@@ -1,0 +1,5 @@
+play.it (2.7.5-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Phil Morrell <debian@emorrp1.name>  Fri, 04 May 2018 20:06:32 +0100
