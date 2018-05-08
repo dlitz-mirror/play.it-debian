@@ -1,38 +1,41 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: play.it
-Source: <url://example.com>
+Upstream-Name: ./play.it
+Upstream-Contact: Antoine Le Gonidec <vv221@dotslashplay.it>
+Source: https://framagit.org/vv221/play.it.git
+Disclaimer: This package is not part of Debian. It is provided as a convenience
+ for integrating non-free games with the users expectations of Debian.
+License: BSD-2-Clause
+Copyright: 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
-License: <special license>
- <Put the license of the package here indented by 1 space>
- <This follows the format of Description: lines in control file>
- .
- <Including paragraphs>
+Copyright: 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
+License: BSD-2-Clause
 
-# If you want to use GPL v2 or later for the /debian/* files use 
-# the following clauses, or change it to suit. Delete these two lines
 Files: debian/*
 Copyright: 2018 Phil Morrell <debian@emorrp1.name>
-License: GPL-2+
- This package is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- .
- This package is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- .
- You should have received a copy of the GNU General Public License
- along with this program. If not, see <https://www.gnu.org/licenses/>
- .
- On Debian systems, the complete text of the GNU General
- Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+License: BSD-2-Clause
 
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-# Please avoid picking licenses with terms that are more restrictive than the
-# packaged work, as it may make Debian's contributions unacceptable upstream.
+License: BSD-2-Clause
+ All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
+ .
+ 1. Redistributions of source code must retain the above copyright notice,
+ this list of conditions and the following disclaimer.
+ .
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+ .
+ This software is provided by the copyright holders and contributors "as is"
+ and any express or implied warranties, including, but not limited to, the
+ implied warranties of merchantability and fitness for a particular purpose
+ are disclaimed. In no event shall the copyright holder or contributors be
+ liable for any direct, indirect, incidental, special, exemplary, or
+ consequential damages (including, but not limited to, procurement of
+ substitute goods or services; loss of use, data, or profits; or business
+ interruption) however caused and on any theory of liability, whether in
+ contract, strict liability, or tort (including negligence or otherwise)
+ arising in any way out of the use of this software, even if advised of the
+ possibility of such damage.
