@@ -1,0 +1,3 @@
+play.it usr/games/
+play.it-2/lib/libplayit2.sh usr/share/games/play.it/
+play.it-2/games/* usr/share/games/play.it/
