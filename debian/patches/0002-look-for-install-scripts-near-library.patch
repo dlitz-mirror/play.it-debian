@@ -1,0 +1,22 @@
+From: Phil Morrell <debian@emorrp1.name>
+Date: Fri, 11 May 2018 01:04:38 +0100
+Subject: look for install scripts near library
+
+* this doesn't handle PLAYIT_LIB2 being in lib/
+---
+ play.it | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/play.it b/play.it
+index 27cb360..1618a39 100755
+--- a/play.it
++++ b/play.it
+@@ -43,7 +43,7 @@ if [ ! -f "$INPUT_FILE" ]; then
+ fi
+ 
+ FILE_MD5="$(md5sum $INPUT_FILE | cut --delimiter=' ' --fields=1)"
+-SCRIPT="$(grep --dereference-recursive --files-with-matches "$FILE_MD5" ~/.local/share/play.it/play.it-* | sort --reverse | head --lines=1)"
++SCRIPT="$(grep --dereference-recursive --files-with-matches "$FILE_MD5" "$(dirname "$PLAYIT_LIB2")" | sort --reverse | head --lines=1)"
+ 
+ if [ -z "$SCRIPT" ]; then
+ 	print_error
