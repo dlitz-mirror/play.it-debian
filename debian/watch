@@ -1,2 +1,10 @@
 version=4
-https://framagit.org/vv221/play.it/tags (?:.*/)@PACKAGE@@ANY_VERSION@@ARCHIVE_EXT@
+
+opts="pgpmode=next" \
+  https://framagit.org/vv221/play.it/tags \
+  (?:.*/)@PACKAGE@@ANY_VERSION@\.tar\.gz
+
+opts="pgpmode=previous" \
+  https://framagit.org/vv221/play.it/tags \
+  (?:.*/)@PACKAGE@@ANY_VERSION@@SIGNATURE_EXT@ \
+  previous
