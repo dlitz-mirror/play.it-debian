@@ -5,10 +5,13 @@ Source: https://framagit.org/vv221/play.it.git
 Disclaimer: This package is not part of Debian. It is provided as a convenience
  for integrating non-free games with the users expectations of Debian.
 License: BSD-2-Clause
-Copyright: 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
 
 Files: *
-Copyright: 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
+Copyright:
+ 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
+ 2016-2018 Mopi <mopi@dotslashplay.it>
+ 2017-2018 Jacek Szafarkiewicz <szafar@linux.pl>
+ 2017 Quentin Barbe <quentin@barbe.me>
 License: BSD-2-Clause
 
 Files: debian/*
