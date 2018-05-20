@@ -6,8 +6,8 @@ Uploaders: Phil Morrell <debian@emorrp1.name>
 Build-Depends: debhelper (>= 11)
 Standards-Version: 4.1.4
 Homepage: https://www.dotslashplay.it/
-Vcs-Git: https://salsa.debian.org/emorrp1-guest/play.it.git
-Vcs-Browser: https://salsa.debian.org/emorrp1-guest/play.it
+Vcs-Git: https://salsa.debian.org/games-team/play.it.git
+Vcs-Browser: https://salsa.debian.org/games-team/play.it
 
 Package: play.it
 Architecture: all
