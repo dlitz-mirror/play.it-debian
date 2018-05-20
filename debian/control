@@ -11,7 +11,16 @@ Vcs-Browser: https://salsa.debian.org/emorrp1-guest/play.it
 
 Package: play.it
 Architecture: all
-Depends: ${misc:Depends}
+Depends:
+ fakeroot,
+ ${misc:Depends},
+Suggests:
+ bsdtar,
+ icoutils,
+ imagemagick,
+ innoextract,
+ unar,
+ unzip,
 Description: Installer for drm-free commercial games
  The ./play.it tool builds .deb and .pkg packages from installers for Windows
  or Linux, mainly those sold by GOG and Humble Bundle. The goal is that a game
