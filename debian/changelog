@@ -1,5 +1,5 @@
-play.it (2.7.5-1) unstable; urgency=medium
+play.it (2.9.0-1) unstable; urgency=medium
 
   * Initial release (Closes: #898372)
 
- -- Phil Morrell <debian@emorrp1.name>  Fri, 04 May 2018 20:06:32 +0100
+ -- Phil Morrell <debian@emorrp1.name>  Wed, 13 Jun 2018 07:01:53 +0100
