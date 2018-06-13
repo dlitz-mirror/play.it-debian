@@ -8,10 +8,13 @@ License: BSD-2-Clause
 
 Files: *
 Copyright:
- 2015-2018 Antoine Le Gonidec <vv221@dotslashplay.it>
- 2016-2018 Mopi <mopi@dotslashplay.it>
- 2017-2018 Jacek Szafarkiewicz <szafar@linux.pl>
- 2017 Quentin Barbe <quentin@barbe.me>
+ 2016-2018, Antoine "vv221/vv222" Le Gonidec
+ 2016-2018, Solène "Mopi" Huault
+ 2017-2018, mortalius
+ 2017-2018, Jacek Szafarkiewicz
+ 2017-2018, HS-157
+ 2017-2018, Phil Morrell
+ 2017-2018, Quentin Barbe
 License: BSD-2-Clause
 
 Files: debian/*
