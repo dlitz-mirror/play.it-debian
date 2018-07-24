@@ -14,10 +14,11 @@ Architecture: all
 Depends:
  fakeroot,
  ${misc:Depends},
-Suggests:
+Recommends:
  bsdtar,
- icoutils,
  imagemagick,
+Suggests:
+ icoutils,
  innoextract,
  unar,
  unzip,
