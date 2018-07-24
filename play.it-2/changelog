@@ -1,4 +1,17 @@
-2.9
+2.9.1
+
+  * extract_data_from: Do not print "OK" after innosetup variants extraction
+    (progress already has a visual feedback)
+
+  * Better handling of game updates and DLC (un)installation by automatically
+    updating the user prefix on each game launch
+
+  * meta-script: if called without argument, show usage instructions
+
+  * icon_get_resolution_from_file: Fix a bug with pre 2.8 scripts where the
+    resolution value of the first analyzed file would be kept for all files
+
+2.9.0
 
   * Update license file to keep track of all authors
 
@@ -7,7 +20,7 @@
   * Remove shebang from library, as it is always meant to be sourced, never
     directly executed
 
-  * Makefile: Add ability to chose the installation path, now defaulting to
+  * Makefile: Add ability to choose the installation path, now defaulting to
     /usr/local/share/games/play.it for library and scripts, and
     /usr/local/games for meta-script
 

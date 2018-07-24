@@ -255,6 +255,7 @@ icon_get_resolution_from_file() {
 		[ -n "${file##* *}" ]
 	then
 		field=2
+		unset resolution
 		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
 			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
 			field=$((field + 1))

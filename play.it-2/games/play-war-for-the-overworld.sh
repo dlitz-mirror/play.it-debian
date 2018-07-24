@@ -34,36 +34,36 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180514.1
+script_version=20180704.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld'
 
-ARCHIVE_GOG='war_for_the_overworld_en_2_0f4_20414.sh'
+ARCHIVE_GOG='war_for_the_overworld_en_2_0_1_21758.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld'
-ARCHIVE_GOG_MD5='9110eadd613d39f95e08e182f08546cf'
-ARCHIVE_GOG_SIZE='4500000'
-ARCHIVE_GOG_VERSION='2.0f4-gog20414'
+ARCHIVE_GOG_MD5='41c4746b17874ca4c42712ffe2b20381'
+ARCHIVE_GOG_SIZE='4600000'
+ARCHIVE_GOG_VERSION='2.0.1-gog20414'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD='war_for_the_overworld_en_2_0f1_20175.sh'
-ARCHIVE_GOG_OLD_MD5='51bcd2bd37c4914f5074a622767859d4'
+ARCHIVE_GOG_OLD='war_for_the_overworld_en_2_0f4_20414.sh'
+ARCHIVE_GOG_OLD_MD5='9110eadd613d39f95e08e182f08546cf'
 ARCHIVE_GOG_OLD_SIZE='4500000'
-ARCHIVE_GOG_OLD_VERSION='2.0f1-gog20175'
+ARCHIVE_GOG_OLD_VERSION='2.0f4-gog20414'
 ARCHIVE_GOG_OLD_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLDER='war_for_the_overworld_en_1_6_66_16455.sh'
-ARCHIVE_GOG_OLDER_MD5='3317bba3d2ec7dc5715f0d44e6cb70c1'
-ARCHIVE_GOG_OLDER_SIZE='2800000'
-ARCHIVE_GOG_OLDER_VERSION='1.6.66-gog16455'
+ARCHIVE_GOG_OLDER='war_for_the_overworld_en_2_0f1_20175.sh'
+ARCHIVE_GOG_OLDER_MD5='51bcd2bd37c4914f5074a622767859d4'
+ARCHIVE_GOG_OLDER_SIZE='4500000'
+ARCHIVE_GOG_OLDER_VERSION='2.0f1-gog20175'
 ARCHIVE_GOG_OLDER_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLDEST='war_for_the_overworld_en_1_6_5f1_15803.sh'
-ARCHIVE_GOG_OLDEST_MD5='5fb91f8c86eafeea09c91b36c0c82afe'
+ARCHIVE_GOG_OLDEST='war_for_the_overworld_en_1_6_66_16455.sh'
+ARCHIVE_GOG_OLDEST_MD5='3317bba3d2ec7dc5715f0d44e6cb70c1'
 ARCHIVE_GOG_OLDEST_SIZE='2800000'
-ARCHIVE_GOG_OLDEST_VERSION='1.6.5f1-gog15803'
+ARCHIVE_GOG_OLDEST_VERSION='1.6.66-gog16455'
 ARCHIVE_GOG_OLDEST_TYPE='mojosetup'
 
 ARCHIVE_HUMBLE='War_for_the_Overworld_v1.5.2_-_Linux_x64.zip'
@@ -101,7 +101,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor gconf"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
@@ -122,7 +122,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
-		return 1
+		exit 1
 	fi
 fi
 . "$PLAYIT_LIB2"

@@ -3,7 +3,6 @@
 set -o errexit
 
 INPUT_FILE="$1"
-shift 1
 
 LIB_ONLY=true
 
@@ -31,6 +30,11 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	fi
 fi
 . "$PLAYIT_LIB2"
+
+if [ "$#" = 0 ]; then
+	help
+	exit 0
+fi
 
 if [ ! -f "$INPUT_FILE" ]; then
 	print_error
@@ -92,6 +96,7 @@ fi
 
 export PLAYIT_LIB2
 
+shift 1
 "$SCRIPT" "$INPUT_FILE" $SCRIPT_OPTIONS "$@"
 
 exit 0
