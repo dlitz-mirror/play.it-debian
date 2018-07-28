@@ -15,8 +15,8 @@ Depends:
  fakeroot,
  ${misc:Depends},
 Recommends:
- bsdtar,
  imagemagick,
+ libarchive-tools,
 Suggests:
  icoutils,
  innoextract,
