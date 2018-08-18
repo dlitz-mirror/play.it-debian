@@ -1,3 +1,15 @@
+play.it (2.10.0-1) unstable; urgency=medium
+
+  [ Phil Morrell ]
+  * New upstream release.
+  * bsdtar is transitional.
+    Thanks to Antoine Le Gonidec
+  * add pandoc to Build-Depends for manpage
+  * bump Standards-Version, no changes needed
+  * install README.md
+
+ -- Phil Morrell <debian@emorrp1.name>  Sat, 18 Aug 2018 16:39:45 +0100
+
 play.it (2.9.1-1) unstable; urgency=medium
 
   * New upstream release.
