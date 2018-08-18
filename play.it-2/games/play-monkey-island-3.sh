@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180401.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='monkey-island-3'
 GAME_NAME='Monkey Island 3: The Curse of Monkey Island'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='setup_the_curse_of_monkey_island_1.0_(18253).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_curse_of_monkey_island'

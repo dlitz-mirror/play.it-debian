@@ -13,7 +13,7 @@ print_instructions() {
 	local packages_list_all
 	local string
 	for package in "$@"; do
-		package_arch="$(eval printf -- '%b' \"\$${package}_ARCH\")"
+		package_arch="$(get_value "${package}_ARCH")"
 		case "$package_arch" in
 			('32')
 				packages_list_32="$packages_list_32 $package"

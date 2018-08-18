@@ -35,8 +35,8 @@ archive_set_error_not_found() {
 	print_error
 	printf '%s\n' "$string"
 	for archive in "$@"; do
-		archive_name="$(eval printf -- '%b' \"\$$archive\")"
-		archive_url="$(eval printf -- '%b' \"\$${archive}_URL\")"
+		archive_name="$(get_value "$archive")"
+		archive_url="$(get_value "${archive}_URL")"
 		printf '%s' "$archive_name"
 		[ -n "$archive_url" ] && printf ' — %s' "$archive_url"
 		printf '\n'
@@ -56,10 +56,10 @@ archive_set() {
 	local name
 	name=$1
 	shift 1
-	current_value="$(eval printf -- '%b' \"\$$name\")"
+	current_value="$(get_value "$name")"
 	if [ -n "$current_value" ]; then
 		for archive in "$@"; do
-			file="$(eval printf -- '%b' \"\$$archive\")"
+			file="$(get_value "$archive")"
 			if [ "$(basename "$current_value")" = "$file" ]; then
 				archive_get_infos "$archive" "$name" "$current_value"
 				archive_check_for_extra_parts "$archive" "$name"
@@ -70,7 +70,7 @@ archive_set() {
 		done
 	else
 		for archive in "$@"; do
-			file="$(eval printf -- '%b' \"\$$archive\")"
+			file="$(get_value "$archive")"
 			if [ ! -f "$file" ] && [ -n "$SOURCE_ARCHIVE" ] && [ -f "${SOURCE_ARCHIVE%/*}/$file" ]; then
 				file="${SOURCE_ARCHIVE%/*}/$file"
 			fi
@@ -105,10 +105,10 @@ archive_check_for_extra_parts() {
 	for i in $(seq 1 9); do
 		part_archive="${archive}_PART${i}"
 		part_name="${name}_PART${i}"
-		file="$(eval printf -- '%b' \"\$$part_archive\")"
+		file="$(get_value "$part_archive")"
 		[ -n "$file" ] || return 0
 		set_archive "$part_name" "$part_archive"
-		if [ -z "$(eval printf -- '%b' \"\$$part_name\")" ]; then
+		if [ -z "$(get_value "$part_name")" ]; then
 			set_archive_error_not_found "$part_archive"
 		fi
 	done
@@ -129,13 +129,13 @@ archive_get_infos() {
 	file="$3"
 	archive_print_file_in_use "$file"
 	eval $name=\"$file\"
-	md5="$(eval printf -- '%b' \"\$${ARCHIVE}_MD5\")"
-	type="$(eval printf -- '%b' \"\$${ARCHIVE}_TYPE\")"
-	size="$(eval printf -- '%b' \"\$${ARCHIVE}_SIZE\")"
+	md5="$(get_value "${ARCHIVE}_MD5")"
+	type="$(get_value "${ARCHIVE}_TYPE")"
+	size="$(get_value "${ARCHIVE}_SIZE")"
 	[ -n "$md5" ] && archive_integrity_check "$ARCHIVE" "$file"
 	if [ -z "$type" ]; then
 		archive_guess_type "$ARCHIVE" "$file"
-		type="$(eval printf -- '%b' \"\$${ARCHIVE}_TYPE\")"
+		type="$(get_value "${ARCHIVE}_TYPE")"
 	fi
 	eval ${name}_TYPE=\"$type\"
 	export ${name}_TYPE
@@ -172,6 +172,9 @@ archive_guess_type() {
 		;;
 		('gog_'*'.sh')
 			type='mojosetup'
+		;;
+		(*'.iso')
+			type='iso'
 		;;
 		(*'.msi')
 			type='msi'
@@ -264,7 +267,7 @@ archive_integrity_check_md5() {
 	archive="$1"
 	file="$2"
 	archive_integrity_check_print "$file"
-	archive_sum="$(eval printf -- '%b' \"\$${ARCHIVE}_MD5\")"
+	archive_sum="$(get_value "${ARCHIVE}_MD5")"
 	file_sum="$(md5sum "$file" | awk '{print $1}')"
 	[ "$file_sum" = "$archive_sum" ] || archive_integrity_check_error "$file"
 }

@@ -38,7 +38,7 @@ select_package_architecture() {
 	local packages_list_64
 	local packages_list_all
 	for package in $PACKAGES_LIST; do
-		package_arch="$(eval printf -- '%b' \"\$${package}_ARCH\")"
+		package_arch="$(get_value "${package}_ARCH")"
 		case "$package_arch" in
 			('32')
 				packages_list_32="$packages_list_32 $package"

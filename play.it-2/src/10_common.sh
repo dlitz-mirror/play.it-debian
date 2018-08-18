@@ -6,7 +6,7 @@
 set_architecture() {
 	use_archive_specific_value "${1}_ARCH"
 	local architecture
-	architecture="$(eval printf -- '%b' \"\$${1}_ARCH\")"
+	architecture="$(get_value "${1}_ARCH")"
 	case $OPTION_PACKAGE in
 		('arch')
 			set_architecture_arch "$architecture"
@@ -96,7 +96,7 @@ liberror() {
 	local var
 	var="$1"
 	local value
-	value="$(eval printf -- '%b' \"\$$var\")"
+	value="$(get_value "$var")"
 	local func
 	func="$2"
 	print_error
@@ -123,7 +123,7 @@ use_archive_specific_value() {
 	name="${name_real}_${ARCHIVE#ARCHIVE_}"
 	local value
 	while [ "$name" != "$name_real" ]; do
-		value="$(eval printf -- '%b' \"\$$name\")"
+		value="$(get_value "$name")"
 		if [ -n "$value" ]; then
 			eval $name_real=\"$value\"
 			export $name_real
@@ -144,7 +144,7 @@ use_package_specific_value() {
 	name="${name_real}_${PKG#PKG_}"
 	local value
 	while [ "$name" != "$name_real" ]; do
-		value="$(eval printf -- '%b' \"\$$name\")"
+		value="$(get_value "$name")"
 		if [ -n "$value" ]; then
 			eval $name_real=\"$value\"
 			export $name_real
@@ -188,3 +188,12 @@ skipping_pkg_warning() {
 	printf "$string" "$1" "$2"
 }
 
+# get the value of a variable and print it
+# USAGE: get_value $variable_name
+get_value() {
+	local name
+	local value
+	name="$1"
+	value="$(eval printf -- '%b' \"\$$name\")"
+	printf '%s' "$value"
+}

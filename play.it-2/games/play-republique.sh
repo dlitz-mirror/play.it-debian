@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180331.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='republique'
 GAME_NAME='Republique'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
 
 ARCHIVE_GOG='setup_republique_remastered_33555_(18824).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/republique'

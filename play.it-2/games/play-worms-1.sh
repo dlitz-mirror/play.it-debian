@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180506.1
+script_version=20180802.2
 
 # Set game-specific variables
 
 GAME_ID='worms-1'
 GAME_NAME='Worms United'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='setup_worms_united_2.0.0.20.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/worms_united'
@@ -88,11 +86,21 @@ target_version='2.8'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1

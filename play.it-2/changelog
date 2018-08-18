@@ -1,3 +1,33 @@
+2.10.0
+
+  * get_tmp_dir: New function allowing to set a temporary working directory by
+    setting $TMPDIR
+
+  * New archive type 'iso', using bsdtar for data extraction
+
+  * get_value: New helper function allowing to get the value of a variable
+    using a dynamically generated name
+
+  * New meta-dependencies 'libudev1' and 'theora' respectively providing
+    libudev.so.1 and libtheora.so.0
+
+  * New archive type 'innosetup1.7', allowing to ensure that InnoExtract >= 1.7
+    is available
+
+  * icon_file_not_found_error: New function displaying an error if some
+    function should work on an icon file that could not be found
+
+  * write_bin_run_dosbox: Improve handling of CD-ROM images for DOSBox games
+
+  * Add support for bzip2 compression
+
+  * Set all application-specific variables even for ScummVM games
+
+2.9.2
+
+  * set_temp_directories: Improve the generation of the temporary work
+    directory, dropping "mktemp --dry-run" usage
+
 2.9.1
 
   * extract_data_from: Do not print "OK" after innosetup variants extraction

@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2016, Antoine Le Gonidec
+# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

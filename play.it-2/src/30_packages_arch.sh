@@ -4,12 +4,12 @@
 # CALLED BY: write_metadata
 pkg_write_arch() {
 	local pkg_deps
-	if [ "$(eval printf -- '%b' \"\$${pkg}_DEPS\")" ]; then
-		pkg_set_deps_arch $(eval printf -- '%b' \"\$${pkg}_DEPS\")
+	if [ "$(get_value "${pkg}_DEPS")" ]; then
+		pkg_set_deps_arch $(get_value "${pkg}_DEPS")
 	fi
 	use_archive_specific_value "${pkg}_DEPS_ARCH"
-	if [ "$(eval printf -- '%b' \"\$${pkg}_DEPS_ARCH\")" ]; then
-		pkg_deps="$pkg_deps $(eval printf -- '%b' \"\$${pkg}_DEPS_ARCH\")"
+	if [ "$(get_value "${pkg}_DEPS_ARCH")" ]; then
+		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_ARCH")"
 	fi
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
@@ -87,7 +87,7 @@ pkg_write_arch() {
 pkg_set_deps_arch() {
 	use_archive_specific_value "${pkg}_ARCH"
 	local architecture
-	architecture="$(eval printf -- '%b' \"\$${pkg}_ARCH\")"
+	architecture="$(get_value "${pkg}_ARCH")"
 	case $architecture in
 		('32')
 			pkg_set_deps_arch32 "$@"
@@ -146,6 +146,9 @@ pkg_set_deps_arch32() {
 			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
+			('libudev1')
+				pkg_dep='lib32-systemd'
+			;;
 			('libxrandr')
 				pkg_dep='lib32-libxrandr'
 			;;
@@ -169,6 +172,9 @@ pkg_set_deps_arch32() {
 			;;
 			('sdl2_mixer')
 				pkg_dep='lib32-sdl2_mixer'
+			;;
+			('theora')
+				pkg_dep='lib32-libtheora'
 			;;
 			('vorbis')
 				pkg_dep='lib32-libvorbis'
@@ -250,6 +256,9 @@ pkg_set_deps_arch64() {
 			('libstdc++')
 				pkg_dep='gcc-libs'
 			;;
+			('libudev1')
+				pkg_dep='libsystemd'
+			;;
 			('libxrandr')
 				pkg_dep='libxrandr'
 			;;
@@ -273,6 +282,9 @@ pkg_set_deps_arch64() {
 			;;
 			('sdl2_mixer')
 				pkg_dep='sdl2_mixer'
+			;;
+			('theora')
+				pkg_dep='libtheora'
 			;;
 			('vorbis')
 				pkg_dep='libvorbis'
@@ -330,6 +342,10 @@ pkg_build_arch() {
 		('xz')
 			tar_options="$tar_options --xz"
 			pkg_filename="${pkg_filename}.xz"
+		;;
+		('bzip2')
+			tar_options="$tar_options --bzip2"
+			pkg_filename="${pkg_filename}.bz2"
 		;;
 		('none') ;;
 		(*)

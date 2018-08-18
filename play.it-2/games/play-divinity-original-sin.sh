@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180501.4
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='divinity-original-sin'
 GAME_NAME='Divinity Original Sin'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='divinity_original_sin_enhanced_edition_en_2_0_119_430_ch_17075.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/divinity_original_sin_enhanced_edition'

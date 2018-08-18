@@ -9,7 +9,7 @@ print_instructions_arch() {
 			skipping_pkg_warning 'print_instructions_arch' "$pkg"
 			return 0
 		fi
-		pkg_path="$(eval printf -- '%b' \"\$${pkg}_PKG\")"
+		pkg_path="$(get_value "${pkg}_PKG")"
 		if [ -z "${pkg_path##* *}" ]; then
 			str_format=' "%s"'
 		else

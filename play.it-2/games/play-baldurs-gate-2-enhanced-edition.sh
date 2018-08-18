@@ -34,20 +34,24 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180801.4
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-2-enhanced-edition'
 GAME_NAME='Baldur’s Gate 2 - Enhanced Edition'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='gog_baldur_s_gate_2_enhanced_edition_2.6.0.11.sh'
+ARCHIVE_GOG='baldur_s_gate_2_enhanced_edition_en_2_5_21851.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
-ARCHIVE_GOG_MD5='b9ee856a29238d4aec65367377d88ac4'
-ARCHIVE_GOG_SIZE='2700000'
-ARCHIVE_GOG_VERSION='2.3.67.3-gog2.6.0.11'
+ARCHIVE_GOG_MD5='4508edf93d6b138a7e91aa0f2f82605a'
+ARCHIVE_GOG_SIZE='3700000'
+ARCHIVE_GOG_VERSION='2.5.16.6-gog21851'
+ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='gog_baldur_s_gate_2_enhanced_edition_2.6.0.11.sh'
+ARCHIVE_GOG_OLD0_MD5='b9ee856a29238d4aec65367377d88ac4'
+ARCHIVE_GOG_OLD0_SIZE='2700000'
+ARCHIVE_GOG_OLD0_VERSION='2.3.67.3-gog2.6.0.11'
 
 ARCHIVE_LIBSSL_32='libssl_1.0.0_32-bit.tar.gz'
 ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
@@ -58,40 +62,46 @@ ARCHIVE_DOC_DATA_FILES='./*'
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='./BaldursGateII ./engine.lua'
 
-ARCHIVE_GAME_AREAS_PATH='data/noarch/game'
-ARCHIVE_GAME_AREAS_FILES='./data/AREA*.bif ./data/Areas.bif ./data/25Areas.bif ./data/ARMisc.bif ./data/25ArMisc.bif'
-
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./chitin.key ./lang ./Manuals ./movies ./music ./scripts ./data/*Anim.bif ./data/*Items.bif ./data/*Sound.bif ./data/*Cre* ./data/25AmbSnd.bif ./data/25Deflt.bif ./data/25Dialog.bif ./data/25Effect.bif ./data/25Gui* ./data/25MiscAn.bif ./data/25NpcSo.bif ./data/25Portrt.bif ./data/25Projct.bif ./data/25Scripts.bif ./data/25SndFX.bif ./data/25SpelAn.bif ./data/25Spells.bif ./data/25Store.bif ./data/bgee* ./data/BlackPits.bif ./data/characters.bif ./data/CREAnim1.bif ./data/Default.bif ./data/DIALOG.BIF ./data/Dorn.bif ./data/ee* ./data/Effects.bif ./data/fonts.bif ./data/GUI* ./data/Hd0* ./data/Hexxat.bif ./data/Neera.bif ./data/NPC* ./data/orphan.bif ./data/PaperDol.bif ./data/patch13.bif ./data/Patch2.bif ./data/Portrait.bif ./data/Project.bif ./data/Rasaad.bif ./data/Scripts.bif ./data/Shaders.bif ./data/Spells.bif ./data/STORES.BIF'
+ARCHIVE_GAME_DATA_FILES='./chitin.key ./lang ./Manuals ./movies ./music ./scripts ./data'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_LIBS='libs'
 APP_MAIN_EXE='BaldursGateII'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-APP_MAIN_ICON_RES='256'
 
-PACKAGES_LIST='PKG_AREAS PKG_DATA PKG_BIN'
-
-PKG_AREAS_ID="${GAME_ID}-areas"
-PKG_AREAS_DESCRIPTION='areas'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+# this is needed for smooth upgrades from packages generated with script version < 20180801.3
+PKG_DATA_PROVIDE="${GAME_ID}-areas"
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_AREAS_ID $PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal json"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal"
 PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -110,15 +120,12 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Get game icon
 
 PKG='PKG_DATA'
-get_icon_from_temp_dir 'APP_MAIN'
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Include libSSL into the game directory
@@ -128,10 +135,8 @@ if [ "$ARCHIVE_LIBSSL" ]; then
 		ARCHIVE='ARCHIVE_LIBSSL'
 		extract_data_from "$ARCHIVE_LIBSSL"
 	)
-	dir='libs'
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	APP_MAIN_LIBS="$dir"
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
@@ -140,24 +145,42 @@ fi
 PKG='PKG_BIN'
 write_launcher 'APP_MAIN'
 
-# Build package
+# Ensure that libjson.so.0 can be found and loaded for game versions needing it
 
-cat > "$postinst" << EOF
-if [ ! -e /lib/i386-linux-gnu/libjson.so.0 ]; then
-	if [ -e /lib/i386-linux-gnu/libjson-c.so ] ; then
-		ln --symbolic libjson-c.so /lib/i386-linux-gnu/libjson.so.0
-	elif [ -e /lib/i386-linux-gnu/libjson-c.so.2 ] ; then
-		ln --symbolic libjson-c.so.2 /lib/i386-linux-gnu/libjson.so.0
-	elif [ -e /lib/i386-linux-gnu/libjson-c.so.3 ] ; then
-		ln --symbolic libjson-c.so.3 /lib/i386-linux-gnu/libjson.so.0
+if [ 'ARCHIVE' = 'ARCHIVE_GOG_OLD0' ]; then
+	PKG_BIN_DEPS="$PKG_BIN_DEPS json"
+
+	target="$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
+
+	cat > "$postinst" <<- EOF
+	if [ ! -e "$target" ]; then
+	    for source in \
+	        /lib/i386-linux-gnu/libjson-c.so \
+	        /lib/i386-linux-gnu/libjson-c.so.2 \
+	        /lib/i386-linux-gnu/libjson-c.so.3 \
+	        /usr/lib32/libjson-c.so
+	    do
+	        if [ -e "\$source" ] ; then
+	            mkdir --parents "${target%/*}"
+	            ln --symbolic "\$source" "$target"
+	            break
+	        fi
+	    done
 	fi
-elif [ ! -e /usr/lib32/libjson.so.0 ] && [ -e /usr/lib32/libjson-c.so ] ; then
-	ln --symbolic libjson-c.so /usr/lib32/libjson.so.0
+	EOF
+
+	cat > "$prerm" <<- EOF
+	if [ -e "$target" ]; then
+	    rm "$target"
+	    rmdir --ignore-fail-on-non-empty --parents "${target%/*}"
+	fi
+	EOF
 fi
-EOF
+
+# Build packages
 
 write_metadata 'PKG_BIN'
-write_metadata 'PKG_AREAS' 'PKG_DATA'
+write_metadata 'PKG_DATA'
 build_pkg
 
 # Clean up

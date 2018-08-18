@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180416.1
+script_version=20180715.1
 
 # Set game-specific variables
 
@@ -43,11 +43,11 @@ GAME_NAME='Poly Bridge'
 
 ARCHIVE_HUMBLE='polybridge-105-linux.zip'
 ARCHIVE_HUMBLE_MD5='cb7644e3ee055addaa4e7a8a727282cb'
-ARCHIVE_HUMBLE_VERSION='105-humble1'
+ARCHIVE_HUMBLE_VERSION='105-humble180330'
 ARCHIVE_HUMBLE_SIZE='260000'
 
 ARCHIVE_DOC_DATA_PATH='polybridge-105-linux'
-ARCHIVE_DOC_DATA_FILES='*.pdf'
+ARCHIVE_DOC_DATA_FILES='./*.pdf'
 
 ARCHIVE_GAME_BIN32_PATH='polybridge-105-linux'
 ARCHIVE_GAME_BIN32_FILES='./polybridge.x86 polybridge_Data/*/x86'
@@ -56,7 +56,7 @@ ARCHIVE_GAME_BIN64_PATH='polybridge-105-linux'
 ARCHIVE_GAME_BIN64_FILES='./polybridge.x86_64 polybridge_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='polybridge-105-linux'
-ARCHIVE_GAME_DATA_FILES='polybridge_Data/globalgamemanagers polybridge_Data/*.assets polybridge_Data/level* polybridge_Data/*.resS polybridge_Data/ScreenSelector.png polybridge_Data/sharedassets1.resource polybridge_Data/Managed polybridge_Data/Mono/etc polybridge_Data/Resources'
+ARCHIVE_GAME_DATA_FILES='./polybridge_Data'
 
 DATA_DIRS='./logs'
 
@@ -64,9 +64,7 @@ APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='polybridge.x86'
 APP_MAIN_EXE_BIN64='polybridge.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='polybridge_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -74,22 +72,32 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libgl xcursor libxrandr"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx xcursor libxrandr"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -101,7 +109,6 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers

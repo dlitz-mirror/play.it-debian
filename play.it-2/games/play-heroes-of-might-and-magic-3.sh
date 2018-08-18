@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180529.1
+script_version=20180806.1
 
 # Set game-specific variables
 
@@ -118,7 +118,7 @@ PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
 PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
 PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 

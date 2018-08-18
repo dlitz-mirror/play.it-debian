@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2016, Antoine Le Gonidec
+# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,14 +35,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180331.3
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='the-dark-eye-memoria'
 GAME_NAME='The Dark Eye: Memoria'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
 
 ARCHIVE_GOG='setup_memoria_1.2.3.0341_(18923).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/memoria'

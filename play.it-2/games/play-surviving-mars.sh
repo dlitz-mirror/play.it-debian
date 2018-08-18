@@ -35,23 +35,25 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180616.1
+script_version=20180724.1
 
 # Set game-specific variables
 
 GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars'
 
-ARCHIVE_GOG='surviving_mars_en_curiosity_update_21183.sh'
+ARCHIVE_GOG='surviving_mars_en_180619_curiosity_hotfix_3_21661.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars'
-ARCHIVE_GOG_MD5='ab9a61d04a128f19bc9e003214fe39a9'
-ARCHIVE_GOG_VERSION='231.139'
+ARCHIVE_GOG_MD5='241f1cb8305becab5d55c8d104bd2c18'
+ARCHIVE_GOG_SIZE='4100000'
+ARCHIVE_GOG_VERSION='231.777-3-gog21661'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_SIZE='3950000'
 
-ARCHIVE_GOG_DELUXE_UPGRADE='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180423_opportunity_rc1_20289.sh'
-ARCHIVE_GOG_DELUXE_UPGRADE_MD5='a574de12f4b7f3aa1f285167109bb6a3'
-ARCHIVE_GOG_DELUXE_UPGRADE_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_OLD='surviving_mars_en_curiosity_update_21183.sh'
+ARCHIVE_GOG_OLD_MD5='ab9a61d04a128f19bc9e003214fe39a9'
+ARCHIVE_GOG_OLD_VERSION='231.139'
+ARCHIVE_GOG_OLD_SIZE='3950000'
+ARCHIVE_GOG_OLD_TYPE='mojosetup_unzip'
 
 ARCHIVE_LIBSSL_64='libssl_1.0.0_64-bit.tar.gz'
 ARCHIVE_LIBSSL_64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
@@ -114,12 +116,6 @@ if [ "$OPTION_PACKAGE" != 'arch' ]; then
 	ARCHIVE="$ARCHIVE_MAIN"
 fi
 
-# Use Digital Deluxe upgrade
-
-ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'ARCHIVE_DELUXE' 'ARCHIVE_GOG_DELUXE_UPGRADE'
-ARCHIVE="$ARCHIVE_MAIN"
-
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
@@ -139,18 +135,6 @@ if [ "$ARCHIVE_LIBSSL" ]; then
 		extract_data_from "$ARCHIVE_LIBSSL"
 	)
 	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
-
-# Include the Digital Deluxe upgrade
-
-if [ "$ARCHIVE_DELUXE" ]; then
-	(
-		ARCHIVE='ARCHIVE_DELUXE'
-		extract_data_from "$ARCHIVE_DELUXE"
-	)
-	mv "$PLAYIT_WORKDIR/gamedata/data/noarch/docs"/* "${PKG_DATA_PATH}/${PATH_DOC}"
-	mv "$PLAYIT_WORKDIR/gamedata/data/noarch/game"/* "${PKG_DATA_PATH}/${PATH_GAME}"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 

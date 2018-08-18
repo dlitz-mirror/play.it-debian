@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='anno-1404'
 GAME_NAME='Anno 1404'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
 
 ARCHIVE_GOG='setup_anno_1404_gold_edition_2.01.5010_(13111).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/anno_1404_gold_edition'
@@ -80,9 +78,13 @@ ARCHIVE_GAME_DATA_PATH='app'
 ARCHIVE_GAME_DATA_PATH_GOG_OLD='game'
 ARCHIVE_GAME_DATA_FILES='./addon ./data ./maindata ./resources'
 
+ARCHIVE_GAME2_DATA_PATH='app/__support/add'
+ARCHIVE_GAME2_DATA_PATH_GOG_OLD='game'
+ARCHIVE_GAME2_DATA_FILES='./engine.ini'
+
 CONFIG_FILES='./*.ini'
 
-APP_WINETRICKS='d3dx9_36'
+APP_WINETRICKS='d3dx9'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='anno4.exe'
@@ -110,35 +112,35 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, winetricks, wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID winetricks wine"
+PKG_BIN_DEPS="$PKG_DATA_ID winetricks wine"
 
 # Load common functions
 
-target_version='2.1'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
 	fi
 fi
 . "$PLAYIT_LIB2"
-
-# Check that all parts of the installer are present
-
-ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_PART1' "${ARCHIVE_MAIN}_PART1"
-[ "$ARCHIVE_PART1" ] || set_archive_error_not_found "${ARCHIVE_MAIN}_PART1"
-set_archive 'ARCHIVE_PART2' "${ARCHIVE_MAIN}_PART2"
-[ "$ARCHIVE_PART2" ] || set_archive_error_not_found "${ARCHIVE_MAIN}_PART2"
-ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
@@ -154,9 +156,18 @@ case "$ARCHIVE" in
 	;;
 esac
 
+# Fix immediate crash
+file="$PLAYIT_WORKDIR/gamedata/$ARCHIVE_GAME2_DATA_PATH/engine.ini"
+if [ -e "$file" ]; then
+	sed --in-place '2i<DirectXVersion>9</DirectXVersion>' "$file"
+else
+	echo '<InitFile><DirectXVersion>9</DirectXVersion></InitFile>' > "$file"
+fi
+
 for PKG in $PACKAGES_LIST; do
 	organize_data "DOC_${PKG#PKG_}"   "$PATH_DOC"
 	organize_data "GAME_${PKG#PKG_}"  "$PATH_GAME"
+	organize_data "GAME2_${PKG#PKG_}"  "$PATH_GAME"
 done
 
 PKG='PKG_BIN'

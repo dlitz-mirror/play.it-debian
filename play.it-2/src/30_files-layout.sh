@@ -48,19 +48,19 @@ organize_data() {
 	fi
 	local pkg_path
 	if [ "$DRY_RUN" = '1' ]; then
-		pkg_path="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+		pkg_path="$(get_value "${PKG}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'organize_data' "$PKG"
 		return 0
 	fi
 	use_archive_specific_value "ARCHIVE_${1}_PATH"
 	use_archive_specific_value "ARCHIVE_${1}_FILES"
 	local archive_path
-	archive_path="$(eval printf -- '%b' \"\$ARCHIVE_${1}_PATH\")"
+	archive_path="$(get_value "ARCHIVE_${1}_PATH")"
 	local archive_files
-	archive_files="$(eval printf -- '%b' \"\$ARCHIVE_${1}_FILES\")"
+	archive_files="$(get_value "ARCHIVE_${1}_FILES")"
 
 	if [ "$archive_path" ] && [ "$archive_files" ] && [ -d "$PLAYIT_WORKDIR/gamedata/$archive_path" ]; then
-		pkg_path="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+		pkg_path="$(get_value "${PKG}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'organize_data' "$PKG"
 		pkg_path="${pkg_path}$2"
 		mkdir --parents "$pkg_path"

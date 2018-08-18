@@ -42,7 +42,7 @@ help() {
 		printf '%s\n' "$string_archives"
 	fi
 	for archive in $ARCHIVES_LIST; do
-		printf '%s\n' "$(eval printf -- '%b' \"\$$archive\")"
+		printf '%s\n' "$(get_value "$archive")"
 	done
 	printf '\n'
 }
@@ -124,20 +124,23 @@ help_compression() {
 			string_none='pas de compression (méthode par défaut)'
 			string_gzip='compression gzip (rapide)'
 			string_xz='compression xz (plus lent mais plus efficace que gzip)'
+			string_bzip2='compression bzip2'
 		;;
 		('en'|*)
 			string='Generated packages compression method choice'
 			string_none='no compression (default method)'
 			string_gzip='gzip compression (fast)'
 			string_xz='xz compression (slower but more efficient than gzip)'
+			string_bzip2='bzip2 compression'
 		;;
 	esac
-	printf -- '--compression=none|gzip|xz\n'
-	printf -- '--compression none|gzip|xz\n\n'
+	printf -- '--compression=none|gzip|xz|bzip2\n'
+	printf -- '--compression none|gzip|xz|bzip2\n\n'
 	printf '\t%s\n\n' "$string"
 	printf '\tnone\t%s\n' "$string_none"
 	printf '\tgzip\t%s\n' "$string_gzip"
 	printf '\txz\t%s\n' "$string_xz"
+	printf '\tbzip2\t%s\n' "$string_bzip2"
 }
 
 # display --prefix option usage

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180621.1
+script_version=20180801.1
 
 # Set game-specific variables
 
@@ -42,12 +42,18 @@ script_version=20180621.1
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: Musketeer'
 
-ARCHIVE_GOG='darkest_dungeon_musketeer_dlc_en_23885_21662.sh'
+ARCHIVE_GOG='darkest_dungeon_musketeer_dlc_en_24154_22522.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_musketeer'
-ARCHIVE_GOG_MD5='f9362568f7e4e1fd205835c3dba2083e'
+ARCHIVE_GOG_MD5='d68e50da94cc01920759ff7009a7a3c2'
 ARCHIVE_GOG_SIZE='22000'
-ARCHIVE_GOG_VERSION='23885-gog21662'
+ARCHIVE_GOG_VERSION='24154-gog22522'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='darkest_dungeon_musketeer_dlc_en_23885_21662.sh'
+ARCHIVE_GOG_OLD0_MD5='f9362568f7e4e1fd205835c3dba2083e'
+ARCHIVE_GOG_OLD0_SIZE='22000'
+ARCHIVE_GOG_OLD0_VERSION='23885-gog21662'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='./*'

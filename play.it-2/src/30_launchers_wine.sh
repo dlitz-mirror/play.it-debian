@@ -27,7 +27,7 @@ write_bin_set_wine() {
 		('wine'|'wine-staging')
 			use_archive_specific_value "${PKG}_ARCH"
 			local architecture
-			architecture="$(eval printf -- '%b' \"\$${PKG}_ARCH\")"
+			architecture="$(get_value "${PKG}_ARCH")"
 			case "$architecture" in
 				('32') winearch='win32' ;;
 				('64') winearch='win64' ;;
@@ -130,7 +130,7 @@ write_bin_run_wine() {
 # CALLED BY: write_desktop
 write_desktop_winecfg() {
 	local pkg_path
-	pkg_path="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	pkg_path="$(get_value "${PKG}_PATH")"
 	[ -n "$pkg_path" ] || missing_pkg_error 'write_desktop_winecfg' "$PKG"
 	APP_WINECFG_ID="${GAME_ID}_winecfg"
 	APP_WINECFG_NAME="$GAME_NAME - WINE configuration"

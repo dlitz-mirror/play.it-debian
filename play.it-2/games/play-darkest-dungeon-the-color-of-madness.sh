@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180621.1
+script_version=20180801.1
 
 # Set game-specific variables
 
@@ -42,12 +42,18 @@ script_version=20180621.1
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: The Color of Madness'
 
-ARCHIVE_GOG='darkest_dungeon_the_color_of_madness_dlc_en_23885_21662.sh'
+ARCHIVE_GOG='darkest_dungeon_the_color_of_madness_dlc_en_24154_22522.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_the_color_of_madness'
-ARCHIVE_GOG_MD5='fe07f35c57c3ddd421db5da33b42ee6e'
+ARCHIVE_GOG_MD5='40088860d8e3e3a651074e84eb2746ac'
 ARCHIVE_GOG_SIZE='630000'
-ARCHIVE_GOG_VERSION='23885-gog21662'
+ARCHIVE_GOG_VERSION='24154-gog22522'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='darkest_dungeon_the_color_of_madness_dlc_en_23885_21662.sh'
+ARCHIVE_GOG_OLD0_MD5='fe07f35c57c3ddd421db5da33b42ee6e'
+ARCHIVE_GOG_OLD0_SIZE='630000'
+ARCHIVE_GOG_OLD0_VERSION='23885-gog21662'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='./*'

@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180512.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: Underlord Edition'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
 
 ARCHIVE_GOG='war_for_the_overworld_underlord_edition_upgrade_dlc_en_gog_1_20169.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_underlord_edition_upgrade'

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180419.1
+script_version=20180814.1
 
 # Set game-specific variables
 
@@ -47,19 +47,17 @@ ARCHIVE_HUMBLE_VERSION='1.0-humble1'
 ARCHIVE_HUMBLE_SIZE='4300000'
 
 ARCHIVE_GAME_BIN_PATH='SUPERHOT'
-ARCHIVE_GAME_BIN_FILES='./SUPERHOT.x86_64 *_Data/*/x86_64'
+ARCHIVE_GAME_BIN_FILES='./SUPERHOT.x86_64 ./*_Data/Mono ./*_Data/Plugins'
 
 ARCHIVE_GAME_DATA_PATH='SUPERHOT'
-ARCHIVE_GAME_DATA_FILES='*_Data/globalgamemanagers *_Data/*.assets *_Data/level* *_Data/*.resS *_Data/ScreenSelector.png *_Data/*.resource *_Data/Managed *_Data/Mono/etc *_Data/Resources *_Data/StreamingAssets'
+ARCHIVE_GAME_DATA_FILES='./*_Data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='SUPERHOT.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='SUPERHOT_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -67,19 +65,29 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libgl xcursor libxrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc glx xcursor libxrandr"
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -91,7 +99,6 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -101,7 +108,8 @@ write_launcher 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 write_metadata 'PKG_BIN'
 build_pkg

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180530.2
+script_version=20180810.1
 
 # Set game-specific variables
 
@@ -133,13 +133,13 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_PACK1_ID $PKG_PACK2_ID $PKG_VOICES_ID $PKG_DATA_ID alsa gtk2 sdl2_image freetype libcurl"
-PKG_BIN_DEPS_DEB='libtxc-dxtn-s2tc0 | libtxc-dxtn0, libudev1'
+PKG_BIN_DEPS="$PKG_PACK1_ID $PKG_PACK2_ID $PKG_VOICES_ID $PKG_DATA_ID alsa gtk2 sdl2_image freetype libcurl libudev1"
+PKG_BIN_DEPS_DEB='libtxc-dxtn-s2tc0 | libtxc-dxtn0'
 PKG_BIN_DEPS_ARCH='lib32-libtxc_dxtn'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"

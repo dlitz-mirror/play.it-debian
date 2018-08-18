@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180318.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='kyn'
 GAME_NAME='Kyn'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
 
 ARCHIVE_GOG='setup_kyn_update_4_(17655).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/kyn'

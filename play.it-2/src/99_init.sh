@@ -25,11 +25,15 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		exit 1
 	fi
 
+	# Set URL for error messages
+
+	PLAYIT_GAMES_BUG_TRACKER_URL='https://framagit.org/vv221/play.it-games/issues'
+
 	# Set allowed values for common options
 
 	ALLOWED_VALUES_ARCHITECTURE='all 32 64 auto'
 	ALLOWED_VALUES_CHECKSUM='none md5'
-	ALLOWED_VALUES_COMPRESSION='none gzip xz'
+	ALLOWED_VALUES_COMPRESSION='none gzip xz bzip2'
 	ALLOWED_VALUES_PACKAGE='arch deb'
 
 	# Set default values for common options
@@ -118,9 +122,9 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set options not already set by script arguments to default values
 
 	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'PREFIX'; do
-		if [ -z "$(eval printf -- '%b' \"\$OPTION_$option\")" ]\
-		&& [ -n "$(eval printf -- \"\$DEFAULT_OPTION_$option\")" ]; then
-			eval OPTION_$option=\"$(eval printf -- '%b' \"\$DEFAULT_OPTION_$option\")\"
+		if [ -z "$(get_value "OPTION_$option")" ]\
+		&& [ -n "$(get_value "DEFAULT_OPTION_$option")" ]; then
+			eval OPTION_$option=\"$(get_value "DEFAULT_OPTION_$option")\"
 			export OPTION_$option
 		fi
 	done
@@ -131,9 +135,9 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		local name
 		name="$1"
 		local value
-		value="$(eval printf -- '%b' \"\$OPTION_$option\")"
+		value="$(get_value "OPTION_$option")"
 		local allowed_values
-		allowed_values="$(eval printf -- '%b' \"\$ALLOWED_VALUES_$option\")"
+		allowed_values="$(get_value "ALLOWED_VALUES_$option")"
 		for allowed_value in $allowed_values; do
 			if [ "$value" = "$allowed_value" ]; then
 				return 0
@@ -161,6 +165,25 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	for option in 'CHECKSUM' 'COMPRESSION' 'PACKAGE'; do
 		check_option_validity "$option"
 	done
+
+	# Do not allow bzip2 compression when building Debian packages
+
+	if
+		[ "$OPTION_PACKAGE" = 'deb' ] && \
+		[ "$OPTION_COMPRESSION" = 'bzip2' ]
+	then
+		print_error
+		case "${LANG%_*}" in
+			('fr')
+				string='Le mode de compression bzip2 n’est pas compatible avec la génération de paquets deb.'
+			;;
+			('en'|*)
+				string='bzip2 compression mode is not compatible with deb packages generation.'
+			;;
+		esac
+		printf '%s\n' "$string"
+		exit 1
+	fi
 
 	# Restrict packages list to target architecture
 

@@ -5,12 +5,15 @@
 check_deps() {
 	icons_list_dependencies
 	if [ "$ARCHIVE" ]; then
-		case "$(eval printf -- '%b' \"\$${ARCHIVE}_TYPE\")" in
+		case "$(get_value "${ARCHIVE}_TYPE")" in
 			('cabinet')
 				SCRIPT_DEPS="$SCRIPT_DEPS cabextract"
 			;;
 			('debian')
 				SCRIPT_DEPS="$SCRIPT_DEPS dpkg"
+			;;
+			('innosetup1.7'*)
+				SCRIPT_DEPS="$SCRIPT_DEPS innoextract1.7"
 			;;
 			('innosetup'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract"
@@ -21,7 +24,7 @@ check_deps() {
 			('msi')
 				SCRIPT_DEPS="$SCRIPT_DEPS msiextract"
 			;;
-			('mojosetup')
+			('mojosetup'|'iso')
 				SCRIPT_DEPS="$SCRIPT_DEPS bsdtar"
 			;;
 			('rar'|'nullsoft-installer')
@@ -49,6 +52,9 @@ check_deps() {
 			('7z')
 				check_deps_7z
 			;;
+			('innoextract'*)
+				check_deps_innoextract "$dep"
+			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
 					check_deps_error_not_found "$dep"
@@ -72,6 +78,44 @@ check_deps_7z() {
 	else
 		check_deps_error_not_found 'p7zip'
 	fi
+}
+
+# check innoextract presence, optionally in a given minimum version
+# USAGE: check_deps_innoextract $keyword
+# CALLS: check_deps_error_not_found
+# CALLED BYD: check_deps
+check_deps_innoextract() {
+	local keyword
+	local name
+	local version
+	local version_major
+	local version_minor
+	keyword="$1"
+	case "$keyword" in
+		('innoextract1.7')
+			name='innoextract (>= 1.7)'
+		;;
+		(*)
+			name='innoextract'
+		;;
+	esac
+	if ! command -v 'innoextract' >/dev/null 2>&1; then
+		check_deps_error_not_found "$name"
+	fi
+	version="$(innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)"
+	version_minor="${version#*.}"
+	version_major="${version%.*}"
+	case "$keyword" in
+		('innoextract1.7')
+			if
+				[ "$version_major" -lt 1 ] || \
+				[ "$version_major" -lt 2 ] && [ "$version_minor" -lt 7 ]
+			then
+				check_deps_error_not_found "$name"
+			fi
+		;;
+	esac
+	return 0
 }
 
 # display a message if a required dependency is missing

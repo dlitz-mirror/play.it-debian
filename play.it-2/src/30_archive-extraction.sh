@@ -17,7 +17,7 @@ extract_data_from() {
 			return 0
 		fi
 		local archive_type
-		archive_type="$(eval printf -- '%b' \"\$${ARCHIVE}_TYPE\")"
+		archive_type="$(get_value "${ARCHIVE}_TYPE")"
 		case "$archive_type" in
 			('7z')
 				extract_7z "$file" "$destination"
@@ -36,7 +36,7 @@ extract_data_from() {
 				msiextract --directory "$destination" "$file" 1>/dev/null 2>&1
 				tolower "$destination"
 			;;
-			('mojosetup')
+			('mojosetup'|'iso')
 				bsdtar --directory "$destination" --extract --file "$file"
 				set_standard_permissions "$destination"
 			;;
@@ -50,8 +50,8 @@ extract_data_from() {
 			;;
 			('rar'|'nullsoft-installer')
 				# compute archive password from GOG id
-				if [ -z "$ARCHIVE_PASSWD" ] && [ -n "$(eval printf -- '%b' \"\$${ARCHIVE}_GOGID\")" ]; then
-					ARCHIVE_PASSWD="$(printf '%s' "$(eval printf -- '%b' \"\$${ARCHIVE}_GOGID\")" | md5sum | cut -d' ' -f1)"
+				if [ -z "$ARCHIVE_PASSWD" ] && [ -n "$(get_value "${ARCHIVE}_GOGID")" ]; then
+					ARCHIVE_PASSWD="$(printf '%s' "$(get_value "${ARCHIVE}_GOGID")" | md5sum | cut -d' ' -f1)"
 				fi
 				if [ -n "$ARCHIVE_PASSWD" ]; then
 					UNAR_OPTIONS="-password $ARCHIVE_PASSWD"
@@ -109,7 +109,7 @@ archive_extraction_innosetup() {
 	archive="$2"
 	destination="$3"
 	options='--progress=1 --silent'
-	if [ "$archive_type" != 'innosetup_nolowercase' ]; then
+	if [ -n "${archive_type%%*_nolowercase}" ]; then
 		options="$options --lowercase"
 	fi
 	if ( innoextract --list --silent "$archive" 2>&1 1>/dev/null |\

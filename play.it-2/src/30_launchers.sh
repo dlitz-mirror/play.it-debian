@@ -22,7 +22,7 @@ write_bin() {
 		skipping_pkg_warning 'write_bin' "$PKG"
 		return 0
 	fi
-	pkg_path="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	pkg_path="$(get_value "${PKG}_PATH")"
 	[ -n "$pkg_path" ] || missing_pkg_error 'write_bin' "$PKG"
 	local app
 	local app_id
@@ -38,28 +38,27 @@ write_bin() {
 		[ "$DRY_RUN" = '1' ] && continue
 
 		# Get app-specific variables
-		if [ -n "$(eval printf -- '%b' \"\$${app}_ID\")" ]; then
-			app_id="$(eval printf -- '%b' \"\$${app}_ID\")"
+		if [ -n "$(get_value "${app}_ID")" ]; then
+			app_id="$(get_value "${app}_ID")"
 		else
 			app_id="$GAME_ID"
 		fi
 
-		app_type="$(eval printf -- '%b' \"\$${app}_TYPE\")"
-		if [ "$app_type" != 'scummvm' ]; then
-			use_package_specific_value "${app}_EXE"
-			use_package_specific_value "${app}_LIBS"
-			use_package_specific_value "${app}_OPTIONS"
-			use_package_specific_value "${app}_POSTRUN"
-			use_package_specific_value "${app}_PRERUN"
-			app_exe="$(eval printf -- '%b' \"\$${app}_EXE\")"
-			app_libs="$(eval printf -- '%b' \"\$${app}_LIBS\")"
-			app_options="$(eval printf -- '%b' \"\$${app}_OPTIONS\")"
-			app_postrun="$(eval printf -- '%b' \"\$${app}_POSTRUN\")"
-			app_prerun="$(eval printf -- '%b' \"\$${app}_PRERUN\")"
-			if [ "$app_type" = 'native' ] ||\
-			   [ "$app_type" = 'native_no-prefix' ]; then
-				chmod +x "${pkg_path}${PATH_GAME}/$app_exe"
-			fi
+		use_package_specific_value "${app}_EXE"
+		use_package_specific_value "${app}_LIBS"
+		use_package_specific_value "${app}_OPTIONS"
+		use_package_specific_value "${app}_POSTRUN"
+		use_package_specific_value "${app}_PRERUN"
+		app_exe="$(get_value "${app}_EXE")"
+		app_libs="$(get_value "${app}_LIBS")"
+		app_options="$(get_value "${app}_OPTIONS")"
+		app_postrun="$(get_value "${app}_POSTRUN")"
+		app_prerun="$(get_value "${app}_PRERUN")"
+		app_type="$(get_value "${app}_TYPE")"
+
+		if [ "$app_type" = 'native' ] ||\
+		   [ "$app_type" = 'native_no-prefix' ]; then
+			chmod +x "${pkg_path}${PATH_GAME}/$app_exe"
 		fi
 
 		# Write winecfg launcher for WINE games
@@ -322,7 +321,7 @@ write_desktop() {
 		testvar "$app" 'APP' || liberror 'app' 'write_desktop'
 		[ "$DRY_RUN" = '1' ] && continue
 
-		app_type="$(eval printf -- '%b' \"\$${app}_TYPE\")"
+		app_type="$(get_value "${app}_TYPE")"
 		if [ "$winecfg_desktop" != 'done' ] && \
 		   { [ "$app_type" = 'wine' ] || \
 		     [ "$app_type" = 'wine32' ] || \
@@ -335,25 +334,25 @@ write_desktop() {
 			write_desktop_winecfg
 		fi
 
-		if [ -n "$(eval printf -- '%b' \"\$${app}_ID\")" ]; then
-			app_id="$(eval printf -- '%b' \"\$${app}_ID\")"
+		if [ -n "$(get_value "${app}_ID")" ]; then
+			app_id="$(get_value "${app}_ID")"
 		else
 			app_id="$GAME_ID"
 		fi
 
-		if [ -n "$(eval printf -- '%b' \"\$${app}_NAME\")" ]; then
-			app_name="$(eval printf -- '%b' \"\$${app}_NAME\")"
+		if [ -n "$(get_value "${app}_NAME")" ]; then
+			app_name="$(get_value "${app}_NAME")"
 		else
 			app_name="$GAME_NAME"
 		fi
 
-		if [ -n "$(eval printf -- '%b' \"\$${app}_CAT\")" ]; then
-			app_cat="$(eval printf -- '%b' \"\$${app}_CAT\")"
+		if [ -n "$(get_value "${app}_CAT")" ]; then
+			app_cat="$(get_value "${app}_CAT")"
 		else
 			app_cat='Game'
 		fi
 
-		pkg_path="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+		pkg_path="$(get_value "${PKG}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'write_desktop' "$PKG"
 		target="${pkg_path}${PATH_DESK}/${app_id}.desktop"
 		mkdir --parents "${target%/*}"

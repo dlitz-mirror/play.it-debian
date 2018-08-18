@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180427.1
+script_version=20180802.1
 
 # Set game-specific variables
 
@@ -42,8 +42,6 @@ SCRIPT_DEPS='find'
 
 GAME_ID='world-of-goo'
 GAME_NAME='World of Goo'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_world_of_goo_2.0.0.3.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/world_of_goo'

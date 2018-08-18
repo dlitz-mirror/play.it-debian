@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, HS-157
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,20 +35,18 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180724.2
 
 # Set game-specific variables
 
 GAME_ID='total-annihilation-kingdoms'
 GAME_NAME='Total Annihilation Kingdoms'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
 ARCHIVE_GOG='setup_total_annihilation_kingdoms_2.0.0.22.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/total_annihilation_kingdoms'
-ARCHIVE_GOG_MD5='e0eb1f17ca2285fc3de10e16b394bfb0'
+ARCHIVE_GOG_MD5='206f4b8e9159414ee38ec609831907bb'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.22'
-ARCHIVE_GOG_SIZE='1004300'
+ARCHIVE_GOG_SIZE='1100000'
 
 ARCHIVE_GAME_BIN_PATH='app'
 ARCHIVE_GAME_BIN_FILES='./*.asi ./*.dll ./*.exe ./*.tsk'
@@ -58,7 +57,6 @@ ARCHIVE_GAME_DATA_FILES='./*.256 ./*.esk  ./*.hpi ./*.htm ./*.icd ./*.id ./*.isu
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='kingdoms.exe'
 APP_MAIN_ICON='kingdoms.exe'
-APP_MAIN_ICON_RES='16 32'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -70,15 +68,25 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine"
 
 # Load common functions
 
-target_version='2.4'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -89,15 +97,13 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 

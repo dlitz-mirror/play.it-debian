@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180621.1
+script_version=20180801.1
 
 # Set game-specific variables
 
@@ -49,11 +49,11 @@ ARCHIVE_GOG_SIZE='41000'
 ARCHIVE_GOG_VERSION='23855-gog21662'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD='darkest_dungeon_the_shieldbreaker_dlc_en_21142_16140.sh'
-ARCHIVE_GOG_OLD_MD5='8606531e5fc728786f497b4803c19994'
-ARCHIVE_GOG_OLD_SIZE='42000'
-ARCHIVE_GOG_OLD_VERSION='21142-gog16140'
-ARCHIVE_GOG_OLD_TYPE='mojosetup'
+ARCHIVE_GOG_OLD0='darkest_dungeon_the_shieldbreaker_dlc_en_21142_16140.sh'
+ARCHIVE_GOG_OLD0_MD5='8606531e5fc728786f497b4803c19994'
+ARCHIVE_GOG_OLD0_SIZE='42000'
+ARCHIVE_GOG_OLD0_VERSION='21142-gog16140'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='./*'

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180621.1
+script_version=20180801.2
 
 # Set game-specific variables
 
@@ -42,30 +42,36 @@ script_version=20180621.1
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: The Crimson Court'
 
-ARCHIVE_GOG='darkest_dungeon_the_crimson_court_dlc_en_23885_21662.sh'
+ARCHIVE_GOG='darkest_dungeon_the_crimson_court_dlc_en_24154_22522.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_the_crimson_court'
-ARCHIVE_GOG_MD5='70018fc475ee4d24fdc19e107fa41a2a'
+ARCHIVE_GOG_MD5='985324dbc5b0ab3e00f04c24a2f2c7cf'
 ARCHIVE_GOG_SIZE='350000'
-ARCHIVE_GOG_VERSION='23885-gog21662'
+ARCHIVE_GOG_VERSION='24154-gog22522'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD='darkest_dungeon_the_crimson_court_dlc_en_21096_16065.sh'
-ARCHIVE_GOG_OLD_MD5='d4beaeb7effff0cbd2e292abf0ef5332'
-ARCHIVE_GOG_OLD_SIZE='350000'
-ARCHIVE_GOG_OLD_VERSION='21096-gog16066'
-ARCHIVE_GOG_OLD_TYPE='mojosetup'
+ARCHIVE_GOG_OLD3='darkest_dungeon_the_crimson_court_dlc_en_23885_21662.sh'
+ARCHIVE_GOG_OLD3_MD5='70018fc475ee4d24fdc19e107fa41a2a'
+ARCHIVE_GOG_OLD3_SIZE='350000'
+ARCHIVE_GOG_OLD3_VERSION='23885-gog21662'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLDER='darkest_dungeon_the_crimson_court_dlc_en_21071_15970.sh'
-ARCHIVE_GOG_OLDER_MD5='67fcfc5e91763cbf20a4ef51ff7b8eff'
-ARCHIVE_GOG_OLDER_SIZE='350000'
-ARCHIVE_GOG_OLDER_VERSION='21071-gog15970'
-ARCHIVE_GOG_OLDER_TYPE='mojosetup'
+ARCHIVE_GOG_OLD2='darkest_dungeon_the_crimson_court_dlc_en_21096_16065.sh'
+ARCHIVE_GOG_OLD2_MD5='d4beaeb7effff0cbd2e292abf0ef5332'
+ARCHIVE_GOG_OLD2_SIZE='350000'
+ARCHIVE_GOG_OLD2_VERSION='21096-gog16066'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLDEST='darkest_dungeon_the_crimson_court_dlc_en_20645_15279.sh'
-ARCHIVE_GOG_OLDEST_MD5='523c66d4575095c66a03d3859e4f83b8'
-ARCHIVE_GOG_OLDEST_SIZE='360000'
-ARCHIVE_GOG_OLDEST_VERSION='20645-gog15279'
-ARCHIVE_GOG_OLDEST_TYPE='mojosetup'
+ARCHIVE_GOG_OLD1='darkest_dungeon_the_crimson_court_dlc_en_21071_15970.sh'
+ARCHIVE_GOG_OLD1_MD5='67fcfc5e91763cbf20a4ef51ff7b8eff'
+ARCHIVE_GOG_OLD1_SIZE='350000'
+ARCHIVE_GOG_OLD1_VERSION='21071-gog15970'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='darkest_dungeon_the_crimson_court_dlc_en_20645_15279.sh'
+ARCHIVE_GOG_OLD0_MD5='523c66d4575095c66a03d3859e4f83b8'
+ARCHIVE_GOG_OLD0_SIZE='360000'
+ARCHIVE_GOG_OLD0_VERSION='20645-gog15279'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='./*'

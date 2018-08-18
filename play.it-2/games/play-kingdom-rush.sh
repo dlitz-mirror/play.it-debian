@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180411.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='kingdom-rush'
 GAME_NAME='Kingdom Rush'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_kingdom_rush_2.0.0.5.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/kingdom_rush'

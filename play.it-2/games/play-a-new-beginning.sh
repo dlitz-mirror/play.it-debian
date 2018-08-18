@@ -34,14 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180402.1
+script_version=20180802.1
 
 # Set game-specific variables
 
 GAME_ID='a-new-beginning'
 GAME_NAME='A New Beginning'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='setup_a_new_beginning_final_cut_2.2.0.7.bin'
 ARCHIVE_GOG_URL='https://www.gog.com/game/a_new_beginning'

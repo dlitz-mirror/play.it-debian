@@ -22,15 +22,15 @@ write_metadata() {
 
 		# Set package-specific variables
 		set_architecture "$pkg"
-		pkg_id="$(eval printf -- '%b' \"\$${pkg}_ID\")"
+		pkg_id="$(get_value "${pkg}_ID")"
 		pkg_maint="$(whoami)@$(hostname)"
-		pkg_path="$(eval printf -- '%b' \"\$${pkg}_PATH\")"
+		pkg_path="$(get_value "${pkg}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'write_metadata' "$pkg"
 		[ "$DRY_RUN" = '1' ] && continue
-		pkg_provide="$(eval printf -- '%b' \"\$${pkg}_PROVIDE\")"
+		pkg_provide="$(get_value "${pkg}_PROVIDE")"
 
 		use_archive_specific_value "${pkg}_DESCRIPTION"
-		pkg_description="$(eval printf -- '%b' \"\$${pkg}_DESCRIPTION\")"
+		pkg_description="$(get_value "${pkg}_DESCRIPTION")"
 
 		case $OPTION_PACKAGE in
 			('arch')
@@ -63,7 +63,7 @@ build_pkg() {
 			skipping_pkg_warning 'build_pkg' "$pkg"
 			return 0
 		fi
-		pkg_path="$(eval printf -- '%b' \"\$${pkg}_PATH\")"
+		pkg_path="$(get_value "${pkg}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'build_pkg' "$PKG"
 		case $OPTION_PACKAGE in
 			('arch')

@@ -36,7 +36,7 @@ icons_list_dependencies() {
 icons_get_from_package() {
 	local path
 	local path_pkg
-	path_pkg="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
 	path="${path_pkg}${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
@@ -72,16 +72,17 @@ icons_get_from_path() {
 	directory="$1"
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
-	path_pkg="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
 	for app in "$@"; do
 		testvar "$app" 'APP' || liberror 'app' 'icons_get_from_package'
-		list="$(eval printf -- '%b' \"\$${app}_ICONS_LIST\")"
+		list="$(get_value "${app}_ICONS_LIST")"
 		[ -n "$list" ] || list="${app}_ICON"
 		for icon in $list; do
 			use_archive_specific_value "$icon"
-			file="$(eval printf -- '%b' \"\$$icon\")"
-			wrestool_id="$(eval printf -- '%b' \"\$${icon}_ID\")"
+			file="$(get_value "$icon")"
+			[ -f "$directory/$file" ] || icon_file_not_found_error "$directory/$file"
+			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
 		done
 		icons_include_png_from_directory "$app" "$destination"
@@ -218,9 +219,9 @@ icons_include_png_from_directory() {
 	local resolution
 	app="$1"
 	directory="$2"
-	name="$(eval printf -- '%b' \"\$${app}_ID\")"
+	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
-	path_pkg="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_include_png_from_directory' "$PKG"
 	for file in "$directory"/*.png; do
 		icon_get_resolution_from_file "$file"
@@ -283,16 +284,16 @@ icons_linking_postinst() {
 	local version_minor_target
 	version_major_target="${target_version%%.*}"
 	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	path_pkg="$(eval printf -- '%b' \"\$${PKG}_PATH\")"
+	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_linking_postinst' "$PKG"
 	path="${path_pkg}${PATH_GAME}"
 	for app in "$@"; do
-		list="$(eval printf -- '%b' \"\$${app}_ICONS_LIST\")"
+		list="$(get_value "${app}_ICONS_LIST")"
 		[ "$list" ] || list="${app}_ICON"
-		name="$(eval printf -- '%b' \"\$${app}_ID\")"
+		name="$(get_value "${app}_ID")"
 		[ "$name" ] || name="$GAME_ID"
 		for icon in $list; do
-			file="$(eval printf -- '%b' \"\$$icon\")"
+			file="$(get_value "$icon")"
 			if
 				{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
 				( ls "$path/$file" >/dev/null 2>&1 || ls "$path"/$file >/dev/null 2>&1 )
@@ -339,10 +340,10 @@ icons_move_to() {
 	local destination
 	local source
 	destination="$1"
-	destination_path="$(eval printf -- '%b' \"\$${destination}_PATH\")"
+	destination_path="$(get_value "${destination}_PATH")"
 	[ -n "$destination_path" ] || missing_pkg_error 'icons_move_to' "$destination"
 	source="$PKG"
-	source_path="$(eval printf -- '%b' \"\$${source}_PATH\")"
+	source_path="$(get_value "${source}_PATH")"
 	[ -n "$source_path" ] || missing_pkg_error 'icons_move_to' "$source"
 	[ "$DRY_RUN" = '1' ] && return 0
 	(
@@ -354,4 +355,28 @@ icons_move_to() {
 }
 # compatibility alias
 move_icons_to() { icons_move_to "$@"; }
+
+# print an error message if an icon can not be found
+# USAGE: icon_file_not_found_error $file
+# CALLED BY: icons_get_from_path
+icon_file_not_found_error() {
+	local file
+	local string1
+	local string2
+	file="$1"
+	case "${LANG%_*}" in
+		('fr')
+			string1='Le fichier d’icône suivant est introuvable : %s'
+			string2='Merci de signaler cette erreur sur notre outil de gestion de bugs : %s'
+		;;
+		('en'|*)
+			string1='The following icon file could not be found: %s'
+			string2='Please report this issue in our bug tracker: %s'
+		;;
+	esac
+	print_error
+	printf "$string1\\n" "$1"
+	printf "$string2\\n" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
+}
 

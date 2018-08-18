@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,21 +35,22 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180714.2
 
 # Set game-specific variables
 
 GAME_ID='ori-and-the-blind-forest'
 GAME_NAME='Ori and the Blind Forest'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_ori_and_the_blind_forest_de_2.0.0.2-1.bin'
+ARCHIVE_GOG='setup_ori_and_the_blind_forest_de_2.0.0.2.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/ori_and_the_blind_forest_definitive_edition'
-ARCHIVE_GOG_MD5='d5ec4ea264c372a4fdd52b5ecbd9efe6'
+ARCHIVE_GOG_MD5='1dedfb0663ebbe82d051a62dc68149b5'
 ARCHIVE_GOG_SIZE='11000000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.2'
 ARCHIVE_GOG_TYPE='rar'
+ARCHIVE_GOG_PART1='setup_ori_and_the_blind_forest_de_2.0.0.2-1.bin'
+ARCHIVE_GOG_PART1_MD5='d5ec4ea264c372a4fdd52b5ecbd9efe6'
+ARCHIVE_GOG_PART1_TYPE='rar'
 ARCHIVE_GOG_PART2='setup_ori_and_the_blind_forest_de_2.0.0.2-2.bin'
 ARCHIVE_GOG_PART2_MD5='94c3d33701eadca15df9520de55f6f03'
 ARCHIVE_GOG_PART2_TYPE='rar'
@@ -65,9 +67,9 @@ ARCHIVE_GAME_BIN_PATH='game'
 ARCHIVE_GAME_BIN_FILES='./oride.exe ./oride_data/managed ./oride_data/mono ./oride_data/plugins'
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='./oride.exe'
-APP_MAIN_ICON='./oride.exe'
-APP_MAIN_ICON_RES='16 24 32 48 64 96 128 192 256'
+APP_MAIN_EXE='oride.exe'
+APP_MAIN_OPTIONS='-force-d3d9'
+APP_MAIN_ICON='oride.exe'
 
 PACKAGES_LIST='PKG_ASSETS PKG_DATA PKG_BIN'
 
@@ -78,20 +80,29 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_ASSETS_ID, $PKG_DATA_ID, wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine"
-PKG_BIN_DEPS_ARCH="$PKG_ASSETS_ID $PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_ASSETS_ID $PKG_DATA_ID wine"
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.9'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -99,32 +110,19 @@ if [ -z "$PLAYIT_LIB2" ]; then
 fi
 . "$PLAYIT_LIB2"
 
-# Check that all parts of the installer are present
-
-set_archive 'ARCHIVE_PART2' 'ARCHIVE_GOG_PART2'
-[ "$ARCHIVE_PART2" ] || set_archive_error_not_found 'ARCHIVE_GOG_PART2'
-ARCHIVE='ARCHIVE_GOG'
-
 # Extract game data
 
-ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
-ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART2")"  "$PLAYIT_WORKDIR/$GAME_ID.r01"
+ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
+ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
 extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
 tolower "$PLAYIT_WORKDIR/gamedata"
+prepare_package_layout
+
+# Extract game icons
 
 PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
-
-PKG='PKG_ASSETS'
-organize_data 'GAME_ASSETS' "$PATH_GAME"
-
-PKG='PKG_DATA'
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
