@@ -3,7 +3,9 @@ Section: contrib/games
 Priority: optional
 Maintainer: Debian Games Team <pkg-games-devel@alioth-lists.debian.net>
 Uploaders: Phil Morrell <debian@emorrp1.name>
-Build-Depends: debhelper (>= 11)
+Build-Depends:
+ debhelper (>= 11),
+ pandoc,
 Standards-Version: 4.1.4
 Homepage: https://www.dotslashplay.it/
 Vcs-Git: https://salsa.debian.org/games-team/play.it.git
