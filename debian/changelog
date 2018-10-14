@@ -1,3 +1,10 @@
+play.it (2.10.3-1) unstable; urgency=medium
+
+  * New upstream release.
+  * refresh upstream key for new expiry date
+
+ -- Phil Morrell <debian@emorrp1.name>  Sun, 14 Oct 2018 19:29:21 +0100
+
 play.it (2.10.0-1) unstable; urgency=medium
 
   [ Phil Morrell ]
