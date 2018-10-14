@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian Games Team <pkg-games-devel@alioth-lists.debian.net>
 Uploaders: Phil Morrell <debian@emorrp1.name>
 Build-Depends:
- debhelper (>= 11),
+ debhelper-compat (= 11),
  pandoc,
 Standards-Version: 4.2.0
 Homepage: https://www.dotslashplay.it/
