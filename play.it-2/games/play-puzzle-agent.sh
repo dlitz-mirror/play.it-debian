@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,35 +32,39 @@ set -o errexit
 ###
 # Puzzle Agent
 # build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180911.1
 
 # Set game-specific variables
 
 GAME_ID='puzzle-agent'
 GAME_NAME='Puzzle Agent'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_puzzle_agent_2.0.0.3.exe'
+ARCHIVE_GOG='setup_puzzle_agent_1.0_(21444).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/puzzle_agent'
-ARCHIVE_GOG_MD5='68155b4aff9aa9e28c107f5b2ff994b5'
+ARCHIVE_GOG_MD5='b986c9a9ed5bce6f8329cc76965ee295'
 ARCHIVE_GOG_SIZE='260000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.3'
+ARCHIVE_GOG_VERSION='1.0-gog21444'
+ARCHIVE_GOG_TYPE='innosetup1.7'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GOG_OLD0='setup_puzzle_agent_2.0.0.3.exe'
+ARCHIVE_GOG_OLD0_MD5='68155b4aff9aa9e28c107f5b2ff994b5'
+ARCHIVE_GOG_OLD0_SIZE='260000'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.0.0.3'
+
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 ARCHIVE_GAME_BIN_FILES='./fmodex.dll ./grickle101.exe ./steam_api.dll'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 ARCHIVE_GAME_DATA_FILES='./pack'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='grickle101.exe'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='grickle101.exe'
-APP_MAIN_ICON_RES='16 32 48 128 256'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -71,34 +76,42 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine-staging"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 

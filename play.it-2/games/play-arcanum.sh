@@ -34,40 +34,54 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180331.1
+script_version=20180819.4
 
 # Set game-specific variables
+
+SCRIPT_DEPS='upx'
 
 GAME_ID='arcanum'
 GAME_NAME='Arcanum: Of Steamworks and Magick Obscura'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_arcanum_2.0.0.15.exe'
-ARCHIVE_GOG_MD5='c09523c61edd18abb97da97463e07a88'
+ARCHIVE_GOG='setup_arcanum_-_of_steamworks_and_magick_obscura_1.0.7.4_(19476).exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/arcanum_of_steamworks_and_magick_obscura'
+ARCHIVE_GOG_MD5='298a3315baebf40f3cc6cee4acae9947'
+ARCHIVE_GOG_TYPE='innosetup1.7'
 ARCHIVE_GOG_SIZE='1200000'
-ARCHIVE_GOG_VERSION='1.0.7.4-gog2.0.0.15'
+ARCHIVE_GOG_VERSION='1.0.7.4-gog19476'
 
-ARCHIVE_DOC1_DATA_PATH='tmp'
-ARCHIVE_DOC1_DATA_FILES='./*.txt'
+ARCHIVE_GOG_OLD0='setup_arcanum_2.0.0.15.exe'
+ARCHIVE_GOG_OLD0_MD5='c09523c61edd18abb97da97463e07a88'
+ARCHIVE_GOG_OLD0_SIZE='1200000'
+ARCHIVE_GOG_OLD0_VERSION='1.0.7.4-gog2.0.0.15'
 
-ARCHIVE_DOC2_DATA_PATH='app'
-ARCHIVE_DOC2_DATA_FILES='./*.doc ./*.htm ./*.pdf ./*.txt ./documents'
+ARCHIVE_DOC0_DATA_PATH='.'
+ARCHIVE_DOC0_DATA_FILES='./*.doc ./*.htm ./*.pdf ./*.txt ./documents'
+# Keep compatibility with old archives
+ARCHIVE_DOC0_DATA_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_DOC1_DATA_PATH='__support/app'
+ARCHIVE_DOC1_DATA_FILES='./eula.*'
+
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='./*.asi ./*.cfg ./*.exe ./*.inf ./binkw32.dll ./ddraw.dll ./mm_won.dll ./mss32.dll ./sierrapt.dll'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='./*.dat ./data ./modules'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_FILES='./*.cfg'
 DATA_DIRS='./data ./modules/arcanum/maps ./modules/arcanum/saves'
+
+APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='arcanum.exe'
 APP_MAIN_OPTIONS='-no3d'
 APP_MAIN_ICON='arcanum.exe'
-APP_MAIN_ICON_RES='16 32'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -76,20 +90,29 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ID="$GAME_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.1'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -100,18 +123,21 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC1_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "DOC2_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract game icons
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Decompress UPX-packed executable
+
+file="${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_EXE"
+if upx -t "$file" >/dev/null 2>&1; then
+	upx -d "$file" >/dev/null
+fi
 
 # Write launchers
 

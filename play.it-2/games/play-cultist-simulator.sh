@@ -34,19 +34,25 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180805.2
+script_version=20180819.1
 
 # Set game-specific variables
 
 GAME_ID='cultist-simulator'
 GAME_NAME='Cultist Simulator'
 
-ARCHIVE_GOG='cultist_simulator_en_2018_7_b_1_22190.sh'
+ARCHIVE_GOG='cultist_simulator_en_2018_8_a_2_22766.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/cultist_simulator'
-ARCHIVE_GOG_MD5='05b6fe0fc497fa84ffd3a54089252840'
+ARCHIVE_GOG_MD5='bb46774fc98174e3b36257ee9b344543'
 ARCHIVE_GOG_SIZE='330000'
-ARCHIVE_GOG_VERSION='2018.7.b.1-gog22190'
+ARCHIVE_GOG_VERSION='2018.8.a.2-gog22766'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='cultist_simulator_en_2018_7_b_1_22190.sh'
+ARCHIVE_GOG_OLD4_MD5='05b6fe0fc497fa84ffd3a54089252840'
+ARCHIVE_GOG_OLD4_SIZE='330000'
+ARCHIVE_GOG_OLD4_VERSION='2018.7.b.1-gog22190'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='cultist_simulator_en_v2018_6_k_2_21613.sh'
 ARCHIVE_GOG_OLD3_MD5='4956d00d5ac6d7caa01b5323797d3a1b'
@@ -109,7 +115,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"

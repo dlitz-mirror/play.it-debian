@@ -1,3 +1,33 @@
+2.10.3
+
+  * write_bin - init_prefix_files: Do not ignore symbolic links in
+    $CONFIG_PATH / $DATA_PATH when generating or updating prefix
+
+  * pkg_write_deb: Always set "Multi-Arch: foreign" in packages meta-data,
+    fixes issues when trying to install DLC for 32-bit games on 64-bit systems
+
+2.10.2
+
+  * write_bin_run_native: Restore pre-2.10.1 version, as the 2.10.1 fix has
+    unexpected side effects
+
+2.10.1
+
+  * Drop pre-built library from repository
+
+  * make install: Use different default paths if not run as root
+
+  * Arch Linux: Add missing package to generic dependency 'gcc32'
+
+  * archive_extraction_innosetup: Hide innoextract warnings during extraction
+
+  * write_bin_build_wine: Always sleep 1 second after using winetricks, as
+    some tweaks won’t apply directly if the game is called to quickly
+
+  * Set input field separator to default value (space, tab, newline)
+
+  * write_bin_run_native: Remove unneeded duplicated code
+
 2.10.0
 
   * get_tmp_dir: New function allowing to set a temporary working directory by

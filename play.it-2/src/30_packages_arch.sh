@@ -117,7 +117,7 @@ pkg_set_deps_arch32() {
 				pkg_dep='lib32-freetype2'
 			;;
 			('gcc32')
-				pkg_dep='gcc-multilib'
+				pkg_dep='gcc-multilib lib32-gcc-libs'
 			;;
 			('gconf')
 				pkg_dep='lib32-gconf'
@@ -227,7 +227,7 @@ pkg_set_deps_arch64() {
 				pkg_dep='freetype2'
 			;;
 			('gcc32')
-				pkg_dep='gcc-multilib'
+				pkg_dep='gcc-multilib lib32-gcc-libs'
 			;;
 			('gconf')
 				pkg_dep='gconf'

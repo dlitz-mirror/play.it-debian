@@ -31,36 +31,46 @@ set -o errexit
 
 ###
 # Mini Metro
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180624.1
+script_version=20180926.4
 
 # Set game-specific variables
 
 GAME_ID='mini-metro'
 GAME_NAME='Mini Metro'
 
-ARCHIVE_HUMBLE='MiniMetro-release-36b-linux.tar.gz'
+ARCHIVE_HUMBLE='MiniMetro-release-37a-linux.tar.gz'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/mini-metro'
-ARCHIVE_HUMBLE_MD5='5c6b16404cd0c3fc00be295721ec7bdd'
-ARCHIVE_HUMBLE_VERSION='1.36b-humble180605'
+ARCHIVE_HUMBLE_MD5='879d12ce7255feebf7406f65519112dd'
+ARCHIVE_HUMBLE_VERSION='1.37a-humble180913'
 ARCHIVE_HUMBLE_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD='MiniMetro-gamma35b-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD_MD5='5548397ea5eddd915aa33247a38dad74'
-ARCHIVE_HUMBLE_OLD_VERSION='1.35b-humble1'
-ARCHIVE_HUMBLE_OLD_SIZE='310000'
+ARCHIVE_HUMBLE_OLD2='MiniMetro-release-37-linux.tar.gz'
+ARCHIVE_HUMBLE_OLD2_MD5='0ee6efa77a16e7775253334640b6d20a'
+ARCHIVE_HUMBLE_OLD2_VERSION='1.37-humble1'
+ARCHIVE_HUMBLE_OLD2_SIZE='310000'
+
+ARCHIVE_HUMBLE_OLD1='MiniMetro-release-36b-linux.tar.gz'
+ARCHIVE_HUMBLE_OLD1_MD5='5c6b16404cd0c3fc00be295721ec7bdd'
+ARCHIVE_HUMBLE_OLD1_VERSION='1.36b-humble180605'
+ARCHIVE_HUMBLE_OLD1_SIZE='310000'
+
+ARCHIVE_HUMBLE_OLD0='MiniMetro-gamma35b-linux.tar.gz'
+ARCHIVE_HUMBLE_OLD0_MD5='5548397ea5eddd915aa33247a38dad74'
+ARCHIVE_HUMBLE_OLD0_VERSION='1.35b-humble1'
+ARCHIVE_HUMBLE_OLD0_SIZE='310000'
 
 ARCHIVE_GAME_BIN32_PATH='.'
-ARCHIVE_GAME_BIN32_FILES='./Mini?Metro.x86 ./Mini?Metro_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='Mini?Metro.x86 Mini?Metro_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='.'
-ARCHIVE_GAME_BIN64_FILES='./Mini?Metro.x86_64 ./Mini?Metro_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='Mini?Metro.x86_64 Mini?Metro_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='*_Data/level* *_Data/StreamingAssets *_Data/Managed *_Data/Mono/etc *_Data/*.assets *_Data/Resources *_Data/resources.assets.resS *_Data/globalgamemanagers *_Data/boot.config'
+ARCHIVE_GAME_DATA_FILES='Mini?Metro_Data'
 
 DATA_DIRS='./logs'
 
@@ -77,36 +87,35 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

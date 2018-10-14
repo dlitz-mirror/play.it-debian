@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Star Wars: Galactic Battlegrounds
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180806.1
+script_version=20180923.3
 
 # Set game-specific variables
 
@@ -46,43 +46,42 @@ ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
 ARCHIVE_GOG_EN='setup_sw_galactic_battlegrounds_saga_2.0.0.4.exe'
 ARCHIVE_GOG_EN_URL='https://www.gog.com/game/star_wars_galactic_battlegrounds_saga'
 ARCHIVE_GOG_EN_MD5='6af25835c5f240914cb04f7b4f741813'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.4'
+ARCHIVE_GOG_EN_VERSION='1.1-gog2.0.0.4'
 ARCHIVE_GOG_EN_SIZE='830000'
 
 ARCHIVE_GOG_FR='setup_sw_galactic_battlegrounds_saga_french_2.0.0.4.exe'
 ARCHIVE_GOG_FR_URL='https://www.gog.com/game/star_wars_galactic_battlegrounds_saga'
 ARCHIVE_GOG_FR_MD5='b30458033e825ad252e2d5b3dc8a7845'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.4'
+ARCHIVE_GOG_FR_VERSION='1.1-gog2.0.0.4'
 ARCHIVE_GOG_FR_SIZE='820000'
 
 ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./*.pdf'
+ARCHIVE_DOC_DATA_FILES='*.pdf'
 
 ARCHIVE_GAME_BIN_PATH='app/game'
-ARCHIVE_GAME_BIN_FILES='./*.exe ./libogg-0.dll ./libvorbis-0.dll ./libvorbisfile-3.dll ./win32.dll'
+ARCHIVE_GAME_BIN_FILES='*.exe libogg-0.dll libvorbis-0.dll libvorbisfile-3.dll win32.dll'
 
 ARCHIVE_GAME_L10N_PATH='app/game'
-ARCHIVE_GAME_L10N_FILES='./language*.dll ./campaign/media/1c2s6_end.mm ./data/gamedata_x1.drs ./data/genie*.dat ./data/list*.crx ./data/sounds.*drs ./history ./sound/campaign ./sound/scenario ./scenario/default0.scx ./taunt'
+ARCHIVE_GAME_L10N_FILES='language*.dll campaign/media/1c2s6_end.mm data/gamedata_x1.drs data/genie*.dat data/list*.crx data/sounds.*drs history sound/campaign sound/scenario scenario/default0.scx taunt'
 
 ARCHIVE_GAME_DATA_PATH='app/game'
-ARCHIVE_GAME_DATA_FILES='./ai ./campaign ./data ./extras ./music ./random ./savegame ./scenario ./sound ./*.avi'
+ARCHIVE_GAME_DATA_FILES='ai campaign data extras music random savegame scenario sound *.avi'
 
 DATA_DIRS='./ai ./campaign ./random ./savegame ./scenario'
 DATA_FILES='./data/*.dat ./player.nf*'
 
+APP_REGEDIT='swgb.reg'
 APP_WINETRICKS="vd=\$(xrandr|awk '/\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='battlegrounds.exe'
 APP_MAIN_ICON='battlegrounds.exe'
-APP_MAIN_ICON_RES='16 32'
 
 APP_ADDON_ID="${GAME_ID}_clone-wars"
 APP_ADDON_NAME="$GAME_NAME - Clone Wars"
 APP_ADDON_TYPE='wine'
 APP_ADDON_EXE='battlegrounds_x1.exe'
 APP_ADDON_ICON='battlegrounds_x1.exe'
-APP_ADDON_ICON_RES='16 32'
 
 PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
 
@@ -101,42 +100,56 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN' 'APP_ADDON'
-move_icons_to 'PKG_DATA'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN' 'APP_ADDON'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 
 PKG='PKG_BIN'
 write_launcher 'APP_MAIN' 'APP_ADDON'
+
+# Work around CD check
+
+cat > "${PKG_BIN_PATH}${PATH_GAME}/swgb.reg" << 'EOF'
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\Software\LucasArts Entertainment Company LLC\Star Wars Galactic Battlegrounds\1.0]
+"CDPath"="C:"
+EOF
 
 # Build package
 

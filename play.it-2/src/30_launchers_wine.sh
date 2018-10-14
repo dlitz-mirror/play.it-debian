@@ -82,6 +82,7 @@ write_bin_build_wine() {
 	if [ "$APP_WINETRICKS" ]; then
 		cat >> "$file" <<- EOF
 		  winetricks $APP_WINETRICKS
+		  sleep 1s
 		EOF
 	fi
 

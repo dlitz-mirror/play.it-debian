@@ -7,6 +7,9 @@ shellcheck:
     stage: check
     before_script:
         - pacman -Sy
-        - pacman --noconfirm -S shellcheck
+        - pacman --noconfirm -S make shellcheck
     script:
         - ./tests/shellcheck-lib.sh
+    artifacts:
+        paths:
+            - play.it-2/lib/libplayit2.sh

@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018, Phil Morrell
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,12 +30,12 @@ set -o errexit
 ###
 
 ###
-# Xenonauts
+# Unreal Tournament
 # build native Linux packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180616.1
+script_version=20180819.1
 
 # Set game-specific variables
 
@@ -64,12 +65,14 @@ ARCHIVE_GAME0_DATA_FILES='./Maps ./Music ./Sounds ./Textures ./Web ./System/*.in
 ARCHIVE_GAME1_DATA_PATH='.'
 ARCHIVE_GAME1_DATA_FILES='./Web ./System/*.ini ./System/*.u ./System/*.int'
 
-CONFIG_FILES='./System/*.ini'
-
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN_ARCH='pulseaudio --start
+APP_MAIN_PRERUN_ARCH='export UT_PREFS="$HOME/.loki/ut"
+mkdir --parents "$UT_PREFS/System"
+pulseaudio --start
 export LD_PRELOAD="/usr/lib32/pulseaudio/libpulsedsp.so"'
-APP_MAIN_PRERUN_DEB='pulseaudio --start
+APP_MAIN_PRERUN_DEB='export UT_PREFS="$HOME/.loki/ut"
+mkdir --parents "$UT_PREFS/System"
+pulseaudio --start
 export LD_PRELOAD="/usr/lib/i386-linux-gnu/pulseaudio/libpulsedsp.so"'
 APP_MAIN_EXE='System/ut-bin'
 APP_MAIN_ICON='app/System/UnrealTournament.exe'
@@ -86,7 +89,7 @@ PKG_BIN_DEPS_DEB='libpulsedsp'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 [ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
 
@@ -161,6 +164,12 @@ write_launcher 'APP_MAIN'
 pattern='s|^cd "$PATH_PREFIX"$|cd "$PATH_PREFIX/${APP_EXE%/*}"|'
 pattern="$pattern"';s|^"\./$APP_EXE"|"./${APP_EXE##*/}"|'
 sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}/$GAME_ID"
+
+# Work around a crash of the host of multiplayer games on map transitions
+
+pattern='s/\(^bWorldLog\)=.*/\1=False/'
+file="${PKG_DATA_PATH}${PATH_GAME}/System/UnrealTournament.ini"
+sed --in-place "$pattern" "$file"
 
 # Build package
 

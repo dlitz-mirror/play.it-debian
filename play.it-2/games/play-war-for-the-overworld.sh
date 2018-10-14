@@ -30,23 +30,29 @@ set -o errexit
 
 ###
 # War for the Overworld
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180730.2
+script_version=20180929.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld'
 
-ARCHIVE_GOG='war_for_the_overworld_en_2_0_3f1_22287.sh'
+ARCHIVE_GOG='war_for_the_overworld_en_2_0_4_23102.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld'
-ARCHIVE_GOG_MD5='4f1ff4e136aeaa795fce8ba26445cbe8'
+ARCHIVE_GOG_MD5='2873095f86b17c613b84af9624986f42'
 ARCHIVE_GOG_SIZE='4700000'
-ARCHIVE_GOG_VERSION='2.0.3f1-gog22287'
+ARCHIVE_GOG_VERSION='2.0.4-gog23102'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='war_for_the_overworld_en_2_0_3f1_22287.sh'
+ARCHIVE_GOG_OLD4_MD5='4f1ff4e136aeaa795fce8ba26445cbe8'
+ARCHIVE_GOG_OLD4_SIZE='4700000'
+ARCHIVE_GOG_OLD4_VERSION='2.0.3f1-gog22287'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='war_for_the_overworld_en_2_0_1_21758.sh'
 ARCHIVE_GOG_OLD3_MD5='41c4746b17874ca4c42712ffe2b20381'
@@ -78,15 +84,15 @@ ARCHIVE_HUMBLE_SIZE='2500000'
 ARCHIVE_HUMBLE_VERSION='1.5.2-humble170202'
 
 ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='Linux'
-ARCHIVE_GAME_BIN_FILES='./*.x86_64 ./*_Data/Plugins ./*_Data/Mono ./*_Data/CoherentUI_Host'
+ARCHIVE_GAME_BIN_FILES='*.x86_64 *_Data/Plugins *_Data/Mono *_Data/CoherentUI_Host'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Linux'
-ARCHIVE_GAME_DATA_FILES='./*_Data ./*.info'
+ARCHIVE_GAME_DATA_FILES='*_Data *.info'
 
 DATA_DIRS='./*_Data/GameData ./logs'
 
@@ -103,40 +109,40 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor gconf"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor gtk2"
+# Keep compatibility with old archives
+PKG_BIN_DEPS_HUMBLE="$PKG_DATA_ID glibc libstdc++ glx xcursor gtk2 gconf"
+PKG_BIN_DEPS_GOG_OLD0="$PKG_BIN_DEPS_HUMBLE"
+PKG_BIN_DEPS_GOG_OLD1="$PKG_BIN_DEPS_HUMBLE"
+PKG_BIN_DEPS_GOG_OLD2="$PKG_BIN_DEPS_HUMBLE"
+PKG_BIN_DEPS_GOG_OLD3="$PKG_BIN_DEPS_HUMBLE"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
-
-# Set archive-specific values
-
-use_archive_specific_value 'APP_MAIN_EXE'
-use_archive_specific_value 'APP_MAIN_ICON'
 
 # Extract game data
 
@@ -166,10 +172,13 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
+use_archive_specific_value 'APP_MAIN_EXE'
+use_archive_specific_value 'APP_MAIN_ICON'
 write_launcher 'APP_MAIN'
 
 # Build packages
 
+use_archive_specific_value 'PKG_BIN_DEPS'
 PKG='PKG_DATA'
 icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'

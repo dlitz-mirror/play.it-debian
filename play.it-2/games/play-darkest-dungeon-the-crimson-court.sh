@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180801.2
+script_version=20180819.1
 
 # Set game-specific variables
 
@@ -42,12 +42,18 @@ script_version=20180801.2
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: The Crimson Court'
 
-ARCHIVE_GOG='darkest_dungeon_the_crimson_court_dlc_en_24154_22522.sh'
+ARCHIVE_GOG='darkest_dungeon_the_crimson_court_dlc_en_24358_23005.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_the_crimson_court'
-ARCHIVE_GOG_MD5='985324dbc5b0ab3e00f04c24a2f2c7cf'
+ARCHIVE_GOG_MD5='344350ff10770ab3abeecabe048c9816'
 ARCHIVE_GOG_SIZE='350000'
-ARCHIVE_GOG_VERSION='24154-gog22522'
+ARCHIVE_GOG_VERSION='24358-gog23005'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='darkest_dungeon_the_crimson_court_dlc_en_24154_22522.sh'
+ARCHIVE_GOG_OLD4_MD5='985324dbc5b0ab3e00f04c24a2f2c7cf'
+ARCHIVE_GOG_OLD4_SIZE='350000'
+ARCHIVE_GOG_OLD4_VERSION='24154-gog22522'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='darkest_dungeon_the_crimson_court_dlc_en_23885_21662.sh'
 ARCHIVE_GOG_OLD3_MD5='70018fc475ee4d24fdc19e107fa41a2a'
@@ -86,7 +92,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.9'
+target_version=2.10
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"

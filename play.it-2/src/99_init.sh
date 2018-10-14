@@ -1,5 +1,8 @@
 if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
+	# Set input field separator to default value (space, tab, newline)
+	unset IFS
+
 	# Check library version against script target version
 
 	version_major_library="${library_version%%.*}"

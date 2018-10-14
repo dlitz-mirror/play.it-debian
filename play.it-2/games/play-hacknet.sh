@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Hacknet
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to dev+playit@indigo.re
 ###
 
-script_version=20180810.1
+script_version=20180918.1
 
 # Set game-specific variables
 
@@ -61,7 +61,11 @@ ARCHIVE_GAME_BIN64_FILES='./*.bin.x86_64 ./lib64/libcef.so ./lib64/libCSteamwork
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='./Hacknet.exe ./*.dll ./Content ./*.pak ./Hacknet.bmp ./locales ./Extensions ./icudtl.dat ./natives_blob.bin ./snapshot_blob.bin ./FNA.dll.config ./mono'
 
+DATA_DIRS='./logs ./Content/People'
+
 APP_MAIN_TYPE='native'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
 APP_MAIN_EXE_BIN32='./Hacknet.bin.x86'
 APP_MAIN_EXE_BIN64='./Hacknet.bin.x86_64'
 APP_MAIN_ICON='data/noarch/support/icon.png'
@@ -83,26 +87,25 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-        [ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-        for path in\
-                './'\
-                "$XDG_DATA_HOME/play.it/"\
-                "$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-                '/usr/local/share/games/play.it/'\
-                '/usr/local/share/play.it/'\
-                '/usr/share/games/play.it/'\
-                '/usr/share/play.it/'
-        do
-                if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
-                        PLAYIT_LIB2="$path/libplayit2.sh"
-                        break
-                fi
-        done
-        if [ -z "$PLAYIT_LIB2" ]; then
-                printf '\n\033[1;31mError:\033[0m\n'
-                printf 'libplayit2.sh not found.\n'
-                exit 1
-        fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
@@ -117,11 +120,22 @@ PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Ensure that Chromium Embedded Framework is functional
+
+chmod +x "${PKG_BIN32_PATH}${PATH_GAME}/cefprocess.bin.x86"
+chmod +x "${PKG_BIN64_PATH}${PATH_GAME}/cefprocess.bin.x86_64"
+
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	write_launcher 'APP_MAIN'
 done
+
+# Fix a crash when starting from some terminals
+
+pattern='s#^"\./$APP_EXE" .*#& > ./logs/$(date +%F-%R).log#'
+sed --in-place "$pattern" "${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID"
+sed --in-place "$pattern" "${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"
 
 # Build package
 

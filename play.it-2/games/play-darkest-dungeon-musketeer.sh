@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180801.1
+script_version=20180819.1
 
 # Set game-specific variables
 
@@ -42,12 +42,18 @@ script_version=20180801.1
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: Musketeer'
 
-ARCHIVE_GOG='darkest_dungeon_musketeer_dlc_en_24154_22522.sh'
+ARCHIVE_GOG='darkest_dungeon_musketeer_dlc_en_24358_23005.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_musketeer'
-ARCHIVE_GOG_MD5='d68e50da94cc01920759ff7009a7a3c2'
+ARCHIVE_GOG_MD5='c8ebb84ab177b4ffcee79faadd8f5981'
 ARCHIVE_GOG_SIZE='22000'
-ARCHIVE_GOG_VERSION='24154-gog22522'
+ARCHIVE_GOG_VERSION='24358-gog23005'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD1='darkest_dungeon_musketeer_dlc_en_24154_22522.sh'
+ARCHIVE_GOG_OLD1_MD5='d68e50da94cc01920759ff7009a7a3c2'
+ARCHIVE_GOG_OLD1_SIZE='22000'
+ARCHIVE_GOG_OLD1_VERSION='24154-gog22522'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD0='darkest_dungeon_musketeer_dlc_en_23885_21662.sh'
 ARCHIVE_GOG_OLD0_MD5='f9362568f7e4e1fd205835c3dba2083e'
@@ -68,7 +74,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.9'
+target_version=2.10
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"

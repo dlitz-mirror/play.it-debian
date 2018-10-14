@@ -30,53 +30,81 @@ set -o errexit
 
 ###
 # Star Wars Battlefront II
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180919.8
 
 # Set game-specific variables
 
 GAME_ID='star-wars-battlefront-2'
 GAME_NAME='Star Wars Battlefront II'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_sw_battlefront2_2.0.0.5.exe'
+ARCHIVE_GOG='setup_star_wars_battlefront_ii_1.1_multiplayer_update_2_(17606).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/star_wars_battlefront_ii'
-ARCHIVE_GOG_MD5='51284c8a8e777868219e811ada284fb1'
-ARCHIVE_GOG_VERSION='1.1-gog2.0.0.5'
-ARCHIVE_GOG_SIZE='9100000'
-ARCHIVE_GOG_TYPE='rar'
-ARCHIVE_GOG_GOGID='1421404701'
-ARCHIVE_GOG_PART1='setup_sw_battlefront2_2.0.0.5-1.bin'
-ARCHIVE_GOG_PART1_MD5='dc36b03c9c43fb8d3cb9b92c947daaa4'
-ARCHIVE_GOG_PART1_TYPE='rar'
-ARCHIVE_GOG_PART2='setup_sw_battlefront2_2.0.0.5-2.bin'
-ARCHIVE_GOG_PART2_MD5='5d4000fd480a80b6e7c7b73c5a745368'
-ARCHIVE_GOG_PART2_TYPE='rar'
+ARCHIVE_GOG_MD5='f482ec251067336d3b8211774b4c44f6'
+ARCHIVE_GOG_VERSION='1.1.2-gog17606'
+ARCHIVE_GOG_SIZE='11000000'
+ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_PART1='setup_star_wars_battlefront_ii_1.1_multiplayer_update_2_(17606)-1.bin'
+ARCHIVE_GOG_PART1_MD5='c34b41f594e55b1522d8826f19cf958f'
+ARCHIVE_GOG_PART1_TYPE='innosetup1.7'
+ARCHIVE_GOG_PART2='setup_star_wars_battlefront_ii_1.1_multiplayer_update_2_(17606)-2.bin'
+ARCHIVE_GOG_PART2_MD5='c9423f3983c67575c1c531e0d18e6a0f'
+ARCHIVE_GOG_PART2_TYPE='innosetup1.7'
 
-ARCHIVE_DOC_DATA_PATH='game'
-ARCHIVE_DOC_DATA_FILES='./*.pdf'
+ARCHIVE_GOG_OLD0='setup_sw_battlefront2_2.0.0.5.exe'
+ARCHIVE_GOG_OLD0_MD5='51284c8a8e777868219e811ada284fb1'
+ARCHIVE_GOG_OLD0_VERSION='1.1-gog2.0.0.5'
+ARCHIVE_GOG_OLD0_SIZE='9100000'
+ARCHIVE_GOG_OLD0_TYPE='rar'
+ARCHIVE_GOG_OLD0_GOGID='1421404701'
+ARCHIVE_GOG_OLD0_PART1='setup_sw_battlefront2_2.0.0.5-1.bin'
+ARCHIVE_GOG_OLD0_PART1_MD5='dc36b03c9c43fb8d3cb9b92c947daaa4'
+ARCHIVE_GOG_OLD0_PART1_TYPE='rar'
+ARCHIVE_GOG_OLD0_PART2='setup_sw_battlefront2_2.0.0.5-2.bin'
+ARCHIVE_GOG_OLD0_PART2_MD5='5d4000fd480a80b6e7c7b73c5a745368'
+ARCHIVE_GOG_OLD0_PART2_TYPE='rar'
 
-ARCHIVE_GAME_BIN_PATH='game/gamedata'
-ARCHIVE_GAME_BIN_FILES='./*.exe ./binkw32.dll ./eax.dll ./unicows.dll'
+ARCHIVE_OPTIONAL_ICONS='star-wars-battlefront-2_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/star-wars-battlefront-2/'
+ARCHIVE_OPTIONAL_ICONS_MD5='322275011d37ac219f1c06c196477fa4'
 
-ARCHIVE_GAME_MOVIES_PATH='game/gamedata'
-ARCHIVE_GAME_MOVIES_FILES='./data/_lvl_pc/movies'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.pdf'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLD0='game'
 
-ARCHIVE_GAME_DATA_PATH='game/gamedata'
-ARCHIVE_GAME_DATA_FILES='./data/_lvl_pc/*.def ./data/_lvl_pc/*.lvl ./data/_lvl_pc/bes ./data/_lvl_pc/common ./data/_lvl_pc/cor ./data/_lvl_pc/dag ./data/_lvl_pc/dea ./data/_lvl_pc/end ./data/_lvl_pc/fel ./data/_lvl_pc/fpm ./data/_lvl_pc/gal ./data/_lvl_pc/geo ./data/_lvl_pc/hot ./data/_lvl_pc/kam ./data/_lvl_pc/kas ./data/_lvl_pc/kor ./data/_lvl_pc/load ./data/_lvl_pc/mus ./data/_lvl_pc/myg ./data/_lvl_pc/nab ./data/_lvl_pc/pol ./data/_lvl_pc/rhn ./data/_lvl_pc/shell ./data/_lvl_pc/side ./data/_lvl_pc/sound ./data/_lvl_pc/spa ./data/_lvl_pc/tan ./data/_lvl_pc/tat ./data/_lvl_pc/test ./data/_lvl_pc/uta ./data/_lvl_pc/yav'
+ARCHIVE_GAME_BIN_PATH='gamedata'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='game/gamedata'
 
+ARCHIVE_GAME_MOVIES_PATH='gamedata'
+ARCHIVE_GAME_MOVIES_FILES='data/_lvl_pc/movies'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MOVIES_PATH_GOG_OLD0='game/gamedata'
+
+ARCHIVE_GAME_DATA_PATH='gamedata'
+ARCHIVE_GAME_DATA_FILES='data'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='game/gamedata'
+
+ARCHIVE_ICONS_PATH='.'
+ARCHIVE_ICONS_FILES='16x16 32x32'
+
+CONFIG_FILES='./data/_lvl_pc/*.ini'
 DATA_DIRS='./savegames'
+
+APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='battlefrontii.exe'
-APP_MAIN_ICON='battlefrontii.exe'
-APP_MAIN_ICON_RES='16 32'
+# Keep compatibility with old archives
+APP_MAIN_ICON_GOG_OLD0='battlefrontii.exe'
 
-PACKAGES_LIST='PKG_MOVIES PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_MOVIES PKG_BIN PKG_DATA'
 
 PKG_MOVIES_ID="${GAME_ID}-movies"
 PKG_MOVIES_DESCRIPTION='movies'
@@ -85,54 +113,83 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_MOVIES_ID $PKG_DATA_ID wine"
-PKG_BIN_DEPS_DEB='libtxc-dxtn-s2tc | libtxc-dxtn-s2tc0 | libtxc-dxtn0 | libtxc-dxtn'
-PKG_BIN_DEPS_ARCH='lib32-libtxc_dxtn'
+PKG_BIN_DEPS="$PKG_MOVIES_ID $PKG_DATA_ID wine glx winetricks"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
-# Check that all parts of the installer are present
+# Load optional icons pack
 
-ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_PART1' "${ARCHIVE_MAIN}_PART1"
-[ "$ARCHIVE_PART1" ] || set_archive_error_not_found "${ARCHIVE_MAIN}_PART1"
-set_archive 'ARCHIVE_PART2' "${ARCHIVE_MAIN}_PART2"
-[ "$ARCHIVE_PART2" ] || set_archive_error_not_found "${ARCHIVE_MAIN}_PART2"
-ARCHIVE="$ARCHIVE_MAIN"
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_OLD0');;
+	(*)
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+esac
 
 # Extract game data
 
-ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
-ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
-extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
-tolower "$PLAYIT_WORKDIR/gamedata"
-
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
-
-PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_OLD0')
+		ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
+		ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
+		extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
+		tolower "$PLAYIT_WORKDIR/gamedata"
+	;;
+	(*)
+		extract_data_from "$SOURCE_ARCHIVE"
+	;;
+esac
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Estract icons
+
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_OLD0')
+		PKG='PKG_BIN'
+		use_archive_specific_value 'APP_MAIN_ICON'
+		icons_get_from_package 'APP_MAIN'
+		icons_move_to 'PKG_DATA'
+	;;
+	(*)
+		if [ "$ARCHIVE_ICONS" ]; then
+			(
+				ARCHIVE='ARCHIVE_ICONS'
+				extract_data_from "$ARCHIVE_ICONS"
+			)
+			PKG='PKG_DATA'
+			organize_data 'ICONS' "$PATH_ICON_BASE"
+			rm --recursive "$PLAYIT_WORKDIR/gamedata"
+		fi
+	;;
+esac
 
 # Write launchers
 

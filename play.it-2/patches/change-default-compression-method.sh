@@ -8,10 +8,10 @@ if [ -n "$1" ]; then
 else
 	case "${LANG%_*}" in
 		('fr')
-			string='Choisissez la méthode de compression par défaut parmi none, gzip et xz.'
+			string='Choisissez la méthode de compression par défaut parmi none, gzip, xz et bzip2.'
 		;;
 		('en'|*)
-			string='Chose the default compression method from none, gzip or xz.'
+			string='Chose the default compression method from none, gzip, xz or bzip2.'
 		;;
 	esac
 	printf '%s\n' "$string"
@@ -19,7 +19,7 @@ else
 fi
 
 case "$compression_method" in
-	('none'|'gzip'|'xz');;
+	('none'|'gzip'|'xz'|'bzip2');;
 	(*)
 		case "${LANG%_*}" in
 			('fr')

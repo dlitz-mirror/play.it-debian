@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180801.1
+script_version=20180819.1
 
 # Set game-specific variables
 
@@ -42,12 +42,18 @@ script_version=20180801.1
 GAME_ID='darkest-dungeon'
 GAME_NAME='Darkest Dungeon: The Color of Madness'
 
-ARCHIVE_GOG='darkest_dungeon_the_color_of_madness_dlc_en_24154_22522.sh'
+ARCHIVE_GOG='darkest_dungeon_the_color_of_madness_dlc_en_24358_23005.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/darkest_dungeon_the_color_of_madness'
-ARCHIVE_GOG_MD5='40088860d8e3e3a651074e84eb2746ac'
-ARCHIVE_GOG_SIZE='630000'
-ARCHIVE_GOG_VERSION='24154-gog22522'
+ARCHIVE_GOG_MD5='0447fad1313ab47f6521debc3e75d308'
+ARCHIVE_GOG_SIZE='640000'
+ARCHIVE_GOG_VERSION='24358-gog23005'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD1='darkest_dungeon_the_color_of_madness_dlc_en_24154_22522.sh'
+ARCHIVE_GOG_OLD1_MD5='40088860d8e3e3a651074e84eb2746ac'
+ARCHIVE_GOG_OLD1_SIZE='630000'
+ARCHIVE_GOG_OLD1_VERSION='24154-gog22522'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD0='darkest_dungeon_the_color_of_madness_dlc_en_23885_21662.sh'
 ARCHIVE_GOG_OLD0_MD5='fe07f35c57c3ddd421db5da33b42ee6e'
@@ -68,7 +74,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.9'
+target_version=2.10
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"

@@ -29,6 +29,7 @@ pkg_write_deb() {
 	Package: $pkg_id
 	Version: $PKG_VERSION
 	Architecture: $pkg_architecture
+	Multi-Arch: foreign
 	Maintainer: $pkg_maint
 	Installed-Size: $pkg_size
 	Section: non-free/games
@@ -58,10 +59,6 @@ pkg_write_deb() {
 		Description: $GAME_NAME
 		 ./play.it script version $script_version
 		EOF
-	fi
-
-	if [ "$pkg_architecture" = 'all' ]; then
-		sed -i 's/Architecture: all/&\nMulti-Arch: foreign/' "$target"
 	fi
 
 	if [ -e "$postinst" ]; then

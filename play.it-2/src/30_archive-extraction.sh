@@ -119,7 +119,7 @@ archive_extraction_innosetup() {
 		archive_extraction_innosetup_error_version "$archive"
 	fi
 	printf '\n'
-	innoextract $options --extract --output-dir "$destination" "$file"
+	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null
 }
 
 # print error if available version of innoextract is too low

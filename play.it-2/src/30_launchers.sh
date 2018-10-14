@@ -181,7 +181,7 @@ write_bin() {
 			    local file_prefix
 			    local file_real
 			    cd "$1"
-			    find . -type f | while read -r file; do
+			    find -L . -type f | while read -r file; do
 			      if [ -e "$PATH_PREFIX/$file" ]; then
 			        file_prefix="$(readlink -e "$PATH_PREFIX/$file")"
 			      else

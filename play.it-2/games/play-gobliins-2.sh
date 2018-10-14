@@ -34,36 +34,45 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180802.1
+script_version=20180819.2
 
 # Set game-specific variables
 
 GAME_ID='gobliins-2'
 GAME_NAME='Gobliins 2: The Prince Buffoon'
 
-ARCHIVE_GOG='setup_gobliiins2_2.1.0.63.exe'
-ARCHIVE_GOG_MD5='0baf2ce55d00fce9af4c98848e88d7dc'
-ARCHIVE_GOG_SIZE='100000'
-ARCHIVE_GOG_VERSION='2.01-gog2.1.0.63'
-ARCHIVE_GOG_VERSION_DATA_DISK='2.01-gog2.1.0.63'
-ARCHIVE_GOG_VERSION_DATA_FLOPPY='1.02-gog2.1.0.63'
+ARCHIVE_GOG='setup_gobliins_2_-_the_prince_buffoon_1.02_(20270).exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/gobliiins_pack'
+ARCHIVE_GOG_MD5='3607f4ab042fea51e3b6544775955701'
+ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_SIZE='110000'
+ARCHIVE_GOG_VERSION='1.02-gog20270'
 
-ARCHIVE_GAME_DATA_DISK_PATH='app'
+ARCHIVE_GOG_OLD0='setup_gobliiins2_2.1.0.63.exe'
+ARCHIVE_GOG_OLD0_MD5='0baf2ce55d00fce9af4c98848e88d7dc'
+ARCHIVE_GOG_OLD0_SIZE='100000'
+ARCHIVE_GOG_OLD0_VERSION='1.02-gog2.1.0.63'
+
+ARCHIVE_GAME_DATA_DISK_PATH='.'
 ARCHIVE_GAME_DATA_DISK_FILES='./gobnew.lic ./intro.stk ./track1.mp3'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_DISK_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_FLOPPY_PATH='app/fdd'
+ARCHIVE_GAME_DATA_FLOPPY_PATH='fdd'
 ARCHIVE_GAME_DATA_FLOPPY_FILES='./*'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_FLOPPY_PATH_GOG_OLD0='app/fdd'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='./*.pdf'
-
-ARCHIVE_GAME_MAIN_PATH='app'
-ARCHIVE_GAME_MAIN_FILES='./goggame-1207662293.ico'
+# Keep compatibility with old archives
+ARCHIVE_DOC_MAIN_PATH_GOG_OLD0='app'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='gob'
 APP_MAIN_ICON='goggame-1207662293.ico'
-APP_MAIN_ICON_RES='16 32 48 256'
+# Keep compatibility with old archives
+APP_MAIN_ICON_GOG_OLD0='app/goggame-1207662293.ico'
 
 PACKAGES_LIST='PKG_MAIN PKG_DATA_DISK PKG_DATA_FLOPPY'
 
@@ -81,15 +90,25 @@ PKG_MAIN_DEPS="$PKG_DATA_ID scummvm"
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
+	for path in\
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
+	do
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+	if [ -z "$PLAYIT_LIB2" ]; then
 		printf '\n\033[1;31mError:\033[0m\n'
 		printf 'libplayit2.sh not found.\n'
 		exit 1
@@ -97,17 +116,16 @@ if [ -z "$PLAYIT_LIB2" ]; then
 fi
 . "$PLAYIT_LIB2"
 
-
 # Extract data from game
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-organize_data 'GAME_MAIN' "$PATH_GAME"
+
+# Get game icon
 
 PKG='PKG_MAIN'
-extract_and_sort_icons_from 'APP_MAIN'
-rm "${PKG_MAIN_PATH}${PATH_GAME}/$APP_MAIN_ICON"
-
+use_package_specific_value 'APP_MAIN_ICON'
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
