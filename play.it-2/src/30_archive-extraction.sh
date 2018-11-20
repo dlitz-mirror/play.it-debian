@@ -31,6 +31,9 @@ extract_data_from() {
 			('innosetup'*)
 				archive_extraction_innosetup "$archive_type" "$file" "$destination"
 			;;
+			('lha')
+				archive_extraction_lha "$file" "$destination"
+			;;
 			('msi')
 				msiextract --directory "$destination" "$file" 1>/dev/null 2>&1
 				tolower "$destination"
@@ -114,6 +117,25 @@ archive_extraction_7z() {
 		unar -output-directory "$destination" -force-overwrite -no-directory "$file" 1>/dev/null
 	else
 		error_archive_no_extractor_found '7z'
+	fi
+}
+
+# extract data from LHA archive
+# USAGE: archive_extraction_lha $archive $destination
+# CALLS: error_archive_no_extractor_found
+# CALLED BY: extract_data_from
+archive_extraction_lha() {
+	local file destination
+	file="$1"
+	destination="$2"
+	if command -v lha >/dev/null 2>&1; then
+		lha -ew="$destination" "$file" >/dev/null
+		set_standard_permissions "$destination"
+	elif command -v bsdtar >/dev/null 2>&1; then
+		bsdtar --directory "$destination" --extract --file "$file"
+		set_standard_permissions "$destination"
+	else
+		error_archive_no_extractor_found 'lha'
 	fi
 }
 
