@@ -165,3 +165,37 @@ information_installation_instructions_gentoo_comment() {
 	return 0
 }
 
+# print integrity check message
+# USAGE: info_archive_integrity_check $file
+info_archive_integrity_check() {
+	local file message
+	file=$(basename "$1")
+	case "${LANG%_*}" in
+		('fr')
+			message='Contrôle de lʼintégrité de %s'
+		;;
+		('en'|*)
+			message='Checking integrity of %s'
+		;;
+	esac
+	printf "$message" "$file"
+	return 0
+}
+
+# print hash computation message
+# USAGE: info_archive_hash_computation $file
+info_archive_hash_computation() {
+	local file message
+	file=$(basename "$1")
+	case "${LANG%_*}" in
+		('fr')
+			message='Calcul de la somme de contrôle de %s'
+		;;
+		('en'|*)
+			message='Computing hashsum for %s'
+		;;
+	esac
+	printf "$message" "$file"
+	return 0
+}
+
