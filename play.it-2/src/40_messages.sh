@@ -236,3 +236,42 @@ error_incompatible_versions() {
 	return 1
 }
 
+# display an error message if an icon dependency is missing
+# USAGE: error_icon_dependency_not_found $dependency
+# NEEDED VARS: (LANG)
+# CALLED BY: check_deps
+error_icon_dependency_not_found() {
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='%s est introuvable. Installez-le avant de lancer ce script.\n'
+			string="$string"'Vous pouvez aussi utiliser --icons=no ou --icons=auto\n'
+		;;
+		('en'|*)
+			string='%s not found. Install it before running this script.\n'
+			string="$string"'You can also use --icons=no or --icons=auto\n'
+		;;
+	esac
+	printf "$string" "$1"
+	return 1
+}
+
+# display a warning message if an icon dependency is missing
+# USAGE: warning_icon_dependency_not_found $dependency
+# NEEDED VARS: (LANG)
+# CALLED BY: check_deps
+warning_icon_dependency_not_found() {
+	print_warning
+	case "${LANG%_*}" in
+		('fr')
+			string='%s est introuvable. Installez-le pour inclure les icônes.\n'
+			string="$string"'Vous pouvez aussi utiliser --icons=no ou --icons=yes\n'
+		;;
+		('en'|*)
+			string='%s not found. Install it to include icons.\n'
+			string="$string"'You can also use --icons=no or --icons=yes\n'
+		;;
+	esac
+	printf "$string\\n" "$1"
+}
+

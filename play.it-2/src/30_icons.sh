@@ -1,6 +1,9 @@
 # update dependencies list with commands needed for icons extraction
 # USAGE: icons_list_dependencies
 icons_list_dependencies() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local script
 	script="$0"
 	if grep\
@@ -8,7 +11,7 @@ icons_list_dependencies() {
 		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'"\
 		"$script" 1>/dev/null
 	then
-		SCRIPT_DEPS="$SCRIPT_DEPS identify"
+		ICONS_DEPS="$ICONS_DEPS identify"
 		if grep\
 			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'"\
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'"\
@@ -16,17 +19,17 @@ icons_list_dependencies() {
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'"\
 			"$script" 1>/dev/null
 		then
-			SCRIPT_DEPS="$SCRIPT_DEPS convert"
+			ICONS_DEPS="$ICONS_DEPS convert"
 		fi
 		if grep\
 			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'"\
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'"\
 			"$script" 1>/dev/null
 		then
-			SCRIPT_DEPS="$SCRIPT_DEPS convert wrestool"
+			ICONS_DEPS="$ICONS_DEPS convert wrestool"
 		fi
 	fi
-	export SCRIPT_DEPS
+	export ICONS_DEPS
 }
 
 # get .png file(s) from various icon sources in current package
@@ -34,6 +37,9 @@ icons_list_dependencies() {
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR PKG
 # CALLS: icons_get_from_path
 icons_get_from_package() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local path
 	local path_pkg
 	path_pkg="$(get_value "${PKG}_PATH")"
@@ -47,6 +53,9 @@ icons_get_from_package() {
 # NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
 # CALLS: icons_get_from_path
 icons_get_from_workdir() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local path
 	path="$PLAYIT_WORKDIR/gamedata"
 	icons_get_from_path "$path" "$@"
@@ -247,6 +256,9 @@ icon_get_resolution_from_file() {
 # USAGE: icons_linking_postinst $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
 icons_linking_postinst() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local file
@@ -311,6 +323,9 @@ icons_move_to() {
 	# Check that $destination_package is set to a valid package
 	# Check that $PATH_ICON_BASE is set to an absolute path
 	###
+
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
 
 	local source_package      source_path      source_directory
 	local destination_package destination_path destination_directory
@@ -385,3 +400,4 @@ icon_path_empty_error() {
 	printf "$string\\n" "$1"
 	return 1
 }
+

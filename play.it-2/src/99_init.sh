@@ -35,6 +35,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ALLOWED_VALUES_COMPRESSION='none gzip xz bzip2'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_PACKAGE='arch deb gentoo'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_ICONS='yes no auto'
 
 	# Set default values for common options
 
@@ -52,6 +54,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	DEFAULT_OPTION_PREFIX='/usr/local'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PACKAGE='deb'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_ICONS='yes'
 	unset winecfg_desktop
 	unset winecfg_launcher
 
@@ -65,6 +69,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	unset SOURCE_ARCHIVE
 	DRY_RUN='0'
 	NO_FREE_SPACE_CHECK='0'
+	SKIP_ICONS=0
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
@@ -81,7 +86,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			 '--prefix='*|\
 			 '--prefix'|\
 			 '--package='*|\
-			 '--package')
+			 '--package'|\
+			 '--icons='*|\
+			 '--icons')
 				if [ "${1%=*}" != "${1#*=}" ]; then
 					option="$(printf '%s' "${1%=*}" | sed 's/^--//')"
 					value="${1#*=}"
@@ -150,7 +157,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set options not already set by script arguments to default values
 
-	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'PREFIX'; do
+	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'ICONS' 'PREFIX'; do
 		if
 			[ -z "$(get_value "OPTION_$option")" ] && \
 			[ -n "$(get_value "DEFAULT_OPTION_$option")" ]
@@ -163,9 +170,14 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Check options values validity
 
-	for option in 'CHECKSUM' 'COMPRESSION'; do
+	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS'; do
 		check_option_validity "$option"
 	done
+
+	if [ "$OPTION_ICONS" = 'no' ]; then
+		SKIP_ICONS=1
+		export SKIP_ICONS
+	fi
 
 	# Do not allow bzip2 compression when building Debian packages
 

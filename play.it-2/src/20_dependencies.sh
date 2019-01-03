@@ -3,7 +3,6 @@
 # NEEDED VARS: (ARCHIVE) (ARCHIVE_TYPE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
-	icons_list_dependencies
 	if [ "$ARCHIVE" ]; then
 		case "$(get_value "${ARCHIVE}_TYPE")" in
 			('cabinet')
@@ -71,6 +70,24 @@ check_deps() {
 				fi
 			;;
 		esac
+	done
+
+	# Check for the dependencies required to extract the icons
+	unset ICONS_DEPS
+	icons_list_dependencies
+	for dep in $ICONS_DEPS; do
+		if ! command -v "$dep" >/dev/null 2>&1; then
+			case "$OPTION_ICONS" in
+				('yes')
+					error_icon_dependency_not_found "$dep"
+				;;
+				('auto')
+					warning_icon_dependency_not_found "$dep"
+					export SKIP_ICONS=1
+					break
+				;;
+			esac
+		fi
 	done
 }
 

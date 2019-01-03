@@ -105,6 +105,9 @@ extract_and_sort_icons_from() {
 }
 
 extract_icon_from() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local destination
 	local file
 	destination="$PLAYIT_WORKDIR/icons"
