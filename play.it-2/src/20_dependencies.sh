@@ -20,6 +20,9 @@ check_deps() {
 			('innosetup'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract"
 			;;
+			('installshield')
+				SCRIPT_DEPS="$SCRIPT_DEPS unshield"
+			;;
 			('lha')
 				SCRIPT_DEPS="$SCRIPT_DEPS lha"
 			;;
