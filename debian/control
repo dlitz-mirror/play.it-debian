@@ -1,7 +1,7 @@
 Source: play.it
 Section: contrib/games
 Priority: optional
-Maintainer: Debian Games Team <pkg-games-devel@alioth-lists.debian.net>
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
 Uploaders: Phil Morrell <debian@emorrp1.name>
 Build-Depends:
  debhelper-compat (= 11),
