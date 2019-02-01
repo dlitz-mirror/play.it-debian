@@ -8,7 +8,7 @@ License: BSD-2-Clause
 
 Files: *
 Copyright:
- 2016-2018, Antoine "vv221/vv222" Le Gonidec
+ 2015-2018, Antoine "vv221/vv222" Le Gonidec
  2016-2018, Solène "Mopi" Huault
  2017-2018, mortalius
  2017-2018, Jacek Szafarkiewicz
@@ -16,9 +16,11 @@ Copyright:
  2017-2018, Phil Morrell
  2017-2018, Quentin Barbe
  2018, Janeene "dawnmist" Beeforth
- 2018, ntome
+ 2018, VA
  2018, Dominique Derrier
  2018, Sébastien “Elzen” Dufromentel
+ 2018, Andrey Butirsky
+ 2018, BetaRays
 License: BSD-2-Clause
 
 Files: debian/*

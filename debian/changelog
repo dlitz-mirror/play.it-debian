@@ -1,3 +1,11 @@
+play.it (2.11.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * use normal team Maintainer address for DDPO
+  * bump S-V, debhelper, no changes needed
+
+ -- Phil Morrell <debian@emorrp1.name>  Fri, 01 Feb 2019 10:51:22 +0000
+
 play.it (2.10.3-1) unstable; urgency=medium
 
   * New upstream release.
