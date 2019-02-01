@@ -2,6 +2,10 @@
 set -o errexit
 
 make libplayit2.sh
-shellcheck --shell=sh --exclude=SC2016,SC2034,SC2039,SC2046,SC2059,SC2086,SC1112,SC2154,SC2163,SC2162 'play.it-2/lib/libplayit2.sh'
+file='play.it-2/lib/libplayit2.sh'
+for shell in 'sh' 'bash' 'dash' 'ksh'; do
+	printf 'Testing %s validity using ShellCheck in %s mode…\n' "$file" "$shell"
+	shellcheck --shell="$shell" --exclude=SC2016,SC2039,SC2059,SC2086 "$file"
+done
 
 exit 0

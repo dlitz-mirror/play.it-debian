@@ -30,23 +30,41 @@ set -o errexit
 
 ###
 # Renowned Explorers: International Society
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180812.1
+script_version=20181128.1
 
 # Set game-specific variables
 
 GAME_ID='renowned-explorers-international-society'
 GAME_NAME='Renowned Explorers: International Society'
 
-ARCHIVE_GOG='renowned_explorers_international_society_en_489_21590.sh'
+ARCHIVE_GOG='renowned_explorers_international_society_512_25169.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/renowned_explorers'
-ARCHIVE_GOG_MD5='9fb2cbe095d437d788eb8ec6402db20b'
+ARCHIVE_GOG_MD5='3f2eb242da5200a78c53162d152a3cac'
 ARCHIVE_GOG_SIZE='1100000'
-ARCHIVE_GOG_VERSION='489-gog21590'
+ARCHIVE_GOG_VERSION='512-gog25169'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD5='renowned_explorers_international_society_508_23701.sh'
+ARCHIVE_GOG_OLD5_MD5='247551613c7aba4b4b31f7a98fa31949'
+ARCHIVE_GOG_OLD5_SIZE='1100000'
+ARCHIVE_GOG_OLD5_VERSION='508-gog23701'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='renowned_explorers_international_society_503_23529.sh'
+ARCHIVE_GOG_OLD4_MD5='6b7555749bc89cc3dda223e2d43bd838'
+ARCHIVE_GOG_OLD4_SIZE='1100000'
+ARCHIVE_GOG_OLD4_VERSION='503-gog23529'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD3='renowned_explorers_international_society_en_489_21590.sh'
+ARCHIVE_GOG_OLD3_MD5='9fb2cbe095d437d788eb8ec6402db20b'
+ARCHIVE_GOG_OLD3_SIZE='1100000'
+ARCHIVE_GOG_OLD3_VERSION='489-gog21590'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD2='renowned_explorers_international_society_en_489_20916.sh'
 ARCHIVE_GOG_OLD2_MD5='42d0ecb54d8302545e78f41ed43acef6'
@@ -67,23 +85,23 @@ ARCHIVE_GOG_OLD0_VERSION='459-gog14894'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='./x86'
+ARCHIVE_GAME_BIN32_FILES='x86/abbeycore x86/libc++.so.1 x86/libc++abi.so.1'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='./x86_64'
+ARCHIVE_GAME_BIN64_FILES='x86_64/abbeycore x86_64/libc++.so.1 x86_64/libc++abi.so.1'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./build.bni ./data ./project.bni ./settings.ini ./soundbanks'
+ARCHIVE_GAME_DATA_FILES='build.bni data project.bni settings.ini soundbanks'
 
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./savedata ./userdata'
 DATA_FILES='./*.txt'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='pulseaudio --start'
+APP_MAIN_PRERUN='export LANG=C'
 APP_MAIN_EXE_BIN32='x86/abbeycore'
 APP_MAIN_EXE_BIN64='x86_64/abbeycore'
 APP_MAIN_ICON='data/noarch/support/icon.png'
@@ -94,7 +112,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glu pulseaudio"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glu"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
@@ -104,26 +122,25 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

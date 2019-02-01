@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Mysteries Resupply Pack for Surviving Mars.
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180822.1
+script_version=20181005.1
 
 # Set game-specific variables
 
@@ -43,13 +43,26 @@ script_version=20180822.1
 GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars: Mysteries Resupply Pack'
 
-ARCHIVE_GOG='surviving_mars_mysteries_resupply_pack_en_davinci_rc1_22763.sh'
-ARCHIVE_GOG_MD5='6e83b67c5d368c25092ecb4fd700b5ae'
+
+ARCHIVE_GOG='surviving_mars_mysteries_resupply_pack_sagan_rc3_update_24111.sh'
+ARCHIVE_GOG_MD5='042fc7152f3ad72e0c121dfb96f617d8'
 ARCHIVE_GOG_SIZE='3100'
-# switching to the build number directly in future
-ARCHIVE_GOG_VERSION='22763'
+ARCHIVE_GOG_VERSION='24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_mysteries_resupply_pack'
+
+ARCHIVE_GOG_OLD3='surviving_mars_mysteries_resupply_pack_sagan_rc1_update_23676.sh'
+ARCHIVE_GOG_OLD3_MD5='e7e96c1384fd795f4a9b69db579524e6'
+ARCHIVE_GOG_OLD3_SIZE='3100'
+ARCHIVE_GOG_OLD3_VERSION='23676'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD2='surviving_mars_mysteries_resupply_pack_en_davinci_rc1_22763.sh'
+ARCHIVE_GOG_OLD2_MD5='6e83b67c5d368c25092ecb4fd700b5ae'
+ARCHIVE_GOG_OLD2_SIZE='3100'
+# switching to the build number directly in future
+ARCHIVE_GOG_OLD2_VERSION='22763'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD1='surviving_mars_mysteries_resupply_pack_en_180619_curiosity_hotfix_3_21661.sh'
 ARCHIVE_GOG_OLD1_MD5='fd7ef79614de264ac4eb2a1e431d64bf'
@@ -64,10 +77,10 @@ ARCHIVE_GOG_OLD0_VERSION='2-gog21442'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='./*'
+ARCHIVE_DOC_MAIN_FILES='*'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='./DLC'
+ARCHIVE_GAME_MAIN_FILES='DLC'
 
 PACKAGES_LIST='PKG_MAIN'
 
@@ -79,26 +92,25 @@ PKG_MAIN_DEPS="$GAME_ID"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

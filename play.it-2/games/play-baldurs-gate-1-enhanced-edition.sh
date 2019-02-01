@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180929.1
+script_version=20180930.1
 
 # Set game-specific variables
 
@@ -72,13 +72,6 @@ ARCHIVE_OPTIONAL_ICONS='baldurs-gate-1-enhanced-edition_icons.tar.gz'
 ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/baldurs-gate-1-enhanced-edition/'
 ARCHIVE_OPTIONAL_ICONS_MD5='58401cf80bc9f1a9e9a0896f5d74b02a'
 
-# Siege of Dragonspear DLC (should be moved to a dedicated script)
-ARCHIVE_GOG_SOD='baldur_s_gate_siege_of_dragonspear_en_2_3_0_4_20148.sh'
-ARCHIVE_GOG_SOD_URL='https://www.gog.com/game/baldurs_gate_siege_of_dragonspear'
-ARCHIVE_GOG_SOD_MD5='152225ec02c87e70bfb59970ac33b755'
-ARCHIVE_GOG_SOD_VERSION='2.3.0.4-gog20148'
-ARCHIVE_GOG_SOD_TYPE='mojosetup_unzip'
-
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
@@ -112,12 +105,12 @@ PKG_DATA_DESCRIPTION='data'
 PKG_DATA_PROVIDE='baldurs-gate-enhanced-edition-data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa"
+PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor"
 PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.3 scripts
 PKG_BIN_PROVIDE='baldurs-gate-enhanced-edition'
 # Keep compatibility with old archives
-PKG_BIN_DEPS_GOG_OLD0="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa json"
+PKG_BIN_DEPS_GOG_OLD0="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor json"
 PKG_BIN_DEPS_GOG_OLD1="$PKG_BIN_DEPS_GOG_OLD0"
 PKG_BIN_DEPS_GOG_OLD2="$PKG_BIN_DEPS_GOG_OLD0"
 
@@ -162,12 +155,6 @@ ARCHIVE_MAIN="$ARCHIVE"
 archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
 ARCHIVE="$ARCHIVE_MAIN"
 
-# Try to load Siege of Dragonspear DLC archive (should be moved to a dedicated script)
-
-ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'ARCHIVE_SOD' 'ARCHIVE_GOG_SOD'
-ARCHIVE="$ARCHIVE_MAIN"
-
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
@@ -186,17 +173,6 @@ else
 	icons_get_from_workdir 'APP_MAIN'
 fi
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Include Siege of Dragonspear DLC (should be moved to a dedicated script)
-
-if [ "$ARCHIVE_SOD" ]; then
-	(
-		ARCHIVE='ARCHIVE_SOD'
-		extract_data_from "$ARCHIVE_SOD"
-	)
-	mv "$PLAYIT_WORKDIR/gamedata/data/noarch/game/sod-dlc.zip" "${PKG_DATA_PATH}/${PATH_GAME}"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
 
 # Include libSSL 1.0.0 32-bit (Debian packages only)
 

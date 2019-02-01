@@ -6,29 +6,30 @@ INPUT_FILE="$1"
 
 LIB_ONLY=true
 
-[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$(dirname "$0")/play.it-2/lib"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		return 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 if [ "$#" = 0 ]; then
@@ -40,43 +41,65 @@ if [ ! -f "$INPUT_FILE" ]; then
 	print_error
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='%s n’est pas un fichier valide\n'
 		;;
 		('en'|*)
 			string='%s is not a valid file\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$string" "$INPUT_FILE"
-	return 1
+	exit 1
 fi
 
 # Locate script by file name
 FILE_NAME="${INPUT_FILE##*/}"
 case "${LANG%_*}" in
 	('fr')
+		# shellcheck disable=SC1112
 		string='Recherche d’un script par nom de fichier pour le fichier %s\n'
 	;;
 	('en'|*)
 		string='Looking for a script by file name for file %s\n'
 	;;
 esac
+# shellcheck disable=SC2059
 printf "$string" "$FILE_NAME"
-SCRIPT="$(grep --dereference-recursive --files-with-matches "ARCHIVE_.\\+='$FILE_NAME'" "$XDG_DATA_HOME/play.it/play.it-2/" '/usr/local/share/games/play.it/' '/usr/local/share/play.it/' '/usr/share/games/play.it/' '/usr/share/play.it/'  2>/dev/null | head --lines=1)"
+SCRIPT="$(find\
+	"$(dirname "$0")/play.it-2/games"\
+	"$XDG_DATA_HOME/play.it"\
+	'/usr/local/share/games/play.it'\
+	'/usr/local/share/play.it'\
+	'/usr/share/games/play.it'\
+	'/usr/share/play.it'\
+	! -path '*/prefixes/*' -type f -name '*.sh' -exec\
+	grep --regexp="ARCHIVE_.\\+='$FILE_NAME'" --files-with-matches '{}' + 2>/dev/null | head --lines=1)"
 
 # Locate script by file MD5 checksum
 if [ -z "$SCRIPT" ]; then
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='Recherche d’un script par somme de contrôle MD5 pour le fichier %s\n'
 		;;
 		('en'|*)
 			string='Looking for a script by MD5 hash sum for file %s\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$string" "$FILE_NAME"
 	check_deps 'md5sum'
-	FILE_MD5="$(md5sum $INPUT_FILE | cut --delimiter=' ' --fields=1)"
-	SCRIPT="$(grep --dereference-recursive --files-with-matches "$FILE_MD5" "$XDG_DATA_HOME/play.it/play.it-2/" '/usr/local/share/games/play.it/' '/usr/local/share/play.it/' '/usr/share/games/play.it/' '/usr/share/play.it/' 2>/dev/null | head --lines=1)"
+	FILE_MD5="$(md5sum "$INPUT_FILE" | cut --delimiter=' ' --fields=1)"
+	SCRIPT="$(find\
+		"$(dirname "$0")/play.it-2/games"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'\
+		! -path '*/prefixes/*' -type f -name '*.sh' -exec\
+		grep --regexp="$FILE_MD5" --files-with-matches '{}' + 2>/dev/null | head --lines=1)"
 	SCRIPT_OPTIONS='--checksum=none'
 fi
 
@@ -90,8 +113,9 @@ if [ -z "$SCRIPT" ]; then
 			string='Could not find script for file %s\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$string" "$FILE_NAME"
-	return 1
+	exit 1
 fi
 
 export PLAYIT_LIB2

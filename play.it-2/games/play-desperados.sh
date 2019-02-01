@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,95 +31,158 @@ set -o errexit
 
 ###
 # Desperados: Wanted Dead or Alive
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181106.1
 
 # Set game-specific variables
 
 GAME_ID='desperados'
 GAME_NAME='Desperados: Wanted Dead or Alive'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
+ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD1 ARCHIVE_WINDOWS_GOG_OLD0'
 
-ARCHIVE_GOG='setup_desperados_wanted_dead_or_alive_2.0.0.6.exe'
+ARCHIVE_GOG='desperados_wanted_dead_or_alive_en_1_0_2_thqn_22430.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/desperados_wanted_dead_or_alive'
-ARCHIVE_GOG_MD5='8e2f4e2ade9e641fdd35a9dd36d55d00'
-ARCHIVE_GOG_VERSION='1.01-gog2.0.0.6'
-ARCHIVE_GOG_SIZE='810000'
+ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_GOG_MD5='c4338cd7526dc01eef347408368f6bf4'
+ARCHIVE_GOG_VERSION='1.0.2-gog22430'
+ARCHIVE_GOG_SIZE='2000000'
 
-ARCHIVE_DOC1_PATH='app'
-ARCHIVE_DOC1_FILES='./manual.pdf ./readme.txt'
+ARCHIVE_GOG_OLD1='desperados_wanted_dead_or_alive_en_gog_1_22137.sh'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+ARCHIVE_GOG_OLD1_MD5='72e623355b7ca5ccdef0c549d0a77192'
+ARCHIVE_GOG_OLD1_VERSION='1.0-gog22137'
+ARCHIVE_GOG_OLD1_SIZE='2000000'
 
-ARCHIVE_DOC2_PATH='tmp'
-ARCHIVE_DOC2_FILES='./gog_eula.txt'
+ARCHIVE_WINDOWS_GOG_OLD0='setup_desperados_wanted_dead_or_alive_2.0.0.6.exe'
+ARCHIVE_WINDOWS_GOG_OLD0_MD5='8e2f4e2ade9e641fdd35a9dd36d55d00'
+ARCHIVE_WINDOWS_GOG_OLD0_VERSION='1.01-gog2.0.0.6'
+ARCHIVE_WINDOWS_GOG_OLD0_SIZE='810000'
 
-ARCHIVE_GAME_BIN_PATH='app/game'
-ARCHIVE_GAME_BIN_FILES='./*.dll ./*.exe'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='readme.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC0_DATA_PATH_WINDOWS='app'
+ARCHIVE_DOC0_DATA_FILES_WINDOWS='manual.pdf readme.txt'
+ARCHIVE_DOC1_DATA_PATH_WINDOWS='tmp'
+ARCHIVE_DOC1_DATA_FILES_WINDOWS='gog_eula.txt'
 
-ARCHIVE_GAME_DATA_PATH='app/game'
-ARCHIVE_GAME_DATA_FILES='./data'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='desperados32 libdbus-1.so.3'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_WINDOWS='app/game'
+ARCHIVE_GAME_BIN_FILES_WINDOWS='*.dll *.exe'
 
-CONFIG_DIRS='./data/configuration'
-DATA_DIRS='./data/savegame ./data/levels/briefing/Restart'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='bootmenu data demo localisation localisation_demo shaders'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_WINDOWS='app/game'
+ARCHIVE_GAME_DATA_FILES_WINDOWS='data'
 
-APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='game.exe'
-APP_MAIN_ICON='./game.exe'
-APP_MAIN_ICON_RES='16 32'
+# Keep compatibility with old archives
+CONFIG_DIRS_WINDOWS='./data/configuration'
+DATA_DIRS_WINDOWS='./data/savegame ./data/levels/briefing/Restart'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+APP_MAIN_TYPE='native'
+APP_MAIN_LIBS='.'
+APP_MAIN_EXE='desperados32'
+APP_MAIN_ICON='data/noarch/support/icon.png'
+# Keep compatibility with old archives
+APP_MAIN_TYPE_WINDOWS='wine'
+APP_MAIN_LIBS_WINDOWS=''
+APP_MAIN_EXE_WINDOWS='game.exe'
+APP_MAIN_ICON_WINDOWS='game.exe'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2"
+PKG_BIN_DEPS_ARCH='lib32-dbus'
+PKG_BIN_DEPS_DEB='libdbus-1-3'
+PKG_BIN_DEPS_GENTOO='' # TODO
+# Keep compatibility with old archives
+PKG_BIN_DEPS_WINDOWS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS_ARCH_WINDOWS=''
+PKG_BIN_DEPS_DEB_WINDOWS=''
+PKG_BIN_DEPS_GENTOO_WINDOWS=''
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Extract icons
 
-PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
+case "$ARCHIVE" in
+	('ARCHIVE_WINDOWS'*)
+		PKG='PKG_BIN'
+		use_archive_specific_value 'APP_MAIN_ICON'
+		icons_get_from_package 'APP_MAIN'
+		icons_move_to 'PKG_DATA'
+	;;
+	(*)
+		PKG='PKG_DATA'
+		icons_get_from_workdir 'APP_MAIN'
+	;;
+esac
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
+case "$ARCHIVE" in
+	('ARCHIVE_WINDOWS'*)
+		use_archive_specific_value 'CONFIG_DIRS'
+		use_archive_specific_value 'DATA_DIRS'
+		use_archive_specific_value 'APP_MAIN_TYPE'
+		use_archive_specific_value 'APP_MAIN_LIBS'
+		use_archive_specific_value 'APP_MAIN_EXE'
+	;;
+esac
+PKG='PKG_BIN'
 write_launcher 'APP_MAIN'
 
 # Build package
 
+case "$ARCHIVE" in
+	('ARCHIVE_WINDOWS'*)
+		use_archive_specific_value 'PKG_BIN_DEPS'
+	;;
+esac
 write_metadata
 build_pkg
 

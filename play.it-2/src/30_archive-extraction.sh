@@ -41,8 +41,10 @@ extract_data_from() {
 				set_standard_permissions "$destination"
 			;;
 			('nix_stage1')
+				local header_length
 				local input_blocksize
-				input_blocksize=$(head --lines=514 "$file" | wc --bytes | tr --delete ' ')
+				header_length="$(grep --text 'offset=.*head.*wc' "$file" | awk '{print $3}' | head --lines=1)"
+				input_blocksize=$(head --lines="$header_length" "$file" | wc --bytes | tr --delete ' ')
 				dd if="$file" ibs=$input_blocksize skip=1 obs=1024 conv=sync 2>/dev/null | gunzip --stdout | tar --extract --file - --directory "$destination"
 			;;
 			('nix_stage2')
@@ -131,6 +133,7 @@ archive_extraction_innosetup_error_version() {
 	print_error
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de l’archive suivante :'
 		;;
 		('en'|*)

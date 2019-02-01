@@ -34,19 +34,31 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180819.1
+script_version=20181216.2
 
 # Set game-specific variables
 
 GAME_ID='cultist-simulator'
 GAME_NAME='Cultist Simulator'
 
-ARCHIVE_GOG='cultist_simulator_en_2018_8_a_2_22766.sh'
+ARCHIVE_GOG='cultist_simulator_2018_12_b_1_25838.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/cultist_simulator'
-ARCHIVE_GOG_MD5='bb46774fc98174e3b36257ee9b344543'
-ARCHIVE_GOG_SIZE='330000'
-ARCHIVE_GOG_VERSION='2018.8.a.2-gog22766'
+ARCHIVE_GOG_MD5='24d89e01593a6860e841242818c5e0a4'
+ARCHIVE_GOG_SIZE='430000'
+ARCHIVE_GOG_VERSION='2018.12.b.1-gog25838'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD6='cultist_simulator_2018_10_i_5_24471.sh'
+ARCHIVE_GOG_OLD6_MD5='d6f4c068f71dcc7bde8157c0ffd265da'
+ARCHIVE_GOG_OLD6_SIZE='300000'
+ARCHIVE_GOG_OLD6_VERSION='2018.10.i.5-gog24471'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD5='cultist_simulator_en_2018_8_a_2_22766.sh'
+ARCHIVE_GOG_OLD5_MD5='bb46774fc98174e3b36257ee9b344543'
+ARCHIVE_GOG_OLD5_SIZE='330000'
+ARCHIVE_GOG_OLD5_VERSION='2018.8.a.2-gog22766'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD4='cultist_simulator_en_2018_7_b_1_22190.sh'
 ARCHIVE_GOG_OLD4_MD5='05b6fe0fc497fa84ffd3a54089252840'
@@ -78,20 +90,20 @@ ARCHIVE_GOG_OLD0_SIZE='310000'
 ARCHIVE_GOG_OLD0_VERSION='2018.5.x.6-gog21178'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
-ARCHIVE_DOC0_PATH='data/noarch/docs'
-ARCHIVE_DOC0_FILES='./*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-ARCHIVE_DOC1_PATH='data/noarch/game'
-ARCHIVE_DOC1_FILES='./README'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='README'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='./CS.x86 ./libsteam_api.so ./CS_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='CS.x86 libsteam_api.so CS_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='./CS.x86_64 ./libsteam_api64.so ./CS_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='CS.x86_64 libsteam_api64.so CS_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./CS_Data'
+ARCHIVE_GAME_DATA_FILES='CS_Data'
 
 DATA_DIRS='./logs'
 
@@ -118,26 +130,25 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

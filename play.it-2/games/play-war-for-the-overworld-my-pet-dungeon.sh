@@ -30,29 +30,41 @@ set -o errexit
 
 ###
 # War for the Overworld: My Pet Dungeon
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180512.1
+script_version=20181121.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: My Pet Dungeon'
 
-ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_dlc_en_gog_1_20169.sh'
+ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_2_0_6f1_24637.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_my_pet_dungeon'
-ARCHIVE_GOG_MD5='21a75a89020491955a5fc9ccae6740af'
-ARCHIVE_GOG_SIZE='1300'
-ARCHIVE_GOG_VERSION='1.0-gog20169'
+ARCHIVE_GOG_MD5='7788aeeee1e9c7cd365eb595e772ff52'
+ARCHIVE_GOG_SIZE='1400'
+ARCHIVE_GOG_VERSION='2.0.6f1-gog24637'
 ARCHIVE_GOG_TYPE='mojosetup'
 
+ARCHIVE_GOG_OLD1='war_for_the_overworld_my_pet_dungeon_2_0_5_24177.sh'
+ARCHIVE_GOG_OLD1_MD5='eb45d5ee8c699d9ded7d15b82ad1efa3'
+ARCHIVE_GOG_OLD1_SIZE='1400'
+ARCHIVE_GOG_OLD1_VERSION='2.0.5-gog24177'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='war_for_the_overworld_my_pet_dungeon_dlc_en_gog_1_20169.sh'
+ARCHIVE_GOG_OLD0_MD5='21a75a89020491955a5fc9ccae6740af'
+ARCHIVE_GOG_OLD0_SIZE='1300'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog20169'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
+
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='./*'
+ARCHIVE_DOC_MAIN_FILES='*'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='./*'
+ARCHIVE_GAME_MAIN_FILES='*'
 
 PACKAGES_LIST='PKG_MAIN'
 
@@ -61,29 +73,28 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

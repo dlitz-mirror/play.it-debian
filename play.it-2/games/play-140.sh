@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +31,11 @@ set -o errexit
 
 ###
 # 140
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180805.2
+script_version=20181002.3
 
 # Set game-specific variables
 
@@ -81,19 +82,19 @@ ARCHIVE_HUMBLE_OLD0_VERSION='2.0-humble160914'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN32_FILES='./*.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='*.x86 *_Data/*/x86'
 # Keep compatibility with old versions
 ARCHIVE_GAME_BIN32_PATH_HUMBLE_OLD1='linux'
 
 ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='*.x86_64 *_Data/*/x86_64'
 # Keep compatibility with old versions
 ARCHIVE_GAME_BIN64_PATH_HUMBLE_OLD1='linux'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
-ARCHIVE_GAME_DATA_FILES='./*_Data'
+ARCHIVE_GAME_DATA_FILES='*_Data'
 # Keep compatibility with old versions
 ARCHIVE_GAME_DATA_PATH_HUMBLE_OLD1='linux'
 
@@ -101,7 +102,6 @@ DATA_DIRS='./logs'
 DATA_FILES='./140.sav'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='pulseaudio --start'
 APP_MAIN_EXE_BIN32='140Linux.x86'
 APP_MAIN_EXE_BIN64='140Linux.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
@@ -120,36 +120,35 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu alsa xcursor pulseaudio"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu alsa xcursor libxrandr libudev1"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

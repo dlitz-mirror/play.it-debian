@@ -30,18 +30,20 @@ set -o errexit
 
 ###
 # Heroes of Might and Magic III
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180806.1
+script_version=20181121.1
 
 # Set game-specific variables
 
 GAME_ID='heroes-of-might-and-magic-3'
 GAME_NAME='Heroes of Might and Magic III'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR ARCHIVE_GOG_EN_OLD ARCHIVE_GOG_FR_OLD'
+SCRIPT_DEPS='iconv'
+
+ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR_OLD0'
 
 ARCHIVE_GOG_EN='setup_homm_3_complete_4.0_(10665).exe'
 ARCHIVE_GOG_EN_URL='https://www.gog.com/game/heroes_of_might_and_magic_3_complete_edition'
@@ -55,38 +57,38 @@ ARCHIVE_GOG_FR_MD5='6c3ee33a531bd0604679581ab267d8a3'
 ARCHIVE_GOG_FR_VERSION='4.0-gog10665'
 ARCHIVE_GOG_FR_SIZE='1100000'
 
-ARCHIVE_GOG_EN_OLD='setup_homm3_complete_2.0.0.16.exe'
-ARCHIVE_GOG_EN_OLD_MD5='263d58f8cc026dd861e9bbcadecba318'
-ARCHIVE_GOG_EN_OLD_VERSION='3.0-gog2.0.0.16'
-ARCHIVE_GOG_EN_OLD_PATCH='patch_heroes_of_might_and_magic_3_complete_2.0.1.17.exe'
-ARCHIVE_GOG_EN_OLD_PATCH_MD5='815b9c097cd57d0e269beb4cc718dad3'
-ARCHIVE_GOG_EN_OLD_PATCH_VERSION='3.0-gog2.0.1.17'
-ARCHIVE_GOG_EN_OLD_SIZE='1100000'
+ARCHIVE_GOG_EN_OLD0='setup_homm3_complete_2.0.0.16.exe'
+ARCHIVE_GOG_EN_OLD0_MD5='263d58f8cc026dd861e9bbcadecba318'
+ARCHIVE_GOG_EN_OLD0_VERSION='3.0-gog2.0.0.16'
+ARCHIVE_GOG_EN_OLD0_SIZE='1100000'
+ARCHIVE_GOG_EN_OLD0_PATCH='patch_heroes_of_might_and_magic_3_complete_2.0.1.17.exe'
+ARCHIVE_GOG_EN_OLD0_PATCH_MD5='815b9c097cd57d0e269beb4cc718dad3'
 
-ARCHIVE_GOG_FR_OLD='setup_homm3_complete_french_2.1.0.20.exe'
-ARCHIVE_GOG_FR_OLD_MD5='ca8e4726acd7b5bc13c782d59c5a459b'
-ARCHIVE_GOG_FR_OLD_VERSION='3.0-gog2.1.0.20'
-ARCHIVE_GOG_FR_OLD_SIZE='1100000'
+ARCHIVE_GOG_FR_OLD0='setup_homm3_complete_french_2.1.0.20.exe'
+ARCHIVE_GOG_FR_OLD0_MD5='ca8e4726acd7b5bc13c782d59c5a459b'
+ARCHIVE_GOG_FR_OLD0_VERSION='3.0-gog2.1.0.20'
+ARCHIVE_GOG_FR_OLD0_SIZE='1100000'
 
-ARCHIVE_DOC1_DATA_PATH='tmp'
-ARCHIVE_DOC1_DATA_FILES='./*eula.txt'
+ARCHIVE_DOC0_DATA_PATH='tmp'
+ARCHIVE_DOC0_DATA_FILES='*eula.txt'
 
-ARCHIVE_DOC2_DATA_PATH='app'
-ARCHIVE_DOC2_DATA_FILES='./eula ./*.cnt ./*.hlp ./*.pdf ./*.txt'
+ARCHIVE_DOC1_DATA_PATH='app'
+ARCHIVE_DOC1_DATA_FILES='eula *.cnt *.hlp *.pdf *.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./*.exe ./binkw32.dll ./ifc20.dll ./ifc21.dll ./mcp.dll ./mp3dec.asi ./mss32.dll ./smackw32.dll'
+ARCHIVE_GAME_BIN_FILES='*.exe binkw32.dll ifc20.dll ifc21.dll mcp.dll mp3dec.asi mss32.dll smackw32.dll'
 
 ARCHIVE_GAME_PATCH_BIN_PATH='tmp'
-ARCHIVE_GAME_PATCH_BIN_FILES='./heroes3.exe'
+ARCHIVE_GAME_PATCH_BIN_FILES='heroes3.exe'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./data ./maps ./mp3'
+ARCHIVE_GAME_DATA_FILES='data maps mp3'
 
 CONFIG_DIRS='./config'
 DATA_DIRS='./games ./maps ./random_maps'
 DATA_FILES='./data/h3ab_bmp.lod ./data/h3ab_spr.lod ./data/h3bitmap.lod ./data/h3sprite.lod'
 
+APP_REGEDIT='tweaks.reg'
 APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
 
 APP_MAIN_TYPE='wine'
@@ -122,62 +124,72 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
-# Load patch if using GOG English archive
+# Load patch if using old GOG English archive
 
-if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD' ]; then
+if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD0' ]; then
 	ARCHIVE_MAIN="$ARCHIVE"
-	archive_set 'ARCHIVE_PATCH' 'ARCHIVE_GOG_EN_OLD_PATCH'
-	[ "$ARCHIVE_PATCH" ] || archive_set_error_not_found 'ARCHIVE_GOG_EN_OLD_PATCH'
+	archive_set 'ARCHIVE_PATCH' 'ARCHIVE_GOG_EN_OLD0_PATCH'
+	[ "$ARCHIVE_PATCH" ] || archive_set_error_not_found 'ARCHIVE_GOG_EN_OLD0_PATCH'
 	ARCHIVE="$ARCHIVE_MAIN"
-	set_temp_directories $PACKAGES_LIST
 fi
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 if [ "$ARCHIVE_PATCH" ]; then
 	(
 		ARCHIVE='ARCHIVE_PATCH'
 		extract_data_from "$ARCHIVE_PATCH"
 	)
+	PKG='PKG_BIN'
+	organize_data 'GAME_PATCH_BIN' "$PATH_GAME"
 fi
-prepare_package_layout
-PKG='PKG_BIN'
-organize_data 'GAME_PATCH_BIN' "$PATH_GAME"
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Allow to skip intro video on first launch
+
+file="${PKG_BIN_PATH}${PATH_GAME}/$APP_REGEDIT"
+cat > "$file" << 'EOF'
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\Software\New World Computing\Heroes of Might and Magic® III\1.0]
+"First Time"=dword:00000000
+"Music Volume"=dword:00000005
+"Sound Volume"=dword:00000005
+EOF
+iconv --from-code=UTF-8 --to-code=UTF-16 --output="$file" "$file"
 
 # Extract icons
 
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN' 'APP_EDITOR_MAP' 'APP_EDITOR_CAMPAIGN'
 icons_move_to 'PKG_DATA'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 

@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Stellaris Dome Set for Surviving Mars.
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180720.1
+script_version=20181005.1
 
 # Set game-specific variables
 
@@ -43,12 +43,24 @@ script_version=20180720.1
 GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars: Stellaris Dome Set'
 
-ARCHIVE_GOG='surviving_mars_stellaris_dome_set_pre_order_dlc_en_180619_curiosity_hotfix_3_21661.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_stellaris_dome_set'
-ARCHIVE_GOG_MD5='01ffc529b9a0cc72e5d94830385bf7b9'
+ARCHIVE_GOG='surviving_mars_stellaris_dome_set_sagan_rc3_update_24111.sh'
+ARCHIVE_GOG_MD5='7759d7fa7f9d99a693a828a6c5db601f'
 ARCHIVE_GOG_SIZE='4000'
-ARCHIVE_GOG_VERSION='3-gog21661'
+ARCHIVE_GOG_VERSION='24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_stellaris_dome_set'
+
+ARCHIVE_GOG_OLD1='surviving_mars_stellaris_dome_set_sagan_rc1_update_23676.sh'
+ARCHIVE_GOG_OLD1_MD5='2b0f7100813779cdd847be15b6599fea'
+ARCHIVE_GOG_OLD1_SIZE='4000'
+ARCHIVE_GOG_OLD1_VERSION='23676'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD0='surviving_mars_stellaris_dome_set_pre_order_dlc_en_180619_curiosity_hotfix_3_21661.sh'
+ARCHIVE_GOG_OLD0_MD5='01ffc529b9a0cc72e5d94830385bf7b9'
+ARCHIVE_GOG_OLD0_SIZE='4000'
+ARCHIVE_GOG_OLD0_VERSION='3-gog21661'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='./*'
@@ -63,29 +75,28 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2016-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,88 +31,97 @@ set -o errexit
 
 ###
 # Anachronox
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181122.2
 
 # Set game-specific variables
 
 GAME_ID='anachronox'
 GAME_NAME='Anachronox'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_anachronox_2.0.0.28.exe'
+ARCHIVE_GOG='setup_anachronox_1.02_(22258).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/anachronox'
-ARCHIVE_GOG_MD5='a9e148972e51a4980a2531d12a85dfc0'
+ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_MD5='4e23d4f7637f6914a7cd6c13feb7ad7d'
+ARCHIVE_GOG_VERSION='1.02-gog22258'
 ARCHIVE_GOG_SIZE='1100000'
-ARCHIVE_GOG_VERSION='1.02build46-gog2.0.0.28'
 
-ARCHIVE_DOC1_PATH='app'
-ARCHIVE_DOC1_FILES='./*.rtf ./*.txt ./manual.pdf ./readme.htm'
+ARCHIVE_GOG_OLD0='setup_anachronox_2.0.0.28.exe'
+ARCHIVE_GOG_OLD0_MD5='a9e148972e51a4980a2531d12a85dfc0'
+ARCHIVE_GOG_OLD0_VERSION='1.02-gog2.0.0.28'
+ARCHIVE_GOG_OLD0_SIZE='1100000'
 
-ARCHIVE_DOC2_PATH='tmp'
-ARCHIVE_DOC2_FILES='./*eula.txt'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.rtf *.txt manual.pdf readme.htm'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./afscmd.exe ./anoxaux.dll ./anox.exe ./anoxgfx.dll ./autorun.exe ./autorun.inf ./dparse.exe ./gamex86.dll ./gct?setup.exe ./gct?setup.ini ./ijl15.dll ./libpng13a.dll ./metagl.dll ./mscomctl.ocx ./mss32.dll ./msvcp60.dll ./msvcrt.dll ./particleman.exe ./patch.dll ./ref_gl.dll ./setupanox.exe ./zlib.dll'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.inf *.ini *.ocx'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./anachronox_word.jpg ./anoxdata ./anox.ico'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='*.jpg anoxdata anox.ico'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 DATA_DIRS='anoxdata/logs anoxdata/save'
 DATA_FILES='./anox.log anoxdata/nokill.*'
 CONFIG_FILES='./*.ini'
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='./anox.exe'
-APP_MAIN_ICON='./anox.ico'
-APP_MAIN_ICON_RES='16 32 48'
+APP_MAIN_EXE='anox.exe'
+APP_MAIN_ICON='anox.ico'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine"
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Extract icon
 
 PKG='PKG_DATA'
-organize_data 'DOC1'      "$PATH_DOC"
-organize_data 'DOC2'      "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-extract_and_sort_icons_from 'APP_MAIN'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 

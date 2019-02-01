@@ -27,12 +27,23 @@ print_instructions() {
 		esac
 
 	done
+	if [ "$OPTION_PACKAGE" = 'gentoo' ] && [ -n "$GENTOO_OVERLAYS" ]; then
+		case "${LANG%_*}" in
+			('fr')
+				string='\nVous pouvez avoir besoin des overlays suivants pour installer ces paquets :%s\n'
+			;;
+			('en'|*)
+				string='\nYou may need the following overlays to install these packages:%s\n'
+			;;
+		esac
+		printf "$string" "$GENTOO_OVERLAYS"
+	fi
 	case "${LANG%_*}" in
 		('fr')
-			string='\nInstallez %s en lançant la série de commandes suivantes en root :\n'
+			string='\nInstallez "%s" en lançant la série de commandes suivantes en root :\n'
 		;;
 		('en'|*)
-			string='\nInstall %s by running the following commands as root:\n'
+			string='\nInstall "%s" by running the following commands as root:\n'
 		;;
 	esac
 	printf "$string" "$GAME_NAME"
@@ -47,6 +58,9 @@ print_instructions() {
 			('deb')
 				print_instructions_deb "$@"
 			;;
+			('gentoo')
+				print_instructions_gentoo "$@"
+			;;
 			(*)
 				liberror 'OPTION_PACKAGE' 'print_instructions'
 			;;
@@ -57,7 +71,7 @@ print_instructions() {
 
 # print installation instructions for Arch Linux - 32-bit version
 # USAGE: print_instructions_architecture_specific $pkg[…]
-# CALLS: print_instructions_arch print_instructions_deb
+# CALLS: print_instructions_arch print_instructions_deb print_instructions_gentoo
 print_instructions_architecture_specific() {
 	case "${LANG%_*}" in
 		('fr')
@@ -75,6 +89,9 @@ print_instructions_architecture_specific() {
 		;;
 		('deb')
 			print_instructions_deb "$@"
+		;;
+		('gentoo')
+			print_instructions_gentoo "$@"
 		;;
 		(*)
 			liberror 'OPTION_PACKAGE' 'print_instructions'

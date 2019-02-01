@@ -1,5 +1,10 @@
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène "Mopi" Huault
+# Copyright (c) 2017-2018, Phil Morrell
+# Copyright (c) 2017-2018, Jacek Szafarkiewicz
+# Copyright (c) 2018, VA
+# Copyright (c) 2018, Janeene "dawnmist" Beeforth
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +35,7 @@
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-library_version=2.10.3
-library_revision=20180929.3
+library_version=2.11.0
+# shellcheck disable=SC2034
+library_revision=20190126.2
 

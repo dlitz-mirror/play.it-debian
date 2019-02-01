@@ -48,7 +48,9 @@ endif
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/play.it
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) || true
 	rm $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 	rm $(DESTDIR)$(datadir)/play.it/play-*.sh
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
 	rm --force $(DESTDIR)$(mandir)/man6/play.it.6.gz
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man6

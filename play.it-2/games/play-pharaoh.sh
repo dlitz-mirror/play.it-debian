@@ -30,13 +30,15 @@ set -o errexit
 
 ###
 # Pharaoh
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180512.1
+script_version=20181013.4
 
 # Set game-specific variables
+
+SCRIPT_DEPS='convert identify wrestool'
 
 GAME_ID='pharaoh'
 GAME_NAME='Pharaoh'
@@ -47,23 +49,21 @@ ARCHIVE_GOG_MD5='62298f00f1f2268c8d5004f5b2e9fc93'
 ARCHIVE_GOG_SIZE='810000'
 ARCHIVE_GOG_VERSION='2.1-gog2.1.0.15'
 
-ARCHIVE_DOC1_DATA_PATH='tmp'
-ARCHIVE_DOC1_DATA_FILES='./*.txt'
+ARCHIVE_DOC0_DATA_PATH='tmp'
+ARCHIVE_DOC0_DATA_FILES='*.txt'
 
-ARCHIVE_DOC2_DATA_PATH='app'
-ARCHIVE_DOC2_DATA_FILES='./*.pdf ./mission?editor?guide.txt ./readme.txt'
+ARCHIVE_DOC1_DATA_PATH='app'
+ARCHIVE_DOC1_DATA_FILES='*.pdf mission?editor?guide.txt readme.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./*.asi ./*.exe ./*.ini ./*.m3d ./*.tsk ./binkw32.dll ./mss16.dll ./mss32.dll ./smackw32.dll ./cleoicon.ico'
+ARCHIVE_GAME_BIN_FILES='*.asi *.exe *.ini *.m3d *.tsk binkw32.dll mss16.dll mss32.dll smackw32.dll cleoicon.ico'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./*.emp ./*.eng ./*.inf ./*.pak ./setup.ico ./auto?reason?phrases.txt ./campaign.txt ./eventmsg.txt ./figure_*.txt ./music.txt ./pharaoh_*.txt ./tax_*.txt ./trade_recommends.txt ./audio ./binks ./data ./maps'
+ARCHIVE_GAME_DATA_FILES='*.emp *.eng *.inf *.pak setup.ico auto?reason?phrases.txt campaign.txt eventmsg.txt figure_*.txt music.txt pharaoh_*.txt tax_*.txt trade_recommends.txt audio binks data maps'
 
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./save'
 DATA_FILES='./*.txt'
-
-APP_WINETRICKS='vd=1024x768'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='pharaoh.exe'
@@ -77,33 +77,32 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

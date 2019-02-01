@@ -30,67 +30,85 @@ set -o errexit
 
 ###
 # Renowned Explorers: The Emperor’s Challenge
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180612.1
+script_version=20181128.1
 
 # Set game-specific variables
 
 GAME_ID='renowned-explorers-international-society'
 GAME_NAME='Renowned Explorers: The Emperor’s Challenge'
 
-ARCHIVE_GOG='renowned_explorers_the_emperor_s_challenge_dlc_en_489_20916.sh'
+ARCHIVE_GOG='renowned_explorers_international_society_the_emperors_challenge_dlc_512_25169.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/renowned_explorers_the_emperors_challenge'
-ARCHIVE_GOG_MD5='553e0fa1ffed73c9c99022c20cfff707'
-ARCHIVE_GOG_SIZE='23000'
-ARCHIVE_GOG_VERSION='489-gog20916'
+ARCHIVE_GOG_MD5='b402cec7fbc05fec42be3ae4ff1a26ec'
+ARCHIVE_GOG_SIZE='22000'
+ARCHIVE_GOG_VERSION='512-gog25169'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD='renowned_explorers_the_emperor_s_challenge_dlc_en_466_15616.sh'
-ARCHIVE_GOG_OLD_URL='https://www.gog.com/game/renowned_explorers_the_emperors_challenge'
-ARCHIVE_GOG_OLD_MD5='12baa49b557c92e2f5eae7ff99623d34'
-ARCHIVE_GOG_OLD_SIZE='23000'
-ARCHIVE_GOG_OLD_VERSION='466-gog15616'
-ARCHIVE_GOG_OLD_TYPE='mojosetup'
+ARCHIVE_GOG_OLD3='renowned_explorers_international_society_the_emperors_challenge_dlc_508_23701.sh'
+ARCHIVE_GOG_OLD3_MD5='7f0b5df5318af767bfb306bd4e3f1e13'
+ARCHIVE_GOG_OLD3_SIZE='22000'
+ARCHIVE_GOG_OLD3_VERSION='508-gog23701'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD2='renowned_explorers_international_society_the_emperors_challenge_dlc_503_23529.sh'
+ARCHIVE_GOG_OLD2_MD5='fb2c6bc1201a3346c47e01f0e7aa136c'
+ARCHIVE_GOG_OLD2_SIZE='22000'
+ARCHIVE_GOG_OLD2_VERSION='503-gog23529'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD1='renowned_explorers_the_emperor_s_challenge_dlc_en_489_20916.sh'
+ARCHIVE_GOG_OLD1_MD5='553e0fa1ffed73c9c99022c20cfff707'
+ARCHIVE_GOG_OLD1_SIZE='23000'
+ARCHIVE_GOG_OLD1_VERSION='489-gog20916'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='renowned_explorers_the_emperor_s_challenge_dlc_en_466_15616.sh'
+ARCHIVE_GOG_OLD0_MD5='12baa49b557c92e2f5eae7ff99623d34'
+ARCHIVE_GOG_OLD0_SIZE='23000'
+ARCHIVE_GOG_OLD0_VERSION='466-gog15616'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='./*'
+ARCHIVE_DOC_MAIN_FILES='*'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='./data'
+ARCHIVE_GAME_MAIN_FILES='data'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID='renowned-explorers-the-emperors-challenge'
+PKG_MAIN_ID="${GAME_ID}-the-emperors-challenge"
 PKG_MAIN_DEPS="$GAME_ID"
+# Easier upgrade from packages generated with pre-20180930.1 scripts
+PKG_MAIN_PROVIDE='renowned-explorers-the-emperors-challenge'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

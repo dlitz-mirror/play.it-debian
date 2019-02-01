@@ -25,6 +25,10 @@ For recent Debian-based distros: `apt install play.it` [![version]][repology]
 [version]: https://repology.org/badge/latest-versions/play.it.svg
 [repology]: https://repology.org/metapackage/play.it
 
+For Archlinux users there is an AUR package [![aur]](https://aur.archlinux.org/packages/play.it/)
+
+[aur]: http://badge.kloud51.com/aur/v/play.it.svg
+
 For everyone else:
 
 ```

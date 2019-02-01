@@ -27,6 +27,7 @@ prepare_package_layout_error_no_list() {
 	print_error
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='prepare_package_layout ne peut pas être appelé sans argument si $PACKAGES_LIST n’est pas défini.'
 		;;
 		('en'|*)
@@ -83,6 +84,7 @@ organize_data_error_missing_pkg() {
 	print_error
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='organize_data ne peut pas être appelé si $PKG n’est pas défini.\n'
 		;;
 		('en'|*)

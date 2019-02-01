@@ -10,6 +10,7 @@ shellcheck:
         - pacman --noconfirm -S make shellcheck
     script:
         - ./tests/shellcheck-lib.sh
+        - ./tests/shellcheck-main-script.sh
     artifacts:
         paths:
             - play.it-2/lib/libplayit2.sh

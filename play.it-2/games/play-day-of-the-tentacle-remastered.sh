@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,14 +35,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181102.2
 
 # Set game-specific variables
 
 GAME_ID='day-of-the-tentacle-remastered'
 GAME_NAME='Day of the Tentacle Remastered'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_day_of_the_tentacle_remastered_2.1.0.2.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/day_of_the_tentacle_remastered'
@@ -49,22 +48,21 @@ ARCHIVE_GOG_MD5='612c59c5cbdbf4d73322b46527a2d502'
 ARCHIVE_GOG_SIZE='2700000'
 ARCHIVE_GOG_VERSION='1.4.1-gog2.1.0.2'
 
-ARCHIVE_DOC1_PATH='data/noarch/docs'
-ARCHIVE_DOC1_FILES='./*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-ARCHIVE_DOC2_PATH='data/noarch/game/'
-ARCHIVE_DOC2_FILES='./readme.txt'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game/'
+ARCHIVE_DOC1_DATA_FILES='readme.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./Dott ./controllerdef.txt ./lib'
+ARCHIVE_GAME_BIN_FILES='Dott controllerdef.txt lib'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./tenta.cle'
+ARCHIVE_GAME_DATA_FILES='tenta.cle'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Dott'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-APP_MAIN_ICON_RES='256'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -72,40 +70,44 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libgl1-mesa-glx | libgl1"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-libgl"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libudev1 openal"
 
 # Load common functions
 
-target_version='2.4'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Get icon
 
 PKG='PKG_DATA'
-organize_data 'DOC1'      "$PATH_DOC"
-organize_data 'DOC2'      "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-get_icon_from_temp_dir 'APP_MAIN'
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers

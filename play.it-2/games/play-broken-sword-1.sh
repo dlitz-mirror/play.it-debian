@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
 # Copyright (c) 2018, Solène Huault
+# Copyright (c) 2018, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ set -o errexit
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20180714.1
+script_version=20181202.2
 
 # Set game-specific variables
 
@@ -49,16 +50,16 @@ ARCHIVE_HUMBLE_SIZE='1400000'
 ARCHIVE_HUMBLE_VERSION='1.0.800-gog130701'
 
 ARCHIVE_DOC_DATA_PATH='bs1dc_linux_v1.0.800'
-ARCHIVE_DOC_DATA_FILES='./legal.txt'
+ARCHIVE_DOC_DATA_FILES='legal.txt'
 
 ARCHIVE_GAME_BIN32_PATH='bs1dc_linux_v1.0.800'
-ARCHIVE_GAME_BIN32_FILES='./i386'
+ARCHIVE_GAME_BIN32_FILES='i386'
 
 ARCHIVE_GAME_BIN64_PATH='bs1dc_linux_v1.0.800'
-ARCHIVE_GAME_BIN64_FILES='./x86_64'
+ARCHIVE_GAME_BIN64_FILES='x86_64'
 
 ARCHIVE_GAME_DATA_PATH='bs1dc_linux_v1.0.800'
-ARCHIVE_GAME_DATA_FILES='./*.dat ./font ./icon.bmp ./movies ./music'
+ARCHIVE_GAME_DATA_FILES='*.dat font icon.bmp movies music'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='i386/bs1dc_i386'
@@ -71,36 +72,35 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc sdl openal"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc sdl1.2 openal"
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

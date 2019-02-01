@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180802.1
+script_version=20181001.5
 
 # Set game-specific variables
 
@@ -56,94 +57,85 @@ ARCHIVE_HUMBLE_WINDOWS_SIZE='300000'
 ARCHIVE_HUMBLE_WINDOWS_VERSION='2.4.2-humble170213'
 
 ARCHIVE_GAME_WINDOWS_BIN_PATH='.'
-ARCHIVE_GAME_WINDOWS_BIN_FILES='./outthereomega.exe *_Data/Plugins *_Data/Managed *_Data/Mono'
+ARCHIVE_GAME_WINDOWS_BIN_FILES='outthereomega.exe *_Data/Plugins *_Data/Managed *_Data/Mono'
 
 ARCHIVE_GAME_LINUX_BIN32_PATH='.'
-ARCHIVE_GAME_LINUX_BIN32_FILES='./*.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_LINUX_BIN32_FILES='*.x86 *_Data/*/x86'
 
 ARCHIVE_GAME_LINUX_BIN64_PATH='.'
-ARCHIVE_GAME_LINUX_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_LINUX_BIN64_FILES='*.x86_64 *_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='./*_Data'
+ARCHIVE_GAME_DATA_FILES='*_Data'
 
-DATA_DIRS='./logs ./saves'
+DATA_DIRS='./logs ./userdata'
 
-APP_MAIN_TYPE_LINUX='native'
-APP_MAIN_TYPE_WINDOWS='wine'
-APP_MAIN_PRERUN_LINUX='pulseaudio --start'
+APP_MAIN_TYPE_HUMBLE_LINUX='native'
+APP_MAIN_TYPE_HUMBLE_WINDOWS='wine'
 APP_MAIN_EXE_LINUX_BIN32='OutThereOmega.x86'
 APP_MAIN_EXE_LINUX_BIN64='OutThereOmega.x86_64'
-APP_MAIN_EXE_WINDOWS='outthereomega.exe'
+APP_MAIN_EXE_WINDOWS_BIN='outthereomega.exe'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST_LINUX='APP_MAIN_ICON_LINUX'
-APP_MAIN_ICONS_LIST_WINDOWS='APP_MAIN_ICON_WINDOWS'
-APP_MAIN_ICON_LINUX='OutThereOmega_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_WINDOWS='outthereomega.exe'
+APP_MAIN_ICON_HUMBLE_LINUX='OutThereOmega_Data/Resources/UnityPlayer.png'
+APP_MAIN_ICON_HUMBLE_WINDOWS='outthereomega.exe'
 
-PACKAGES_LIST='PKG_DATA'
+PACKAGES_LIST_HUMBLE_LINUX='PKG_DATA PKG_LINUX_BIN32 PKG_LINUX_BIN64'
+PACKAGES_LIST_HUMBLE_WINDOWS='PKG_DATA PKG_WINDOWS_BIN'
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_DATA_ID_HUMBLE_LINUX="${PKG_DATA_ID}-linux"
+PKG_DATA_ID_HUMBLE_WINDOWS="${PKG_DATA_ID}-windows"
 PKG_DATA_PROVIDE="$PKG_DATA_ID"
+PKG_DATA_DESCRIPTION='data'
 
 PKG_LINUX_BIN32_ID="${GAME_ID}-linux"
 PKG_LINUX_BIN32_ARCH='32'
-PKG_LINUX_BIN32_DEPS="$PKG_DATA_ID glx xcursor libxrandr pulseaudio"
+PKG_LINUX_BIN32_DEPS="$PKG_DATA_ID glx xcursor libxrandr libudev1"
+PKG_LINUX_BIN32_PROVIDE="$GAME_ID"
 
 PKG_LINUX_BIN64_ID="$PKG_LINUX_BIN32_ID"
 PKG_LINUX_BIN64_ARCH='64'
 PKG_LINUX_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_LINUX_BIN64_PROVIDE="$GAME_ID"
 
 PKG_WINDOWS_BIN_ID="${GAME_ID}-windows"
 PKG_WINDOWS_BIN_ARCH='32'
 PKG_WINDOWS_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_WINDOWS_BIN_PROVIDE="$GAME_ID"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Set archive-specific variables
 
-case "$ARCHIVE" in
-	('ARCHIVE_HUMBLE_LINUX')
-		PACKAGES_LIST="$PACKAGES_LIST PKG_LINUX_BIN32 PKG_LINUX_BIN64"
-		PKG_DATA_ID="${PKG_DATA_ID}-linux"
-		APP_MAIN_ICONS_LIST="$APP_MAIN_ICONS_LIST_LINUX"
-		APP_MAIN_TYPE="$APP_MAIN_TYPE_LINUX"
-		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_LINUX"
-	;;
-	('ARCHIVE_HUMBLE_WINDOWS')
-		PACKAGES_LIST="$PACKAGES_LIST PKG_WINDOWS_BIN"
-		PKG_DATA_ID="${PKG_DATA_ID}-windows"
-		APP_MAIN_ICONS_LIST="$APP_MAIN_ICONS_LIST_WINDOWS"
-		APP_MAIN_TYPE="$APP_MAIN_TYPE_WINDOWS"
-	;;
-esac
+use_archive_specific_value 'APP_MAIN_ICON'
+use_archive_specific_value 'APP_MAIN_TYPE'
+use_archive_specific_value 'PACKAGES_LIST'
+use_archive_specific_value 'PKG_DATA_ID'
 set_temp_directories $PACKAGES_LIST
 
 # Extract game data
@@ -184,7 +176,7 @@ case "$ARCHIVE" in
 		pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
 		pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
 		pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""
-		pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/saves\" \"$saves_path\""
+		pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/userdata\" \"$saves_path\""
 		pattern="$pattern\\nfi#"
 		sed --in-place "$pattern" "${PKG_WINDOWS_BIN_PATH}${PATH_BIN}"/*
 	;;
@@ -203,12 +195,11 @@ case "$ARCHIVE" in
 		write_metadata
 	;;
 esac
-
 build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 

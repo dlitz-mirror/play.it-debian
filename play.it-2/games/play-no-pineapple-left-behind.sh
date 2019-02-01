@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # No Pineapple Left Behind
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181004.3
 
 # Set game-specific variables
 
 GAME_ID='no-pineapple-left-behind'
 GAME_NAME='No Pineapple Left Behind'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_no_pineapple_left_behind_2.4.0.7.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/no_pineapple_left_behind'
@@ -49,74 +48,79 @@ ARCHIVE_GOG_MD5='8134abbdbc068f3305a54a41f32820bc'
 ARCHIVE_GOG_SIZE='7100000'
 ARCHIVE_GOG_VERSION='1.1.0-gog2.4.0.7'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='./*.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='nplb.x86 nplb_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='nplb.x86_64 nplb_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./*_Data'
+ARCHIVE_GAME_DATA_FILES='nplb_Data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='pulseaudio --start'
-APP_MAIN_EXE_BIN32='./nplb.x86'
-APP_MAIN_EXE_BIN64='./nplb.x86_64'
+APP_MAIN_PRERUN='if ! command -v pulseaudio >/dev/null 2>&1; then
+	mkdir --parents libs
+	ln --force --symbolic /dev/null libs/libpulse-simple.so.0
+	export LD_LIBRARY_PATH="libs:$LD_LIBRARY_PATH"
+else
+	if [ -e "libs/libpulse-simple.so.0" ]; then
+		rm libs/libpulse-simple.so.0
+		rmdir --ignore-fail-on-non-empty libs
+	fi
+	pulseaudio --start
+fi'
+APP_MAIN_EXE_BIN32='nplb.x86'
+APP_MAIN_EXE_BIN64='nplb.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log -force-opengl'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='*_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='nplb_Data/Resources/UnityPlayer.png'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS_DEB="$PKG_DATA_ID, libgl1-mesa-glx | libgl1, libc6, libxcursor1, pulseaudio:amd64 | pulseaudio"
-PKG_BIN32_DEPS_ARCH="$PKG_DATA_ID lib32-libgl lib32-glibc lib32-libxcursor pulseaudio"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 gtk2"
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_ARCH="$PKG_DATA_ID libgl glibc libxcursor pulseaudio"
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-PKG='PKG_BIN32'
-organize_data 'GAME_BIN32' "$PATH_GAME"
-
-PKG='PKG_BIN64'
-organize_data 'GAME_BIN64' "$PATH_GAME"
-
-PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -127,21 +131,18 @@ done
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 write_metadata 'PKG_BIN32' 'PKG_BIN64'
 build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-printf '\n'
-printf '32-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN32'
-printf '64-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN64'
+print_instructions
 
 exit 0

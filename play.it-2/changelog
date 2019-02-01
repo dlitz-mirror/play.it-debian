@@ -1,3 +1,55 @@
+2.11.0
+
+  * Add ability to generate packages for Gentoo, using --package=gentoo
+
+  * Rewrite of launchers-related functions. Compatibility wrappers still
+    exist for old functions
+
+  * archive_guess_type: Automatically set ARCHIVE_TYPE for 7-zip archives
+
+  * Nixstaller archives: Guess header length instead of using hardcoded value
+
+  * Improve support for Java games
+
+  * pkg_write_*: Reliably use archive-specific dependencies list when
+    available
+
+  * New option --skip-free-space-check: Bypass free space check, create
+    temporary directories under $TMPDIR, defaults to /tmp
+
+  * Fix issue with pre-2.8 compatibility code in icons_linking_postinst
+
+  * move_icons_to: Fix crash when --prefix is set to a custom value
+
+2.10.5
+
+  * select_package_architecture: Fix bug when using --architecture=64 (or
+    --architecture=auto on 64-bit systems) on an archive providing 32-bit
+    binaries only
+
+2.10.4
+
+  * Improve ShellCheck tests coverage
+
+  * Do not let empty dirs lingering after uninstallation using make
+
+  * main script: Fix wrong usage of 'return' instead of 'exit'
+
+  * main script: Update search paths for library and game scripts
+
+  * help: Fix usage instructions when called from main script
+
+  * packages_guess_format: Fix falling back on default package format value
+    when host OS couldn’t be guessed
+
+  * icons_get_from_path: Fail with an explicit error message if called with an
+    empty icon path
+
+  * print_instructions: Improve message readability
+
+  * write_bin - init_prefix_dirs: Fix use of globbing when setting the paths to
+    user directories
+
 2.10.3
 
   * write_bin - init_prefix_files: Do not ignore symbolic links in

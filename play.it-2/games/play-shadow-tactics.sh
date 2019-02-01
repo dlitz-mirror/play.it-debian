@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180810.1
+script_version=20181102.2
 
 # Set game-specific variables
 
@@ -55,16 +55,16 @@ ARCHIVE_GOG_OLD0_VERSION='1.4.4.f-gog14723'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./Shadow?Tactics ./*_Data/Mono ./*_Data/Plugins'
+ARCHIVE_GAME_BIN_FILES='Shadow?Tactics Shadow?Tactics_Data/Mono Shadow?Tactics_Data/Plugins'
 
 ARCHIVE_GAME_LIGHTING_PATH='data/noarch/game'
-ARCHIVE_GAME_LIGHTING_FILES='./*_Data/GI'
+ARCHIVE_GAME_LIGHTING_FILES='Shadow?Tactics_Data/GI'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./*_Data'
+ARCHIVE_GAME_DATA_FILES='Shadow?Tactics_Data'
 
 DATA_DIRS='./logs'
 
@@ -83,33 +83,32 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_LIGHTING_ID $PKG_DATA_ID glibc libstdc++ glx gtk2 libudev1"
+PKG_BIN_DEPS="$PKG_LIGHTING_ID $PKG_DATA_ID glibc libstdc++ glx libudev1 xcursor libxrandr"
 
 # Load common functions
 
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 

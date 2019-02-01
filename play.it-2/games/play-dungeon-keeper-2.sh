@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2019, Antoine Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,48 +30,61 @@ set -o errexit
 
 ###
 # Dungeon Keeper 2
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190101.1
 
 # Set game-specific variables
 
 GAME_ID='dungeon-keeper-2'
 GAME_NAME='Dungeon Keeper II'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
-
-ARCHIVE_GOG='setup_dungeon_keeper2_2.0.0.32.exe'
+ARCHIVE_GOG='setup_dungeon_keeper_2_1.7_(22280).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/dungeon_keeper_2'
-ARCHIVE_GOG_MD5='92d04f84dd870d9624cd18449d3622a5'
+ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_MD5='eeb2229ee49518504884a9ac65f611ad'
+ARCHIVE_GOG_VERSION='1.7-gog22280'
 ARCHIVE_GOG_SIZE='510000'
-ARCHIVE_GOG_VERSION='1.7-gog2.0.0.32'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./*.pdf ./*.txt'
+ARCHIVE_GOG_OLD0='setup_dungeon_keeper2_2.0.0.32.exe'
+ARCHIVE_GOG_OLD0_URL='https://www.gog.com/game/dungeon_keeper_2'
+ARCHIVE_GOG_OLD0_MD5='92d04f84dd870d9624cd18449d3622a5'
+ARCHIVE_GOG_OLD0_VERSION='1.7-gog2.0.0.32'
+ARCHIVE_GOG_OLD0_SIZE='510000'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./aweman32.dll ./dkii*.exe ./patch.dll ./qmixer.dll ./sfman32.dll ./weanetr.dll'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./data ./dk2texturecache'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
+
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='data dk2texturecache'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_DIRS='./data/settings'
 DATA_DIRS='./data/save'
 DATA_FILES='./*.LOG'
 
+APP_WINETRICKS='csmt=off'
+
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='dkii-dx.exe'
 APP_MAIN_ICON='dkii.exe'
-APP_MAIN_ICON_RES='16 32 48'
 
 APP_SOFTWARE_ID="${GAME_ID}_software"
 APP_SOFTWARE_TYPE='wine'
 APP_SOFTWARE_EXE='dkii.exe'
 APP_SOFTWARE_OPTIONS='-softwarefilter -32bitdisplay -disablegamma -shadows 1 -software'
 APP_SOFTWARE_NAME="$GAME_NAME (software rendering)"
+APP_SOFTWARE_ICON="$APP_MAIN_ICON"
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -79,51 +92,51 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN' 'APP_SOFTWARE'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 
 PKG='PKG_BIN'
 write_launcher 'APP_MAIN' 'APP_SOFTWARE'
-
-# Use base game icon for software rendering launcher
-
-file="${PKG_BIN_PATH}${PATH_DESK}/$APP_SOFTWARE_ID.desktop"
-regex="s/\(Icon=\).\+/\1$GAME_ID/"
-sed --in-place "$regex" "$file"
 
 # Build package
 

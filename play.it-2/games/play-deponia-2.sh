@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # Deponia 2 - Chaos on Deponia
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181203.1
 
 # Set game-specific variables
 
 GAME_ID='deponia-2'
 GAME_NAME='Deponia 2 - Chaos on Deponia'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_HUMBLE'
 
 ARCHIVE_GOG='gog_deponia_2_chaos_on_deponia_2.1.0.3.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/deponia_2_chaos_on_deponia'
@@ -54,88 +53,80 @@ ARCHIVE_HUMBLE_MD5='e7a71d5b8a83b2c2393095256b03553b'
 ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'
 
-ARCHIVE_DOC_PATH_GOG='data/noarch/game'
-ARCHIVE_DOC_PATH_HUMBLE='Chaos on Deponia'
-ARCHIVE_DOC_FILES='./documents ./version.txt'
+ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_DOC0_DATA_PATH_HUMBLE='Chaos on Deponia'
+ARCHIVE_DOC0_DATA_FILES='documents version.txt'
 
-ARCHIVE_DOC2_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC2_FILES_GOG='./*'
+ARCHIVE_DOC1_DATA_PATH_GOG='data/noarch/docs'
+ARCHIVE_DOC1_DATA_FILES_GOG='*'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='Chaos on Deponia'
-ARCHIVE_GAME_BIN_FILES='./config.ini ./Deponia2 ./libs64'
-
-ARCHIVE_GAME_VIDEOS_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_VIDEOS_PATH_HUMBLE='Chaos on Deponia'
-ARCHIVE_GAME_VIDEOS_FILES='./videos'
+ARCHIVE_GAME_BIN_FILES='config.ini Deponia2 libs64'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Chaos on Deponia'
-ARCHIVE_GAME_DATA_FILES='./characters ./data.vis ./lua ./scenes'
+ARCHIVE_GAME_DATA_FILES='characters data.vis lua scenes videos'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Deponia2'
 APP_MAIN_LIBS='libs64'
 APP_MAIN_ICON_GOG='data/noarch/support/icon.png'
-APP_MAIN_ICON_GOG_RES='256'
 
-PACKAGES_LIST='PKG_VIDEOS PKG_DATA PKG_BIN'
-
-PKG_VIDEOS_ID="${GAME_ID}-videos"
-PKG_VIDEOS_DESCRIPTION='videos'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+# Easier upgrade from packages generated with pre-20181119.2 scripts
+PKG_DATA_PROVIDE='deponia-2-videos'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS_DEB="$PKG_VIDEOS_ID, $PKG_DATA_ID, libc6, libstdc++6, libgl1-mesa-glx | libgl1, libopenal1, libavcodec56 | libavcodec-ffmpeg56 | libavcodec-extra-56 | libavcodec-ffmpeg-extra56, libavformat56 | libavformat-ffmpeg56, libavutil54 | libavutil-ffmpeg54, libswscale3 | libswscale-ffmpeg3"
-PKG_BIN_DEPS_ARCH="$PKG_VIDEOS_ID $PKG_DATA_ID libgl openal ffmpeg ffmpeg2.8"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal"
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+case "$ARCHIVE" in
+	('ARCHIVE_HUMBLE')
+		set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+	;;
+esac
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Get icon
 
-PKG='PKG_VIDEOS'
-organize_data 'GAME_VIDEOS' "$PATH_GAME"
-
-PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'DOC2'      "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-if [ "$ARCHIVE" = 'ARCHIVE_GOG' ]; then
-	APP_MAIN_ICON="$APP_MAIN_ICON_GOG"
-	APP_MAIN_ICON_RES="$APP_MAIN_ICON_GOG_RES"
-fi
+use_archive_specific_value 'APP_MAIN_ICON'
 if [ "$APP_MAIN_ICON" ]; then
-	res="$APP_MAIN_ICON_RES"
-	PATH_ICON="${PKG_DATA_PATH}${PATH_ICON_BASE}/${res}x${res}/apps"
-	mkdir --parents "$PATH_ICON"
-	mv "$PLAYIT_WORKDIR/gamedata/$APP_MAIN_ICON" "$PATH_ICON/$GAME_ID.png"
+	PKG='PKG_DATA'
+	icons_get_from_workdir 'APP_MAIN'
 fi
-
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers

@@ -81,6 +81,7 @@ icons_get_from_path() {
 		for icon in $list; do
 			use_archive_specific_value "$icon"
 			file="$(get_value "$icon")"
+			[ -z "$file" ] && icon_path_empty_error "$icon"
 			[ -f "$directory/$file" ] || icon_file_not_found_error "$directory/$file"
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
@@ -249,7 +250,9 @@ icon_get_resolution_from_file() {
 	local version_major_target
 	local version_minor_target
 	file="$1"
+	# shellcheck disable=SC2154
 	version_major_target="${target_version%%.*}"
+	# shellcheck disable=SC2154
 	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	if
 		{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
@@ -282,7 +285,9 @@ icons_linking_postinst() {
 	local path_pkg
 	local version_major_target
 	local version_minor_target
+	# shellcheck disable=SC2154
 	version_major_target="${target_version%%.*}"
+	# shellcheck disable=SC2154
 	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_linking_postinst' "$PKG"
@@ -294,13 +299,15 @@ icons_linking_postinst() {
 		[ "$name" ] || name="$GAME_ID"
 		for icon in $list; do
 			file="$(get_value "$icon")"
-			if
-				{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
-				( ls "$path/$file" >/dev/null 2>&1 || ls "$path"/$file >/dev/null 2>&1 )
-			then
-				icon_get_resolution_from_file "$path/$file"
+			if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ]; then
+				# ensure compatibility with scripts targeting pre-2.8 library
+				if [ -e "$path/$file" ] || [ -e "$path"/$file ]; then
+					icon_get_resolution_from_file "$path/$file"
+				else
+					icon_get_resolution_from_file "${PKG_DATA_PATH}${PATH_GAME}/$file"
+				fi
 			else
-				icon_get_resolution_from_file "${PKG_DATA_PATH}${PATH_GAME}/$file"
+				icon_get_resolution_from_file "$path/$file"
 			fi
 			path_icon="$PATH_ICON_BASE/$resolution/apps"
 			if
@@ -349,8 +356,8 @@ icons_move_to() {
 	(
 		cd "$source_path"
 		cp --link --parents --recursive --no-dereference --preserve=links "./$PATH_ICON_BASE" "$destination_path"
-		rm --recursive "./$PATH_ICON_BASE"
-		rmdir --ignore-fail-on-non-empty --parents "./${PATH_ICON_BASE%/*}"
+		rm --recursive "./$PATH_ICON_BASE"/*
+		rmdir --ignore-fail-on-non-empty --parents "${PATH_ICON_BASE#/}"
 	)
 }
 # compatibility alias
@@ -366,6 +373,7 @@ icon_file_not_found_error() {
 	file="$1"
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string1='Le fichier d’icône suivant est introuvable : %s'
 			string2='Merci de signaler cette erreur sur notre outil de gestion de bugs : %s'
 		;;
@@ -380,3 +388,21 @@ icon_file_not_found_error() {
 	return 1
 }
 
+# print an error message if an icon path is empty
+# USAGE: icon_path_empty_error $icon
+# CALLED BY: icons_get_from_path
+icon_path_empty_error() {
+	local string
+	case "${LANG%_*}" in
+		('fr')
+			# shellcheck disable=SC1112
+			string='Le chemin vers l̛’icône est vide : %s'
+		;;
+		('en'|*)
+			string='The icon path is empty: %s'
+		;;
+	esac
+	print_error
+	printf "$string\\n" "$1"
+	return 1
+}

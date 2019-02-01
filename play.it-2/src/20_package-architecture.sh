@@ -6,7 +6,9 @@ select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
 	local version_major_target
 	local version_minor_target
+	# shellcheck disable=SC2154
 	version_major_target="${target_version%%.*}"
+	# shellcheck disable=SC2154
 	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 6 ]; then
 		select_package_architecture_warning_unsupported
@@ -63,7 +65,7 @@ select_package_architecture() {
 		('64')
 			if [ -z "$packages_list_64" ]; then
 				select_package_architecture_warning_unavailable
-				OPTION_ARCHITECTURE-'all'
+				OPTION_ARCHITECTURE='all'
 				return 0
 			fi
 			PACKAGES_LIST="$packages_list_64 $packages_list_all"
@@ -83,6 +85,7 @@ select_package_architecture_warning_unavailable() {
 	local string
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='L’architecture demandée n’est pas disponible : %s\n'
 		;;
 		('en'|*)
@@ -101,6 +104,7 @@ select_package_architecture_error_unknown() {
 	local string
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='L’architecture demandée n’est pas supportée : %s\n'
 		;;
 		('en'|*)
@@ -120,6 +124,7 @@ select_package_architecture_warning_unsupported() {
 	local string
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='L’option --architecture n’est pas gérée par ce script.'
 		;;
 		('en'|*)

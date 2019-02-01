@@ -3,6 +3,8 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
+# Copyright (c) 2018, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +32,16 @@ set -o errexit
 
 ###
 # Octodad Dadliest Catch
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181014.1
 
 # Set game-specific variables
 
 GAME_ID='octodad-dadliest-catch'
 GAME_NAME='Octodad Dadliest Catch'
-
-ARCHIVES_LIST='ARCHIVE_HUMBLE'
 
 ARCHIVE_HUMBLE='OctodadDadliestCatch1.2.19351.tar.gz'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/octodad-dadliest-catch'
@@ -50,44 +50,50 @@ ARCHIVE_HUMBLE_SIZE='3000000'
 ARCHIVE_HUMBLE_VERSION='1.2.19351-humble170512'
 
 ARCHIVE_GAME_BIN_PATH='Octodad Dadliest Catch'
-ARCHIVE_GAME_BIN_FILES='./OctodadDadliestCatch ./lib*.so'
+ARCHIVE_GAME_BIN_FILES='OctodadDadliestCatch lib*.so'
 
 ARCHIVE_GAME_DATA_PATH='Octodad Dadliest Catch'
-ARCHIVE_GAME_DATA_FILES='./*'
+ARCHIVE_GAME_DATA_FILES='Content icon_512x512.png'
 
 CONFIG_FILES='./*.xml'
 DATA_FILES='./*.odad ./*.txt'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='OctodadDadliestCatch'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='./icon_512x512.png'
-APP_MAIN_ICON_RES='512'
+APP_MAIN_ICON='icon_512x512.png'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libgl1-mesa-glx | libgl1"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-libgl"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
@@ -95,13 +101,7 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
-
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
-
-PKG='PKG_DATA'
-organize_data 'GAME_DATA' "$PATH_GAME"
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -111,7 +111,8 @@ write_launcher 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 write_metadata 'PKG_BIN'
 build_pkg

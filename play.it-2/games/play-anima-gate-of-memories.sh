@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2017-2018, Solène Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # Anima: Gate of Memories
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181007.3
 
 # Set game-specific variables
 
 GAME_ID='anima-gate-of-memories'
 GAME_NAME='Anima: Gate of Memories'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_anima_gate_of_memories_2.0.0.1.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/anima_gate_of_memories'
@@ -50,33 +49,30 @@ ARCHIVE_GOG_SIZE='8900000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.1'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='./*.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='GoMLinux.x86 GoMLinux_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='GoMLinux.x86_64 GoMLinux_Data/*/x86_64'
 
 ARCHIVE_GAME_ASSETS_PATH='data/noarch/game'
-ARCHIVE_GAME_ASSETS_FILES='./*_Data/*.assets ./*_Data/*.assets.resS'
+ARCHIVE_GAME_ASSETS_FILES='GoMLinux_Data/*.assets GoMLinux_Data/*.assets.resS'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./*_Data'
+ARCHIVE_GAME_DATA_FILES='GoMLinux_Data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='pulseaudio --start'
 APP_MAIN_EXE_BIN32='GoMLinux.x86'
 APP_MAIN_EXE_BIN64='GoMLinux.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='*_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='GoMLinux_Data/Resources/UnityPlayer.png'
 
-PACKAGES_LIST='PKG_ASSETS PKG_DATA PKG_BIN32 PKG_BIN64'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_ASSETS PKG_DATA'
 
 PKG_ASSETS_ID="${GAME_ID}-assets"
 PKG_ASSETS_DESCRIPTION='assets'
@@ -85,48 +81,42 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS_DEB="$PKG_ASSETS_ID, $PKG_DATA_ID, libc6, libglu1-mesa | libglu1, libxcursor1, libxrandr2, pulseaudio:amd64 | pulseaudio"
-PKG_BIN32_DEPS_ARCH="$PKG_ASSETS_ID $PKG_DATA_ID lib32-glu lib32-libxcursor lib32-libxrandr pulseaudio"
+PKG_BIN32_DEPS="$PKG_ASSETS_ID $PKG_DATA_ID glibc libstdc++ glu xcursor libxrandr gtk2 libudev1"
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_ARCH="$PKG_ASSETS_ID $PKG_DATA_ID glu libxcursor libxrandr pulseaudio"
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-PKG='PKG_BIN32'
-organize_data 'GAME_BIN32' "$PATH_GAME"
-
-PKG='PKG_BIN64'
-organize_data 'GAME_BIN64' "$PATH_GAME"
-
-PKG='PKG_ASSETS'
-organize_data 'GAME_ASSETS' "$PATH_GAME"
-
-PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -137,21 +127,18 @@ done
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 write_metadata 'PKG_ASSETS' 'PKG_BIN32' 'PKG_BIN64'
 build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-printf '\n'
-printf '32-bit:'
-print_instructions 'PKG_ASSETS' 'PKG_DATA' 'PKG_BIN32'
-printf '64-bit:'
-print_instructions 'PKG_ASSETS' 'PKG_DATA' 'PKG_BIN64'
+print_instructions
 
 exit 0

@@ -30,18 +30,16 @@ set -o errexit
 
 ###
 # Hammerwatch
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181021.4
 
 # Set game-specific variables
 
 GAME_ID='hammerwatch'
 GAME_NAME='Hammerwatch'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_HUMBLE'
 
 ARCHIVE_GOG='gog_hammerwatch_2.1.0.7.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/hammerwatch'
@@ -49,26 +47,37 @@ ARCHIVE_GOG_MD5='2d1f01b73f43e0b6399ab578c52c6cb6'
 ARCHIVE_GOG_SIZE='230000'
 ARCHIVE_GOG_VERSION='1.32-gog2.1.0.7'
 
-ARCHIVE_HUMBLE='hammerwatch_linux1.32.zip'
+ARCHIVE_HUMBLE='hammerwatch_linux_141.zip'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/hammerwatch'
-ARCHIVE_HUMBLE_MD5='c31f4053bcde3dc34bc8efe5f232c26e'
+ARCHIVE_HUMBLE_MD5='a342298f2201a33a616e412b70c4a7f8'
 ARCHIVE_HUMBLE_SIZE='230000'
-ARCHIVE_HUMBLE_VERSION='1.32-humble160405'
+ARCHIVE_HUMBLE_VERSION='1.42-humble180913'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
+ARCHIVE_HUMBLE_OLD0='hammerwatch_linux1.32.zip'
+ARCHIVE_HUMBLE_OLD0_MD5='c31f4053bcde3dc34bc8efe5f232c26e'
+ARCHIVE_HUMBLE_OLD0_SIZE='230000'
+ARCHIVE_HUMBLE_OLD0_VERSION='1.32-humble160405'
+
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES_GOG='*'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_BIN32_PATH_HUMBLE='Hammerwatch'
-ARCHIVE_GAME_BIN32_FILES='./lib ./Hammerwatch.bin.x86'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
+ARCHIVE_GAME_BIN32_FILES='lib Hammerwatch.bin.x86'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN32_PATH_HUMBLE_OLD0='Hammerwatch'
 
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_PATH_HUMBLE='Hammerwatch'
-ARCHIVE_GAME_BIN64_FILES='./lib64 ./Hammerwatch.bin.x86_64'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='.'
+ARCHIVE_GAME_BIN64_FILES='lib64 Hammerwatch.bin.x86_64'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN64_PATH_HUMBLE_OLD0='Hammerwatch'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_DATA_PATH_HUMBLE='Hammerwatch'
-ARCHIVE_GAME_DATA_FILES='./editor ./levels ./mono ./assets* ./Farseer* ./Hammerwatch.exe ./Hammerwatch.pdb ./ICS* ./Lidgren* ./Mono* ./mscor* ./Png* ./Run* ./SDL2* ./Steam* ./System* ./Tilted*'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
+ARCHIVE_GAME_DATA_FILES='*.dll *.dll.config *.pdb Hammerwatch.exe editor levels mono assets*'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_HUMBLE_OLD0='Hammerwatch'
 
 CONFIG_FILES='./*.xml'
 DATA_FILES='./*.log ./*.txt'
@@ -78,51 +87,56 @@ APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Hammerwatch.bin.x86'
 APP_MAIN_EXE_BIN64='Hammerwatch.bin.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='./Hammerwatch.exe'
-APP_MAIN_ICON_RES='16 32 48 96 256'
+APP_MAIN_ICON='Hammerwatch.exe'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_MEDIA_ID $PKG_DATA_ID glibc libstdc++6 sdl2"
+PKG_BIN32_DEPS="$PKG_MEDIA_ID $PKG_DATA_ID glibc libstdc++ sdl2 glx"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
 PKG='PKG_DATA'
-extract_and_sort_icons_from 'APP_MAIN'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
@@ -132,14 +146,11 @@ done
 
 # Copy 'Hammerwatch.exe' into game prefix
 
-pattern='s/cp --parents --remove-destination "$APP_EXE" "$PATH_PREFIX"/&\n'
-pattern="$pattern\\tcd \"\$PATH_GAME\"\\n"
-pattern="$pattern\\tcp --parents --remove-destination 'Hammerwatch.exe' \"\$PATH_PREFIX\"/"
-for file in "${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID" \
-            "${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"
-do
-	sed --in-place "$pattern" "$file"
-done
+pattern='s/^\tcp --parents --dereference --remove-destination "$APP_EXE" "$PATH_PREFIX"$/&\n'
+pattern="$pattern"'\tcp --parents --remove-destination "Hammerwatch.exe" "$PATH_PREFIX"/'
+file1="${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID"
+file2="${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"
+sed --in-place "$pattern" "$file1" "$file2"
 
 # Build package
 
@@ -148,14 +159,10 @@ build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-printf '\n'
-printf '32-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN32'
-printf '64-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN64'
+print_instructions
 
 exit 0

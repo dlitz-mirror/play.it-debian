@@ -19,6 +19,7 @@ archive_set_error_not_found() {
 	local string_single
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string_multiple='Aucun des fichiers suivants n’est présent :'
 			string_single='Le fichier suivant est introuvable :'
 		;;
@@ -138,7 +139,7 @@ archive_get_infos() {
 		type="$(get_value "${ARCHIVE}_TYPE")"
 	fi
 	eval ${name}_TYPE=\"$type\"
-	export ${name}_TYPE
+	export ${name?}_TYPE
 	check_deps
 	if [ -n "$size" ]; then
 		[ -n "$ARCHIVE_SIZE" ] || ARCHIVE_SIZE='0'
@@ -146,7 +147,7 @@ archive_get_infos() {
 	fi
 	export ARCHIVE_SIZE
 	export PKG_VERSION
-	export $name
+	export ${name?}
 	export ARCHIVE
 }
 
@@ -191,12 +192,15 @@ archive_guess_type() {
 		(*'.zip')
 			type='zip'
 		;;
+		(*'.7z')
+			type='7z'
+		;;
 		(*)
 			archive_guess_type_error "$archive"
 		;;
 	esac
 	eval ${archive}_TYPE=\'$type\'
-	export ${archive}_TYPE
+	export ${archive?}_TYPE
 }
 
 # display an error message if archive_guess_type failed to guess the type of an archive
@@ -206,6 +210,7 @@ archive_guess_type_error() {
 	local string
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='ARCHIVE_TYPE n’est pas défini pour %s et n’a pas pu être détecté automatiquement.'
 		;;
 		('en'|*)
@@ -281,6 +286,7 @@ archive_integrity_check_print() {
 	file="$1"
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string='Contrôle de l’intégrité de %s'
 		;;
 		('en'|*)
@@ -298,6 +304,7 @@ archive_integrity_check_error() {
 	local string2
 	case "${LANG%_*}" in
 		('fr')
+			# shellcheck disable=SC1112
 			string1='Somme de contrôle incohérente. %s n’est pas le fichier attendu.'
 			string2='Utilisez --checksum=none pour forcer son utilisation.'
 		;;
@@ -318,7 +325,7 @@ archives_get_list() {
 	local script
 	[ -n "$ARCHIVES_LIST" ] && return 0
 	script="$0"
-	while read archive; do
+	while read -r archive; do
 		if [ -z "$ARCHIVES_LIST" ]; then
 			ARCHIVES_LIST="$archive"
 		else

@@ -30,18 +30,16 @@ set -o errexit
 
 ###
 # Trine
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20181001.5
 
 # Set game-specific variables
 
-GAME_ID='trine'
+GAME_ID='trine-1'
 GAME_NAME='Trine'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_trine_enchanted_edition_2.0.0.2.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/trine_enchanted_edition'
@@ -49,82 +47,88 @@ ARCHIVE_GOG_MD5='0e8d2338b568222b28cf3c31059b4960'
 ARCHIVE_GOG_SIZE='1500000'
 ARCHIVE_GOG_VERSION='2.12.508-gog2.0.0.2'
 
-ARCHIVE_LIBPNG_32='libpng_1.2_32-bit.tar.gz'
-ARCHIVE_LIBPNG_32_MD5='15156525b3c6040571f320514a0caa80'
+ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC1_DATA_FILES='./*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-ARCHIVE_DOC2_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC2_DATA_FILES='./*.txt'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./bin/trine1_* ./lib'
+ARCHIVE_GAME_BIN_FILES='bin/trine1_* lib'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./*.fbq ./trine1.png ./data'
+ARCHIVE_GAME_DATA_FILES='*.fbq trine1.png data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='pulseaudio --start'
+APP_MAIN_LIBS='lib/lib32'
 APP_MAIN_EXE='bin/trine1_linux_launcher_32bit'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='trine1.png'
-APP_MAIN_ICON_RES='64'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+# Easier upgrade from packages generated with pre-20181001.2 scripts
+PKG_DATA_PROVIDE='trine-data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu gtk2 alsa openal vorbis pulseaudio"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu gtk2 alsa openal vorbis libudev1"
+# Easier upgrade from packages generated with pre-20181001.2 scripts
+PKG_BIN_PROVIDE='trine'
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 . "$PLAYIT_LIB2"
 
 # Use libpng 1.2 32-bit archive
 
-set_archive 'ARCHIVE_LIBPNG' 'ARCHIVE_LIBPNG_32'
-ARCHIVE='ARCHIVE_GOG'
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive 'ARCHIVE_LIBPNG32' 'ARCHIVE_OPTIONAL_LIBPNG32'
+ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-	organize_data "DOC1_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "DOC2_${PKG#PKG_}" "$PATH_DOC"
-done
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Include libpng into the game directory
+# Include libpng 1.2 32-bit
 
-if [ "$ARCHIVE_LIBPNG" ]; then
-	dir='libs'
-	ARCHIVE='ARCHIVE_LIBPNG'
-	extract_data_from "$ARCHIVE_LIBPNG"
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	APP_MAIN_LIBS="$dir"
+if [ "$ARCHIVE_LIBPNG32" ]; then
+	(
+		ARCHIVE='ARCHIVE_LIBPNG32'
+		extract_data_from "$ARCHIVE_LIBPNG32"
+	)
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
@@ -136,21 +140,23 @@ chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/bin"/*
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 
-cat > "$postinst" << EOF
-if [ ! -e "$PATH_GAME/libs/libpng12.so.0" ]; then
-	ln --symbolic ./libpng12.so.0.50.0 "$PATH_GAME/libs/libpng12.so.0"
-fi
-EOF
+if [ "$ARCHIVE_LIBPNG32" ]; then
+	cat > "$postinst" <<- EOF
+	if [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
+	    ln --symbolic ./libpng12.so.0.50.0 "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
+	fi
+	EOF
 
-cat > "$prerm" << EOF
-if [ -e "$PATH_GAME/libs/libpng12.so.0" ]; then
-	rm "$PATH_GAME/libs/libpng12.so.0"
+	cat > "$prerm" <<- EOF
+	if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
+	    rm "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
+	fi
+	EOF
 fi
-EOF
-
 write_metadata 'PKG_BIN'
 
 build_pkg

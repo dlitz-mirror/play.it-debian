@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Puzzle Agent
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20180911.1
+script_version=20181020.3
 
 # Set game-specific variables
 
@@ -55,12 +55,18 @@ ARCHIVE_GOG_OLD0_SIZE='260000'
 ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.0.0.3'
 
 ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='fmodex.dll grickle101.exe steam_api.dll'
+# Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
-ARCHIVE_GAME_BIN_FILES='./fmodex.dll ./grickle101.exe ./steam_api.dll'
 
 ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='pack'
+# Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
-ARCHIVE_GAME_DATA_FILES='./pack'
+
+DATA_DIRS='./userdata'
+
+APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='grickle101.exe'
@@ -72,7 +78,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine-staging"
+PKG_BIN_DEPS="$PKG_DATA_ID wine-staging glx winetricks xrandr"
 
 # Load common functions
 
@@ -117,6 +123,16 @@ icons_move_to 'PKG_DATA'
 
 PKG='PKG_BIN'
 write_launcher 'APP_MAIN'
+
+# Store saved games and settings outside of WINE prefix
+
+saves_path='$WINEPREFIX/drive_c/users/$(whoami)/My Documents/Telltale Games/puzzle-agent'
+pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
+pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
+pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""
+pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/userdata\" \"$saves_path\""
+pattern="$pattern\\nfi#"
+sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
 
 # Build package
 
