@@ -90,20 +90,26 @@ pkg_write_gentoo() {
 	}
 	EOF
 
-	if [ -e "$postinst" ]; then
+	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		pkg_postinst() {
-		$(cat "$postinst")
+		$(get_value "${pkg}_POSTINST_RUN")
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_gentoo_postinst "$target"
 	fi
 
-	if [ -e "$prerm" ]; then
+	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		pkg_prerm() {
-		$(cat "$prerm")
+		$(get_value "${pkg}_PRERM_RUN")
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$prerm" ]; then
+		compat_pkg_write_gentoo_prerm "$target"
 	fi
 }
 

@@ -80,25 +80,32 @@ pkg_write_deb() {
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
-	if [ -e "$postinst" ]; then
+	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
-		$(cat "$postinst")
+		$(get_value "${pkg}_POSTINST_RUN")
 
 		exit 0
 		EOF
 		chmod 755 "$postinst_script"
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_deb_postinst "$postinst_script"
 	fi
-	if [ -e "$prerm" ]; then
+
+	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
-		$(cat "$prerm")
+		$(get_value "${pkg}_PRERM_RUN")
 
 		exit 0
 		EOF
 		chmod 755 "$prerm_script"
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$prerm" ]; then
+		compat_pkg_write_deb_prerm "$prerm_script"
 	fi
 }
 

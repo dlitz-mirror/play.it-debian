@@ -60,29 +60,36 @@ pkg_write_arch() {
 
 	target="$pkg_path/.INSTALL"
 
-	if [ -e "$postinst" ]; then
+	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		post_install() {
-		$(cat "$postinst")
+		$(get_value "${pkg}_POSTINST_RUN")
 		}
 
 		post_upgrade() {
 		post_install
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_arch_postinst "$target"
 	fi
 
-	if [ -e "$prerm" ]; then
+	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		pre_remove() {
-		$(cat "$prerm")
+		$(get_value "${pkg}_PRERM_RUN")
 		}
 
 		pre_upgrade() {
 		pre_remove
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_arch_prerm "$target"
 	fi
+
 }
 
 # set list or Arch Linux dependencies from generic names

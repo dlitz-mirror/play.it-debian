@@ -1,3 +1,79 @@
+# Keep compatibility with 2.11 and older
+
+compat_pkg_write_arch_postinst() {
+	local target
+	target="$1"
+	cat >> "$target" <<- EOF
+	post_install() {
+	$(cat "$postinst")
+	}
+
+	post_upgrade() {
+	post_install
+	}
+	EOF
+}
+
+compat_pkg_write_arch_prerm() {
+	local target
+	target="$1"
+	cat >> "$target" <<- EOF
+	pre_remove() {
+	$(cat "$prerm")
+	}
+
+	pre_upgrade() {
+	pre_remove
+	}
+	EOF
+}
+
+compat_pkg_write_deb_postinst() {
+	local target
+	target="$1"
+	cat > "$target" <<- EOF
+	#!/bin/sh -e
+
+	$(cat "$postinst")
+
+	exit 0
+	EOF
+	chmod 755 "$target"
+}
+
+compat_pkg_write_deb_prerm() {
+	local target
+	target="$1"
+	cat > "$target" <<- EOF
+	#!/bin/sh -e
+
+	$(cat "$prerm")
+
+	exit 0
+	EOF
+	chmod 755 "$target"
+}
+
+compat_pkg_write_gentoo_postinst() {
+	local target
+	target="$1"
+	cat >> "$target" <<- EOF
+	pkg_postinst() {
+	$(cat "$postinst")
+	}
+	EOF
+}
+
+compat_pkg_write_gentoo_prerm() {
+	local target
+	target="$1"
+	cat >> "$target" <<- EOF
+	pkg_prerm() {
+	$(cat "$prerm")
+	}
+	EOF
+}
+
 # Keep compatibility with 2.10 and older
 
 write_bin() {
