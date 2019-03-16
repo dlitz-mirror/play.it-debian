@@ -9,7 +9,7 @@ print_instructions_arch() {
 			warning_skip_package 'print_instructions_arch' "$pkg"
 			return 0
 		fi
-		pkg_path="$(get_value "${pkg}_PKG")"
+		pkg_path=$(realpath "$(get_value "${pkg}_PKG")")
 		if [ -z "${pkg_path##* *}" ]; then
 			str_format=' "%s"'
 		else

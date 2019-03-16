@@ -276,7 +276,7 @@ pkg_set_deps_deb() {
 # CALLED BY: build_pkg
 pkg_build_deb() {
 	local pkg_filename
-	pkg_filename="$PWD/$(basename "$1").deb"
+	pkg_filename="$OPTION_OUTPUT_DIR/$(basename "$1").deb"
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		information_package_already_exists "$(basename "$pkg_filename")"
 		eval ${pkg}_PKG=\"$pkg_filename\"

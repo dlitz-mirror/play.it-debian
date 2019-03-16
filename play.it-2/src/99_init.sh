@@ -63,6 +63,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	DEFAULT_OPTION_PACKAGE='deb'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_ICONS='yes'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_OUTPUT_DIR="$PWD"
 	unset winecfg_desktop
 	unset winecfg_launcher
 
@@ -97,11 +99,13 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			 '--package'|\
 			 '--icons='*|\
 			 '--icons')
+			 '--output-dir='*|\
+			 '--output-dir')
 				if [ "${1%=*}" != "${1#*=}" ]; then
-					option="$(printf '%s' "${1%=*}" | sed 's/^--//')"
+					option="$(printf '%s' "${1%=*}" | sed 's/^--//;s/-/_/g')"
 					value="${1#*=}"
 				else
-					option="$(printf '%s' "$1" | sed 's/^--//')"
+					option="$(printf '%s' "$1" | sed 's/^--//;s/-/_/g')"
 					value="$2"
 					shift 1
 				fi
@@ -110,9 +114,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 					exit 0
 				else
 					# shellcheck disable=SC2046
-					eval OPTION_$(printf '%s' "$option" | tr '[:lower:]' '[:upper:]')=\"$value\"
+					eval OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')=\"$value\"
 					# shellcheck disable=SC2046
-					export OPTION_$(printf '%s' "$option" | tr '[:lower:]' '[:upper:]')
+					export OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')
 				fi
 				unset option
 				unset value
@@ -161,7 +165,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set options not already set by script arguments to default values
 
-	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'ICONS' 'PREFIX'; do
+	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'ICONS' 'OUTPUT_DIR' 'PREFIX'; do
 		if
 			[ -z "$(get_value "OPTION_$option")" ] && \
 			[ -n "$(get_value "DEFAULT_OPTION_$option")" ]
@@ -182,6 +186,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		SKIP_ICONS=1
 		export SKIP_ICONS
 	fi
+
+	# Make sure the output directory exists and is writable
+
+	OPTION_OUTPUT_DIR=$(printf '%s' "$OPTION_OUTPUT_DIR" | sed "s#^~#$HOME#")
+	if [ ! -d "$OPTION_OUTPUT_DIR" ]; then
+		error_not_a_directory "$OPTION_OUTPUT_DIR"
+	fi
+	if [ ! -w "$OPTION_OUTPUT_DIR" ]; then
+		error_not_writable "$OPTION_OUTPUT_DIR"
+	fi
+	export OPTION_OUTPUT_DIR
 
 	# Do not allow bzip2 compression when building Debian packages
 

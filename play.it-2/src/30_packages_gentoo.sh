@@ -324,7 +324,8 @@ pkg_build_gentoo() {
 			pkg_filename_base="$pkg_architecture/$pkg_filename_base"
 		fi
 	done
-	local pkg_filename="$PWD/$pkg_filename_base"
+	local pkg_filename
+	pkg_filename="$OPTION_OUTPUT_DIR/$pkg_filename_base"
 
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		information_package_already_exists "$pkg_filename_base"

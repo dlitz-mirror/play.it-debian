@@ -34,6 +34,7 @@ help() {
 	help_skipfreespacecheck
 	help_icons
 	help_overwrite
+	help_output_dir
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -254,6 +255,23 @@ help_overwrite() {
 		;;
 	esac
 	printf -- '--overwrite\n\n'
+	printf "$message"
+	return 0
+}
+
+# display --output-dir option usage
+# USAGE: help_output_dir
+help_output_dir() {
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='\tDéfinit le répertoire de destination des paquets générés.\n\n'
+		;;
+		('en'|*)
+			message='\tSet the output directory for generated packages.\n\n'
+		;;
+	esac
+	printf -- '--output-dir\n\n'
 	printf "$message"
 	return 0
 }
