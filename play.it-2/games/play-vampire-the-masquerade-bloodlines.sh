@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Vampire the Masquerade: Bloodlines
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180825.1
+script_version=20190324.1
 
 # Set game-specific variables
 
@@ -69,12 +69,12 @@ ARCHIVE_GOG_OLD0_PART1_MD5='4177042d5a6e03026d52428e900e6137'
 ARCHIVE_GOG_OLD0_PART1_TYPE='innosetup'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='./bin ./*.dll ./*.dll.12 ./*.exe.12 ./launcher.exe ./vampire.exe ./vampire/*dlls ./unofficial_patch/*dlls'
+ARCHIVE_GAME_BIN_FILES='bin *.dll *.dll.12 *.exe.12 launcher.exe vampire.exe vampire/*dlls unofficial_patch/*dlls'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME_L10N_PATH='.'
-ARCHIVE_GAME_L10N_FILES='./docs/eula.rtf ./docs/license.txt ./docs/msr.txt ./docs/help/compatibility ./docs/help/credits ./docs/help/default.htm ./docs/help/index.htm ./docs/help/license ./docs/help/manual ./docs/help/_borders/left.htm ./docs/help/_borders/top.htm ./docs/help/images/troika.gif ./docs/help/tech?help/default.htm ./docs/help/tech?help/information ./docs/help/tech?help/customer?support/customer_support_files ./*.pdf ./version.inf ./vampire/cfg ./vampire/pack101.vpk ./vampire/pack103.vpk ./vampire/stats.txt ./vampire/vidcfg.bin'
+ARCHIVE_GAME_L10N_FILES='docs/eula.rtf docs/license.txt docs/msr.txt docs/help/compatibility docs/help/credits docs/help/default.htm docs/help/index.htm docs/help/license docs/help/manual docs/help/_borders/left.htm docs/help/_borders/top.htm docs/help/images/troika.gif docs/help/tech?help/default.htm docs/help/tech?help/information docs/help/tech?help/customer?support/customer_support_files *.pdf version.inf vampire/cfg vampire/pack101.vpk vampire/pack103.vpk vampire/stats.txt vampire/vidcfg.bin'
 
 ARCHIVE_GAME_L10N_DE_PATH="$ARCHIVE_GAME_L10N_PATH"
 ARCHIVE_GAME_L10N_DE_FILES="$ARCHIVE_GAME_L10N_FILES"
@@ -88,7 +88,7 @@ ARCHIVE_GAME_L10N_FR_PATH="$ARCHIVE_GAME_L10N_PATH"
 ARCHIVE_GAME_L10N_FR_FILES="$ARCHIVE_GAME_L10N_FILES"
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='./docs/copying.lesser ./docs/help/_borders/side_ie.css ./docs/help/_borders/style_ie.css ./docs/help/images/vamp.gif ./docs/help/images/*.jpg ./docs/help/tech?help/customer?support/customer_support.htm ./*.mpg ./*.tth ./*.txt ./*.dat ./vampire/maps ./vampire/media ./vampire/pack000.vpk ./vampire/pack001.vpk ./vampire/pack002.vpk ./vampire/pack003.vpk ./vampire/pack004.vpk ./vampire/pack005.vpk ./vampire/pack006.vpk ./vampire/pack007.vpk ./vampire/pack008.vpk ./vampire/pack009.vpk ./vampire/pack010.vpk ./vampire/pack100.vpk ./vampire/pack102.vpk ./vampire/python ./vampire/sound ./docs/help/_borders/top_files ./docs/help/readme ./unofficial_patch'
+ARCHIVE_GAME_DATA_FILES='docs/copying.lesser docs/help/_borders/side_ie.css docs/help/_borders/style_ie.css docs/help/images/vamp.gif docs/help/images/*.jpg docs/help/tech?help/customer?support/customer_support.htm *.mpg *.tth *.txt *.dat vampire/maps vampire/media vampire/pack000.vpk vampire/pack001.vpk vampire/pack002.vpk vampire/pack003.vpk vampire/pack004.vpk vampire/pack005.vpk vampire/pack006.vpk vampire/pack007.vpk vampire/pack008.vpk vampire/pack009.vpk vampire/pack010.vpk vampire/pack100.vpk vampire/pack102.vpk vampire/python vampire/sound docs/help/_borders/top_files docs/help/readme unofficial_patch'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
@@ -132,31 +132,30 @@ PKG_BIN_DEPS="$PKG_DATA_ID $PKG_L10N_ID wine"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Set script dependencies depending on source archive
@@ -241,12 +240,11 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-use_archive_specific_value 'APP_MAIN_EXE'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 # shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG'*)
-		write_launcher 'APP_UP'
+		launchers_write 'APP_UP'
 	;;
 esac
 
@@ -293,6 +291,5 @@ case "$ARCHIVE" in
 		print_instructions
 	;;
 esac
-
 
 exit 0
