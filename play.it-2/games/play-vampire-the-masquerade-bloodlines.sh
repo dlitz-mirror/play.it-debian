@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190324.1
+script_version=20191027.1
 
 # Set game-specific variables
 
@@ -43,21 +43,42 @@ SCRIPT_DEPS_DOTEMU='unzip'
 GAME_ID='vampire-the-masquerade-bloodlines'
 GAME_NAME='Vampire the Masquerade: Bloodlines'
 
+ARCHIVES_LIST='ARCHIVE_DOTEMU ARCHIVE_GOG_EN ARCHIVE_GOG_FR ARCHIVE_GOG_OLD1 ARCHIVE_GOG_OLD0'
+
 ARCHIVE_DOTEMU='vampire_the_masquerade_bloodlines_v1.2.exe'
 ARCHIVE_DOTEMU_MD5='8981da5fa644475583b2888a67fdd741'
 ARCHIVE_DOTEMU_TYPE='rar'
 ARCHIVE_DOTEMU_SIZE='3000000'
 ARCHIVE_DOTEMU_VERSION='1.2-dotemu1'
 
-ARCHIVE_GOG='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.0)_(22135).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/vampire_the_masquerade_bloodlines'
-ARCHIVE_GOG_MD5='095771daf8fd1b26d34a099f182c8d4a'
-ARCHIVE_GOG_TYPE='innosetup1.7'
-ARCHIVE_GOG_SIZE='4100000'
-ARCHIVE_GOG_VERSION='1.2up10.0-gog22135'
-ARCHIVE_GOG_PART1='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.0)_(22135)-1.bin'
-ARCHIVE_GOG_PART1_MD5='ef8a3fe212da189d811fcf6bc70a1e40'
-ARCHIVE_GOG_PART1_TYPE='innosetup1.7'
+ARCHIVE_GOG_EN='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.2)_(28160).exe'
+ARCHIVE_GOG_EN_URL='https://www.gog.com/game/vampire_the_masquerade_bloodlines'
+ARCHIVE_GOG_EN_MD5='8c1907871d2ded8afda77d5b570d5383'
+ARCHIVE_GOG_EN_TYPE='innosetup'
+ARCHIVE_GOG_EN_SIZE='4100000'
+ARCHIVE_GOG_EN_VERSION='1.2up10.2-gog28160'
+ARCHIVE_GOG_EN_PART1='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.2)_(28160)-1.bin'
+ARCHIVE_GOG_EN_PART1_MD5='a28edc25dc3c0f818673196852490628'
+ARCHIVE_GOG_EN_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_FR='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.2)_(french)_(28160).exe'
+ARCHIVE_GOG_FR_URL='https://www.gog.com/game/vampire_the_masquerade_bloodlines'
+ARCHIVE_GOG_FR_MD5='8877c5ab14363b249e72034fe5333921'
+ARCHIVE_GOG_FR_TYPE='innosetup'
+ARCHIVE_GOG_FR_SIZE='4200000'
+ARCHIVE_GOG_FR_VERSION='1.2up10.2-gog28160'
+ARCHIVE_GOG_FR_PART1='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.2)_(french)_(28160)-1.bin'
+ARCHIVE_GOG_FR_PART1_MD5='0dddbbcd2dee5474066b4863c56aa5f0'
+ARCHIVE_GOG_FR_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_OLD1='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.0)_(22135).exe'
+ARCHIVE_GOG_OLD1_MD5='095771daf8fd1b26d34a099f182c8d4a'
+ARCHIVE_GOG_OLD1_TYPE='innosetup1.7'
+ARCHIVE_GOG_OLD1_SIZE='4100000'
+ARCHIVE_GOG_OLD1_VERSION='1.2up10.0-gog22135'
+ARCHIVE_GOG_OLD1_PART1='setup_vampire_the_masquerade_-_bloodlines_1.2_(up_10.0)_(22135)-1.bin'
+ARCHIVE_GOG_OLD1_PART1_MD5='ef8a3fe212da189d811fcf6bc70a1e40'
+ARCHIVE_GOG_OLD1_PART1_TYPE='innosetup1.7'
 
 ARCHIVE_GOG_OLD0='setup_vtmb_1.2_(up_9.7_basic)_(11362).exe'
 ARCHIVE_GOG_OLD0_MD5='62b8db3b054595fb46bd8eaa5f8ae7bc'
@@ -74,21 +95,20 @@ ARCHIVE_GAME_BIN_FILES='bin *.dll *.dll.12 *.exe.12 launcher.exe vampire.exe vam
 ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME_L10N_PATH='.'
-ARCHIVE_GAME_L10N_FILES='docs/eula.rtf docs/license.txt docs/msr.txt docs/help/compatibility docs/help/credits docs/help/default.htm docs/help/index.htm docs/help/license docs/help/manual docs/help/_borders/left.htm docs/help/_borders/top.htm docs/help/images/troika.gif docs/help/tech?help/default.htm docs/help/tech?help/information docs/help/tech?help/customer?support/customer_support_files *.pdf version.inf vampire/cfg vampire/pack101.vpk vampire/pack103.vpk vampire/stats.txt vampire/vidcfg.bin'
+ARCHIVE_GAME_L10N_FILES='docs *.pdf version.inf vampire/cfg vampire/pack101.vpk vampire/pack103.vpk vampire/stats.txt vampire/vidcfg.bin'
 
 ARCHIVE_GAME_L10N_DE_PATH="$ARCHIVE_GAME_L10N_PATH"
 ARCHIVE_GAME_L10N_DE_FILES="$ARCHIVE_GAME_L10N_FILES"
 
 ARCHIVE_GAME_L10N_EN_PATH="$ARCHIVE_GAME_L10N_PATH"
 ARCHIVE_GAME_L10N_EN_FILES="$ARCHIVE_GAME_L10N_FILES"
-# Keep compatibility with old archives
-ARCHIVE_GAME_L10N_EN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME_L10N_FR_PATH="$ARCHIVE_GAME_L10N_PATH"
 ARCHIVE_GAME_L10N_FR_FILES="$ARCHIVE_GAME_L10N_FILES"
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='docs/copying.lesser docs/help/_borders/side_ie.css docs/help/_borders/style_ie.css docs/help/images/vamp.gif docs/help/images/*.jpg docs/help/tech?help/customer?support/customer_support.htm *.mpg *.tth *.txt *.dat vampire/maps vampire/media vampire/pack000.vpk vampire/pack001.vpk vampire/pack002.vpk vampire/pack003.vpk vampire/pack004.vpk vampire/pack005.vpk vampire/pack006.vpk vampire/pack007.vpk vampire/pack008.vpk vampire/pack009.vpk vampire/pack010.vpk vampire/pack100.vpk vampire/pack102.vpk vampire/python vampire/sound docs/help/_borders/top_files docs/help/readme unofficial_patch'
+ARCHIVE_GAME_DATA_FILES_DOTEMU='*.mpg *.tth *.txt *.dat vampire/maps vampire/media vampire/pack000.vpk vampire/pack001.vpk vampire/pack002.vpk vampire/pack003.vpk vampire/pack004.vpk vampire/pack005.vpk vampire/pack006.vpk vampire/pack007.vpk vampire/pack008.vpk vampire/pack009.vpk vampire/pack010.vpk vampire/pack100.vpk vampire/pack102.vpk vampire/python vampire/sound'
+ARCHIVE_GAME_DATA_FILES_GOG='*.mpg *.pdf *.tth *.txt *.dat version.inf doc vampire unofficial_patch'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
@@ -108,10 +128,15 @@ APP_UP_ICON='vampire.exe'
 APP_UP_NAME="$GAME_NAME - Unofficial Patch"
 
 PACKAGES_LIST_DOTEMU='PKG_BIN PKG_L10N_DE PKG_L10N_EN PKG_L10N_FR PKG_DATA'
-PACKAGES_LIST_GOG='PKG_BIN PKG_L10N_EN PKG_DATA'
+PACKAGES_LIST_GOG='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
+PKG_DATA_ID_GOG_FR="${PKG_DATA_ID}-fr"
+PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DESCRIPTION_GOG_EN="$PKG_DATA_DESCRIPTION - English version"
+PKG_DATA_DESCRIPTION_GOG_FR="$PKG_DATA_DESCRIPTION - French version"
 
 PKG_L10N_ID="${GAME_ID}-l10n"
 
@@ -129,6 +154,8 @@ PKG_L10N_FR_DESCRIPTION='French localization'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID $PKG_L10N_ID wine"
+PKG_BIN_DEPS_GOG_EN="$PKG_DATA_ID wine"
+PKG_BIN_DEPS_GOG_FR="$PKG_DATA_ID wine"
 
 # Load common functions
 
@@ -222,6 +249,9 @@ case "$ARCHIVE" in
 		tolower "$PLAYIT_WORKDIR/gamedata"
 	;;
 esac
+if [ -e "$PLAYIT_WORKDIR"/gamedata/unofficial_patch_* ]; then
+	mv "$PLAYIT_WORKDIR"/gamedata/unofficial_patch_* "$PLAYIT_WORKDIR/gamedata/unofficial_patch"
+fi
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
