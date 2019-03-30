@@ -184,10 +184,10 @@ pkg_set_deps_deb() {
 				esac
 			;;
 			('wine32')
-				pkg_dep='wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine'
+				pkg_dep='wine32 | wine-bin | wine-i386 | wine-staging-i386, wine'
 			;;
 			('wine64')
-				pkg_dep='wine64-development | wine64 | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
+				pkg_dep='wine64 | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
 			;;
 			('wine-staging')
 				use_archive_specific_value "${pkg}_ARCH"
