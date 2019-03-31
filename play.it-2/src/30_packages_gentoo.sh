@@ -303,7 +303,7 @@ pkg_build_gentoo() {
 	done
 	local pkg_filename="$PWD/$pkg_filename_base"
 
-	if [ -e "$pkg_filename" ]; then
+	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		pkg_build_print_already_exists "$pkg_filename_base"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg}_PKG

@@ -44,6 +44,8 @@ help() {
 	printf '\n'
 	help_icons
 	printf '\n'
+	help_overwrite
+	printf '\n'
 
 	printf 'ARCHIVE\n\n'
 	archives_get_list
@@ -260,7 +262,6 @@ help_skipfreespacecheck() {
 	printf '\t%s\n\n' "$string"
 }
 
-
 # display --icons option usage
 # USAGE: help_icons
 # NEEDED VARS: (LANG)
@@ -292,5 +293,23 @@ help_icons() {
 	[ "$DEFAULT_OPTION_ICONS" = 'no' ] && printf ' %s\n' "$string_default" || printf '\n'
 	printf '\tauto\t%s' "$string_auto"
 	[ "$DEFAULT_OPTION_ICONS" = 'auto' ] && printf ' %s\n' "$string_default" || printf '\n'
+}
+
+# display --overwrite
+# USAGE: help_overwrite
+# NEEDED VARS: (LANG)
+# CALLED BY: help
+help_overwrite() {
+	local string
+	case "${LANG%_*}" in
+		('fr')
+			string='Remplace les paquets si ils existent déjà.'
+		;;
+		('en'|*)
+			string='Replace packages if they already exist.'
+		;;
+	esac
+	printf -- '--overwrite\n\n'
+	printf '\t%s\n\n' "$string"
 }
 

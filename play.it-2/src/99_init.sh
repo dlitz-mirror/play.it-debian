@@ -70,6 +70,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	DRY_RUN='0'
 	NO_FREE_SPACE_CHECK='0'
 	SKIP_ICONS=0
+	OVERWRITE_PACKAGES=0
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
@@ -116,6 +117,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			('--skip-free-space-check')
 				NO_FREE_SPACE_CHECK='1'
 				export NO_FREE_SPACE_CHECK
+			;;
+			('--overwrite')
+				OVERWRITE_PACKAGES=1
+				export OVERWRITE_PACKAGES
 			;;
 			('--'*)
 				print_error
