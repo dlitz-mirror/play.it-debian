@@ -190,6 +190,9 @@ pkg_set_deps_gentoo() {
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"
 			;;
+			('mono')
+				pkg_dep="dev-lang/mono$architecture_suffix"
+			;;
 			('nss')
 				pkg_dep="dev-libs/nss$architecture_suffix"
 			;;

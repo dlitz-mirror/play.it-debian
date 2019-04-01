@@ -138,6 +138,15 @@ launcher_write_script() {
 				launcher_write_script_wine_run "$application" "$target_file"
 			fi
 		;;
+		('mono')
+			launcher_write_script_mono_application_variables "$application" "$target_file"
+			launcher_write_script_game_variables "$target_file"
+			launcher_write_script_user_files "$target_file"
+			launcher_write_script_prefix_variables "$target_file"
+			launcher_write_script_prefix_functions "$target_file"
+			launcher_write_script_prefix_build "$target_file"
+			launcher_write_script_mono_run "$application" "$target_file"
+		;;
 		(*)
 			error_unknown_application_type "$application_type"
 		;;
