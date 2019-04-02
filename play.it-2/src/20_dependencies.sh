@@ -12,7 +12,7 @@ check_deps() {
 				SCRIPT_DEPS="$SCRIPT_DEPS cabextract"
 			;;
 			('debian')
-				SCRIPT_DEPS="$SCRIPT_DEPS dpkg"
+				SCRIPT_DEPS="$SCRIPT_DEPS debian"
 			;;
 			('innosetup1.7'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract1.7"
@@ -74,6 +74,9 @@ check_deps() {
 			('lha')
 				check_deps_lha
 			;;
+			('debian')
+				check_deps_debian
+			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
 					error_dependency_not_found "$dep"
@@ -125,6 +128,26 @@ check_deps_lha() {
 		fi
 	done
 	error_dependency_not_found 'lha'
+}
+
+# check presence of a software to handle .deb packages
+# USAGE: check_deps_debian
+# CALLS: error_dependency_not_found
+# CALLED BY: check_deps
+check_deps_debian() {
+	for command in 'dpkg-deb' 'bsdtar' 'unar'; do
+		if command -v "$command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	if command -v 'tar' >/dev/null 2>&1; then
+		for command in '7z' '7zr' 'ar'; do
+			if command -v "$command" >/dev/null 2>&1; then
+				return 0
+			fi
+		done
+	fi
+	error_dependency_not_found 'dpkg-deb'
 }
 
 # check innoextract presence, optionally in a given minimum version
@@ -186,6 +209,9 @@ dependency_provided_by() {
 		;;
 		('icotool'|'wrestool')
 			provider='icoutils'
+		;;
+		('dpkg-deb')
+			provider='dpkg'
 		;;
 		(*)
 			provider="$command"
