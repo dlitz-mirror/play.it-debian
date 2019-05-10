@@ -27,7 +27,7 @@ pkg_write_arch() {
 	pkgname = $pkg_id
 	pkgver = $PKG_VERSION
 	packager = $pkg_maint
-	builddate = $(date +"%m%d%Y")
+	builddate = $(date +%s)
 	size = $pkg_size
 	arch = $pkg_architecture
 	EOF
