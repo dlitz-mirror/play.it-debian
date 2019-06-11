@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Deus Ex
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180813.1
+script_version=20190611.1
 
 # Set game-specific variables
 
@@ -78,7 +78,7 @@ ARCHIVE_DOC_DATA_PATH_GOG_OLD3='app'
 ARCHIVE_DOC_DATA_PATH_GOG_OLD4='app'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='./system/*.exe ./system/*.ini ./system/*.int ./system/3dfxspl2.dll ./system/3dfxspl3.dll ./system/3dfxspl.dll ./system/consys.dll ./system/core.dll ./system/d3ddrv.dll ./system/deusex.dll ./system/deusextext.dll ./system/editor.dll ./system/engine.dll ./system/extension.dll ./system/fire.dll ./system/galaxy.dll ./system/glide2x.dll ./system/glide3x.dll ./system/glide.dll ./system/glidedrv.dll ./system/ipdrv.dll ./system/metaldrv.dll ./system/msvcrt.dll ./system/opengldrv.dll ./system/render.dll ./system/sgldrv.dll ./system/softdrv.dll ./system/window.dll ./system/windrv.dll'
+ARCHIVE_GAME_BIN_FILES='./system/*.dll ./system/*.exe ./system/*.ini ./system/*.int'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_GOG_OLD1='app'
 ARCHIVE_GAME_BIN_PATH_GOG_OLD2='app'
@@ -116,31 +116,30 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine xgamma"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -158,7 +157,7 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
