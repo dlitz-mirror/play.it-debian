@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2019, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +31,11 @@ set -o errexit
 
 ###
 # The Witcher 2
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180810.1
+script_version=20190711.1
 
 # Set game-specific variables
 
@@ -48,44 +49,44 @@ ARCHIVE_GOG_SIZE='24000000'
 ARCHIVE_GOG_VERSION='1release3-gog20992'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD='gog_the_witcher_2_assassins_of_kings_enhanced_edition_2.2.0.8.sh'
-ARCHIVE_GOG_OLD_MD5='3fff5123677a7be2023ecdb6af3b82b6'
-ARCHIVE_GOG_OLD_SIZE='24000000'
-ARCHIVE_GOG_OLD_VERSION='1release3-gog2.2.0.8'
-ARCHIVE_GOG_OLD_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_OLD0='gog_the_witcher_2_assassins_of_kings_enhanced_edition_2.2.0.8.sh'
+ARCHIVE_GOG_OLD0_MD5='3fff5123677a7be2023ecdb6af3b82b6'
+ARCHIVE_GOG_OLD0_SIZE='24000000'
+ARCHIVE_GOG_OLD0_VERSION='1release3-gog2.2.0.8'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='./*'
+ARCHIVE_DOC0_DATA_FILES='*'
 
 ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC1_DATA_FILES='./*.rtf ./*.txt'
+ARCHIVE_DOC1_DATA_FILES='*.rtf *.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./bin ./configurator ./CrashReporter* ./crash_reporting ./eONprecompiledShaders32.dat ./*launcher* ./libopenal-eon.so.1 ./saferun.sh ./sdlinput ./witcher2'
+ARCHIVE_GAME_BIN_FILES='bin configurator CrashReporter* crash_reporting eONprecompiledShaders32.dat *launcher* libopenal-eon.so.1 saferun.sh sdlinput witcher2'
 
 ARCHIVE_GAME_PACK1_PATH='data/noarch/game'
-ARCHIVE_GAME_PACK1_FILES='./CookedPC/pack0.dzip.split00'
+ARCHIVE_GAME_PACK1_FILES='CookedPC/pack0.dzip.split00'
 
 ARCHIVE_GAME_PACK2_PATH='data/noarch/game'
-ARCHIVE_GAME_PACK2_FILES='./CookedPC/pack0.dzip.split01 ./CookedPC/pack0.dzip.split02'
+ARCHIVE_GAME_PACK2_FILES='CookedPC/pack0.dzip.split01 CookedPC/pack0.dzip.split02'
 
 ARCHIVE_GAME_VOICES_DE_PATH='data/noarch/game'
-ARCHIVE_GAME_VOICES_DE_FILES='./CookedPC/de0.w2speech'
+ARCHIVE_GAME_VOICES_DE_FILES='CookedPC/de0.w2speech'
 
 ARCHIVE_GAME_VOICES_EN_PATH='data/noarch/game'
-ARCHIVE_GAME_VOICES_EN_FILES='./CookedPC/en0.w2speech'
+ARCHIVE_GAME_VOICES_EN_FILES='CookedPC/en0.w2speech'
 
 ARCHIVE_GAME_VOICES_FR_PATH='data/noarch/game'
-ARCHIVE_GAME_VOICES_FR_FILES='./CookedPC/fr0.w2speech'
+ARCHIVE_GAME_VOICES_FR_FILES='CookedPC/fr0.w2speech'
 
 ARCHIVE_GAME_VOICES_PL_PATH='data/noarch/game'
-ARCHIVE_GAME_VOICES_PL_FILES='./CookedPC/pl0.w2speech'
+ARCHIVE_GAME_VOICES_PL_FILES='CookedPC/pl0.w2speech'
 
 ARCHIVE_GAME_VOICES_RU_PATH='data/noarch/game'
-ARCHIVE_GAME_VOICES_RU_FILES='./CookedPC/ru0.w2speech'
+ARCHIVE_GAME_VOICES_RU_FILES='CookedPC/ru0.w2speech'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./CookedPC ./fontconfig ./icudt52l.dat ./linux ./SDLGamepad.config ./VPFS_registry.vpfsdb ./witcher2.vpfs'
+ARCHIVE_GAME_DATA_FILES='CookedPC fontconfig icudt52l.dat linux SDLGamepad.config VPFS_registry.vpfsdb witcher2.vpfs'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='witcher2'
@@ -139,31 +140,30 @@ PKG_BIN_DEPS_ARCH='lib32-libtxc_dxtn'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -172,16 +172,17 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get icons
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN' 'APP_CONFIG'
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_CONFIG'
+launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Build package
-
-PKG='PKG_DATA'
-postinst_icons_linking 'APP_MAIN' 'APP_CONFIG'
-write_metadata 'PKG_DATA'
 
 cat > "$postinst" << EOF
 printf 'Building pack0.dzip, this might take a while…\\n'
@@ -193,7 +194,7 @@ rm "$PATH_GAME/CookedPC/pack0.dzip"
 EOF
 write_metadata 'PKG_BIN'
 
-write_metadata 'PKG_PACK1' 'PKG_PACK2' 'PKG_VOICES_DE' 'PKG_VOICES_EN' 'PKG_VOICES_FR' 'PKG_VOICES_PL' 'PKG_VOICES_RU'
+write_metadata 'PKG_PACK1' 'PKG_PACK2' 'PKG_VOICES_DE' 'PKG_VOICES_EN' 'PKG_VOICES_FR' 'PKG_VOICES_PL' 'PKG_VOICES_RU' 'PKG_DATA'
 build_pkg
 
 # Clean up
