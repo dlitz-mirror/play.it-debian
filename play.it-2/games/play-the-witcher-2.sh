@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190711.1
+script_version=20190924.1
 
 # Set game-specific variables
 
@@ -134,9 +134,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_PACK1_ID $PKG_PACK2_ID $PKG_VOICES_ID $PKG_DATA_ID alsa gtk2 sdl2_image freetype libcurl libudev1"
-PKG_BIN_DEPS_DEB='libtxc-dxtn-s2tc0 | libtxc-dxtn0'
-PKG_BIN_DEPS_ARCH='lib32-libtxc_dxtn'
+PKG_BIN_DEPS="$PKG_PACK1_ID $PKG_PACK2_ID $PKG_VOICES_ID $PKG_DATA_ID alsa gtk2 sdl2_image freetype libcurl libudev1 glx"
 
 # Load common functions
 
