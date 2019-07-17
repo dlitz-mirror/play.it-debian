@@ -103,14 +103,35 @@ print_warning() {
 
 # convert files name to lower case
 # USAGE: tolower $dir[…]
+# CALLS: tolower_convmv tolower_shell
 tolower() {
 	[ "$DRY_RUN" = '1' ] && return 0
 	for dir in "$@"; do
 		[ -d "$dir" ] || return 1
-		find "$dir" -depth -mindepth 1 | while read -r file; do
-			newfile="${file%/*}/$(printf '%s' "${file##*/}" | tr '[:upper:]' '[:lower:]')"
-			[ -e "$newfile" ] || mv "$file" "$newfile"
-		done
+		if command -v convmv > /dev/null; then
+			tolower_convmv "$dir"
+		else
+			tolower_shell "$dir"
+		fi
+	done
+}
+
+# convert files name to lower case using convmv
+# USAGE: tolower_convmv $dir
+# CALLED BY: tolower
+tolower_convmv() {
+	local dir="$1"
+	convmv --notest --lower -r "$dir" >/dev/null 2>&1
+}
+# convert files name to lower case using pure shell
+# USAGE: tolower_shell $dir
+# CALLED BY: tolower
+tolower_shell() {
+	local dir="$1"
+
+	find "$dir" -depth -mindepth 1 | while read -r file; do
+		newfile="${file%/*}/$(printf '%s' "${file##*/}" | tr '[:upper:]' '[:lower:]')"
+		[ -e "$newfile" ] || mv "$file" "$newfile"
 	done
 }
 
