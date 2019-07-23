@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -34,15 +34,14 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180930.4
+script_version=20190723.1
 
 # Set game-specific variables
 
 SCRIPT_DEPS='unix2dos'
 
 GAME_ID='baldurs-gate-1'
-# shellcheck disable=SC1112
-GAME_NAME='Baldur’s Gate'
+GAME_NAME='Baldurʼs Gate'
 
 ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD0'
 
@@ -125,7 +124,7 @@ PKG_BIN_PROVIDE='baldurs-gate'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -148,13 +147,12 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 tolower "$PLAYIT_WORKDIR/gamedata/data/noarch/docs"
 tolower "$PLAYIT_WORKDIR/gamedata/data/noarch/prefix/drive_c"
 prepare_package_layout
@@ -163,7 +161,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Extract icons
 
 PKG='PKG_L10N'
-extract_and_sort_icons_from 'APP_MAIN' 'APP_CONFIG'
+icons_get_from_package 'APP_MAIN' 'APP_CONFIG'
 move_icons_to 'PKG_DATA'
 
 # Tweak paths in baldur.ini
@@ -171,21 +169,25 @@ move_icons_to 'PKG_DATA'
 file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
 # shellcheck disable=SC1003
 pattern='s/^\(.D.:\)=.*/\1=C:\\'"$GAME_ID"'\\/'
-sed --in-place "$pattern" "$file"
-unix2dos "${PKG_L10N_PATH}${PATH_GAME}/baldur.ini" > /dev/null 2>&1
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place "$pattern" "$file"
+	unix2dos "$file" > /dev/null 2>&1
+fi
 
 # Use more sensible default settings for modern hardware
 
 file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
 pattern='s/^\(Path Search Nodes\)=.*/\1=400000/'
 pattern="$pattern"';s/^\(CacheSize\)=.*/\1=1024/'
-sed --in-place "$pattern" "$file"
-unix2dos "${PKG_L10N_PATH}${PATH_GAME}/baldur.ini" > /dev/null 2>&1
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place "$pattern" "$file"
+	unix2dos "$file" > /dev/null 2>&1
+fi
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_CONFIG'
+launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Build package
 
