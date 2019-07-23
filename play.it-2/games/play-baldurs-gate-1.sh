@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190930.2
+script_version=20190930.3
 
 # Set game-specific variables
 
@@ -90,7 +90,7 @@ ARCHIVE_GAME_DATA_FILES='*.key characters music scripts *save/*/*.bmp *save/*/*.
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./save'
 
-APP_WINETRICKS='vd=800x600'
+APP_WINETRICKS='vd=800x600 csmt=off'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bgmain2.exe'
