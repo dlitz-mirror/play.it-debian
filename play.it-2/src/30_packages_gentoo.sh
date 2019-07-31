@@ -241,7 +241,12 @@ pkg_set_deps_gentoo() {
 				pkg_dep='virtual/wine[staging,abi_x86_64]'
 			;;
 			('winetricks')
-				pkg_dep='app-emulation/winetricks'
+				pkg_dep='app-emulation/winetricks
+				|| (
+					x11-terms/xterm
+					gnome-extra/zenity
+					kde-apps/kdialog
+				)'
 			;;
 			('xcursor')
 				pkg_dep="x11-libs/libXcursor$architecture_suffix"

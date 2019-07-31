@@ -193,7 +193,7 @@ pkg_set_deps_arch32() {
 				pkg_dep='wine-staging'
 			;;
 			('winetricks')
-				pkg_dep='winetricks'
+				pkg_dep='winetricks xterm'
 			;;
 			('xcursor')
 				pkg_dep='lib32-libxcursor'

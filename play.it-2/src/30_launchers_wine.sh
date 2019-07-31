@@ -84,7 +84,13 @@ launcher_write_script_wine_prefix_build() {
 
 	if [ "$APP_WINETRICKS" ]; then
 		cat >> "$file" <<- EOF
-		    winetricks $APP_WINETRICKS
+		    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+		        winetricks $APP_WINETRICKS
+		    elif command -v xterm >/dev/null; then
+		        xterm -e winetricks $APP_WINETRICKS
+		    else
+		        winetricks $APP_WINETRICKS
+		    fi
 		    sleep 1s
 		EOF
 	fi
