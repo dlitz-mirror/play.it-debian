@@ -47,7 +47,11 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_CHECKSUM='none md5'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION='none gzip xz bzip2'
+	ALLOWED_VALUES_COMPRESSION_DEB='none gzip xz'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION_ARCH='none gzip xz bzip2'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION_GENTOO='gzip xz bzip2'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_PACKAGE='arch deb gentoo'
 	# shellcheck disable=SC2034
@@ -160,8 +164,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	check_option_validity 'PACKAGE'
 
-	# Set default value for compression and prefix depending on the chosen package format
+	# Set allowed and default values for compression and prefix depending on the chosen package format
 
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION="$(get_value "ALLOWED_VALUES_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
@@ -201,24 +207,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		error_not_writable "$OPTION_OUTPUT_DIR"
 	fi
 	export OPTION_OUTPUT_DIR
-
-	# Do not allow bzip2 compression when building Debian packages
-
-	if
-		[ "$OPTION_PACKAGE" = 'deb' ] && \
-		[ "$OPTION_COMPRESSION" = 'bzip2' ]
-	then
-		error_compression_method_not_compatible 'bzip2' 'deb'
-	fi
-
-	# Do not allow none compression when building Gentoo packages
-
-	if
-		[ "$OPTION_PACKAGE" = 'gentoo' ] && \
-		[ "$OPTION_COMPRESSION" = 'none' ]
-	then
-		error_compression_method_not_compatible 'none' 'gentoo'
-	fi
 
 	# Restrict packages list to target architecture
 

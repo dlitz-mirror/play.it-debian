@@ -157,7 +157,11 @@ check_option_validity() {
 	done
 	# if we did not leave the function before this point, the tested value is not valid
 	option_name=$(printf '%s' "$option_name" | tr '[:upper:]' '[:lower:]')
-	error_option_invalid "$option_name" "$option_value"
+	if [ "$option_name" = 'compression' ]; then
+		error_compression_invalid
+	else
+		error_option_invalid "$option_name" "$option_value"
+	fi
 }
 
 # try to guess the tar implementation used for `tar` on the current system
