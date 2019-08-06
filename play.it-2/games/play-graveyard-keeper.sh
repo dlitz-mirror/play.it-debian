@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210513.2
+script_version=20210513.3
 
 # Set game-specific variables
 
@@ -83,6 +83,15 @@ APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Use a per-session dedicated file for logs
 mkdir --parents logs
 APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 
 # Load common functions
 
