@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,22 +31,22 @@ set -o errexit
 ###
 # Graveyard Keeper
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181229.1
+script_version=20210513.1
 
 # Set game-specific variables
 
 GAME_ID='graveyard-keeper'
 GAME_NAME='Graveyard Keeper'
 
-ARCHIVE_GOG='graveyard_keeper_1_122_25858.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/graveyard_keeper'
-ARCHIVE_GOG_MD5='ad75b8ed2c4b74a763849918da672f5b'
-ARCHIVE_GOG_SIZE='920000'
-ARCHIVE_GOG_VERSION='1.122-gog25858'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_BASE_0='graveyard_keeper_1_122_25858.sh'
+ARCHIVE_BASE_0_MD5='ad75b8ed2c4b74a763849918da672f5b'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='920000'
+ARCHIVE_BASE_0_VERSION='1.122-gog25858'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/graveyard_keeper'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -60,13 +60,9 @@ ARCHIVE_GAME_BIN64_FILES='Graveyard?Keeper.x86_64 Graveyard?Keeper_Data/*/x86_64
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Graveyard?Keeper_Data'
 
-DATA_DIRS='./logs'
-
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Graveyard Keeper.x86'
 APP_MAIN_EXE_BIN64='Graveyard Keeper.x86_64'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='Graveyard Keeper_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
@@ -75,27 +71,34 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
 # Load common functions
 
-target_version='2.10'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -112,20 +115,25 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up
