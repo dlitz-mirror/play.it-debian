@@ -129,3 +129,25 @@ error_unknown_tar_implementation() {
 	printf "$string" "$PLAYIT_BUG_TRACKER_URL"
 	exit 1
 }
+
+# display a message if a required dependency is missing
+# USAGE: error_dependency_not_found $command_name
+# CALLED BY: check_deps check_deps_7z
+# CALLS: dependency_provided_by
+error_dependency_not_found() {
+	local command_name provider
+	command_name="$1"
+	provider="$(dependency_provided_by "$command_name")"
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='%s est introuvable. Installez %s avant de lancer ce script.\n'
+		;;
+		('en'|*)
+			string='%s not found. Install %s before running this script.\n'
+		;;
+	esac
+	printf "$string" "$command_name" "$provider"
+	return 1
+}
+
