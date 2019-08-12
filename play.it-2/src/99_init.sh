@@ -158,39 +158,6 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Check options values validity
 
-	check_option_validity() {
-		local name
-		name="$1"
-		local value
-		value="$(get_value "OPTION_$option")"
-		local allowed_values
-		allowed_values="$(get_value "ALLOWED_VALUES_$option")"
-		for allowed_value in $allowed_values; do
-			if [ "$value" = "$allowed_value" ]; then
-				return 0
-			fi
-		done
-		print_error
-		local string1
-		local string2
-		case "${LANG%_*}" in
-			('fr')
-				# shellcheck disable=SC1112
-				string1='%s n’est pas une valeur valide pour --%s.\n'
-				# shellcheck disable=SC1112
-				string2='Lancez le script avec l’option --%s=help pour une liste des valeurs acceptés.\n'
-			;;
-			('en'|*)
-				string1='%s is not a valid value for --%s.\n'
-				string2='Run the script with the option --%s=help to get a list of supported values.\n'
-			;;
-		esac
-		printf "$string1" "$value" "$(printf '%s' $option | tr '[:upper:]' '[:lower:]')"
-		printf "$string2" "$(printf '%s' $option | tr '[:upper:]' '[:lower:]')"
-		printf '\n'
-		exit 1
-	}
-
 	for option in 'CHECKSUM' 'COMPRESSION' 'PACKAGE'; do
 		check_option_validity "$option"
 	done

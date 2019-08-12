@@ -220,3 +220,31 @@ get_value() {
 	value="$(eval printf -- '%b' \"\$$name\")"
 	printf '%s' "$value"
 }
+
+# check that the value assigned to a given option is valid
+# USAGE: check_option_validity $option_name
+check_option_validity() {
+	local name value allowed_values
+	name="$1"
+	value="$(get_value "OPTION_$name")"
+	allowed_values="$(get_value "ALLOWED_VALUES_$name")"
+	for allowed_value in $allowed_values; do
+		if [ "$value" = "$allowed_value" ]; then
+			return 0
+		fi
+	done
+	local string
+	case "${LANG%_*}" in
+		('fr')
+			string='%s nʼest pas une valeur valide pour --%s.\n'
+			string="$string"'Lancez le script avec lʼoption --%s=help pour une liste des valeurs acceptés.\n\n'
+		;;
+		('en'|*)
+			string='%s is not a valid value for --%s.\n'
+			string="$string"'Run the script with the option --%s=help to get a list of supported values.\n\n'
+		;;
+	esac
+	print_error
+	printf "$string" "$value" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')"
+	return 1
+}
