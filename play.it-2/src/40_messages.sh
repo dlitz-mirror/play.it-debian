@@ -108,3 +108,24 @@ error_unknown_application_type() {
 	exit 1
 }
 
+# display an error when the tar implementation isn’t recognized
+# USAGE: error_unknown_tar_implementation
+# CALLS: print_error
+error_unknown_tar_implementation() {
+	local string
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='La version de tar présente sur ce système nʼest pas reconnue.\n'
+			string="$string"'./play.it ne peut utiliser que GNU tar ou bsdtar.\n'
+			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			string='The tar implementation on this system wasnʼt recognized.\n'
+			string="$string"'./play.it can only use GNU tar or bsdtar.\n'
+			string="$string"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	printf "$string" "$PLAYIT_BUG_TRACKER_URL"
+	exit 1
+}

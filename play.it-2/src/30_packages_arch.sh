@@ -342,7 +342,21 @@ pkg_build_arch() {
 	fi
 
 	local tar_options
-	tar_options='--create --group=root --owner=root'
+	tar_options='--create'
+	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
+		guess_tar_implementation
+	fi
+	case "$PLAYIT_TAR_IMPLEMENTATION" in
+		('gnutar')
+			tar_options="$tar_options --group=root --owner=root"
+		;;
+		('bsdtar')
+			tar_options="$tar_options --gname=root --uname=root"
+		;;
+		(*)
+			error_unknown_tar_implementation
+		;;
+	esac
 
 	case $OPTION_COMPRESSION in
 		('gzip')

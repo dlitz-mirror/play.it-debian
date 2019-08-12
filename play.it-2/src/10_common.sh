@@ -269,3 +269,19 @@ check_option_validity() {
 	printf "$string" "$value" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')"
 	return 1
 }
+
+# try to guess the tar implementation used for `tar` on the current system
+# USAGE: guess_tar_implementation
+guess_tar_implementation() {
+	case "$(tar --version | head --lines 1)" in
+		(*'GNU tar'*)
+			PLAYIT_TAR_IMPLEMENTATION='gnutar'
+		;;
+		(*'libarchive'*)
+			PLAYIT_TAR_IMPLEMENTATION='bsdtar'
+		;;
+		(*)
+			error_unknown_tar_implementation
+		;;
+	esac
+}
