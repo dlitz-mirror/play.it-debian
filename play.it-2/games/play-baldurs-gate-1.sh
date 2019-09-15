@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190723.1
+script_version=20190930.2
 
 # Set game-specific variables
 
@@ -118,7 +118,7 @@ PKG_DATA_DESCRIPTION='data'
 PKG_DATA_PROVIDE='baldurs-gate-data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks glx libxrandr"
 # Easier upgrade from packages generated with pre-20180930.2 scripts
 PKG_BIN_PROVIDE='baldurs-gate'
 
