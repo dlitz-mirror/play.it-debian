@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190927.1
+script_version=20190927.2
 
 # Set game-specific variables
 
@@ -62,7 +62,7 @@ ARCHIVE_GAME_DATA_FILES='*.eng *.inf poseidon.ico zeus.ico adventures audio bink
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./save'
 
-APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}') csmt=off"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='zeus.exe'
