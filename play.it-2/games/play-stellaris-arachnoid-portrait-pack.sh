@@ -34,19 +34,49 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190705.1
+script_version=20191024.2
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Arachnoid Portrait Pack'
 
-ARCHIVE_GOG='stellaris_arachnoid_portrait_pack_2_3_3_30733.sh'
+ARCHIVE_GOG='stellaris_arachnoid_portrait_pack_2_5_0_5_33395.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
-ARCHIVE_GOG_MD5='5c057dbae5991e41771bff2e8a8761eb'
-ARCHIVE_GOG_SIZE='1300'
-ARCHIVE_GOG_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_MD5='41bebae230c0ff7bce679676332db1ef'
+ARCHIVE_GOG_SIZE='1400'
+ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD8='stellaris_arachnoid_portrait_pack_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD8_MD5='f9e8b40b26976241efda3fc483c076bf'
+ARCHIVE_GOG_OLD8_SIZE='1400'
+ARCHIVE_GOG_OLD8_VERSION='2.4.1.1-gog33112'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_arachnoid_portrait_pack_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD7_MD5='cf2ee052c99dd391dc1e5271abe1b4bd'
+ARCHIVE_GOG_OLD7_SIZE='1400'
+ARCHIVE_GOG_OLD7_VERSION='2.4.1-gog33088'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_arachnoid_portrait_pack_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD6_MD5='38c2b997d0545b7a7f2e3ddc3db33585'
+ARCHIVE_GOG_OLD6_SIZE='1400'
+ARCHIVE_GOG_OLD6_VERSION='2.4.0.7-gog33057'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD5='stellaris_arachnoid_portrait_pack_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD5_MD5='6b4eb96220030a77ef2b77753bee241a'
+ARCHIVE_GOG_OLD5_SIZE='1300'
+ARCHIVE_GOG_OLD5_VERSION='2.3.3.1-gog30901'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD4='stellaris_arachnoid_portrait_pack_2_3_3_30733.sh'
+ARCHIVE_GOG_OLD4_MD5='5c057dbae5991e41771bff2e8a8761eb'
+ARCHIVE_GOG_OLD4_SIZE='1300'
+ARCHIVE_GOG_OLD4_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD3='stellaris_arachnoid_portrait_pack_2_3_2_1_30253.sh'
 ARCHIVE_GOG_OLD3_MD5='6b52fde34bd0030d0d41c93a72eb17c9'

@@ -34,19 +34,49 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190705.1
+script_version=20191024.2
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Plantoids Species Pack'
 
-ARCHIVE_GOG='stellaris_plantoids_species_pack_2_3_3_30733.sh'
+ARCHIVE_GOG='stellaris_plantoids_species_pack_2_5_0_5_33395.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
-ARCHIVE_GOG_MD5='9ee0a135b8daaaf8c8133a17265fc70f'
-ARCHIVE_GOG_SIZE='1300'
-ARCHIVE_GOG_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_MD5='e0a472efa9de93df6daaef409546d37f'
+ARCHIVE_GOG_SIZE='1400'
+ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD5='stellaris_plantoids_species_pack_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD5_MD5='77a7baf5e6c053df54a94cbad695880b'
+ARCHIVE_GOG_OLD5_SIZE='1400'
+ARCHIVE_GOG_OLD5_VERSION='2.4.1.1-gog33112'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD4='stellaris_plantoids_species_pack_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD4_MD5='7398caec78dce20509bd855f12142be7'
+ARCHIVE_GOG_OLD4_SIZE='1400'
+ARCHIVE_GOG_OLD4_VERSION='2.4.1-gog33088'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD3='stellaris_plantoids_species_pack_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD3_MD5='b28ef109f37874b8b3328797f8eafbad'
+ARCHIVE_GOG_OLD3_SIZE='1400'
+ARCHIVE_GOG_OLD3_VERSION='2.4.0.7-gog33057'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD2='stellaris_plantoids_species_pack_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD2_MD5='8312d804898d8508dc221c7e513b9798'
+ARCHIVE_GOG_OLD2_SIZE='1300'
+ARCHIVE_GOG_OLD2_VERSION='2.3.3.1-gog30901'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD1='stellaris_plantoids_species_pack_2_3_3_30733.sh'
+ARCHIVE_GOG_OLD1_MD5='9ee0a135b8daaaf8c8133a17265fc70f'
+ARCHIVE_GOG_OLD1_SIZE='1300'
+ARCHIVE_GOG_OLD1_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD0='stellaris_plantoids_species_pack_2_3_2_1_30253.sh'
 ARCHIVE_GOG_OLD0_MD5='060a450f1836eb52c54739945824afed'

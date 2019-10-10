@@ -34,19 +34,49 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191003.1
+script_version=20191024.2
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Synthetic Dawn Story Pack'
 
-ARCHIVE_GOG='stellaris_synthetic_dawn_story_pack_2_3_3_30733.sh'
+ARCHIVE_GOG='stellaris_synthetic_dawn_story_pack_2_5_0_5_33395.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_synthetic_dawn_story_pack'
-ARCHIVE_GOG_MD5='9f591acef78c04290fab2ec11cb92189'
+ARCHIVE_GOG_MD5='bef6e627ff8e4e1d0890bfacff979261'
 ARCHIVE_GOG_SIZE='49000'
-ARCHIVE_GOG_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD4='stellaris_synthetic_dawn_story_pack_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD4_MD5='39b5ff1e84024fa579054a4b69043f8f'
+ARCHIVE_GOG_OLD4_SIZE='49000'
+ARCHIVE_GOG_OLD4_VERSION='2.4.4.1-gog33112'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD3='stellaris_synthetic_dawn_story_pack_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD3_MD5='85bdd887883651fbf43d5526d23d2231'
+ARCHIVE_GOG_OLD3_SIZE='49000'
+ARCHIVE_GOG_OLD3_VERSION='2.4.1-gog33088'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD2='stellaris_synthetic_dawn_story_pack_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD2_MD5='917989c55c41acecfa6ecb4d0f1f607b'
+ARCHIVE_GOG_OLD2_SIZE='49000'
+ARCHIVE_GOG_OLD2_VERSION='2.4.0.7-gog33057'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD1='stellaris_synthetic_dawn_story_pack_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD1_MD5='0bd54303550244ca68695f80d515d73c'
+ARCHIVE_GOG_OLD1_SIZE='49000'
+ARCHIVE_GOG_OLD1_VERSION='2.3.3.1-gog30901'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD0='stellaris_synthetic_dawn_story_pack_2_3_3_30733.sh'
+ARCHIVE_GOG_OLD0_MD5='9f591acef78c04290fab2ec11cb92189'
+ARCHIVE_GOG_OLD0_SIZE='49000'
+ARCHIVE_GOG_OLD0_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='dlc/dlc016_synthetic_dawn'

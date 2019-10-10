@@ -34,19 +34,49 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191030.1
+script_version=20191102.3
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Distant Stars Story Pack'
 
-ARCHIVE_GOG='stellaris_distant_stars_story_pack_2_3_3_30733.sh'
+ARCHIVE_GOG='stellaris_distant_stars_story_pack_2_5_0_5_33395.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_distant_stars_story_pack'
-ARCHIVE_GOG_MD5='c66aa0592a5f188196cfd3ab8a75bd15'
+ARCHIVE_GOG_MD5='f7e4d861c265ee1aab8c505df415390a'
 ARCHIVE_GOG_SIZE='22000'
-ARCHIVE_GOG_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD4='stellaris_distant_stars_story_pack_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD4_MD5='13a3c2f25da4e39be55b6d0b6cd40826'
+ARCHIVE_GOG_OLD4_SIZE='22000'
+ARCHIVE_GOG_OLD4_VERSION='2.4.1.1-gog33112'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD3='stellaris_distant_stars_story_pack_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD3_MD5='17716ff7cf3fb83a418064a2505ad9d6'
+ARCHIVE_GOG_OLD3_SIZE='22000'
+ARCHIVE_GOG_OLD3_VERSION='2.4.1-gog33088'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD2='stellaris_distant_stars_story_pack_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD2_MD5='1b6272a16391842d48906845435d03c5'
+ARCHIVE_GOG_OLD2_SIZE='22000'
+ARCHIVE_GOG_OLD2_VERSION='2.4.0.7-gog33057'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD1='stellaris_distant_stars_story_pack_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD1_MD5='2cd17f30fd465528c4c45427b3ffc45a'
+ARCHIVE_GOG_OLD1_SIZE='22000'
+ARCHIVE_GOG_OLD1_VERSION='2.3.3.1-gog30901'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD0='stellaris_distant_stars_story_pack_2_3_3_30733.sh'
+ARCHIVE_GOG_OLD0_MD5='c66aa0592a5f188196cfd3ab8a75bd15'
+ARCHIVE_GOG_OLD0_SIZE='22000'
+ARCHIVE_GOG_OLD0_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='dlc/dlc019_distant_stars'
