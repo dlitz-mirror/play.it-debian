@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190505.1
+script_version=20191023.1
 
 # Set game-specific variables
 
@@ -42,11 +42,29 @@ script_version=20190505.1
 GAME_ID='sunless-skies'
 GAME_NAME='Sunless Skies — Cyclopean Owl DLC'
 
-ARCHIVE_GOG='sunless_skies_cyclopean_owl_dlc_1_2_1_3_0224b0c8_28905.sh'
+ARCHIVE_GOG='sunless_skies_cyclopean_owl_dlc_1_3_2_06feaeba_33084.sh'
 ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_MD5='a1172610549c60fdd0631de49b48414c'
-ARCHIVE_GOG_VERSION='1.2.1.3-gog28905'
+ARCHIVE_GOG_MD5='b8b19ec517d7490df943b886f4402d81'
+ARCHIVE_GOG_VERSION='1.3.2.0-gog33084'
 ARCHIVE_GOG_SIZE='1100'
+
+ARCHIVE_GOG_OLD8='sunless_skies_cyclopean_owl_dlc_1_2_4_0_015d561cx_31380.sh'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup'
+ARCHIVE_GOG_OLD8_MD5='b5396ebeda83d75096b731c99551f7a8'
+ARCHIVE_GOG_OLD8_VERSION='1.2.4.0-gog31380'
+ARCHIVE_GOG_OLD8_SIZE='1100'
+
+ARCHIVE_GOG_OLD7='sunless_skies_cyclopean_owl_dlc_1_2_3_0_f3b4e1db_x_30226.sh'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup'
+ARCHIVE_GOG_OLD7_MD5='5d9fdd039eaead44ad3af3e9d3c780fe'
+ARCHIVE_GOG_OLD7_VERSION='1.2.3.0-gog30226'
+ARCHIVE_GOG_OLD7_SIZE='1100'
+
+ARCHIVE_GOG_OLD6='sunless_skies_cyclopean_owl_dlc_1_2_1_3_0224b0c8_28905.sh'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup'
+ARCHIVE_GOG_OLD6_MD5='a1172610549c60fdd0631de49b48414c'
+ARCHIVE_GOG_OLD6_VERSION='1.2.1.3-gog28905'
+ARCHIVE_GOG_OLD6_SIZE='1100'
 
 ARCHIVE_GOG_OLD5='sunless_skies_cyclopean_owl_dlc_1_2_1_2_b0df8add_28695.sh'
 ARCHIVE_GOG_OLD5_TYPE='mojosetup'
@@ -123,6 +141,10 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+if [ -e "$PLAYIT_WORKDIR/gamedata/data/noarch/game/OwlScout.dlc" ]; then
+	mkdir --parents "$PLAYIT_WORKDIR/gamedata/data/noarch/game/dlc/OwlScout"
+	mv "$PLAYIT_WORKDIR/gamedata/data/noarch/game/OwlScout.dlc" "$PLAYIT_WORKDIR/gamedata/data/noarch/game/dlc/OwlScout"
+fi
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
