@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190930.1
+script_version=20191103.1
 
 # Set game-specific variables
 
@@ -98,9 +98,15 @@ DATA_DIRS='./save'
 DATA_FILES='./system/*.log'
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_PRERUN="rgamma=\$(xgamma 2>&1|sed 's/->//'|cut -d',' -f1|awk '{print \$2}')
+APP_MAIN_PRERUN="# store gamma values to restore them after quitting the game
+rgamma=\$(xgamma 2>&1|sed 's/->//'|cut -d',' -f1|awk '{print \$2}')
 ggamma=\$(xgamma 2>&1|sed 's/->//'|cut -d',' -f2|awk '{print \$2}')
 bgamma=\$(xgamma 2>&1|sed 's/->//'|cut -d',' -f3|awk '{print \$2}')"
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# run the game binary from its container directory
+cd "${APP_EXE%/*}"
+APP_EXE="${APP_EXE##*/}"'
 # shellcheck disable=SC2016
 APP_MAIN_POSTRUN='xgamma -rgamma $rgamma -ggamma $ggamma -bgamma $bgamma'
 APP_MAIN_EXE='system/deusex.exe'
