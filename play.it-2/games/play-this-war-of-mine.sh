@@ -35,12 +35,12 @@ set -o errexit
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20190224.1
+script_version=20191217.2
 
 # Set game-specific variables
 
 GAME_ID='this-war-of-mine'
-GAME_NAME='This War Of Mine'
+GAME_NAME='This War of Mine'
 
 ARCHIVE_GOG='this_war_of_mine_5_1_0_26027.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/this_war_of_mine'
@@ -74,7 +74,7 @@ ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='libcurl.so.4 libOpenAL.so KosovoLinux This?War?of?Mine TWOMLinux'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='*.dat *.idx *str CustomContent LocalizationPacks svnrev.txt WorkshopData'
+ARCHIVE_GAME_DATA_FILES='*.dat *.idx *.str CustomContent LocalizationPacks svnrev.txt WorkshopData'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='KosovoLinux'
@@ -89,7 +89,10 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc glx openal libcurl"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libcurl alsa"
+PKG_BIN_DEPS_ARCH='lib32-libx11'
+PKG_BIN_DEPS_DEB='libx11-6'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 # Load common functions
 
@@ -127,14 +130,14 @@ prepare_package_layout
 # Extract icon
 
 PKG='PKG_DATA'
-get_icon_from_temp_dir 'APP_MAIN'
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
 use_archive_specific_value 'APP_MAIN_EXE'
-launcher_write 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
