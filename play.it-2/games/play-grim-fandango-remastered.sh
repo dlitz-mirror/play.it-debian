@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191130.1
+script_version=20191130.2
 
 # Set game-specific variables
 
@@ -77,7 +77,10 @@ PKG_MOVIES_ID="${GAME_ID}-movies"
 PKG_MOVIES_DESCRIPTION='movies'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_MOVIES_ID $PKG_DATA_ID glibc libstdc++ glu sdl2"
+PKG_BIN_DEPS="$PKG_MOVIES_ID $PKG_DATA_ID glibc libstdc++ sdl2 glx glu alsa"
+PKG_BIN_DEPS_ARCH='lib32-libx11'
+PKG_BIN_DEPS_DEB='libx11-6'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 # Load common functions
 
