@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine Le Gonidec
-# Copyright (c) 2018-2019, BetaRays
+# Copyright (c) 2015-2020, Antoine Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@ set -o errexit
 ###
 # Wing Commander
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
 script_version=20190726.1
