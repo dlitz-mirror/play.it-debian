@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2019, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,32 +30,48 @@ set -o errexit
 ###
 
 ###
-# War for the Overworld: Heart of Gold
+# Din’s Curse
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20191110.1
 
 # Set game-specific variables
 
-GAME_ID='war-for-the-overworld'
-GAME_NAME='War for the Overworld: Heart of Gold'
+GAME_ID='dins-curse'
+GAME_NAME='Din’s Curse'
 
-ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_heart_of_gold'
-ARCHIVE_GOG_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
-ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_GOG='gog_din_s_curse_2.0.0.6.sh'
+ARCHIVE_GOG_URL=''
+ARCHIVE_GOG_MD5='abead770d1fe9a2c7adb6d250318b698'
+ARCHIVE_GOG_VERSION='1.034-gog2.0.0.6'
+ARCHIVE_GOG_SIZE='170000'
+ARCHIVE_GOG_TYPE='zip_unclean'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='goggame-1571774750.info'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
-PKG_MAIN_ID="${GAME_ID}-heart-of-gold"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='DinsCurse'
+
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='DCIcon.png Assets User'
+
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE='DinsCurse'
+APP_MAIN_ICON='DCIcon.png'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal glx"
 
 # Load common functions
 
@@ -87,12 +104,21 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
+
 # Build package
 
-write_metadata
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
+write_metadata 'PKG_DATA'
+write_metadata 'PKG_BIN'
 build_pkg
 
 # Clean up

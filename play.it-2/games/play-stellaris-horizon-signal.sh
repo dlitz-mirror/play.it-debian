@@ -34,19 +34,49 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190705.1
+script_version=20191024.2
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Horizon Signal'
 
-ARCHIVE_GOG='stellaris_horizon_signal_2_3_3_30733.sh'
+ARCHIVE_GOG='stellaris_horizon_signal_2_5_0_5_33395.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_horizon_signal'
-ARCHIVE_GOG_MD5='cae26d668625d828f04132781767b36c'
-ARCHIVE_GOG_SIZE='1300'
-ARCHIVE_GOG_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_MD5='61746bd87a0cbd22d4d98281f585bfc2'
+ARCHIVE_GOG_SIZE='1400'
+ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD10='stellaris_horizon_signal_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD10_MD5='0a519147bfb6af4aa509fbd6def7eda6'
+ARCHIVE_GOG_OLD10_SIZE='1400'
+ARCHIVE_GOG_OLD10_VERSION='2.4.1.1-gog33112'
+ARCHIVE_GOG_OLD10_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD9='stellaris_horizon_signal_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD9_MD5='23d9ceedee2b919596f12a59cf1f47d1'
+ARCHIVE_GOG_OLD9_SIZE='1400'
+ARCHIVE_GOG_OLD9_VERSION='2.4.1-gog33088'
+ARCHIVE_GOG_OLD9_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD8='stellaris_horizon_signal_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD8_MD5='6fdb17badf8a0e39ab3f8c2597552c12'
+ARCHIVE_GOG_OLD8_SIZE='1400'
+ARCHIVE_GOG_OLD8_VERSION='2.4.0.7-gog33057'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_horizon_signal_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD7_MD5='c7273e17a0f412ab17cf7e21a6e5fb16'
+ARCHIVE_GOG_OLD7_SIZE='1300'
+ARCHIVE_GOG_OLD7_VERSION='2.3.3.1-gog30901'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_horizon_signal_2_3_3_30733.sh'
+ARCHIVE_GOG_OLD6_MD5='cae26d668625d828f04132781767b36c'
+ARCHIVE_GOG_OLD6_SIZE='1300'
+ARCHIVE_GOG_OLD6_VERSION='2.3.3-gog30733'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD5='stellaris_horizon_signal_2_3_2_1_30253.sh'
 ARCHIVE_GOG_OLD5_MD5='9d6f047648c46694df2141873019d014'

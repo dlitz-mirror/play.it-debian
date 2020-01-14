@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 set -o errexit
 
 ###
@@ -29,63 +29,56 @@ set -o errexit
 ###
 
 ###
-# Pyre
+# Anomaly: Warzone Earth
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190924.2
+script_version=20191103.1
 
 # Set game-specific variables
 
-GAME_ID='pyre'
-GAME_NAME='Pyre'
+GAME_ID='anomaly-warzone-earth'
+GAME_NAME='Anomaly: Warzone Earth'
 
-ARCHIVE_GOG='pyre_1_50427_11957_23366.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/pyre'
-ARCHIVE_GOG_MD5='ae34d8b4c069ffd7a98f295af4596e1f'
-ARCHIVE_GOG_SIZE='8200000'
-ARCHIVE_GOG_VERSION='1.50427.11957-gog23366'
-ARCHIVE_GOG_TYPE='mojosetup_unzip'
+ARCHIVE_HUMBLE='AnomalyWarzoneEarth-Installer_Humble_Linux_1364850491.zip'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/anomaly-warzone-earth'
+ARCHIVE_HUMBLE_MD5='acf5147293b42c7625aea6ad0e56afc4'
+ARCHIVE_HUMBLE_SIZE='870000'
+ARCHIVE_HUMBLE_VERSION='1.0-humble2'
 
-ARCHIVE_GOG_OLD0='pyre_en_1_0_18732.sh'
-ARCHIVE_GOG_OLD0_MD5='83ea264e95e2519aba72078d35290d49'
-ARCHIVE_GOG_OLD0_SIZE='8100000'
-ARCHIVE_GOG_OLD0_VERSION='1.0-gog18732'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
+ARCHIVE_HUMBLE_OLD0='AnomalyWarzoneEarth-Installer'
+ARCHIVE_HUMBLE_OLD0_MD5='36d3fb101ab7c674d475b8f0b59d5e68'
+ARCHIVE_HUMBLE_OLD0_SIZE='440000'
+ARCHIVE_HUMBLE_OLD0_VERSION='1.0-humble1'
+ARCHIVE_HUMBLE_OLD0_TYPE='mojosetup'
 
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
+ARCHIVE_DOC_DATA_PATH='data'
+ARCHIVE_DOC_DATA_FILES='Copyright* README'
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC1_DATA_FILES='Linux.README ReadMe.txt'
+ARCHIVE_GAME_BIN_PATH='data'
+ARCHIVE_GAME_BIN_FILES='AnomalyWarzoneEarth'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='Pyre.bin.x86 lib'
-
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='Pyre.bin.x86_64 lib64'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='*.bmp *.config *.cur *.dll *.exe *.pdb *.xml gamecontrollerdb.txt monoconfig monomachineconfig Content'
+ARCHIVE_GAME_DATA_PATH='data'
+ARCHIVE_GAME_DATA_FILES='*.dat *.idx icon.png'
 
 APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='export LANG=C TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='Pyre.bin.x86'
-APP_MAIN_EXE_BIN64='Pyre.bin.x86_64'
-APP_MAIN_ICON='PyreIcon.bmp'
+APP_MAIN_PRERUN='# work around infinite loading time bug
+gcc -m32 -o preload.so preload.c -ldl -shared -fPIC -Wall -Wextra
+export LD_PRELOAD=./preload.so'
+APP_MAIN_EXE='AnomalyWarzoneEarth'
+APP_MAIN_ICON='icon.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+PACKAGES_LIST='PKG_DATA PKG_BIN'
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DESCRIPTIOn='data'
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 alsa glx libudev1 openal"
-
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal gcc32"
+PKG_BIN_DEPS_ARCH_LINUX='lib32-libx11'
+PKG_BIN_DEPS_DEB_LINUX='libx11-6'
+PKG_BIN_DEPS_GENTOO_LINUX='x11-libs/libX11[abi_x86_32]'
 
 # Load common functions
 
@@ -118,19 +111,56 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+case "$ARCHIVE" in
+	('ARCHIVE_HUMBLE_OLD0')
+		# no .zip container
+	;;
+	(*)
+		(
+			ARCHIVE='ARCHIVE_INNER'
+			ARCHIVE_INNER_PATH="$PLAYIT_WORKDIR/gamedata/AnomalyWarzoneEarth-Installer"
+			ARCHIVE_INNER_TYPE='mojosetup'
+			extract_data_from "$ARCHIVE_INNER_PATH"
+			rm "$ARCHIVE_INNER_PATH"
+		)
+	;;
+esac
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Extract icon
+# Get icon
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
+
+# Hack to work around infinite loading times
+
+cat > "${PKG_BIN_PATH}${PATH_GAME}/preload.c" << EOF
+#define _GNU_SOURCE
+#include <dlfcn.h>
+#include <semaphore.h>
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+
+static int (*_realSemTimedWait)(sem_t *, const struct timespec *) = NULL;
+
+int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
+	if (abs_timeout->tv_nsec >= 1000000000) {
+		((struct timespec *)abs_timeout)->tv_nsec -= 1000000000;
+		((struct timespec *)abs_timeout)->tv_sec++;
+	}
+	return _realSemTimedWait(sem, abs_timeout);
+}
+__attribute__((constructor)) void init(void) {
+	_realSemTimedWait = dlsym(RTLD_NEXT, "sem_timedwait");
+}
+EOF
 
 # Build package
 

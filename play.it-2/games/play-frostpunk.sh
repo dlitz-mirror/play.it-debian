@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2019, Antoine Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,32 +29,67 @@ set -o errexit
 ###
 
 ###
-# War for the Overworld: Heart of Gold
+# Frostpunk
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20191211.1
 
 # Set game-specific variables
 
-GAME_ID='war-for-the-overworld'
-GAME_NAME='War for the Overworld: Heart of Gold'
+GAME_ID='frostpunk'
+GAME_NAME='Frostpunk'
 
-ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_heart_of_gold'
-ARCHIVE_GOG_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
-ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_GOG='setup_frostpunk_1.4.0.48534.51933_(2019-08-30_1543)_(32102).exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/frostpunk'
+ARCHIVE_GOG_MD5='08e52207d9385bd5d3d66755facad69a'
+ARCHIVE_GOG_TYPE='innosetup'
+ARCHIVE_GOG_VERSION='1.4.0.48534.51933-gog32102'
+ARCHIVE_GOG_SIZE='6500000'
+ARCHIVE_GOG_PART1='setup_frostpunk_1.4.0.48534.51933_(2019-08-30_1543)_(32102)-1.bin'
+ARCHIVE_GOG_PART1_MD5='60245c2ede7e99f526fa5cb87a660ebe'
+ARCHIVE_GOG_PART1_TYPE='innosetup'
+ARCHIVE_GOG_PART2='setup_frostpunk_1.4.0.48534.51933_(2019-08-30_1543)_(32102)-2.bin'
+ARCHIVE_GOG_PART2_MD5='48dcdc8acb8bfd93b5eab09b8695854e'
+ARCHIVE_GOG_PART2_TYPE='innosetup'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='goggame-1571774750.info'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.exe *.dll *.ini'
 
-PKG_MAIN_ID="${GAME_ID}-heart-of-gold"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='*.dat *.idx *.str'
+
+CONFIG_FILES='./gfxconfig.ini'
+
+APP_WINETRICKS='dxvk'
+
+APP_MAIN_TYPE='wine'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='user_data_path="$WINEPREFIX/drive_c/users/$(whoami)/Application Data/11bitstudios/Frostpunk"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "${user_data_path%/*}"
+	mkdir --parents "$PATH_DATA/userdata"
+	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi
+touch custom_localizations.dat voices.dat'
+APP_MAIN_EXE='frostpunk.exe'
+APP_MAIN_ICON='frostpunk.exe'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='64'
+PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS_ARCH='winetricks'
+PKG_BIN_DEPS_DEB='dxvk'
+PKG_BIN_DEPS_GENTOO='winetricks'
 
 # Load common functions
 
@@ -84,11 +119,35 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Use repositories-provided dxvk on Debian
+case "$OPTION_PACKAGE" in
+	('deb')
+		unset APP_WINETRICKS
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+if [ ! -e dxvk_installed ]; then
+	sleep 3s
+	dxvk-setup install --development
+	touch dxvk_installed
+fi'
+	;;
+esac
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icons
+
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
+
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

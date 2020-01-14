@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190730.2
+script_version=20191221.1
 
 # Set game-specific variables
 
@@ -45,7 +45,7 @@ ARCHIVE_GOG='war_for_the_overworld_2_0_7f1_30014.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld'
 ARCHIVE_GOG_MD5='a352307c8fbf70c33bdfdd97a82c6530'
 ARCHIVE_GOG_SIZE='4700000'
-ARCHIVE_GOG_VERSION='2.0.7f1-gog30014'
+ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
 ARCHIVE_GOG_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD7='war_for_the_overworld_2_0_6f1_24637.sh'

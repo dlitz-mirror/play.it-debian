@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/sh -e
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2019, Antoine Le Gonidec
+# Copyright (c) 2018-2019, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,70 +30,98 @@ set -o errexit
 ###
 
 ###
-# War for the Overworld: Heart of Gold
-# build native packages from the original installers
+# Basingstoke
+# build native Linux packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20191107.1
 
 # Set game-specific variables
 
-GAME_ID='war-for-the-overworld'
-GAME_NAME='War for the Overworld: Heart of Gold'
+GAME_ID='baba-is-you'
+GAME_NAME='Baba Is You'
 
-ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_heart_of_gold'
-ARCHIVE_GOG_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
-ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_ITCH='BIY_linux.tar.gz'
+ARCHIVE_ITCH_URL='https://hempuli.itch.io/baba'
+ARCHIVE_ITCH_MD5='3694afc5579cdaad7448c9744aa8d063'
+ARCHIVE_ITCH_VERSION='1.0-itch'
+ARCHIVE_ITCH_SIZE='87000'
+ARCHIVE_ITCH_TYPE='tar'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='goggame-1571774750.info'
+ARCHIVE_GAME_BIN32_PATH='Baba Is You/bin32'
+ARCHIVE_GAME_BIN32_FILES='Chowdren'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_BIN64_PATH='Baba Is You/bin64'
+ARCHIVE_GAME_BIN64_FILES='Chowdren'
 
-PKG_MAIN_ID="${GAME_ID}-heart-of-gold"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_GAME_DATA_PATH='Baba Is You'
+ARCHIVE_GAME_DATA_FILES='./Data icon.bmp Assets.dat gamecontrollerdb.txt'
+
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='Chowdren'
+APP_MAIN_EXE_BIN64='Chowdren'
+APP_MAIN_ICON='icon.bmp'
+
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glx glibc libstdc++"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
 target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
 	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
-		'/usr/share/play.it'
+		'./'\
+		"$XDG_DATA_HOME/play.it/"\
+		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
+		'/usr/local/share/games/play.it/'\
+		'/usr/local/share/play.it/'\
+		'/usr/share/games/play.it/'\
+		'/usr/share/play.it/'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
+		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
+	if [ -z "$PLAYIT_LIB2" ]; then
+		printf '\n\033[1;31mError:\033[0m\n'
+		printf 'libplayit2.sh not found.\n'
+		exit 1
+	fi
 fi
-if [ -z "$PLAYIT_LIB2" ]; then
-	printf '\n\033[1;31mError:\033[0m\n'
-	printf 'libplayit2.sh not found.\n'
-	exit 1
-fi
-# shellcheck source=play.it-2/lib/libplayit2.sh
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+
 prepare_package_layout
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Write launchers
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	write_launcher 'APP_MAIN'
+done
 
 # Build package
 
-write_metadata
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
+write_metadata 'PKG_DATA'
+write_metadata 'PKG_BIN32' 'PKG_BIN64'
 build_pkg
 
 # Clean up

@@ -29,32 +29,52 @@ set -o errexit
 ###
 
 ###
-# War for the Overworld: Heart of Gold
+# Butcher - Demo
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20191205.1
 
 # Set game-specific variables
 
-GAME_ID='war-for-the-overworld'
-GAME_NAME='War for the Overworld: Heart of Gold'
+GAME_ID='butcher-demo'
+GAME_NAME='Butcher Demo'
 
-ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_heart_of_gold'
-ARCHIVE_GOG_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
-ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG='gog_butcher_demo_2.0.0.1.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/butcher_demo'
+ARCHIVE_GOG_MD5='03ed5d89ef38ef10a3318b8da7e62525'
+ARCHIVE_GOG_VERSION='1.0-gog2.0.0.1'
+ARCHIVE_GOG_SIZE='110000'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='goggame-1571774750.info'
+ARCHIVE_DOC_PATH='data/noarch/docs' 
+ARCHIVE_DOC_FILES='*'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='butcher'
 
-PKG_MAIN_ID="${GAME_ID}-heart-of-gold"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='butcher_Data'
+
+DATA_DIRS='./logs'
+
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE='butcher'
+# shellcheck disable=SC2016
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+APP_MAIN_ICON='butcher_Data/Resources/UnityPlayer.png'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
+PKG_BIN_DEPS_ARCH='lib32-libx11'
+PKG_BIN_DEPS_DEB='libx11-6'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
 
 # Load common functions
 
@@ -90,9 +110,17 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Write launchers
+
+PKG='PKG_BIN'
+launcher_write 'APP_MAIN'
+
 # Build package
 
-write_metadata
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
+write_metadata 'PKG_DATA'
+write_metadata 'PKG_BIN'
 build_pkg
 
 # Clean up

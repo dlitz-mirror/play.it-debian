@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190505.1
+script_version=20191023.8
 
 # Set game-specific variables
 
@@ -96,6 +96,19 @@ ARCHIVE_GAME_DATA_FILES='Sunless?Skies_Data'
 DATA_DIRS='./dlc ./logs'
 
 APP_MAIN_TYPE='native'
+# Work around screen resolution detection issues
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='config_file="$HOME/.config/unity3d/Failbetter Games/Sunless Skies/prefs"
+if [ ! -e "$config_file" ]; then
+	mkdir --parents "${config_file%/*}"
+	resolution=$(xrandr | awk "/\*/ {print $1}")
+	cat > "$config_file" <<- EOF
+	<unity_prefs version_major="1" version_minor="1">
+	        <pref name="Screenmanager Resolution Height" type="int">${resolution%x*}</pref>
+	        <pref name="Screenmanager Resolution Width" type="int">${resolution#*x}</pref>
+	</unity_prefs>
+	EOF
+fi'
 APP_MAIN_EXE_BIN32='Sunless Skies.x86'
 APP_MAIN_EXE_BIN64='Sunless Skies.x86_64'
 # shellcheck disable=SC2016
@@ -108,7 +121,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 xrandr"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
@@ -147,6 +160,11 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
@@ -155,10 +173,7 @@ done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up
