@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200119.1
+script_version=20200119.2
 
 # Set game-specific variables
 
@@ -43,7 +43,7 @@ GAME_ID='dins-curse'
 GAME_NAME='Din’s Curse'
 
 ARCHIVE_GOG='gog_din_s_curse_2.0.0.6.sh'
-ARCHIVE_GOG_URL=''
+ARCHIVE_GOG_URL='https://www.gog.com/game/dins_curse'
 ARCHIVE_GOG_MD5='abead770d1fe9a2c7adb6d250318b698'
 ARCHIVE_GOG_VERSION='1.034-gog2.0.0.6'
 ARCHIVE_GOG_SIZE='170000'
