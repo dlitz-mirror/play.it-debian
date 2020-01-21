@@ -20,7 +20,7 @@ extract_data_from() {
 		archive_type="$(get_value "${ARCHIVE}_TYPE")"
 		case "$archive_type" in
 			('7z')
-				extract_7z "$file" "$destination"
+				archive_extraction_7z "$file" "$destination"
 			;;
 			('cabinet')
 				cabextract -L -d "$destination" -q "$file"
@@ -96,6 +96,25 @@ extract_data_from_print() {
 		;;
 	esac
 	printf "$string" "$1"
+}
+
+# extract data from 7z archive
+# USAGE: archive_extraction_7z $archive $destination
+# CALLS: error_archive_extraction_7z_no_extractor_found
+# CALLED BY: extract_data_from
+archive_extraction_7z() {
+	local file destination
+	file="$1"
+	destination="$2"
+	if command -v 7zr >/dev/null 2>&1; then
+		7zr x -o"$destination" -y "$file" 1>/dev/null
+	elif command -v 7za >/dev/null 2>&1; then
+		7za x -o"$destination" -y "$file" 1>/dev/null
+	elif command -v unar >/dev/null 2>&1; then
+		unar -output-directory "$destination" -force-overwrite -no-directory "$file" 1>/dev/null
+	else
+		error_archive_no_extractor_found '7z'
+	fi
 }
 
 # extract data from InnoSetup archive

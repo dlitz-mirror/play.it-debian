@@ -151,3 +151,24 @@ error_dependency_not_found() {
 	return 1
 }
 
+# display an error when trying to extract an archive but no extractor is present
+# USAGE: error_archive_no_extractor_found $archive_type
+# CALLS: print_error
+error_archive_no_extractor_found() {
+	local archive_type string
+	archive_type="$1"
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='Ce script a essayé dʼextraire le contenu dʼune archive de type "%s", mais aucun outil approprié nʼa été trouvé.\n'
+			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			string='This script tried to extract the contents of a "%s" archive, but not appropriate tool could be found.\n'
+			string="$string"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	printf "$string" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	exit 1
+}
+

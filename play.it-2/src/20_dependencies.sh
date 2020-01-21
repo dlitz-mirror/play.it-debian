@@ -73,15 +73,12 @@ check_deps() {
 # CALLS: error_dependency_not_found
 # CALLED BY: check_deps
 check_deps_7z() {
-	if command -v 7zr >/dev/null 2>&1; then
-		extract_7z() { 7zr x -o"$2" -y "$1"; }
-	elif command -v 7za >/dev/null 2>&1; then
-		extract_7z() { 7za x -o"$2" -y "$1"; }
-	elif command -v unar >/dev/null 2>&1; then
-		extract_7z() { unar -output-directory "$2" -force-overwrite -no-directory "$1"; }
-	else
-		error_dependency_not_found '7zr'
-	fi
+	for command in '7zr' '7za' 'unar'; do
+		if command -v "$command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	error_dependency_not_found '7zr'
 }
 
 # check innoextract presence, optionally in a given minimum version
