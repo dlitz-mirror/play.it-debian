@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Torment: Tides of Numenera
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190724.2
+script_version=20200201.1
 
 # Set game-specific variables
 
@@ -51,7 +51,7 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='TidesOfNumenera TidesOfNumenera_Data/Mono/x86_64 TidesOfNumenera_Data/Plugins'
+ARCHIVE_GAME_BIN_FILES='TidesOfNumenera TidesOfNumenera_Data/Mono TidesOfNumenera_Data/Plugins'
 
 ARCHIVE_GAME_AUDIO_PATH='data/noarch/game'
 ARCHIVE_GAME_AUDIO_FILES='TidesOfNumenera_Data/StreamingAssets/Audio'
@@ -65,7 +65,8 @@ ARCHIVE_GAME_DATA_FILES='TidesOfNumenera_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='export LANG=C'
+APP_MAIN_PRERUN='# Work around engine bugs on non-US locales
+export LANG=C'
 APP_MAIN_EXE='TidesOfNumenera'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
@@ -81,9 +82,13 @@ PKG_RESOURCES_DESCRIPTION='resources'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_AUDIO_ID $PKG_RESOURCES_ID"
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_AUDIO_ID $PKG_RESOURCES_ID $PKG_DATA_ID glx sdl2"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr sdl2 gtk2"
+PKG_BIN_DEPS_ARCH='libx11 gdk-pixbuf2 glib2'
+PKG_BIN_DEPS_DEB='libx11-6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11 x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
