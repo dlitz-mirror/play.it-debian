@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Banished
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200201.1
 
 # Set game-specific variables
 
@@ -56,10 +56,10 @@ ARCHIVE_GOG_64_VERSION='1.0.7-gog14938'
 ARCHIVE_GOG_64_SIZE='190000'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./*.dll ./*.exe'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./windata'
+ARCHIVE_GAME_DATA_FILES='windata'
 
 APP_WINETRICKS='xact'
 
@@ -68,7 +68,6 @@ APP_MAIN_EXE_GOG_32='application-x32.exe'
 APP_MAIN_EXE_GOG_64='application-x64.exe'
 APP_MAIN_ICON_GOG_32='application-x32.exe'
 APP_MAIN_ICON_GOG_64='application-x64.exe'
-APP_MAIN_ICON_RES='16 24 32 48'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -82,43 +81,49 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Get game icon
 
 PKG='PKG_BIN'
-use_archive_specific_value 'APP_MAIN_ICON'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
-
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 
 PKG='PKG_BIN'
 use_archive_specific_value 'APP_MAIN_EXE'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
