@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200201.1
+script_version=20200201.2
 
 # Set game-specific variables
 
@@ -77,7 +77,7 @@ PKG_DATA_DESCRIPTION='data'
 PKG_BIN_ID="$GAME_ID"
 PKG_BIN_ARCH_GOG_32='32'
 PKG_BIN_ARCH_GOG_64='64'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks glx"
 
 # Load common functions
 
