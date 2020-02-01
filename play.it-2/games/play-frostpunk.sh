@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191211.1
+script_version=20200202.3
 
 # Set game-specific variables
 
@@ -69,7 +69,8 @@ APP_WINETRICKS='dxvk'
 
 APP_MAIN_TYPE='wine'
 # shellcheck disable=SC2016
-APP_MAIN_PRERUN='user_data_path="$WINEPREFIX/drive_c/users/$(whoami)/Application Data/11bitstudios/Frostpunk"
+APP_MAIN_PRERUN='# Store saved games and settingd outside of WINE prefix
+user_data_path="$WINEPREFIX/drive_c/users/$(whoami)/Application Data/11bitstudios/Frostpunk"
 if [ ! -e "$user_data_path" ]; then
 	mkdir --parents "${user_data_path%/*}"
 	mkdir --parents "$PATH_DATA/userdata"
@@ -77,6 +78,13 @@ if [ ! -e "$user_data_path" ]; then
 	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
 fi
 touch custom_localizations.dat voices.dat'
+APP_MAIN_PRERUN_DEB="$APP_MAIN_PRERUN"'
+# Install dxvk on first launch
+if [ ! -e dxvk_installed ]; then
+	sleep 3s
+	dxvk-setup install --development
+	touch dxvk_installed
+fi'
 APP_MAIN_EXE='frostpunk.exe'
 APP_MAIN_ICON='frostpunk.exe'
 
@@ -123,12 +131,7 @@ fi
 case "$OPTION_PACKAGE" in
 	('deb')
 		unset APP_WINETRICKS
-		APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
-if [ ! -e dxvk_installed ]; then
-	sleep 3s
-	dxvk-setup install --development
-	touch dxvk_installed
-fi'
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_DEB"
 	;;
 esac
 
