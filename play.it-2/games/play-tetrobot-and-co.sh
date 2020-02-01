@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
+# Copyright (c) 2018-2019, VA
 # Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +30,52 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Tetrobot and Co.
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to dev+playit@indigo.re
 ###
 
-script_version=20190721.1
+script_version=20190927.3
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='tetrobot-and-co'
+GAME_NAME='Tetrobot and Co.'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='gog_tetrobot_and_co_2.1.0.6.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/tetrobot-and-co'
+ARCHIVE_GOG_MD5='2ad2969e64e19d5753f8822e407c148c'
+ARCHIVE_GOG_SIZE='530000'
+ARCHIVE_GOG_VERSION='1.2.1-gog2.1.0.6'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_GOG_OLD0='gog_tetrobot_and_co_2.1.0.5.sh'
+ARCHIVE_GOG_OLD0_MD5='7d75f9813e1ec154158875c8e69e9dc8'
+ARCHIVE_GOG_OLD0_SIZE='530000'
+ARCHIVE_GOG_OLD0_VERSION='1.2.1-gog2.1.0.5'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='Tetrobot?and?Co.x86 Data/Mono'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='Data'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE='Tetrobot and Co.x86'
+APP_MAIN_ICON='Data/Resources/UnityPlayer.png'
 
-GAME_IMAGE='./game.ins'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
-
-PACKAGES_LIST='PKG_MAIN'
-
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor"
+PKG_BIN_DEPS_ARCH='lib32-libx11 lib32-libxext lib32-gcc-libs'
+PKG_BIN_DEPS_DEB='libx11-6, libxext6, libgcc1'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] x11-libs/libXext[abi_x86_32] sys-devel/gcc[abi_x86_32]'
 
 # Load common functions
 
@@ -113,26 +108,18 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
+PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
 
 # Build package
 
@@ -148,3 +135,4 @@ rm --recursive "$PLAYIT_WORKDIR"
 print_instructions
 
 exit 0
+

@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +29,58 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Mushroom 11
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20200122.3
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='mushroom-11'
+GAME_NAME='Mushroom 11'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_HUMBLE='Mushroom_11_v1.07b4_Humble_Linux.zip'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/mushroom-11'
+ARCHIVE_HUMBLE_MD5='0c257b149a3636ba839fba4cffe7b3db'
+ARCHIVE_HUMBLE_SIZE='480000'
+ARCHIVE_HUMBLE_VERSION='1.07b4-humble1'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_GAME_BIN32_PATH='.'
+ARCHIVE_GAME_BIN32_FILES='Mushroom_11.x86 Mushroom_11_Data/*/x86'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_GAME_BIN64_PATH='.'
+ARCHIVE_GAME_BIN64_FILES='Mushroom_11.x86_64 Mushroom_11_Data/*/x86_64'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='Mushroom_11_Data'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+DATA_DIRS='./logs'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='Mushroom_11.x86'
+APP_MAIN_EXE_BIN64='Mushroom_11.x86_64'
+# shellcheck disable=SC2016
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+APP_MAIN_ICON='Mushroom_11_Data/Resources/UnityPlayer.png'
 
-GAME_IMAGE='./game.ins'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2 alsa"
+PKG_BIN32_DEPS_ARCH='lib32-libx11'
+PKG_BIN32_DEPS_DEB='libx11-6'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
-PACKAGES_LIST='PKG_MAIN'
-
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11'
 
 # Load common functions
 
@@ -113,26 +113,19 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

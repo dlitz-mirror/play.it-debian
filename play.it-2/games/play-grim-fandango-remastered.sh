@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20191130.2
+script_version=20191130.3
 
 # Set game-specific variables
 
@@ -56,7 +56,7 @@ ARCHIVE_DOC1_DATA_PATH='data/noarch/game/bin'
 ARCHIVE_DOC1_DATA_FILES='*License.txt common-licenses'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game/bin'
-ARCHIVE_GAME_BIN_FILES='GrimFandango *.so libSDL2-2.0.so.1 x86'
+ARCHIVE_GAME_BIN_FILES='GrimFandango *.so x86'
 
 ARCHIVE_GAME_MOVIES_PATH='data/noarch/game/bin'
 ARCHIVE_GAME_MOVIES_FILES='MoviesHD'
@@ -65,6 +65,11 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game/bin'
 ARCHIVE_GAME_DATA_FILES='*.lab *.LAB controllerdef.txt en_gagl088.lip FontsHD *.tab icon.png patch_v2_or_v3_to_v4.bin patch_v4_to_v5.bin'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN_ARCH='SYSTEM_SDL2_PATH="/usr/lib32/libSDL2-2.0.so.0"'
+APP_MAIN_PRERUN_DEB='SYSTEM_SDL2_PATH="/usr/lib/i386-linux-gnu/libSDL2-2.0.so.0"'
+APP_MAIN_PRERUN_GENTOO='SYSTEM_SDL2_PATH="/usr/lib32/libSDL2-2.0.so.0"'
+APP_MAIN_PRERUN='
+ln --force --symbolic "$SYSTEM_SDL2_PATH" ./libSDL2-2.0.so.1'
 APP_MAIN_EXE='GrimFandango'
 APP_MAIN_ICON='icon.png'
 
@@ -124,6 +129,20 @@ icons_get_from_package 'APP_MAIN'
 # Write launchers
 
 PKG='PKG_BIN'
+case "$OPTION_PACKAGE" in
+	('arch')
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_ARCH $APP_MAIN_PRERUN"
+	;;
+	('deb')
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_DEB $APP_MAIN_PRERUN"
+	;;
+	('gentoo')
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_GENTOO $APP_MAIN_PRERUN"
+	;;
+	(*)
+		liberror 'OPTION_PACKAGE' "$0"
+	;;
+esac
 launchers_write 'APP_MAIN'
 
 # Build package

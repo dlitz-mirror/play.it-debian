@@ -2,8 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2019, Antoine Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +29,59 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# FlatOut 2
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20190928.1
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='flatout-2'
+GAME_NAME='FlatOut 2'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='flatout_2_gog_3_23461.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/flatout_2'
+ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_GOG_MD5='5529dcd679eae03f23d9807efd22a182'
+ARCHIVE_GOG_VERSION='1.2-gog23461'
+ARCHIVE_GOG_SIZE='3800000'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_GOG_OLD1='gog_flatout_2_2.1.0.6.sh'
+ARCHIVE_GOG_OLD1_MD5='77cbd07105aa202ef808edebda15833a'
+ARCHIVE_GOG_OLD1_VERSION='1.2-gog2.1.0.6'
+ARCHIVE_GOG_OLD1_SIZE='3400000'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_GOG_OLD0='gog_flatout_2_2.0.0.4.sh'
+ARCHIVE_GOG_OLD0_MD5='cdc453f737159ac62bd9f59540002610'
+ARCHIVE_GOG_OLD0_VERSION='1.2-gog2.0.0.4'
+ARCHIVE_GOG_OLD0_SIZE='3600000'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/prefix/drive_c/gog games/flatout 2'
+ARCHIVE_DOC_DATA_FILES='*.pdf readme.htm'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_GAME_BIN_PATH='data/noarch/prefix/drive_c/gog games/flatout 2'
+ARCHIVE_GAME_BIN_FILES='flatout2.exe'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+ARCHIVE_GAME_DATA_PATH='data/noarch/prefix/drive_c/gog games/flatout 2'
+ARCHIVE_GAME_DATA_FILES='filesystem flatout2.ico fo2?.bfs patch patch1.bfs'
 
-GAME_IMAGE='./game.ins'
+DATA_DIRS='./savegame'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+APP_WINETRICKS='d3dx9'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+APP_MAIN_TYPE='wine'
+APP_MAIN_EXE='flatout2.exe'
+APP_MAIN_ICON='flatout2.ico'
 
-PACKAGES_LIST='PKG_MAIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine glx winetricks"
 
 # Load common functions
 
@@ -113,26 +114,19 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
+tolower "$PLAYIT_WORKDIR/gamedata/data/noarch/prefix/drive_c"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icons
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
+PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
 
 # Build package
 

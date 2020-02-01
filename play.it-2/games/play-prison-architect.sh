@@ -3,7 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2018-2019, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +30,69 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Prison Architect
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20190929.1
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='prison-architect'
+GAME_NAME='Prison Architect'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='prison_architect_clink_1_02_30664.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/prison_architect'
+ARCHIVE_GOG_MD5='f261f6121e3fe9ae5023624098d3946d'
+ARCHIVE_GOG_VERSION='1.02-gog30664'
+ARCHIVE_GOG_SIZE='390000'
+ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_HUMBLE='prisonarchitect-clink_1.02-linux.tar.gz'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/prison-architect'
+ARCHIVE_HUMBLE_MD5='ecf4cf68e10069c3c2cb99bcc52ef417'
+ARCHIVE_HUMBLE_VERSION='1.02-humble'
+ARCHIVE_HUMBLE_SIZE='390000'
+ARCHIVE_HUMBLE_TYPE='tar.gz'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='prisonarchitect-clink_1.0-linux'
+ARCHIVE_GAME_BIN32_FILES='PrisonArchitect.i686 lib/libpops_api.so'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='prisonarchitect-clink_1.0-linux'
+ARCHIVE_GAME_BIN64_FILES='PrisonArchitect.x86_64 lib64/libpops_api.so'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='prisonarchitect-clink_1.0-linux'
+ARCHIVE_GAME_DATA_FILES='*.dat'
 
-GAME_IMAGE='./game.ins'
+APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='export LANG=C'
+APP_MAIN_EXE_BIN32='PrisonArchitect.i686'
+APP_MAIN_EXE_BIN64='PrisonArchitect.x86_64'
+APP_MAIN_ICON_GOG='data/noarch/support/icon.png'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx glu sdl2 libstdc++"
+PKG_BIN32_DEPS_DEB='libuuid1, zlib1g'
+PKG_BIN32_DEPS_ARCH='libutil-linux zlib'
+PKG_BIN32_DEPS_GENTOO='sys-apps/util-linux[abi_x86_32] sys-libs/zlib[abi_x86_32]'
 
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_ARCH='lib32-util-linux lib32-zlib'
+PKG_BIN64_DEPS_GENTOO='sys-apps/util-linux sys-libs/zlib'
 
 # Load common functions
 
@@ -113,26 +125,22 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 
-# Get icon
+# Get game icon
 
-icons_get_from_workdir 'APP_MAIN'
+PKG='PKG_DATA'
+use_archive_specific_value 'APP_MAIN_ICON'
+if [ -n "$APP_MAIN_ICON" ]; then
+	icons_get_from_workdir 'APP_MAIN'
+fi
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

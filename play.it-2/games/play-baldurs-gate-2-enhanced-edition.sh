@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190915.1
+script_version=20191009.1
 
 # Set game-specific variables
 
@@ -58,34 +58,50 @@ ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
 ARCHIVE_OPTIONAL_LIBSSL32_URL='https://www.dotslashplay.it/ressources/libssl/'
 ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
 
+ARCHIVE_OPTIONAL_LIBSSL64='libssl_1.0.0_64-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBSSL64_URL='https://www.dotslashplay.it/ressources/libssl/'
+ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
+
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='BaldursGateII engine.lua'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='BaldursGateII'
+
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='BaldursGateII64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='chitin.key lang Manuals movies music scripts data'
+ARCHIVE_GAME_DATA_FILES='chitin.key engine.lua lang Manuals movies music scripts data'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_LIBS='libs'
-APP_MAIN_EXE='BaldursGateII'
+APP_MAIN_EXE_BIN32='BaldursGateII'
+APP_MAIN_EXE_BIN64='BaldursGateII64'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+# Keep compatibility with old archives
+PACKAGES_LIST_GOG_OLD0='PKG_BIN32 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 # This is needed for smooth upgrades from packages generated with script version < 20180801.3
 PKG_DATA_PROVIDE="${GAME_ID}-areas"
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor"
-PKG_BIN_DEPS_ARCH='lib32-libx11 lib32-expat lib32-openssl-1.0'
-PKG_BIN_DEPS_DEB='libx11-6, libexpat1'
-PKG_BIN_DEPS_GENTOO='libx11-6[abi_x86_32] dev-libs/expat[abi_x86_32] dev-libs/openssl[abi_x86_32]'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor"
+PKG_BIN32_DEPS_ARCH='lib32-libx11 lib32-expat lib32-openssl-1.0'
+PKG_BIN32_DEPS_DEB='libx11-6, libexpat1'
+PKG_BIN32_DEPS_GENTOO='libx11-6[abi_x86_32] dev-libs/expat[abi_x86_32] dev-libs/openssl[abi_x86_32]'
 # Keep compatibility with old archives
-PKG_BIN_DEPS_OLD0="$PKG_DATA_ID glibc libstdc++ glx openal json"
+PKG_BIN32_DEPS_OLD0="$PKG_DATA_ID glibc libstdc++ glx openal json"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11 expat openssl-1.0'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='libx11-6 dev-libs/expat dev-libs/openssl'
 
 # Load common functions
 
@@ -115,12 +131,27 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Update list of packages to build, based on source archive
+
+use_archive_specific_value 'PACKAGES_LIST'
+# shellcheck disable=SC2086
+set_temp_directories $PACKAGES_LIST
+
 # Use libSSL 1.0.0 32-bit archive
 
 case "$OPTION_PACKAGE" in
 	('deb')
 		ARCHIVE_MAIN="$ARCHIVE"
 		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
+		case "$ARCHIVE" in
+			('ARCHIVE_GOG_OLD0')
+				# Nothing to do here, 64-bit binary is not available
+				true
+			;;
+			(*)
+				set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
+			;;
+		esac
 		ARCHIVE="$ARCHIVE_MAIN"
 	;;
 esac
@@ -144,23 +175,44 @@ if [ "$ARCHIVE_LIBSSL32" ]; then
 		ARCHIVE='ARCHIVE_LIBSSL32'
 		extract_data_from "$ARCHIVE_LIBSSL32"
 	)
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-	mv "$PLAYIT_WORKDIR/gamedata"/lib*.so.1.0.0 "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	mkdir --parents "${PKG_BIN32_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR/gamedata"/lib*.so.1.0.0 "${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	rm --recursive "$PLAYIT_WORKDIR/gamedata"
+fi
+if [ "$ARCHIVE_LIBSSL64" ]; then
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE='ARCHIVE_LIBSSL64'
+		extract_data_from "$ARCHIVE_LIBSSL64"
+	)
+	mkdir --parents "${PKG_BIN64_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR/gamedata"/lib*.so.1.0.0 "${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
 # Write launchers
 
-PKG='PKG_BIN'
+PKG='PKG_BIN32'
 launchers_write 'APP_MAIN'
+# shellcheck disable=SC2031
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_OLD0')
+		# Nothing to do here, 64-bit binary is not available
+		true
+	;;
+	(*)
+		PKG='PKG_BIN64'
+		launchers_write 'APP_MAIN'
+	;;
+esac
 
-# Ensure that libjson.so.0 can be found and loaded for game versions needing it
+# Build packages
 
 # shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_OLD0')
+		# Ensure that libjson.so.0 can be found and loaded for game versions needing it
 		target="$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
-
 		cat > "$postinst" <<- EOF
 		if [ ! -e "$target" ]; then
 		    for source in \
@@ -177,19 +229,18 @@ case "$ARCHIVE" in
 		    done
 		fi
 		EOF
-
 		cat > "$prerm" <<- EOF
 		if [ -e "$target" ]; then
 		    rm "$target"
 		    rmdir --ignore-fail-on-non-empty --parents "${target%/*}"
 		fi
 		EOF
+		write_metadata 'PKG_BIN32'
+	;;
+	(*)
+		write_metadata 'PKG_BIN32' 'PKG_BIN64'
 	;;
 esac
-
-# Build packages
-
-write_metadata 'PKG_BIN'
 write_metadata 'PKG_DATA'
 build_pkg
 

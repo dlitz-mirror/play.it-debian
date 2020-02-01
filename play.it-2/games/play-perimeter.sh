@@ -2,8 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2019, Antoine Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +29,54 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Perimeter
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20191003.1
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='perimeter'
+GAME_NAME='Perimeter'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='setup_perimeter_1.03_(19064).exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/perimeter'
+ARCHIVE_GOG_TYPE='innosetup'
+ARCHIVE_GOG_MD5='a65c86a8de9b938bc070bcbe5900aef2'
+ARCHIVE_GOG_VERSION='1.03-gog19064'
+ARCHIVE_GOG_SIZE='3800000'
+ARCHIVE_GOG_PART1='setup_perimeter_1.03_(19064)-1.bin'
+ARCHIVE_GOG_PART1_TYPE='innosetup'
+ARCHIVE_GOG_PART1_MD5='ba08f50e95ce6424d214f57383d338c8'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_FILES='manual.pdf readme.txt'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_GAME0_BIN_PATH='app'
+ARCHIVE_GAME0_BIN_FILES='*.exe binkw32.dll'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_GAME1_BIN_PATH='app/__support/app'
+ARCHIVE_GAME1_BIN_FILES='*'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_FILES='perimeter.ico cache_font resource scripts'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+CONFIG_FILES='./*.ini resource/*.ini'
+DATA_DIRS='resource/saves'
 
-GAME_IMAGE='./game.ins'
+APP_MAIN_TYPE='wine'
+APP_MAIN_EXE='perimeter.exe'
+APP_MAIN_ICON='perimeter.ico'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
-
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine glx xcursor"
 
 # Load common functions
 
@@ -113,26 +109,18 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icons
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
+PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
 
 # Build package
 

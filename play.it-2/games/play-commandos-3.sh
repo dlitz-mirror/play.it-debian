@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2019, Antoine Le Gonidec
+# Copyright (c) 2017-2019, Jacek Szafarkiewicz
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +30,48 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Commandos 3: Destination Berlin
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20190927.3
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='commandos-3'
+GAME_NAME='Commandos 3: Destination Berlin'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='setup_commandos_3_-_destination_berlin_1.42_hotfix2_(25143).exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/commandos_2_3'
+ARCHIVE_GOG_MD5='2fa1ad6e7c7e918bdaa1adee5bb3a0ec'
+ARCHIVE_GOG_VERSION='1.42-gog25143'
+ARCHIVE_GOG_SIZE='2100000'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.pdf eula.txt readme.rtf support.txt'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='*.pck directplay.cmd data output'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+CONFIG_DIRS='./output'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}') d3dx9_42"
 
-GAME_IMAGE='./game.ins'
+APP_MAIN_TYPE='wine'
+APP_MAIN_EXE='commandos3.exe'
+APP_MAIN_ICON='commandos3.exe'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
-
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks glx xrandr"
 
 # Load common functions
 
@@ -113,26 +104,18 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icons
+
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
+PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
 
 # Build package
 

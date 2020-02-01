@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
+# Copyright (c) 2018-2019, VA
 # Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,57 +30,68 @@ set -o errexit
 ###
 
 ###
-# Fantasy General
+# Capsized
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to dev+playit@indigo.re
 ###
 
-script_version=20190721.1
+script_version=20190927.4
 
 # Set game-specific variables
 
-GAME_ID='fantasy-general'
-GAME_NAME='Fantasy General'
+GAME_ID='capsized'
+GAME_NAME='Capsized'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_GOG='gog_capsized_2.0.0.2.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/capsized'
+ARCHIVE_GOG_MD5='f516c52b4614d63c3cfa4e1ed43934b8'
+ARCHIVE_GOG_SIZE='670000'
+ARCHIVE_GOG_VERSION='1.0-gog2.0.0.2'
+ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_EN='gog_fantasy_general_2.0.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_EN_MD5='59b86b9115ae013d2e23a8b4b7b771fd'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_EN_SIZE='260000'
+ARCHIVE_HUMBLE='capsized-12212015-bin'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/capsized'
+ARCHIVE_HUMBLE_MD5='10515ca5f73e38151e17766cba97f3ed'
+ARCHIVE_HUMBLE_SIZE='650000'
+ARCHIVE_HUMBLE_VERSION='1.0-humble151221'
+ARCHIVE_HUMBLE_TYPE='mojosetup'
 
-ARCHIVE_GOG_FR='gog_fantasy_general_french_2.0.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fantasy_general'
-ARCHIVE_GOG_FR_MD5='1b188304b4cca838e6918ca6e2d9fe2b'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.0.0.8'
-ARCHIVE_GOG_FR_SIZE='240000'
+ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_DOC0_DATA_PATH_HUMBLE='data'
+ARCHIVE_DOC0_DATA_FILES='Linux.README'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_DOC1_DATA_PATH_GOG='data/noarch/docs'
+ARCHIVE_DOC1_DATA_FILES_GOG='*'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='data'
+ARCHIVE_GAME_BIN32_FILES='NePlusUltra.bin.x86 lib'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='*'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='data'
+ARCHIVE_GAME_BIN64_FILES='NePlusUltra.bin.x86_64 lib64'
 
-GAME_IMAGE='./game.ins'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='data'
+ARCHIVE_GAME_DATA_FILES='*.config *.dll Capsized.bmp Content NePlusUltra.exe de es fr it mono'
 
-DATA_DIRS='./saves'
-CONFIG_FILES='dat/prefs.dat'
+APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='export TERM="${TERM%-256color}"'
+APP_MAIN_EXE_BIN32='NePlusUltra.bin.x86'
+APP_MAIN_EXE_BIN64='NePlusUltra.bin.x86_64'
+APP_MAIN_ICON='Capsized.bmp'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='exe/barena.exe'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
 
-PACKAGES_LIST='PKG_MAIN'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='dosbox'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glx alsa openal vorbis theora libudev1"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
@@ -113,26 +124,19 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
-
-# Get icon
-
-icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
-
-# Run game binary from its direct parent directory
-
-# shellcheck disable=SC2016
-pattern='s|$APP_EXE \($APP_OPTIONS $@\)|cd ${APP_EXE%/*}\n${APP_EXE##*/} \1|'
-file="${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "$file"
-fi
+for PKG in PKG_BIN32 PKG_BIN64; do
+        launchers_write 'APP_MAIN'
+done
 
 # Build package
 
@@ -148,3 +152,4 @@ rm --recursive "$PLAYIT_WORKDIR"
 print_instructions
 
 exit 0
+
