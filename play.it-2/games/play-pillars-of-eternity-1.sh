@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200202.4
+script_version=20200202.5
 
 # Set game-specific variables
 
@@ -108,11 +108,15 @@ PKG_AREAS_PROVIDE='pillars-of-eternity-areas'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_AREAS_ID"
 # Easier upgrade from packages generated with pre-20200202.3 script
 PKG_DATA_PROVIDE='pillars-of-eternity-data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_AREAS_ID $PKG_DATA_ID glu xcursor libxrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2"
+PKG_BIN_DEPS_ARCH='libx11 gdk-pixbuf2 glib2'
+PKG_BIN_DEPS_DEB='libx11-6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11 x11-libs/gdk-pixbuf dev-libs/glib'
 # Easier upgrade from packages generated with pre-20200202.3 script
 PKG_BIN_PROVIDE='pillars-of-eternity'
 
