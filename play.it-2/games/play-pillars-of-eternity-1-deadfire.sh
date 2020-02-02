@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,14 @@ set -o errexit
 ###
 # Pillars of Eternity: Deadfire Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180919.2
+script_version=20200202.1
 
 # Set game-specific variables
 
-GAME_ID='pillars-of-eternity'
+GAME_ID='pillars-of-eternity-1'
 GAME_NAME='Pillars of Eternity: Deadfire Pack'
 
 ARCHIVE_GOG='pillars_of_eternity_deadfire_pack_dlc_en_3_07_0_1318_20099.sh'
@@ -67,10 +67,12 @@ PACKAGES_LIST='PKG_MAIN'
 
 PKG_MAIN_ID="${GAME_ID}-deadfire-pack"
 PKG_MAIN_DEPS="$GAME_ID"
+# Easier upgrade from packages generated with pre-20200202.1 script
+PKG_MAIN_PROVIDE='pillars-of-eternity-deadfire-pack'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -93,7 +95,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
