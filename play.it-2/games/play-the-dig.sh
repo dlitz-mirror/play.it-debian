@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200202.1
+script_version=20200202.4
 
 # Set game-specific variables
 
@@ -58,23 +58,29 @@ ARCHIVE_GOG_FR_SIZE='760000'
 ARCHIVE_GOG_FR_VERSION='1.0-gog20100'
 ARCHIVE_GOG_FR_TYPE='mojosetup'
 
-ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='*'
+ARCHIVE_DOC_L10N_PATH='data/noarch/docs'
+ARCHIVE_DOC_L10N_FILES='*'
+
+ARCHIVE_GAME_L10N_PATH='data/noarch/data'
+ARCHIVE_GAME_L10N_FILES='digvoice.bun language.bnd video/digtxt.trs video/sq14sc14.san video/sq14sc22.san video/sq17.san video/sq18b.san video/sq18sc15.san video/sq1.san video/sq2.san video/sq3.san video/sq4.san video/sq8a.san video/sq8b.san video/sq8c.san video/sq9.san'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='dig.la0 dig.la1 digmusic.bun digvoice.bun language.bnd video'
+ARCHIVE_GAME_MAIN_FILES='dig.la0 dig.la1 digmusic.bun video'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='dig'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_MAIN'
+PACKAGES_LIST='PKG_L10N PKG_MAIN'
 
-PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
-PKG_MAIN_DEPS='scummvm'
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
+PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+
+PKG_MAIN_DEPS="$PKG_L10N_ID scummvm"
 
 # Load common functions
 
@@ -112,11 +118,13 @@ prepare_package_layout
 
 # Get icon
 
+PKG='PKG_MAIN'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
+PKG='PKG_MAIN'
 launchers_write 'APP_MAIN'
 
 # Build package
