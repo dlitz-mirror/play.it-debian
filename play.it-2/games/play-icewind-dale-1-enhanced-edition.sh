@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200203.1
+script_version=20200203.2
 
 # Set game-specific variables
 
@@ -110,7 +110,7 @@ PKG_DATA_DESCRIPTION='data'
 PKG_DATA_PROVIDE='icewind-dale-enhanced-edition-data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal"
+PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr"
 PKG_BIN32_DEPS_ARCH='lib32-openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 PKG_BIN32_PROVIDE='icewind-dale-enhanced-edition'
