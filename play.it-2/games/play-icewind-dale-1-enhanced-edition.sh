@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200203.2
+script_version=20200203.6
 
 # Set game-specific variables
 
@@ -80,11 +80,35 @@ ARCHIVE_GAME_BIN32_FILES='IcewindDale'
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='IcewindDale64'
 
-ARCHIVE_GAME_L10N_PATH='data/noarch/game'
-ARCHIVE_GAME_L10N_FILES='lang'
+ARCHIVE_GAME_L10N_CS_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_CS_FILES='lang/cs_CZ'
+
+ARCHIVE_GAME_L10N_DE_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_DE_FILES='lang/de_DE'
+
+ARCHIVE_GAME_L10N_ES_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_ES_FILES='lang/es_ES'
+
+ARCHIVE_GAME_L10N_FR_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_FR_FILES='lang/fr_FR'
+
+ARCHIVE_GAME_L10N_IT_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_IT_FILES='lang/it_IT'
+
+ARCHIVE_GAME_L10N_KO_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_KO_FILES='lang/ko_KR'
+
+ARCHIVE_GAME_L10N_PL_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_PL_FILES='lang/pl_PL'
+
+ARCHIVE_GAME_L10N_RU_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_RU_FILES='lang/ru_RU'
+
+ARCHIVE_GAME_L10N_TR_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_TR_FILES='lang/tr_TR'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='chitin.key engine.lua data movies music scripts'
+ARCHIVE_GAME_DATA_FILES='chitin.key engine.lua data movies music scripts lang/en_US'
 
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='16x16 32x32 48x48 64x64 128x128 256x256'
@@ -95,22 +119,64 @@ APP_MAIN_EXE_BIN32='IcewindDale'
 APP_MAIN_EXE_BIN64='IcewindDale64'
 APP_MAIN_ICON_GOG='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N PKG_DATA'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_IT PKG_L10N_KO PKG_L10N_PL PKG_L10N_RU PKG_L10N_TR PKG_DATA'
 # Keep compatibility with old archives
-PACKAGES_LIST_GOG_OLD0='PKG_BIN32 PKG_L10N PKG_DATA'
+PACKAGES_LIST_GOG_OLD0='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_IT PKG_L10N_KO PKG_L10N_PL PKG_L10N_RU PKG_L10N_TR PKG_DATA'
 
-PKG_L10N_ID="${GAME_ID}-l10n"
-PKG_L10N_DESCRIPTION='localizations'
-# Easier upgrade from packages generated with pre-20180926.2 scripts
-PKG_L10N_PROVIDE='icewind-dale-enhanced-edition-l10n'
+PKG_L10N_ID="${GAME_ID}-l10n-extra"
+
+PKG_L10N_CS_ID="${PKG_L10N_ID}-cs"
+PKG_L10N_CS_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_CS_DESCRIPTION='Czech localization'
+PKG_L10N_CS_DEPS="$GAME_ID"
+
+PKG_L10N_DE_ID="${PKG_L10N_ID}-de"
+PKG_L10N_DE_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_DE_DESCRIPTION='German localization'
+PKG_L10N_DE_DEPS="$GAME_ID"
+
+PKG_L10N_ES_ID="${PKG_L10N_ID}-es"
+PKG_L10N_ES_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_ES_DESCRIPTION='Spanish localization'
+PKG_L10N_ES_DEPS="$GAME_ID"
+
+PKG_L10N_FR_ID="${PKG_L10N_ID}-fr"
+PKG_L10N_FR_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_FR_DESCRIPTION='French localization'
+PKG_L10N_FR_DEPS="$GAME_ID"
+
+PKG_L10N_IT_ID="${PKG_L10N_ID}-it"
+PKG_L10N_IT_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_IT_DESCRIPTION='Italian localization'
+PKG_L10N_IT_DEPS="$GAME_ID"
+
+PKG_L10N_KO_ID="${PKG_L10N_ID}-ko"
+PKG_L10N_KO_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_KO_DESCRIPTION='Korean localization'
+PKG_L10N_KO_DEPS="$GAME_ID"
+
+PKG_L10N_PL_ID="${PKG_L10N_ID}-pl"
+PKG_L10N_PL_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_PL_DESCRIPTION='Polish localization'
+PKG_L10N_PL_DEPS="$GAME_ID"
+
+PKG_L10N_RU_ID="${PKG_L10N_ID}-ru"
+PKG_L10N_RU_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_RU_DESCRIPTION='Russian localization'
+PKG_L10N_RU_DEPS="$GAME_ID"
+
+PKG_L10N_TR_ID="${PKG_L10N_ID}-tr"
+PKG_L10N_TR_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_TR_DESCRIPTION='Turkish localization'
+PKG_L10N_TR_DEPS="$GAME_ID"
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
-# Easier upgrade from packages generated with pre-20180926.2 scripts
-PKG_DATA_PROVIDE='icewind-dale-enhanced-edition-data'
+# Easier upgrade from packages generated with pre-20200203.5 scripts
+PKG_DATA_PROVIDE='icewind-dale-1-enhanced-edition-l10n'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libxrandr"
 PKG_BIN32_DEPS_ARCH='lib32-openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 PKG_BIN32_PROVIDE='icewind-dale-enhanced-edition'
@@ -265,7 +331,7 @@ case "$ARCHIVE" in
 		fi
 		EOF
 		write_metadata 'PKG_BIN32'
-		write_metadata 'PKG_L10N' 'PKG_DATA'
+		write_metadata 'PKG_L10N_CS' 'PKG_L10N_DE' 'PKG_L10N_ES' 'PKG_L10N_FR' 'PKG_L10N_IT' 'PKG_L10N_KO' 'PKG_L10N_PL' 'PKG_L10N_RU' 'PKG_L10N_TR' 'PKG_DATA'
 	;;
 	(*)
 		write_metadata
@@ -279,6 +345,64 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-print_instructions
+case "${LANG%_*}" in
+	('fr')
+		lang_string='version %s :'
+		lang_en='anglaise'
+		lang_cs='tchèque'
+		lang_de='allemande'
+		lang_es='espagnole'
+		lang_fr='française'
+		lang_it='italienne'
+		lang_ko='coréenne'
+		lang_pl='polonaise'
+		lang_ru='russe'
+		lang_tr='turque'
+	;;
+	('en'|*)
+		lang_string='%s version:'
+		lang_en='English'
+		lang_cs='Czech'
+		lang_de='German'
+		lang_es='Spanish'
+		lang_fr='French'
+		lang_it='Italian'
+		lang_ko='Korean'
+		lang_pl='Polish'
+		lang_ru='Russian'
+		lang_tr='Turkish'
+	;;
+esac
+printf '\n'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_en"
+print_instructions 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_cs"
+print_instructions 'PKG_L10N_CS' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_de"
+print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_es"
+print_instructions 'PKG_L10N_ES' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_fr"
+print_instructions 'PKG_L10N_FR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_it"
+print_instructions 'PKG_L10N_IT' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_ko"
+print_instructions 'PKG_L10N_KO' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_pl"
+print_instructions 'PKG_L10N_PL' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_ru"
+print_instructions 'PKG_L10N_RU' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
+printf "$lang_string" "$lang_tr"
+print_instructions 'PKG_L10N_TR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
 
 exit 0
