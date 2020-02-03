@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200203.1
+script_version=20200203.4
 
 # Set game-specific variables
 
@@ -61,6 +61,18 @@ ARCHIVE_GAME_DATA_PATH='Raetikon'
 ARCHIVE_GAME_DATA_FILES='data steam_appid.txt'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Create minimal configuration file to avoid a black screen on Intel chipset
+config_file="$HOME/.secrets-of-raetikon/Options.xml"
+if [ ! -e "$config_file" ]; then
+	mkdir --parents "$(dirname "$config_file")"
+	cat > "$config_file" <<- EOF
+	<root>
+	    <rendering>
+	        <postProcessing value="false" />
+	    </rendering>
+	</root>
+	EOF
+fi'
 APP_MAIN_EXE_BIN32='Raetikon'
 APP_MAIN_EXE_BIN64='Raetikon64'
 
