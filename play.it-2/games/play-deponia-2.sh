@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200203.1
+script_version=20200203.2
 
 # Set game-specific variables
 
@@ -53,6 +53,10 @@ ARCHIVE_HUMBLE_MD5='e7a71d5b8a83b2c2393095256b03553b'
 ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'
 
+ARCHIVE_OPTIONAL_ICONS='deponia-2_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/deponia-2/'
+ARCHIVE_OPTIONAL_ICONS_MD5='4469f0e85881f0db2c266dcb6222717c'
+
 ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_DOC0_DATA_PATH_HUMBLE='Chaos on Deponia'
 ARCHIVE_DOC0_DATA_FILES='documents version.txt'
@@ -67,6 +71,9 @@ ARCHIVE_GAME_BIN_FILES='config.ini Deponia2 libs64'
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Chaos on Deponia'
 ARCHIVE_GAME_DATA_FILES='characters data.vis lua scenes videos'
+
+ARCHIVE_ICONS_PATH='.'
+ARCHIVE_ICONS_FILES='16x16 32x32 48x48 256x256'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Deponia2'
@@ -111,6 +118,12 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load icons archive if available
+
+ARCHIVE_MAIN="$ARCHIVE"
+archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
@@ -121,15 +134,21 @@ case "$ARCHIVE" in
 esac
 prepare_package_layout
 
-# Get icon
+# Include game icon
 
-case "$ARCHIVE" in
-	('ARCHIVE_GOG')
-		PKG='PKG_DATA'
-		use_archive_specific_value 'APP_MAIN_ICON'
-		icons_get_from_workdir 'APP_MAIN'
-	;;
-esac
+PKG='PKG_DATA'
+if [ "$ARCHIVE_ICONS" ]; then
+	ARCHIVE='ARCHIVE_ICONS' \
+		extract_data_from "$ARCHIVE_ICONS"
+	organize_data 'ICONS' "$PATH_ICON_BASE"
+else
+	case "$ARCHIVE" in
+		('ARCHIVE_GOG')
+			use_archive_specific_value 'APP_MAIN_ICON'
+			icons_get_from_workdir 'APP_MAIN'
+		;;
+	esac
+fi
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
