@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Icewind Dale - Enhanced Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180929.1
+script_version=20200203.1
 
 # Set game-specific variables
 
@@ -114,18 +114,16 @@ PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal"
 PKG_BIN32_DEPS_ARCH='lib32-openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 PKG_BIN32_PROVIDE='icewind-dale-enhanced-edition'
-# Keep compatibility with old archives
-PKG_BIN32_DEPS_GOG_OLD0="$PKG_BIN32_DEPS json"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_ARCH="$PKG_BIN32_DEPS_ARCH"
+PKG_BIN64_DEPS_ARCH='openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 PKG_BIN64_PROVIDE='icewind-dale-enhanced-edition'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -148,15 +146,16 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Set pakcages list dependending on source archive
+# Set packages list based on source archive
+
 use_archive_specific_value 'PACKAGES_LIST'
 # shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
-# Try to load icons archive
+# Load icons archive if available
 
 ARCHIVE_MAIN="$ARCHIVE"
 archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
@@ -167,7 +166,14 @@ ARCHIVE="$ARCHIVE_MAIN"
 if [ "$OPTION_PACKAGE" = 'deb' ]; then
 	ARCHIVE_MAIN="$ARCHIVE"
 	archive_set 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
-	archive_set 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
+	case "$ARCHIVE_MAIN" in
+		('ARCHIVE_GOG_OLD0')
+			# No 64-bit binary provided, 64-bit libSSL 1.0.0 is not required
+		;;
+		(*)
+			archive_set 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
+		;;
+	esac
 	ARCHIVE="$ARCHIVE_MAIN"
 fi
 
@@ -180,10 +186,8 @@ prepare_package_layout
 
 PKG='PKG_DATA'
 if [ "$ARCHIVE_ICONS" ]; then
-	(
-		ARCHIVE='ARCHIVE_ICONS'
+	ARCHIVE='ARCHIVE_ICONS' \
 		extract_data_from "$ARCHIVE_ICONS"
-	)
 	organize_data 'ICONS' "$PATH_ICON_BASE"
 else
 	icons_get_from_workdir 'APP_MAIN'
@@ -193,21 +197,15 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Include libSSL 1.0.0 (Debian packages only)
 
 if [ "$ARCHIVE_LIBSSL32" ]; then
-	(
-		# shellcheck disable=SC2030
-		ARCHIVE='ARCHIVE_LIBSSL32'
+	ARCHIVE='ARCHIVE_LIBSSL32' \
 		extract_data_from "$ARCHIVE_LIBSSL32"
-	)
 	mkdir --parents "${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 if [ "$ARCHIVE_LIBSSL64" ]; then
-	(
-		# shellcheck disable=SC2030
-		ARCHIVE='ARCHIVE_LIBSSL64'
+	ARCHIVE='ARCHIVE_LIBSSL64' \
 		extract_data_from "$ARCHIVE_LIBSSL64"
-	)
 	mkdir --parents "${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
@@ -216,22 +214,24 @@ fi
 # Write launchers
 
 PKG='PKG_BIN32'
-write_launcher 'APP_MAIN'
-# shellcheck disable=SC2031
+launchers_write 'APP_MAIN'
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_OLD0');;
+	('ARCHIVE_GOG_OLD0')
+		# No 64-bit binary provided
+	;;
 	(*)
 		PKG='PKG_BIN64'
-		write_launcher 'APP_MAIN'
+		launchers_write 'APP_MAIN'
 	;;
 esac
 
 # Build package
 
-use_archive_specific_value 'PKG_BIN32_DEPS'
-# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_OLD0')
+		# No 64-bit binary provided
+		# Old 32-bit version depends on libjson.so.0
+		PKG_BIN32_DEPS="$PKG_BIN32_DEPS json"
 		case "$OPTION_PACKAGE" in
 			('arch')
 				cat > "$postinst" <<- EOF
@@ -264,17 +264,13 @@ case "$ARCHIVE" in
 		    rm "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
 		fi
 		EOF
+		write_metadata 'PKG_BIN32'
+		write_metadata 'PKG_L10N' 'PKG_DATA'
 	;;
-esac
-write_metadata 'PKG_BIN32'
-# shellcheck disable=SC2031
-case "$ARCHIVE" in
-	('ARCHIVE_GOG_OLD0');;
 	(*)
-		write_metadata 'PKG_BIN64'
+		write_metadata
 	;;
 esac
-write_metadata 'PKG_L10N' 'PKG_DATA'
 build_pkg
 
 # Clean up
