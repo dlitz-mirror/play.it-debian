@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200204.2
+script_version=20200204.3
 
 # Set game-specific variables
 
@@ -67,7 +67,7 @@ ARCHIVE_DOC_FILES='README.linux *.pdf'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='data/x86'
-ARCHIVE_GAME_BIN_FILES='Xenonauts.bin.x86 lib'
+ARCHIVE_GAME_BIN_FILES='Xenonauts.bin.x86 lib/libsteam_api.so'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='data/noarch'
