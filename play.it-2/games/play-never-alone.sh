@@ -1,10 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
-# Copyright (c) 2018-2019, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,10 @@ set -o errexit
 ###
 # Never Alone
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190113.1
+script_version=20200204.1
 
 # Set game-specific variables
 
@@ -50,7 +50,7 @@ ARCHIVE_HUMBLE_SIZE='4900000'
 ARCHIVE_HUMBLE_VERSION='1.04-humble161008'
 
 ARCHIVE_GAME_BIN_PATH='NeverAlone_ArcticCollection_Linux.1.04'
-ARCHIVE_GAME_BIN_FILES='Never_Alone.x64 Never_Alone_Data/*/x86_64'
+ARCHIVE_GAME_BIN_FILES='Never_Alone.x64 Never_Alone_Data/Mono Never_Alone_Data/Plugins'
 
 ARCHIVE_GAME_VIDEOS_PATH='NeverAlone_ArcticCollection_Linux.1.04'
 ARCHIVE_GAME_VIDEOS_FILES='Never_Alone_Data/StreamingAssets/Videos'
@@ -73,13 +73,14 @@ PKG_VIDEOS_DESCRIPTION='videos'
 
 PKG_DATA_ID="$GAME_ID-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_VIDEOS_ID"
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_VIDEOS_ID $PKG_DATA_ID glibc libstdc++ glu xcursor"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -102,7 +103,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -112,17 +113,19 @@ set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN' 'PKG_VIDEOS'
+write_metadata
 build_pkg
 
 # Clean up
