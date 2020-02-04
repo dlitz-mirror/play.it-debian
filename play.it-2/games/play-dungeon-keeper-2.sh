@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200204.2
+script_version=20200204.3
 
 # Set game-specific variables
 
@@ -71,18 +71,27 @@ ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_DIRS='./data/settings'
 DATA_DIRS='./data/save'
-DATA_FILES='./*.LOG'
+DATA_FILES='./*.LOG ./*.reg'
 
 APP_WINETRICKS='csmt=off'
 
 APP_MAIN_TYPE='wine'
+APP_MAIN_PRERUN='# Load persistent registry entries
+registry_dump="persistent.reg"
+if [ -e "$registry_dump" ]; then
+	regedit "$registry_dump"
+fi'
 APP_MAIN_EXE='dkii-dx.exe'
+APP_MAIN_POSTRUN='# Store persistent registry entries
+regedit -E "$registry_dump" "HKEY_CURRENT_USER\Software\Bullfrog Productions Ltd\Dungeon Keeper II"'
 APP_MAIN_ICON='dkii.exe'
 
 APP_SOFTWARE_ID="${GAME_ID}_software"
 APP_SOFTWARE_TYPE='wine'
+APP_SOFTWARE_PRERUN="$APP_MAIN_PRERUN"
 APP_SOFTWARE_EXE='dkii.exe'
 APP_SOFTWARE_OPTIONS='-softwarefilter -32bitdisplay -disablegamma -shadows 1 -software'
+APP_SOFTWARE_POSTRUN="$APP_MAIN_POSTRUN"
 APP_SOFTWARE_NAME="$GAME_NAME (software rendering)"
 APP_SOFTWARE_ICON="$APP_MAIN_ICON"
 
