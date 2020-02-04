@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200204.2
+script_version=20200204.3
 
 # Set game-specific variables
 
@@ -48,6 +48,11 @@ ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/never-alone-arctic-collec
 ARCHIVE_HUMBLE_MD5='3da062abaaa9e3e6ff97d4c82c8ea3c3'
 ARCHIVE_HUMBLE_SIZE='4900000'
 ARCHIVE_HUMBLE_VERSION='1.04-humble161008'
+
+ARCHIVE_OPTIONAL_MESAFIX='neveralonefix.c'
+ARCHIVE_OPTIONAL_MESAFIX_URL='https://github.com/dscharrer/void/blob/master/hacks/neveralonefix.c'
+ARCHIVE_OPTIONAL_MESAFIX_MD5='61898247276ec22c30ff83a887aff819'
+ARCHIVE_OPTIONAL_MESAFIX_TYPE='file'
 
 ARCHIVE_GAME_BIN_PATH='NeverAlone_ArcticCollection_Linux.1.04'
 ARCHIVE_GAME_BIN_FILES='Never_Alone.x64 Never_Alone_Data/Mono Never_Alone_Data/Plugins'
@@ -61,6 +66,15 @@ ARCHIVE_GAME_DATA_FILES='Never_Alone_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN_MESAFIX='# Load dscharrerʼs hack to work around shadows rendering issue
+APP_OPTIONS="./$APP_EXE $APP_OPTIONS"
+APP_EXE="neveralonefix.c"
+if [ -h "neveralonefix.c" ]; then
+	hack_path=$(realpath "neveralonefix.c")
+	rm "neveralonefix.c"
+	cp "$hack_path" "neveralonefix.c"
+fi'
 APP_MAIN_EXE='Never_Alone.x64'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
@@ -80,6 +94,10 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor"
 PKG_BIN_DEPS_ARCH='libx11'
 PKG_BIN_DEPS_DEB='libx11-6'
 PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+# Extra dependencies required to build dscharrerʼs Mesa hack
+PKG_BIN_DEPS_ARCH_MESAFIX="$PKG_BIN_DEPS_ARCH gcc mesa pkgconf"
+PKG_BIN_DEPS_DEB_MESAFIX="$PKG_BIN_DEPS_DEB, gcc, libgl-dev | libgl1-mesa-dev, libglvnd-dev | libgl1-mesa-dev, pkg-config"
+PKG_BIN_DEPS_GENTOO_MESAFIX="$PKG_BIN_DEPS_GENTOO sys-devel/gcc media-libs/mesa dev-util/pkgconfig"
 
 # Load common functions
 
@@ -109,6 +127,12 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load dscharrerʼs Mesa fix if available
+
+ARCHIVE_MAIN="$ARCHIVE"
+archive_set 'ARCHIVE_MESAFIX' 'ARCHIVE_OPTIONAL_MESAFIX'
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
@@ -120,6 +144,17 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
+
+# Include dscharrerʼs Mesa fix
+
+if [ -n "$ARCHIVE_MESAFIX" ]; then
+	cp "$ARCHIVE_MESAFIX" "${PKG_BIN_PATH}${PATH_GAME}/neveralonefix.c"
+	chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/neveralonefix.c"
+	APP_MAIN_PRERUN="$APP_MAIN_PRERUN_MESAFIX"
+	PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH_MESAFIX"
+	PKG_BIN_DEPS_DEB="$PKG_BIN_DEPS_DEB_MESAFIX"
+	PKG_BIN_DEPS_GENTOO="$PKG_BIN_DEPS_GENTOO_MESAFIX"
+fi
 
 # Write launchers
 
