@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200204.1
+script_version=20200204.2
 
 # Set game-specific variables
 
@@ -83,7 +83,10 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glx sdl2 alsa"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2 alsa"
+PKG_BIN_DEPS_ARCH='lib32-libx11 lib32-libxinerama lib32-libxxf86vm lib32-libxext'
+PKG_BIN_DEPS_DEB='libx11-6, libxinerama1, libxxf86vm1, libxext6'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] x11-libs/libXinerama[abi_x86_32] x11-libs/libXxf86vm[abi_x86_32] x11-libs/libXext[abi_x86_32]'
 
 # Load common functions
 
