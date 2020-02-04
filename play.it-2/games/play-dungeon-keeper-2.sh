@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,17 @@ set -o errexit
 ###
 
 ###
-# Dungeon Keeper 2
+# Dungeon Keeper Ⅱ
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190101.1
+script_version=20200204.1
 
 # Set game-specific variables
 
 GAME_ID='dungeon-keeper-2'
-GAME_NAME='Dungeon Keeper II'
+GAME_NAME='Dungeon Keeper Ⅱ'
 
 ARCHIVE_GOG='setup_dungeon_keeper_2_1.7_(22280).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/dungeon_keeper_2'
@@ -96,7 +96,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -119,7 +119,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -137,7 +137,7 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_SOFTWARE'
+launchers_write 'APP_MAIN' 'APP_SOFTWARE'
 
 # Build package
 
