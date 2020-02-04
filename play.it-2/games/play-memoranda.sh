@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200204.7
+script_version=20200216.2
 
 # Set game-specific variables
 
@@ -70,8 +70,10 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu openal libxrandr"
-PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libxrandr glu"
+PKG_BIN_DEPS_ARCH='lib32-zlib lib32-libxxf86vm lib32-libxext lib32-libx11 lib32-openssl-1.0 lib32-gcc-libs'
+PKG_BIN_DEPS_DEB='zlib1g, libxxf86vm1, libxext6, libx11-6, libgcc-s1 | libgcc1'
+PKG_BIN_DEPS_GENTOO='sys-libs/zlib[abi_x86_32] x11-libs/libXxf86vm[abi_x86_32] x11-libs/libXext[abi_x86_32] x11-libs/libX11[abi_x86_32] dev-libs/openssl-compat[abi_x86_32]'
 
 # Load common functions
 
@@ -103,11 +105,19 @@ fi
 
 # Use libSSL 1.0.0 32-bit archive (Debian packages only)
 
-if [ "$OPTION_PACKAGE" = 'deb' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	archive_set 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
+case "$OPTION_PACKAGE" in
+	('deb')
+		ARCHIVE_MAIN="$ARCHIVE"
+		archive_set 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+	('arch'|'gentoo')
+		# Both Arch Linux and Gentoo still have official libSSL 1.0.0 packages
+	;;
+	(*)
+		liberror 'OPTION_PACKAGE' "$0"
+	;;
+esac
 
 # Extract game data
 
