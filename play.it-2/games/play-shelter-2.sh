@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +31,11 @@ set -o errexit
 
 ###
 # Shelter 2 + Mountains
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200205.1
 
 # Set game-specific variables
 
@@ -48,33 +49,26 @@ ARCHIVE_MOUNTAINS_GOG_URL='https://www.gog.com/game/shelter_2_mountains'
 ARCHIVE_MOUNTAINS_GOG_MD5='ffe25b4ac5d75b9a30ed983634397d85'
 ARCHIVE_MOUNTAINS_GOG_SIZE='2500000'
 ARCHIVE_MOUNTAINS_GOG_VERSION='1.0-gog2.0.0.1'
-ARCHIVE_MOUNTAINS_GOG_TYPE='mojosetup'
 
 ARCHIVE_GOG='gog_shelter_2_2.5.0.10.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/shelter_2'
 ARCHIVE_GOG_MD5='f2bf2e188667133ad117b5bff846e66e'
 ARCHIVE_GOG_SIZE='2200000'
 ARCHIVE_GOG_VERSION='20150708-gog2.5.0.10'
-ARCHIVE_GOG_TYPE='mojosetup'
 
 DATA_DIRS='./logs'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
-
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./Shelter2.x86 ./Shelter2_Data/Mono ./Shelter2_Data/Plugins'
+ARCHIVE_GAME_BIN_FILES='Shelter2.x86 Shelter2_Data/Mono Shelter2_Data/Plugins'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./Shelter2_Data/level* ./Shelter2_Data/mainData ./Shelter2_Data/PlayerConnectionConfigFile ./Shelter2_Data/Resources ./Shelter2_Data/resources.assets ./Shelter2_Data/ScreenSelector.png ./Shelter2_Data/sharedassets* ./Shelter2_Data/Managed'
+ARCHIVE_GAME_DATA_FILES='Shelter2_Data'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Shelter2.x86'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='*_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='Shelter2_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -86,48 +80,56 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor"
 
 # Load common functions
 
-target_version='2.4'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
+PKG='PKG_BIN'
 write_launcher 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
