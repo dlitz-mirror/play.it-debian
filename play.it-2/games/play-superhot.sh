@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.1
+script_version=20200205.2
 
 # Set game-specific variables
 
@@ -67,7 +67,10 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc glx xcursor libxrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr gtk2"
+PKG_BIN_DEPS_ARCH='libx11 gdk-pixbuf2 glib2'
+PKG_BIN_DEPS_DEB='libx11-6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11 x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
