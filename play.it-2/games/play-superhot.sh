@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.2
+script_version=20200205.3
 
 # Set game-specific variables
 
@@ -56,6 +56,8 @@ ARCHIVE_GAME_DATA_FILES='SUPERHOT_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
+export LANG=C'
 APP_MAIN_EXE='SUPERHOT.x86_64'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
