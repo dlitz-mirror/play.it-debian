@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.2
+script_version=20200205.3
 
 # Set game-specific variables
 
@@ -55,6 +55,15 @@ ARCHIVE_DOC_DATA_FILES='LICENSE.txt version.txt'
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='Engine StateOfMind/Binaries StateOfMind.cfg'
 
+ARCHIVE_GAME_PAKS1_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS1_FILES='StateOfMind/Content/Paks/pakchunk0-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk1-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk2-LinuxNoEditor.pak'
+
+ARCHIVE_GAME_PAKS2_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS2_FILES='StateOfMind/Content/Paks/pakchunk3-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk4-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk5-LinuxNoEditor.pak'
+
+ARCHIVE_GAME_PAKS3_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS3_FILES='StateOfMind/Content/Paks/pakchunk6-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk7-LinuxNoEditor.pak'
+
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='StateOfMind/Content StateOfMind.png StateOfMind.desktop'
 
@@ -63,10 +72,20 @@ APP_MAIN_EXE='StateOfMind/Binaries/Linux/StateOfMind-Linux-Shipping'
 APP_MAIN_OPTIONS='StateOfMind'
 APP_MAIN_ICON='StateOfMind.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_PAKS1 PKG_PAKS2 PKG_PAKS3 PKG_DATA'
+
+PKG_PAKS1_ID="${GAME_ID}-paks-1"
+PKG_PAKS1_DESCRIPTION='data paks - 1'
+
+PKG_PAKS2_ID="${GAME_ID}-paks-2"
+PKG_PAKS2_DESCRIPTION='data paks - 2'
+
+PKG_PAKS3_ID="${GAME_ID}-paks-3"
+PKG_PAKS3_DESCRIPTION='data paks - 3'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_PAKS1_ID $PKG_PAKS2_ID $PKG_PAKS3_ID"
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal"
