@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.3
+script_version=20200205.4
 
 # Set game-specific variables
 
@@ -58,6 +58,19 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
 export LANG=C'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Work around issues when pulseaudio libraries are available but pulseaudio is not running
+if ! command -v pulseaudio >/dev/null 2>&1; then
+	mkdir --parents libs
+	ln --force --symbolic /dev/null libs/libpulse-simple.so.0
+	export LD_LIBRARY_PATH="libs:$LD_LIBRARY_PATH"
+else
+	if [ -e "libs/libpulse-simple.so.0" ]; then
+		rm libs/libpulse-simple.so.0
+		rmdir --ignore-fail-on-non-empty libs
+	fi
+	pulseaudio --start
+fi'
 APP_MAIN_EXE='SUPERHOT.x86_64'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
