@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.1
+script_version=20200205.2
 
 # Set game-specific variables
 
@@ -53,10 +53,10 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='LICENSE.txt version.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Engine StateOfMind StateOfMind.cfg'
+ARCHIVE_GAME_BIN_FILES='Engine StateOfMind/Binaries StateOfMind.cfg'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='StateOfMind.png StateOfMind.desktop'
+ARCHIVE_GAME_DATA_FILES='StateOfMind/Content StateOfMind.png StateOfMind.desktop'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='StateOfMind/Binaries/Linux/StateOfMind-Linux-Shipping'
