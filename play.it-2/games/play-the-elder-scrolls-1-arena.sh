@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # The Elder Scrolls: Arena
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190302.4
+script_version=20200206.1
 
 # Set game-specific variables
 
@@ -62,9 +62,10 @@ GAME_IMAGE_TYPE='cdrom'
 DATA_DIRS='./save ./arena_cd'
 
 APP_MAIN_TYPE='dosbox'
+APP_MAIN_PRERUN='config -set cpu cycles=fixed 20000
+d:'
 APP_MAIN_EXE='acd.exe'
 APP_MAIN_OPTIONS='-Ssbpdig.adv -IOS220 -IRQS7 -DMAS1 -Mgenmidi.adv -IOM330 -IRQM2 -DMAM1'
-APP_MAIN_PRERUN='d:'
 APP_MAIN_ICON='app/goggame-1435828982.ico'
 
 PACKAGES_LIST='PKG_MAIN'
@@ -113,7 +114,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-launcher_write 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
