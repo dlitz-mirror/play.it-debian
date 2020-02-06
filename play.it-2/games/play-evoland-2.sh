@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Evoland 2, A Slight Case of Spacetime Continuum Disorder
-# build native Linux packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190113.4
+script_version=20200206.1
 
 # Set game-specific variables
 
@@ -47,7 +47,6 @@ ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/evoland-2'
 ARCHIVE_HUMBLE_MD5='0e34269cb7db3a6c065311eea90e651a'
 ARCHIVE_HUMBLE_SIZE='790000'
 ARCHIVE_HUMBLE_VERSION='1.0.9137-humble170116'
-ARCHIVE_HUMBLE_TYPE='zip'
 
 ARCHIVE_GAME_BIN_PATH='Evoland2'
 ARCHIVE_GAME_BIN_FILES='Adobe?AIR Evoland2.exe gamePadConfig.txt pad.exe'
@@ -71,7 +70,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -112,7 +111,7 @@ icons_get_from_package 'APP_MAIN'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
