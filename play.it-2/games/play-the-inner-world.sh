@@ -35,27 +35,38 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200206.2
+script_version=20200206.3
 
 # Set game-specific variables
 
 GAME_ID='the-inner-world'
 GAME_NAME='The Inner World'
 
-ARCHIVE_GOG='setup_the_inner_world_2.0.0.2.exe'
+ARCHIVE_GOG='setup_the_inner_world_1.2.1_(26675).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_inner_world'
-ARCHIVE_GOG_MD5='b5778aa9770ba7fc7d1a3884154c136b'
+ARCHIVE_GOG_MD5='2379e9c64c4fe06d6892474637aa405b'
 ARCHIVE_GOG_SIZE='1500000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.2'
+ARCHIVE_GOG_VERSION='1.2.1-gog26675'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='eula?headup?games.rtf'
+ARCHIVE_GOG_OLD0='setup_the_inner_world_2.0.0.2.exe'
+ARCHIVE_GOG_OLD0_MD5='b5778aa9770ba7fc7d1a3884154c136b'
+ARCHIVE_GOG_OLD0_SIZE='1500000'
+ARCHIVE_GOG_OLD0_VERSION='1.2.1-gog2.0.0.2'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='theinnerworld.exe adobe?air theinnerworld.swf'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.rtf'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='fizbin-link.url headup-link.url innerworld-link.url media meta-inf mimetype'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.exe *.swf adobe?air meta-inf mimetype'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
+
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='*.url media'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 APP_MAIN_TYPE='wine'
 # shellcheck disable=SC1004
