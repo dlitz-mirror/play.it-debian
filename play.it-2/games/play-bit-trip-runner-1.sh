@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200206.1
+script_version=20200206.2
 
 # Set game-specific variables
 
@@ -75,7 +75,7 @@ PKG_DATA_DESCRIPTION='data'
 PKG_DATA_PROVIDE='runner-data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx xcursor sdl openal"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl1.2 openal vorbis"
 # Easier upgrade from packages generated with pre-20200206.1 scripts
 PKG_BIN32_PROVIDE='runner'
 
