@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200207.1
+script_version=20200207.2
 
 # Set game-specific variables
 
@@ -106,6 +106,15 @@ APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='shock2.exe'
+# shellcheck disable=SC2016
+APP_MAIN_POSTRUN='# Work around issues with configuration persistence
+for cfg in *.cfg; do
+	if [ -f "$cfg" ] && [ ! -h "$cfg" ]; then
+		mv "$PATH_CONFIG/$cfg" "$PATH_CONFIG/$cfg.old"
+		mv "$cfg" "$PATH_CONFIG/$cfg"
+		ln --symbolic "$PATH_CONFIG/$cfg" "$cfg"
+	fi
+done'
 APP_MAIN_ICON='shock2.exe'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
