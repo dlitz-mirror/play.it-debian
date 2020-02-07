@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,10 @@ set -o errexit
 ###
 # System Shock 2
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190520.1
+script_version=20200207.1
 
 # Set game-specific variables
 
@@ -77,7 +77,7 @@ ARCHIVE_DOC_DATA_PATH_GOG_OLD2='app'
 ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME0_BIN_PATH='.'
-ARCHIVE_GAME0_BIN_FILES='*.ax *.bnd *.cfg *.exe *.osm 7z.dll d3dx9_43.dll ffmpeg.dll fmsel.dll ir41_32.dll ir50_32.dll lgvid.dll msvcrt40.dll editor/*.cfg editor/*.dll editor/*.exe microsoft.vc90.crt'
+ARCHIVE_GAME0_BIN_FILES='*.ax *.bnd *.cfg *.crt *.dll *.exe *.osm */*.cfg */*.dll */*.exe'
 # Keep compatibility with old archives
 ARCHIVE_GAME0_BIN_PATH_GOG_OLD1='app'
 ARCHIVE_GAME0_BIN_PATH_GOG_OLD2='app'
@@ -101,6 +101,7 @@ CONFIG_FILES='./*.bnd ./*.cfg ./*.ini'
 DATA_DIRS='./current ./save_0 ./save_1 ./save_2 ./save_3 ./save_4 ./save_5 ./save_6 ./save_7 ./save_8 ./save_9 ./save_10 ./save_11 ./save_12 ./save_13 ./save_14'
 DATA_FILES='./*.log'
 
+# Set up a virtual WINE desktop on first launch, using current screen resolution
 APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
@@ -113,7 +114,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr glx"
 
 # Load common functions
 
