@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,18 @@ set -o errexit
 
 ###
 # Indiana Jones and the Fate of Atlantis
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180619.1
+script_version=20200208.1
 
 # Set game-specific variables
 
 GAME_ID='indiana-jones-and-the-fate-of-atlantis'
 GAME_NAME='Indiana Jones and the Fate of Atlantis'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD'
+ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD0'
 
 ARCHIVE_GOG_EN='indiana_jones_and_the_fate_of_atlantis_en_gog_2_20145.sh'
 ARCHIVE_GOG_EN_URL='https://www.gog.com/game/indiana_jones_and_the_fate_of_atlantis'
@@ -50,10 +50,10 @@ ARCHIVE_GOG_EN_SIZE='390000'
 ARCHIVE_GOG_EN_VERSION='1.0-gog20145'
 ARCHIVE_GOG_EN_TYPE='mojosetup'
 
-ARCHIVE_GOG_EN_OLD='gog_indiana_jones_and_the_fate_of_atlantis_2.2.0.27.sh'
-ARCHIVE_GOG_EN_OLD_MD5='d56a5850b9d1d4f82eebc282ef7fb52b'
-ARCHIVE_GOG_EN_OLD_SIZE='250000'
-ARCHIVE_GOG_EN_OLD_VERSION='1.0-gog2.2.0.27'
+ARCHIVE_GOG_EN_OLD0='gog_indiana_jones_and_the_fate_of_atlantis_2.2.0.27.sh'
+ARCHIVE_GOG_EN_OLD0_MD5='d56a5850b9d1d4f82eebc282ef7fb52b'
+ARCHIVE_GOG_EN_OLD0_SIZE='250000'
+ARCHIVE_GOG_EN_OLD0_VERSION='1.0-gog2.2.0.27'
 
 ARCHIVE_GOG_FR='indiana_jones_and_the_fate_of_atlantis_fr_gog_2_20145.sh'
 ARCHIVE_GOG_FR_URL='https://www.gog.com/game/indiana_jones_and_the_fate_of_atlantis'
@@ -62,16 +62,16 @@ ARCHIVE_GOG_FR_SIZE='240000'
 ARCHIVE_GOG_FR_VERSION='1.0-gog20145'
 ARCHIVE_GOG_FR_TYPE='mojosetup'
 
-ARCHIVE_GOG_FR_OLD='gog_indiana_jones_and_the_fate_of_atlantis_french_2.2.0.27.sh'
-ARCHIVE_GOG_FR_OLD_MD5='0da3a8b3d0505c86a9f863c27debbca7'
-ARCHIVE_GOG_FR_OLD_SIZE='99000'
-ARCHIVE_GOG_FR_OLD_VERSION='1.0-gog2.2.0.27'
+ARCHIVE_GOG_FR_OLD0='gog_indiana_jones_and_the_fate_of_atlantis_french_2.2.0.27.sh'
+ARCHIVE_GOG_FR_OLD0_MD5='0da3a8b3d0505c86a9f863c27debbca7'
+ARCHIVE_GOG_FR_OLD0_SIZE='99000'
+ARCHIVE_GOG_FR_OLD0_VERSION='1.0-gog2.2.0.27'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='./*.pdf ./*.txt'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='./atlantis.000 ./atlantis.001 ./monster.sou'
+ARCHIVE_GAME_MAIN_FILES='atlantis.000 atlantis.001 monster.sou'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='atlantis'
@@ -88,34 +88,33 @@ PKG_MAIN_DEPS_ARCH='scummvm'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Extract data from game
+# Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 tolower "$PLAYIT_WORKDIR/gamedata"
@@ -128,7 +127,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
