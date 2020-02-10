@@ -35,27 +35,38 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200210.1
+script_version=20200210.2
 
 # Set game-specific variables
 
 GAME_ID='little-big-adventure-1'
 GAME_NAME='Little Big Adventure'
 
-ARCHIVE_GOG='setup_lba_2.1.0.22.exe'
+ARCHIVE_GOG='setup_little_big_adventure_1.0_(28186).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/little_big_adventure'
-ARCHIVE_GOG_MD5='c40177522adcbe50ea52590be57045f8'
+ARCHIVE_GOG_MD5='43d4926dc8a56a95800e746ac9797201'
 ARCHIVE_GOG_SIZE='510000'
-ARCHIVE_GOG_VERSION='1.0-gog2.1.0.22'
+ARCHIVE_GOG_VERSION='1.0-gog28186'
 
-ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_GOG_OLD0='setup_lba_2.1.0.22.exe'
+ARCHIVE_GOG_OLD0_MD5='c40177522adcbe50ea52590be57045f8'
+ARCHIVE_GOG_OLD0_SIZE='510000'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.22'
+
+ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='*.cfg *.dll *.ini dos4gw.exe language.exe relent.exe loadpats.exe setup.exe setup.lst'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.hqr lba.dat lba.gog setsound.bat vox sample.*'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 GAME_IMAGE='lba.dat'
 
