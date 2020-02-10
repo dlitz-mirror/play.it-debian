@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Little Big Adventure 1
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180828.1
+script_version=20200210.1
 
 # Set game-specific variables
 
@@ -59,8 +59,8 @@ ARCHIVE_GAME_DATA_FILES='*.hqr lba.dat lba.gog setsound.bat vox sample.*'
 
 GAME_IMAGE='lba.dat'
 
-CONFIG_FILES='./*.cfg ./*.ini'
-DATA_FILES='./*.LBA'
+CONFIG_FILES='*.cfg *.ini'
+DATA_FILES='*.LBA'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='relent.exe'
@@ -76,30 +76,30 @@ PKG_BIN_DEPS="$PKG_DATA_ID dosbox"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
+
 if [ -z "$PLAYIT_LIB2" ]; then
-        [ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-        for path in\
-                './'\
-                "$XDG_DATA_HOME/play.it/"\
-                "$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-                '/usr/local/share/games/play.it/'\
-                '/usr/local/share/play.it/'\
-                '/usr/share/games/play.it/'\
-                '/usr/share/play.it/'
-        do
-                if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
-                        PLAYIT_LIB2="$path/libplayit2.sh"
-                        break
-                fi
-        done
-        if [ -z "$PLAYIT_LIB2" ]; then
-                printf '\n\033[1;31mError:\033[0m\n'
-                printf 'libplayit2.sh not found.\n'
-                exit 1
-        fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -116,7 +116,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
