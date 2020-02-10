@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Little Big Adventure 1
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200210.2
+script_version=20200314.1
 
 # Set game-specific variables
 
@@ -53,20 +53,15 @@ ARCHIVE_GOG_OLD0_MD5='c40177522adcbe50ea52590be57045f8'
 ARCHIVE_GOG_OLD0_SIZE='510000'
 ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.22'
 
-ARCHIVE_DOC_DATA_PATH='.'
-ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
+ARCHIVE_DOC_MAIN_PATH='.'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
 # Keep compatibility with old archives
-ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
+ARCHIVE_DOC_MAIN_PATH_GOG_OLD0='app'
 
-ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='*.cfg *.dll *.ini dos4gw.exe language.exe relent.exe loadpats.exe setup.exe setup.lst'
+ARCHIVE_GAME_MAIN_PATH='.'
+ARCHIVE_GAME_MAIN_FILES='*.cfg *.dll *.ini dos4gw.exe language.exe relent.exe loadpats.exe setup.exe setup.lst *.hqr lba.dat lba.gog setsound.bat vox sample.*'
 # Keep compatibility with old archives
-ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
-
-ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='*.hqr lba.dat lba.gog setsound.bat vox sample.*'
-# Keep compatibility with old archives
-ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
+ARCHIVE_GAME_MAIN_PATH_GOG_OLD0='app'
 
 GAME_IMAGE='lba.dat'
 
@@ -77,13 +72,11 @@ APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='relent.exe'
 APP_MAIN_ICON='app/goggame-1207658971.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID dosbox"
+PKG_MAIN_DEPS='dosbox'
+# Easier upgrade from packages generated with pre-20200210.3 scripts
+PKG_MAIN_PROVIDE='little-big-adventure-1-data'
 
 # Load common functions
 
@@ -120,13 +113,11 @@ prepare_package_layout
 
 # Extract icons
 
-PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
 
 # Build package
