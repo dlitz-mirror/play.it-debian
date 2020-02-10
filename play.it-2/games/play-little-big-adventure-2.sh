@@ -37,7 +37,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200812.1
+script_version=20200812.2
 
 # Set game-specific variables
 
@@ -53,14 +53,11 @@ ARCHIVE_GOG_0_MD5='9909163b7285bd37417f6d3c1ccfa3ee'
 ARCHIVE_GOG_0_SIZE='750000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.1.0.8'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.bat *.cfg *.dos *.exe *.ini drivers'
-
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='*.hqr *.ile *.obl lba2.dat lba2.gog lba2.ogg'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='*.bat *.cfg *.dos *.exe *.ini drivers *.hqr *.ile *.obl lba2.dat lba2.gog lba2.ogg'
 
 GAME_IMAGE='lba2.dat'
 
@@ -71,13 +68,9 @@ APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='lba2.exe'
 APP_MAIN_ICON='lba2.exe'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID dosbox"
+PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
@@ -115,19 +108,16 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
-PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
-icons_move_to 'PKG_DATA'
 
 # Keep Voices on HD
 
-file="${PKG_BIN_PATH}${PATH_GAME}/lba2.cfg"
+file="${PKG_MAIN_PATH}${PATH_GAME}/lba2.cfg"
 pattern='s/\(FlagKeepVoice:\) OFF/\1 ON/'
 sed --in-place "$pattern" "$file"
 
 # Write launchers
 
-PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
 
 # Build package
