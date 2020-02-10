@@ -37,7 +37,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200812.2
+script_version=20200919.1
 
 # Set game-specific variables
 
@@ -45,19 +45,29 @@ GAME_ID='little-big-adventure-2'
 GAME_NAME='Little Big Adventure 2'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_1='setup_little_big_adventure_2_1.0_(28192).exe'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/little_big_adventure_2'
+ARCHIVE_GOG_1_MD5='80b95bb8faa2353284b321748021da16'
+ARCHIVE_GOG_1_SIZE='750000'
+ARCHIVE_GOG_1_VERSION='1.0-gog28192'
+
 ARCHIVE_GOG_0='setup_lba2_2.1.0.8.exe'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/little_big_adventure_2'
 ARCHIVE_GOG_0_MD5='9909163b7285bd37417f6d3c1ccfa3ee'
 ARCHIVE_GOG_0_SIZE='750000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.1.0.8'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_MAIN_PATH_GOG_0='app'
 
-ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_PATH='.'
 ARCHIVE_GAME_MAIN_FILES='*.bat *.cfg *.dos *.exe *.ini drivers *.hqr *.ile *.obl lba2.dat lba2.gog lba2.ogg'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAIN_PATH_GOG_0='app'
 
 GAME_IMAGE='lba2.dat'
 
@@ -66,7 +76,7 @@ DATA_DIRS='save vox'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='lba2.exe'
-APP_MAIN_ICON='lba2.exe'
+APP_MAIN_ICON='app/goggame-1207658974.ico'
 
 PACKAGES_LIST='PKG_MAIN'
 
@@ -104,11 +114,11 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
-icons_get_from_package 'APP_MAIN'
+icons_get_from_workdir 'APP_MAIN'
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Keep Voices on HD
 
