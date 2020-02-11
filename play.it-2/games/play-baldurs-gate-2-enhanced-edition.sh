@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,17 +30,17 @@ set -o errexit
 ###
 
 ###
-# Baldur’s Gate 2 - Enhanced Edition
+# Baldur’s Gate Ⅱ - Enhanced Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191009.1
+script_version=20200211.1
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-2-enhanced-edition'
-GAME_NAME='Baldurʼs Gate 2 - Enhanced Edition'
+GAME_NAME='Baldurʼs Gate Ⅱ - Enhanced Edition'
 
 ARCHIVE_GOG='baldur_s_gate_2_enhanced_edition_en_2_5_21851.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
