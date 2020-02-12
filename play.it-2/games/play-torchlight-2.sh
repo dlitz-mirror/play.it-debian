@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.3
+script_version=20210507.7
 
 # Set game-specific variables
 
@@ -64,11 +64,11 @@ ARCHIVE_DOC1_DATA_FILES='EULA'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='data/x86'
-ARCHIVE_GAME_BIN32_FILES='lib *.bin.x86'
+ARCHIVE_GAME_BIN32_FILES='Torchlight2.bin.x86 ModLauncher.bin.x86 lib/libCEGUI* lib/libfmodex.so lib/libOgreMain.so.1 lib/Plugin_OctreeSceneManager.so lib/RenderSystem_GL.so'
 
 ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='data/x86_64'
-ARCHIVE_GAME_BIN64_FILES='lib64 *.bin.x86_64'
+ARCHIVE_GAME_BIN64_FILES='Torchlight2.bin.x86_64 ModLauncher.bin.x86_64 lib64/libCEGUI* lib64/libfmodex.so lib64/libOgreMain.so.1 lib64/Plugin_OctreeSceneManager.so lib64/RenderSystem_GL.so'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='data/noarch'
@@ -84,17 +84,26 @@ PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
+###
+# TODO
+# Check if we can use repository-provided OGRE libraries on Debian
+###
+
+###
+# TODO
+# A dependency for Arch Linux is missing on 32-bit libexpat.so.1
+###
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ sdl2 freetype glx"
-PKG_BIN32_DEPS_ARCH='lib32-bzip2 lib32-libxft'
-PKG_BIN32_DEPS_DEB='libbz2-1.0, libxft2'
-PKG_BIN32_DEPS_GENTOO='app-arch/bzip2[abi_x86_32] x11-libs/libXft[abi_x86_32]'
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx xcursor freetype libz.so.1 libSDL2-2.0.so.0 libX11.so.6 libGLU.so.1"
+PKG_BIN32_DEPS_ARCH='lib32-util-linux lib32-fontconfig lib32-libxft lib32-libxext lib32-freeimage lib32-libsm lib32-libice'
+PKG_BIN32_DEPS_DEB='libuuid1, libfontconfig1, libxft2, libxext6, libfreeimage3, libexpat1, libsm6, libice6'
+PKG_BIN32_DEPS_GENTOO='sys-apps/util-linux[abi_x86_32] media-libs/fontconfig[abi_x86_32] x11-libs/libXft[abi_x86_32] x11-libs/libXext[abi_x86_32] media-libs/freeimage[abi_x86_32] dev-libs/expat[abi_x86_32] x11-libs/libSM[abi_x86_32] x11-libs/libICE[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_ARCH='bzip2 libxft'
+PKG_BIN64_DEPS_ARCH='libutil-linux fontconfig libxft libxext freeimage expat libsm libice'
 PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_GENTOO='app-arch/bzip2 x11-libs/libXft'
+PKG_BIN64_DEPS_GENTOO='sys-apps/util-linux media-libs/fontconfig x11-libs/libXft x11-libs/libXext media-libs/freeimage dev-libs/expat x11-libs/libSM x11-libs/libICE'
 
 # Easier upgrade from packages generated with pre-20200212.2 scripts
 
