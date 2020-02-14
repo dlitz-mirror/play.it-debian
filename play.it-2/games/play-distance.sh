@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Distance
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20200215.1
 
 # Set game-specific variables
 
@@ -88,7 +88,7 @@ PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 sdl2"
 PKG_BIN_DEPS_ARCH='lib32-libx11'
 PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 # Load common functions
 
