@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200203.2
+script_version=20200215.1
 
 # Set game-specific variables
 
@@ -49,6 +49,7 @@ ARCHIVE_GOG_SIZE='3200000'
 ARCHIVE_GOG_VERSION='3.3.2351-gog2.1.0.3'
 
 ARCHIVE_HUMBLE='Deponia2_DEB_Full_3.2.2342_Multi_Daedalic_ESD.tar.gz'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/chaos-on-deponia'
 ARCHIVE_HUMBLE_MD5='e7a71d5b8a83b2c2393095256b03553b'
 ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'
