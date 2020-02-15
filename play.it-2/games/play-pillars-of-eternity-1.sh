@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,14 +32,14 @@ set -o errexit
 ###
 # Pillars of Eternity
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180919.2
+script_version=20200202.5
 
 # Set game-specific variables
 
-GAME_ID='pillars-of-eternity'
+GAME_ID='pillars-of-eternity-1'
 GAME_NAME='Pillars of Eternity'
 
 ARCHIVE_GOG='pillars_of_eternity_en_3_07_0_1318_17461.sh'
@@ -102,16 +103,26 @@ PACKAGES_LIST='PKG_AREAS PKG_BIN PKG_DATA'
 
 PKG_AREAS_ID="${GAME_ID}-areas"
 PKG_AREAS_DESCRIPTION='areas'
+# Easier upgrade from packages generated with pre-20200202.3 script
+PKG_AREAS_PROVIDE='pillars-of-eternity-areas'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_AREAS_ID"
+# Easier upgrade from packages generated with pre-20200202.3 script
+PKG_DATA_PROVIDE='pillars-of-eternity-data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_AREAS_ID $PKG_DATA_ID glu xcursor libxrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2"
+PKG_BIN_DEPS_ARCH='libx11 gdk-pixbuf2 glib2'
+PKG_BIN_DEPS_DEB='libx11-6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11 x11-libs/gdk-pixbuf dev-libs/glib'
+# Easier upgrade from packages generated with pre-20200202.3 script
+PKG_BIN_PROVIDE='pillars-of-eternity'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -134,7 +145,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Load extra archives (DLC)
@@ -171,19 +182,22 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
-# Build package
+# Get game icon
 
+PKG='PKG_DATA'
 # shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_OLD0'|'ARCHIVE_GOG_OLD1')
 		APP_MAIN_ICONS_LIST="$APP_MAIN_ICONS_LIST_OLD"
 	;;
 esac
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_AREAS' 'PKG_BIN'
+icons_get_from_package 'APP_MAIN'
+
+# Build package
+
+write_metadata
 build_pkg
 
 # Clean up

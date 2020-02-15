@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2019-2020, Erwann Duclos
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191205.1
+script_version=20200131.1
 
 # Set game-specific variables
 
@@ -70,9 +71,9 @@ PACKAGES_LIST='PKG_BIN PKG_DATA'
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='32'
+PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
-PKG_BIN_DEPS_ARCH='lib32-libx11'
+PKG_BIN_DEPS_ARCH='libx11'
 PKG_BIN_DEPS_DEB='libx11-6'
 PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
 

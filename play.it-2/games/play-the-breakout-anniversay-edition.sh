@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,48 +29,57 @@ set -o errexit
 ###
 
 ###
-# Pillars of Eternity: Deadfire Pack
+# Edna & Harvey: The Breakout - Anniversary Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180919.2
+script_version=20100131.6
 
 # Set game-specific variables
 
-GAME_ID='pillars-of-eternity'
-GAME_NAME='Pillars of Eternity: Deadfire Pack'
+GAME_ID='edna-and-harvey-the-breakout-anniversay-edition' 
+GAME_NAME='Edna & Harvey: The Breakout - Anniversary Edition'
 
-ARCHIVE_GOG='pillars_of_eternity_deadfire_pack_dlc_en_3_07_0_1318_20099.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/pillars_of_eternity_deadfire_pack'
-ARCHIVE_GOG_MD5='da315aba26784e55aa51139cebb7f9d2'
+ARCHIVE_GOG='edna_harvey_the_breakout_anniversary_edition_0_19120503_35770.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/edna_harvey_the_breakout_anniversary_edition'
+ARCHIVE_GOG_MD5='bb6ed80ee6fdbd21c059351c48e5156e'
+ARCHIVE_GOG_SIZE='3700000'
+ARCHIVE_GOG_VERSION='0.19120503-gog35770'
 ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_SIZE='1300'
-ARCHIVE_GOG_VERSION='3.07.0.1318-gog20099'
 
-ARCHIVE_GOG_OLD1='pillars_of_eternity_deadfire_pack_dlc_en_3_07_0_1318_17462.sh'
-ARCHIVE_GOG_OLD1_MD5='021362da5912dc8a3e47473e97726f7f'
-ARCHIVE_GOG_OLD1_TYPE='mojosetup'
-ARCHIVE_GOG_OLD1_SIZE='1300'
-ARCHIVE_GOG_OLD1_VERSION='3.07.0.1318-gog17462'
+ARCHIVE_DOC_PATH='data/noarch/docs'
+ARCHIVE_DOC_FILES='*'
 
-ARCHIVE_GOG_OLD0='pillars_of_eternity_deadfire_pack_dlc_en_3_07_16380.sh'
-ARCHIVE_GOG_OLD0_MD5='2fc0dc21648953be1c571e28b1e3d002'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup'
-ARCHIVE_GOG_OLD0_SIZE='1300'
-ARCHIVE_GOG_OLD0_VERSION='3.07-gog16380'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='edna.x86 edna_Data/*/x86'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='PillarsOfEternity_Data/assetbundles/px4.unity3d'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='edna.x86_64 edna_Data/*/x86_64'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='edna_Data'
 
-PKG_MAIN_ID="${GAME_ID}-deadfire-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='edna.x86'
+APP_MAIN_EXE_BIN64='edna.x86_64'
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+APP_MAIN_ICON='edna_Data/Resources/UnityPlayer.png'
+
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -93,7 +102,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -101,6 +110,17 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Write launchers
+
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2017-2019, Phil Morrell
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2017-2020, Phil Morrell
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190915.1
+script_version=20200114.1
 
 # Set game-specific variables
 
@@ -76,6 +76,9 @@ APP_MAIN_PRERUN_DEB='export UT_PREFS="$HOME/.loki/ut"
 mkdir --parents "$UT_PREFS/System"
 pulseaudio --start
 export LD_PRELOAD="/usr/lib/i386-linux-gnu/pulseaudio/libpulsedsp.so"'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN_GENTOO='export UT_PREFS="$HOME/.loki/ut"
+mkdir --parents "$UT_PREFS/System"'
 APP_MAIN_EXE='System/ut-bin'
 APP_MAIN_ICON='app/System/UnrealTournament.exe'
 
@@ -85,9 +88,9 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl1.2 pulseaudio glx"
-PKG_BIN_DEPS_ARCH='lib32-libpulse'
-PKG_BIN_DEPS_DEB='libpulsedsp'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl1.2 glx"
+PKG_BIN_DEPS_ARCH='pulseaudio lib32-libpulse'
+PKG_BIN_DEPS_DEB='pulseaudio:amd64 | pulseaudio, libpulsedsp'
 
 # Load common functions
 
@@ -155,6 +158,9 @@ case $OPTION_PACKAGE in
 	;;
 	('deb')
 		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_DEB"
+	;;
+	('gentoo')
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_GENTOO"
 	;;
 	(*)
 		liberror 'OPTION_PACKAGE' "$0"

@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,18 +30,17 @@ set -o errexit
 ###
 
 ###
-# Baldur’s Gate - Enhanced Edition
+# Baldurʼs Gate - Enhanced Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180930.1
+script_version=20200203.1
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-1-enhanced-edition'
-# shellcheck disable=SC1112
-GAME_NAME='Baldur’s Gate - Enhanced Edition'
+GAME_NAME='Baldurʼs Gate - Enhanced Edition'
 
 ARCHIVE_GOG='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
@@ -110,14 +110,10 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr als
 PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 # Easier upgrade from packages generated with pre-20180926.3 scripts
 PKG_BIN_PROVIDE='baldurs-gate-enhanced-edition'
-# Keep compatibility with old archives
-PKG_BIN_DEPS_GOG_OLD0="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor json"
-PKG_BIN_DEPS_GOG_OLD1="$PKG_BIN_DEPS_GOG_OLD0"
-PKG_BIN_DEPS_GOG_OLD2="$PKG_BIN_DEPS_GOG_OLD0"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -140,7 +136,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Use libSSL 1.0.0 32-bit archive (Debian packages only)
@@ -151,7 +147,7 @@ if [ "$OPTION_PACKAGE" = 'deb' ]; then
 	ARCHIVE="$ARCHIVE_MAIN"
 fi
 
-# Try to load icons archive
+# Load icons archive if available
 
 ARCHIVE_MAIN="$ARCHIVE"
 archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
@@ -166,10 +162,8 @@ prepare_package_layout
 
 PKG='PKG_DATA'
 if [ "$ARCHIVE_ICONS" ]; then
-	(
-		ARCHIVE='ARCHIVE_ICONS'
+	ARCHIVE='ARCHIVE_ICONS' \
 		extract_data_from "$ARCHIVE_ICONS"
-	)
 	organize_data 'ICONS' "$PATH_ICON_BASE"
 else
 	icons_get_from_workdir 'APP_MAIN'
@@ -179,11 +173,8 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Include libSSL 1.0.0 32-bit (Debian packages only)
 
 if [ "$ARCHIVE_LIBSSL32" ]; then
-	(
-		# shellcheck disable=SC2030
-		ARCHIVE='ARCHIVE_LIBSSL32'
+	ARCHIVE='ARCHIVE_LIBSSL32' \
 		extract_data_from "$ARCHIVE_LIBSSL32"
-	)
 	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
@@ -192,14 +183,14 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-use_archive_specific_value 'PKG_BIN_DEPS'
-# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_OLD0'|'ARCHIVE_GOG_OLD1'|'ARCHIVE_GOG_OLD2')
+		# Old versions depend on libjson.so.0
+		PKG_BIN_DEPS="$PKG_BIN_DEPS json"
 		case "$OPTION_PACKAGE" in
 			('arch')
 				cat > "$postinst" <<- EOF
@@ -232,10 +223,13 @@ case "$ARCHIVE" in
 		    rm "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
 		fi
 		EOF
+		write_metadata 'PKG_BIN'
+		write_metadata 'PKG_L10N' 'PKG_DATA'
+	;;
+	(*)
+		write_metadata
 	;;
 esac
-write_metadata 'PKG_BIN'
-write_metadata 'PKG_L10N' 'PKG_DATA'
 build_pkg
 
 # Clean up

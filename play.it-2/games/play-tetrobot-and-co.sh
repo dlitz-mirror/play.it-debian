@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2018-2019, VA
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2018-2020, VA
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to dev+playit@indigo.re
 ###
 
-script_version=20190927.3
+script_version=20200202.1
 
 # Set game-specific variables
 
@@ -43,7 +43,7 @@ GAME_ID='tetrobot-and-co'
 GAME_NAME='Tetrobot and Co.'
 
 ARCHIVE_GOG='gog_tetrobot_and_co_2.1.0.6.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/tetrobot-and-co'
+ARCHIVE_GOG_URL='https://www.gog.com/game/tetrobot_and_co'
 ARCHIVE_GOG_MD5='2ad2969e64e19d5753f8822e407c148c'
 ARCHIVE_GOG_SIZE='530000'
 ARCHIVE_GOG_VERSION='1.2.1-gog2.1.0.6'

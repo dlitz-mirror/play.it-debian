@@ -1,9 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,48 +29,46 @@ set -o errexit
 ###
 
 ###
-# Firewatch
+# Pillars of Eternity: Deadfire Pack
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200119.1
+script_version=20200202.1
 
 # Set game-specific variables
 
-GAME_ID='firewatch'
-GAME_NAME='Firewatch'
+GAME_ID='pillars-of-eternity-1'
+GAME_NAME='Pillars of Eternity: Deadfire Pack'
 
-ARCHIVE_GOG='firewatch_en_1_09_20938.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/firewatch'
-ARCHIVE_GOG_MD5='804f663f99afef437e120fdded8b86b1'
-ARCHIVE_GOG_SIZE='4200000'
-ARCHIVE_GOG_VERSION='1.09-gog20938'
+ARCHIVE_GOG='pillars_of_eternity_deadfire_pack_dlc_en_3_07_0_1318_20099.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/pillars_of_eternity_deadfire_pack'
+ARCHIVE_GOG_MD5='da315aba26784e55aa51139cebb7f9d2'
 ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_GOG_SIZE='1300'
+ARCHIVE_GOG_VERSION='3.07.0.1318-gog20099'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='*'
+ARCHIVE_GOG_OLD1='pillars_of_eternity_deadfire_pack_dlc_en_3_07_0_1318_17462.sh'
+ARCHIVE_GOG_OLD1_MD5='021362da5912dc8a3e47473e97726f7f'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+ARCHIVE_GOG_OLD1_SIZE='1300'
+ARCHIVE_GOG_OLD1_VERSION='3.07.0.1318-gog17462'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='*.x86_64 *_Data/*/x86_64'
+ARCHIVE_GOG_OLD0='pillars_of_eternity_deadfire_pack_dlc_en_3_07_16380.sh'
+ARCHIVE_GOG_OLD0_MD5='2fc0dc21648953be1c571e28b1e3d002'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
+ARCHIVE_GOG_OLD0_SIZE='1300'
+ARCHIVE_GOG_OLD0_VERSION='3.07-gog16380'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='*_Data'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='PillarsOfEternity_Data/assetbundles/px4.unity3d'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='if command -v pulseaudio >/dev/null 2>&1; then
-	pulseaudio --start
-fi'
-APP_MAIN_EXE='fw.x86_64'
-APP_MAIN_ICON='fw_Data/Resources/UnityPlayer.png'
+PACKAGES_LIST='PKG_MAIN'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
-
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_MAIN_ID="${GAME_ID}-deadfire-pack"
+PKG_MAIN_DEPS="$GAME_ID"
+# Easier upgrade from packages generated with pre-20200202.1 script
+PKG_MAIN_PROVIDE='pillars-of-eternity-deadfire-pack'
 
 # Load common functions
 
@@ -106,16 +103,6 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Get game icon
-
-PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
-
-# Write launchers
-
-PKG='PKG_BIN'
-launchers_write 'APP_MAIN'
 
 # Build package
 

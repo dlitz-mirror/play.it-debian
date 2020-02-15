@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2019, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Prison Architect
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190929.1
+script_version=20200202.1
 
 # Set game-specific variables
 
@@ -49,8 +49,8 @@ ARCHIVE_GOG_VERSION='1.02-gog30664'
 ARCHIVE_GOG_SIZE='390000'
 ARCHIVE_GOG_TYPE='mojosetup'
 
+# DRM-free archive does not seem to be sold anymore on humblebundle.com
 ARCHIVE_HUMBLE='prisonarchitect-clink_1.02-linux.tar.gz'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/prison-architect'
 ARCHIVE_HUMBLE_MD5='ecf4cf68e10069c3c2cb99bcc52ef417'
 ARCHIVE_HUMBLE_VERSION='1.02-humble'
 ARCHIVE_HUMBLE_SIZE='390000'

@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,17 @@ set -o errexit
 ###
 
 ###
-# Dungeon Keeper 2
+# Dungeon Keeper Ⅱ
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190101.1
+script_version=20200204.3
 
 # Set game-specific variables
 
 GAME_ID='dungeon-keeper-2'
-GAME_NAME='Dungeon Keeper II'
+GAME_NAME='Dungeon Keeper Ⅱ'
 
 ARCHIVE_GOG='setup_dungeon_keeper_2_1.7_(22280).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/dungeon_keeper_2'
@@ -71,18 +71,27 @@ ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_DIRS='./data/settings'
 DATA_DIRS='./data/save'
-DATA_FILES='./*.LOG'
+DATA_FILES='./*.LOG ./*.reg'
 
 APP_WINETRICKS='csmt=off'
 
 APP_MAIN_TYPE='wine'
+APP_MAIN_PRERUN='# Load persistent registry entries
+registry_dump="persistent.reg"
+if [ -e "$registry_dump" ]; then
+	regedit "$registry_dump"
+fi'
 APP_MAIN_EXE='dkii-dx.exe'
+APP_MAIN_POSTRUN='# Store persistent registry entries
+regedit -E "$registry_dump" "HKEY_CURRENT_USER\Software\Bullfrog Productions Ltd\Dungeon Keeper II"'
 APP_MAIN_ICON='dkii.exe'
 
 APP_SOFTWARE_ID="${GAME_ID}_software"
 APP_SOFTWARE_TYPE='wine'
+APP_SOFTWARE_PRERUN="$APP_MAIN_PRERUN"
 APP_SOFTWARE_EXE='dkii.exe'
 APP_SOFTWARE_OPTIONS='-softwarefilter -32bitdisplay -disablegamma -shadows 1 -software'
+APP_SOFTWARE_POSTRUN="$APP_MAIN_POSTRUN"
 APP_SOFTWARE_NAME="$GAME_NAME (software rendering)"
 APP_SOFTWARE_ICON="$APP_MAIN_ICON"
 
@@ -92,11 +101,11 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks glx"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -119,7 +128,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -137,7 +146,7 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_SOFTWARE'
+launchers_write 'APP_MAIN' 'APP_SOFTWARE'
 
 # Build package
 
