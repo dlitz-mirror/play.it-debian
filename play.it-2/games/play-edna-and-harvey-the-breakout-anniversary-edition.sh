@@ -34,11 +34,11 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20100131.6
+script_version=20200216.1
 
 # Set game-specific variables
 
-GAME_ID='edna-and-harvey-the-breakout-anniversay-edition' 
+GAME_ID='edna-and-harvey-the-breakout-anniversary-edition' 
 GAME_NAME='Edna & Harvey: The Breakout - Anniversary Edition'
 
 ARCHIVE_GOG='edna_harvey_the_breakout_anniversary_edition_0_19120503_35770.sh'
