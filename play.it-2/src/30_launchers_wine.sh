@@ -62,7 +62,7 @@ launcher_write_script_wine_prefix_build() {
 	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
 
 	if ! [ -e "$WINEPREFIX" ]; then
-	    mkdir --parents "${WINEPREFIX%/*}"
+	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
 	    LANG=C wineboot --init 2>/dev/null
 	EOF
@@ -103,7 +103,7 @@ launcher_write_script_wine_prefix_build() {
 		    (
 		        cd "$WINEPREFIX/drive_c/"
 		        cp "$PATH_GAME/$reg_file" .
-		        reg_file_basename="${reg_file##*/}"
+		        reg_file_basename="$(basename "$reg_file")"
 		        wine regedit "$reg_file_basename"
 		        rm "$reg_file_basename"
 		    )

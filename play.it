@@ -42,7 +42,7 @@ if [ ! -f "$INPUT_FILE" ]; then
 fi
 
 # Locate script by file name
-FILE_NAME="${INPUT_FILE##*/}"
+FILE_NAME="$(basename "$INPUT_FILE")"
 case "${LANG%_*}" in
 	('fr')
 		# shellcheck disable=SC1112

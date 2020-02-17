@@ -70,8 +70,8 @@ archive_set() {
 	else
 		for archive in "$@"; do
 			file="$(get_value "$archive")"
-			if [ ! -f "$file" ] && [ -n "$SOURCE_ARCHIVE" ] && [ -f "${SOURCE_ARCHIVE%/*}/$file" ]; then
-				file="${SOURCE_ARCHIVE%/*}/$file"
+			if [ ! -f "$file" ] && [ -n "$SOURCE_ARCHIVE" ] && [ -f "$(dirname "$SOURCE_ARCHIVE")/$file" ]; then
+				file="$(dirname "$SOURCE_ARCHIVE")/$file"
 			fi
 			if [ -f "$file" ]; then
 				archive_get_infos "$archive" "$name" "$file"
@@ -157,7 +157,7 @@ archive_guess_type() {
 	local type
 	archive="$1"
 	file="$2"
-	case "${file##*/}" in
+	case "$(basename "$file")" in
 		(*'.cab')
 			type='cabinet'
 		;;

@@ -170,7 +170,7 @@ icon_convert_to_png() {
 	local name
 	file="$1"
 	destination="$2"
-	name="${file##*/}"
+	name="$(basename "$file")"
 	convert "$file" "$destination/${name%.*}.png"
 }
 

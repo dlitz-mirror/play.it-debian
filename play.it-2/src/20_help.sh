@@ -20,12 +20,12 @@ help() {
 		;;
 	esac
 	printf '\n'
-	if [ "${0##*/}" = 'play.it' ]; then
+	if [ "$(basename "$0")" = 'play.it' ]; then
 		format='%s %s ARCHIVE [OPTION]…\n\n'
 	else
 		format='%s %s [OPTION]… [ARCHIVE]\n\n'
 	fi
-	printf "$format" "$string" "${0##*/}"
+	printf "$format" "$string" "$(basename "$0")"
 	
 	printf 'OPTIONS\n\n'
 	help_architecture

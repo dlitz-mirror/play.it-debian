@@ -132,7 +132,7 @@ tolower_shell() {
 	local dir="$1"
 
 	find "$dir" -depth -mindepth 1 | while read -r file; do
-		newfile="${file%/*}/$(printf '%s' "${file##*/}" | tr '[:upper:]' '[:lower:]')"
+		newfile=$(dirname "$file")/$(basename "$file" | tr '[:upper:]' '[:lower:]')
 		[ -e "$newfile" ] || mv "$file" "$newfile"
 	done
 }

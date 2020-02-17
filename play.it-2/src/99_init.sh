@@ -1,4 +1,4 @@
-if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
+if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS

@@ -253,9 +253,9 @@ pkg_set_deps_deb() {
 # CALLED BY: build_pkg
 pkg_build_deb() {
 	local pkg_filename
-	pkg_filename="$PWD/${1##*/}.deb"
+	pkg_filename="$PWD/$(basename "$1").deb"
 	if [ -e "$pkg_filename" ]; then
-		pkg_build_print_already_exists "${pkg_filename##*/}"
+		pkg_build_print_already_exists "$(basename "$pkg_filename")"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg?}_PKG
 		return 0
@@ -271,7 +271,7 @@ pkg_build_deb() {
 		;;
 	esac
 
-	pkg_print "${pkg_filename##*/}"
+	pkg_print "$(basename "$pkg_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"

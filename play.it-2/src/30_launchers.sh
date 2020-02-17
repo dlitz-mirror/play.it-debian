@@ -81,7 +81,7 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
-	mkdir --parents "${target_file%/*}"
+	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
 	launcher_write_script_headers "$target_file"
@@ -265,7 +265,7 @@ launcher_write_script_prefix_functions() {
 	                fi
 	            fi
 	            rm --force --recursive "$PATH_PREFIX/$dir"
-	            mkdir --parents "$PATH_PREFIX/${dir%/*}"
+	            mkdir --parents "$PATH_PREFIX/$(dirname "$dir")"
 	            ln --symbolic "$(readlink --canonicalize-existing "$1/$dir")" "$PATH_PREFIX/$dir"
 	        done
 	    )
@@ -287,7 +287,7 @@ launcher_write_script_prefix_functions() {
 	                if [ "$file_prefix" ]; then
 	                    rm --force "$PATH_PREFIX/$file"
 	                fi
-	                mkdir --parents "$PATH_PREFIX/${file%/*}"
+	                mkdir --parents "$PATH_PREFIX/$(dirname "$file")"
 	                ln --symbolic "$file_real" "$PATH_PREFIX/$file"
 	            fi
 	        done
@@ -487,7 +487,7 @@ launcher_write_desktop() {
 	fi
 
 	# write desktop file
-	mkdir --parents "${target_file%/*}"
+	mkdir --parents "$(dirname "$target_file")"
 	cat >> "$target_file" <<- EOF
 	[Desktop Entry]
 	Version=1.0
