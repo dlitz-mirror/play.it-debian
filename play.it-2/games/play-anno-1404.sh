@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2017-2019, Phil Morrell
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2017-2020, Phil Morrell
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Anno 1404: Gold Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190623.7
+script_version=20200209.1
 
 # Set game-specific variables
 
@@ -112,18 +112,32 @@ ARCHIVE_GAME1_DATA_FILES='engine.ini'
 # Keep compatibility with old archives
 ARCHIVE_GAME1_DATA_PATH_GOG_OLD0='game'
 
-DATA_DIRS='./userdata'
+ARCHIVE_REDIST_PATH='tmp'
+ARCHIVE_REDIST_FILES='directx_jun2010_redist.exe'
 
-APP_WINETRICKS='d3dx9'
+DATA_DIRS='./userdata'
 
 APP_MAIN_TYPE='wine'
 # shellcheck disable=SC2016
-APP_MAIN_PRERUN='user_data_path="$WINEPREFIX/drive_c/users/$(whoami)/Application Data/Ubisoft/Anno1404"
+APP_MAIN_PRERUN='# Store user data outside of WINE prefix
+user_data_path="$WINEPREFIX/drive_c/users/$(whoami)/Application Data/Ubisoft/Anno1404"
 if [ ! -e "$user_data_path" ]; then
 	mkdir --parents "${user_data_path%/*}"
 	mkdir --parents "$PATH_DATA/userdata"
 	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
 	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Install d3dx9 through winetricks, using the shipped installer if required
+if [ ! -e d3dx9_installed ]; then
+	cached_installer="${XDG_CACHE_HOME:="$HOME/.cache"}/winetricks/directx9/directx_Jun2010_redist.exe"
+	if [ ! -e "$cached_installer" ]; then
+		mkdir --parents "$(dirname "$cached_installer")"
+		cp directx/directx_jun2010_redist.exe "$cached_installer"
+	fi
+	winetricks d3dx9
+	touch d3dx9_installed
 fi'
 APP_MAIN_EXE='anno4.exe'
 APP_MAIN_ICON='anno4.exe'
@@ -210,6 +224,11 @@ case "$ARCHIVE" in
 	;;
 esac
 prepare_package_layout
+
+# Include DirectX shipped installer
+
+PKG='PKG_BIN'
+organize_data 'REDIST' "$PATH_GAME/directx"
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons

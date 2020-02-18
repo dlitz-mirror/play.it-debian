@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2019, Solène "Mopi" Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # State of Mind
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181222.1
+script_version=20200205.3
 
 # Set game-specific variables
 
@@ -49,34 +49,50 @@ ARCHIVE_GOG_SIZE='21000000'
 ARCHIVE_GOG_VERSION='1.2.24280-gog24687'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
-
-ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC1_DATA_FILES='LICENSE.txt version.txt'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC_DATA_FILES='LICENSE.txt version.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Engine StateOfMind StateOfMind.cfg'
+ARCHIVE_GAME_BIN_FILES='Engine StateOfMind/Binaries StateOfMind.cfg'
+
+ARCHIVE_GAME_PAKS1_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS1_FILES='StateOfMind/Content/Paks/pakchunk0-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk1-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk2-LinuxNoEditor.pak'
+
+ARCHIVE_GAME_PAKS2_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS2_FILES='StateOfMind/Content/Paks/pakchunk3-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk4-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk5-LinuxNoEditor.pak'
+
+ARCHIVE_GAME_PAKS3_PATH='data/noarch/game'
+ARCHIVE_GAME_PAKS3_FILES='StateOfMind/Content/Paks/pakchunk6-LinuxNoEditor.pak StateOfMind/Content/Paks/pakchunk7-LinuxNoEditor.pak'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='StateOfMind.png StateOfMind.desktop'
+ARCHIVE_GAME_DATA_FILES='StateOfMind/Content StateOfMind.png StateOfMind.desktop'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='StateOfMind/Binaries/Linux/StateOfMind-Linux-Shipping'
 APP_MAIN_OPTIONS='StateOfMind'
 APP_MAIN_ICON='StateOfMind.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_PAKS1 PKG_PAKS2 PKG_PAKS3 PKG_DATA'
+
+PKG_PAKS1_ID="${GAME_ID}-paks-1"
+PKG_PAKS1_DESCRIPTION='data paks - 1'
+
+PKG_PAKS2_ID="${GAME_ID}-paks-2"
+PKG_PAKS2_DESCRIPTION='data paks - 2'
+
+PKG_PAKS3_ID="${GAME_ID}-paks-3"
+PKG_PAKS3_DESCRIPTION='data paks - 3'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_PAKS1_ID $PKG_PAKS2_ID $PKG_PAKS3_ID"
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -108,17 +124,19 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
