@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200109.1
+script_version=20200209.1
 
 # Set game-specific variables
 
@@ -47,7 +47,6 @@ ARCHIVE_GOG_URL='https://www.gog.com/game/wing_commander_1_2'
 ARCHIVE_GOG_MD5='850542ba9a543378a4894156b41ce511'
 ARCHIVE_GOG_VERSION='1.0-gog28045'
 ARCHIVE_GOG_SIZE='45000'
-ARCHIVE_GOG_TYPE='innosetup'
 
 ARCHIVE_GOG_OLD0='setup_wing_commander_2.1.0.18.exe'
 ARCHIVE_GOG_OLD0_MD5='a4a3a355489e66bcecd34d1d9041ebb5'
@@ -72,11 +71,14 @@ CONFIG_FILES='./*.cfg'
 DATA_DIRS='./gamedat'
 
 APP_MAIN_TYPE='dosbox'
+APP_MAIN_PRERUN='config -set cpu cycles=fixed 4000
+loadfix -1'
 APP_MAIN_EXE='wc.exe'
 APP_MAIN_ICON='app/goggame-1207662643.ico'
 
 APP_SM2_ID="${GAME_ID}_sm2"
 APP_SM2_TYPE='dosbox'
+APP_SM2_PRERUN="$APP_MAIN_PRERUN"
 APP_SM2_EXE='sm2.exe'
 APP_SM2_ICON='app/goggame-1207662643.ico'
 APP_SM2_NAME="$GAME_NAME - The Secret Missions 2 - Crusade"

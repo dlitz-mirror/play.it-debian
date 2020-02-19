@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Solène "Mopi" Huault
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,43 +29,37 @@ set -o errexit
 ###
 
 ###
-# Evoland 2, A Slight Case of Spacetime Continuum Disorder
+# Starship Titanic
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200206.2
+script_version=20200210.1
 
 # Set game-specific variables
 
-GAME_ID='evoland-2'
-GAME_NAME='Evoland 2, A Slight Case of Spacetime Continuum Disorder'
+GAME_ID='starship-titanic'
+GAME_NAME='Starship Titanic'
 
-ARCHIVE_HUMBLE='Evoland2.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/evoland-2'
-ARCHIVE_HUMBLE_MD5='0e34269cb7db3a6c065311eea90e651a'
-ARCHIVE_HUMBLE_SIZE='790000'
-ARCHIVE_HUMBLE_VERSION='1.0.9137-humble170116'
+ARCHIVE_GOG='setup_starship_titanic_2.0.0.4.exe'
+ARCHIVE_GOG_URL='https://www.gog.com/game/starship_titanic'
+ARCHIVE_GOG_MD5='1b0778ee3ed364ae55b2a20bd50e4cc6'
+ARCHIVE_GOG_SIZE='1300000'
+ARCHIVE_GOG_VERSION='1.00.42-gog2.0.0.4'
 
-ARCHIVE_GAME_BIN_PATH='Evoland2'
-ARCHIVE_GAME_BIN_FILES='Adobe?AIR Evoland2.exe gamePadConfig.txt pad.exe'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='*.doc *.txt'
 
-ARCHIVE_GAME_DATA_PATH='Evoland2'
-ARCHIVE_GAME_DATA_FILES='game.dat icons META-INF mimetype res.pak'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='assets newgame.st'
 
-DATA_DIRS='./save'
+APP_MAIN_TYPE='scummvm'
+APP_MAIN_SCUMMID='titanic'
+APP_MAIN_ICON='app/st.exe'
 
-APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='Evoland2.exe'
-APP_MAIN_ICON='Evoland2.exe'
+PACKAGES_LIST='PKG_MAIN'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
-
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
+PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
 
@@ -99,18 +92,15 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
+
+# Extract icons
+
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Extract icon
-
-PKG='PKG_BIN'
-icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
 
 # Build package
