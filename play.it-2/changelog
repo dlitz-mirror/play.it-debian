@@ -1,5 +1,7 @@
 2.11.3
 
+  * Fix cdrom type (file or directory) detection for DOSBox games
+
   * Use -eq instead of = for arithmetic comparisons
 
   * Update link to issues tracker
