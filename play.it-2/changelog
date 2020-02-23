@@ -1,3 +1,37 @@
+2.11.3
+
+  * Use -eq instead of = for arithmetic comparisons
+
+  * Update link to issues tracker
+
+  * Improve handling of 7z archives extraction
+
+  * Improve error messages shown when a required script dependency is missing
+
+  * Spawn a terminal when calling winetricks, so its actions are no longer
+    hidden from users not running their games from a terminal
+
+  * Use convmv when available for converting file names to lower case, as it
+    has better performances than our custom-made function
+
+  * Fix argument usage for check_option_validity, and move it outside of
+    play.it-2/src/99_init.sh
+
+  * Arch Linux: Advertise ./play.it in the generated packages metadata
+
+  * Arch Linux: Fix builddate entry in the generated packages metadata
+
+  * Arch Linux: Improve support for libarchive implementation of tar
+   ("bsdtar") when building packages
+
+  * Debian: Improve handling of WINE dependency, thanks to Jens Reyer for the
+    help on debian-wine mailing list
+
+  * Gentoo: Fix default compression method for generated packages
+
+  * Gentoo: Drop abi_x86_32 abi_x86_32 USE flag for app-emulation/winetricks
+    dependency
+
 2.11.2
 
   * Do not throw an error when a script has been called with --dry-run and an
