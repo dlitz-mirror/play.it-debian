@@ -137,6 +137,42 @@ tolower_shell() {
 	done
 }
 
+# convert files name to upper case
+# USAGE: toupper $dir[…]
+# CALLS: toupper_convmv toupper_shell
+toupper() {
+	[ "$DRY_RUN" = '1' ] && return 0
+	for dir in "$@"; do
+		[ -d "$dir" ] || return 1
+		if command -v convmv > /dev/null; then
+			toupper_convmv "$dir"
+		else
+			toupper_shell "$dir"
+		fi
+	done
+}
+
+# convert files name to upper case using convmv
+# USAGE: toupper_convmv $dir
+# CALLED BY: toupper
+toupper_convmv() {
+	local dir="$1"
+	find "$dir" -mindepth 1 -maxdepth 1 -exec \
+		convmv --notest --upper -r {} + >/dev/null 2>&1
+}
+
+# convert files name to upper case using pure shell
+# USAGE: toupper_shell $dir
+# CALLED BY: toupper
+toupper_shell() {
+	local dir="$1"
+
+	find "$dir" -depth -mindepth 1 | while read -r file; do
+		newfile="$(dirname "$file")/$(basename "$file" | tr '[:lower:]' '[:upper:]')"
+		[ -e "$newfile" ] || mv "$file" "$newfile"
+	done
+}
+
 # display an error if a function has been called with invalid arguments
 # USAGE: liberror $var_name $calling_function
 # NEEDED VARS: (LANG)
