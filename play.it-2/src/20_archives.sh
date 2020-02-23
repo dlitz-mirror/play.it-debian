@@ -28,7 +28,7 @@ archive_set_error_not_found() {
 			string_single='The following file could not be found:'
 		;;
 	esac
-	if [ "$#" = 1 ]; then
+	if [ "$#" -eq 1 ]; then
 		string="$string_single"
 	else
 		string="$string_multiple"

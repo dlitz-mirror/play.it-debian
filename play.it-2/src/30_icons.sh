@@ -124,7 +124,7 @@ icon_extract_png_from_file() {
 # CALLS: icon_extract_ico_from_exe icon_extract_png_from_ico
 # CALLED BY: icon_extract_png_from_file
 icon_extract_png_from_exe() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -140,7 +140,7 @@ icon_extract_png_from_exe() {
 # USAGE: icon_extract_ico_from_exe $file $destination
 # CALLED BY: icon_extract_png_from_exe
 icon_extract_ico_from_exe() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	local options
@@ -164,7 +164,7 @@ icon_extract_png_from_ico() { icon_convert_to_png "$@"; }
 # USAGE: icon_convert_to_png $file $destination
 # CALLED BY: icon_extract_png_from_bmp icon_extract_png_from_ico
 icon_convert_to_png() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	local name
@@ -178,7 +178,7 @@ icon_convert_to_png() {
 # USAGE: icon_copy_png $file $destination
 # CALLED BY: icon_extract_png_from_file
 icon_copy_png() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -192,7 +192,7 @@ icon_copy_png() {
 # CALLS: icon_get_resolution_from_file
 # CALLED BY: icons_get_from_path
 icons_include_png_from_directory() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local directory
 	local file
@@ -256,7 +256,7 @@ icon_get_resolution_from_file() {
 # USAGE: icons_linking_postinst $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
 icons_linking_postinst() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local file
 	local icon
@@ -332,7 +332,7 @@ icons_move_to() {
 	source="$PKG"
 	source_path="$(get_value "${source}_PATH")"
 	[ -n "$source_path" ] || missing_pkg_error 'icons_move_to' "$source"
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	(
 		cd "$source_path"
 		cp --link --parents --recursive --no-dereference --preserve=links "./$PATH_ICON_BASE" "$destination_path"

@@ -48,7 +48,7 @@ organize_data() {
 		return 0
 	fi
 	local pkg_path
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		pkg_path="$(get_value "${PKG}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'organize_data' "$PKG"
 		return 0

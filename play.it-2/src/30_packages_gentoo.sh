@@ -305,7 +305,7 @@ pkg_build_gentoo() {
 	fi
 
 	pkg_print "$pkg_filename_base"
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg}_PKG

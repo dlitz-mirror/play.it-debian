@@ -5,7 +5,7 @@
 # CALLED BY:
 launcher_write_script() {
 	# check that this has been called with exactly one argument
-	if [ "$#" = '0' ]; then
+	if [ "$#" -eq 0 ]; then
 		error_missing_argument 'launcher_write_script'
 	elif [ "$#" -gt 1 ]; then
 		error_extra_arguments 'launcher_write_script'
@@ -44,7 +44,7 @@ launcher_write_script() {
 	target_file="${package_path}${PATH_BIN}/$application_id"
 
 	# if called in dry run mode, return before writing anything
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		return 0
 	fi
 
@@ -387,7 +387,7 @@ launcher_write_script_postrun() {
 # CALLS: error_missing_argument error_extra_arguments error_no_pkg
 launcher_write_desktop() {
 	# check that this has been called with exactly one argument
-	if [ "$#" = '0' ]; then
+	if [ "$#" -eq 0 ]; then
 		error_missing_argument 'launcher_write_desktop'
 	elif [ "$#" -gt 1 ]; then
 		error_extra_arguments 'launcher_write_desktop'
@@ -450,7 +450,7 @@ launcher_write_desktop() {
 	esac
 
 	# if called in dry run mode, return before writing anything
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		return 0
 	fi
 

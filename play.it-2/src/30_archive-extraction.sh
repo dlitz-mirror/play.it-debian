@@ -12,7 +12,7 @@ extract_data_from() {
 		local destination
 		destination="$PLAYIT_WORKDIR/gamedata"
 		mkdir --parents "$destination"
-		if [ "$DRY_RUN" = '1' ]; then
+		if [ "$DRY_RUN" -eq 1 ]; then
 			printf '\n'
 			return 0
 		fi
