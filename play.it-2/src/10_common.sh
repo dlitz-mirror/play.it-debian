@@ -121,8 +121,10 @@ tolower() {
 # CALLED BY: tolower
 tolower_convmv() {
 	local dir="$1"
-	convmv --notest --lower -r "$dir" >/dev/null 2>&1
+	find "$dir" -mindepth 1 -maxdepth 1 -exec \
+		convmv --notest --lower -r {} + >/dev/null 2>&1
 }
+
 # convert files name to lower case using pure shell
 # USAGE: tolower_shell $dir
 # CALLED BY: tolower
