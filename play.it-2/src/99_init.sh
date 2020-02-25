@@ -1,5 +1,8 @@
 if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
+	# Exit immediately on error
+	set -o errexit
+
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
