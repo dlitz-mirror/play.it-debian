@@ -75,7 +75,7 @@ launcher_write_script_wine_prefix_build() {
 		cat >> "$file" <<- 'EOF'
 		    # Remove most links pointing outside of the WINE prefix
 		    rm "$WINEPREFIX/dosdevices/z:"
-		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read directory; do
+		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
 		        rm "$directory"
 		        mkdir "$directory"
 		    done
@@ -123,7 +123,7 @@ launcher_write_script_wine_prefix_build() {
 	done
 	(
 	    cd "$PATH_GAME"
-	    find . -type d | while read dir; do
+	    find . -type d | while read -r dir; do
 	        if [ -h "$PATH_PREFIX/$dir" ]; then
 	            rm "$PATH_PREFIX/$dir"
 	        fi
@@ -132,12 +132,12 @@ launcher_write_script_wine_prefix_build() {
 	cp --recursive --remove-destination --symbolic-link "$PATH_GAME"/* "$PATH_PREFIX"
 	(
 	    cd "$PATH_PREFIX"
-	    find . -type l | while read link; do
+	    find . -type l | while read -r link; do
 	        if [ ! -e "$link" ]; then
 	            rm "$link"
 	        fi
 	    done
-	    find . -depth -type d | while read dir; do
+	    find . -depth -type d | while read -r dir; do
 	        if [ ! -e "$PATH_GAME/$dir" ]; then
 	            rmdir --ignore-fail-on-non-empty "$dir"
 	        fi
