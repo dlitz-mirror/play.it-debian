@@ -54,7 +54,7 @@ testvar() {
 # set defaults rights on files (755 for dirs & 644 for regular files)
 # USAGE: set_standard_permissions $dir[…]
 set_standard_permissions() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	for dir in "$@"; do
 		[  -d "$dir" ] || return 1
 		find "$dir" -type d -exec chmod 755 '{}' +
@@ -103,14 +103,37 @@ print_warning() {
 
 # convert files name to lower case
 # USAGE: tolower $dir[…]
+# CALLS: tolower_convmv tolower_shell
 tolower() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	for dir in "$@"; do
 		[ -d "$dir" ] || return 1
-		find "$dir" -depth -mindepth 1 | while read -r file; do
-			newfile="${file%/*}/$(printf '%s' "${file##*/}" | tr '[:upper:]' '[:lower:]')"
-			[ -e "$newfile" ] || mv "$file" "$newfile"
-		done
+		if command -v convmv > /dev/null; then
+			tolower_convmv "$dir"
+		else
+			tolower_shell "$dir"
+		fi
+	done
+}
+
+# convert files name to lower case using convmv
+# USAGE: tolower_convmv $dir
+# CALLED BY: tolower
+tolower_convmv() {
+	local dir="$1"
+	find "$dir" -mindepth 1 -maxdepth 1 -exec \
+		convmv --notest --lower -r {} + >/dev/null 2>&1
+}
+
+# convert files name to lower case using pure shell
+# USAGE: tolower_shell $dir
+# CALLED BY: tolower
+tolower_shell() {
+	local dir="$1"
+
+	find "$dir" -depth -mindepth 1 | while read -r file; do
+		newfile="${file%/*}/$(printf '%s' "${file##*/}" | tr '[:upper:]' '[:lower:]')"
+		[ -e "$newfile" ] || mv "$file" "$newfile"
 	done
 }
 
@@ -219,4 +242,48 @@ get_value() {
 	name="$1"
 	value="$(eval printf -- '%b' \"\$$name\")"
 	printf '%s' "$value"
+}
+
+# check that the value assigned to a given option is valid
+# USAGE: check_option_validity $option_name
+check_option_validity() {
+	local name value allowed_values
+	name="$1"
+	value="$(get_value "OPTION_$name")"
+	allowed_values="$(get_value "ALLOWED_VALUES_$name")"
+	for allowed_value in $allowed_values; do
+		if [ "$value" = "$allowed_value" ]; then
+			return 0
+		fi
+	done
+	local string
+	case "${LANG%_*}" in
+		('fr')
+			string='%s nʼest pas une valeur valide pour --%s.\n'
+			string="$string"'Lancez le script avec lʼoption --%s=help pour une liste des valeurs acceptés.\n\n'
+		;;
+		('en'|*)
+			string='%s is not a valid value for --%s.\n'
+			string="$string"'Run the script with the option --%s=help to get a list of supported values.\n\n'
+		;;
+	esac
+	print_error
+	printf "$string" "$value" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')"
+	return 1
+}
+
+# try to guess the tar implementation used for `tar` on the current system
+# USAGE: guess_tar_implementation
+guess_tar_implementation() {
+	case "$(tar --version | head --lines 1)" in
+		(*'GNU tar'*)
+			PLAYIT_TAR_IMPLEMENTATION='gnutar'
+		;;
+		(*'libarchive'*)
+			PLAYIT_TAR_IMPLEMENTATION='bsdtar'
+		;;
+		(*)
+			error_unknown_tar_implementation
+		;;
+	esac
 }

@@ -3,7 +3,7 @@
 # NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) PACKAGES_LIST (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
 # CALLS: liberror pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
 write_metadata() {
-	if [ $# = 0 ]; then
+	if [ $# -eq 0 ]; then
 		write_metadata $PACKAGES_LIST
 		return 0
 	fi
@@ -26,7 +26,7 @@ write_metadata() {
 		pkg_maint="$(whoami)@$(hostname)"
 		pkg_path="$(get_value "${pkg}_PATH")"
 		[ -n "$pkg_path" ] || missing_pkg_error 'write_metadata' "$pkg"
-		[ "$DRY_RUN" = '1' ] && continue
+		[ "$DRY_RUN" -eq 1 ] && continue
 		pkg_provide="$(get_value "${pkg}_PROVIDE")"
 
 		use_archive_specific_value "${pkg}_DESCRIPTION"
@@ -55,7 +55,7 @@ write_metadata() {
 # NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) PACKAGES_LIST (PKG_PATH) PLAYIT_WORKDIR
 # CALLS: liberror pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
-	if [ $# = 0 ]; then
+	if [ $# -eq 0 ]; then
 		build_pkg $PACKAGES_LIST
 		return 0
 	fi

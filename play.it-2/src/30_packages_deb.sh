@@ -184,10 +184,10 @@ pkg_set_deps_deb() {
 				esac
 			;;
 			('wine32')
-				pkg_dep='wine32-development | wine32 | wine-bin | wine-i386 | wine-staging-i386, wine:amd64 | wine'
+				pkg_dep='wine32 | wine32-development | wine-bin | wine-i386 | wine-staging-i386, wine'
 			;;
 			('wine64')
-				pkg_dep='wine64-development | wine64 | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
+				pkg_dep='wine64 | wine64-development | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
 			;;
 			('wine-staging')
 				use_archive_specific_value "${pkg}_ARCH"
@@ -204,7 +204,7 @@ pkg_set_deps_deb() {
 				pkg_dep='wine-staging-amd64, winehq-staging'
 			;;
 			('winetricks')
-				pkg_dep='winetricks'
+				pkg_dep='winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
 			;;
 			('xcursor')
 				pkg_dep='libxcursor1'
@@ -253,7 +253,7 @@ pkg_build_deb() {
 	esac
 
 	pkg_print "${pkg_filename##*/}"
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg?}_PKG

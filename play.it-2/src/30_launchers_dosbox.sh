@@ -54,7 +54,7 @@ launcher_write_script_dosbox_run() {
 				local package
 				local package_path
 				for package in $PACKAGES_LIST; do
-					package_path="$(get_value "${pkg}_PATH")"
+					package_path="$(get_value "${package}_PATH")"
 					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
 						image="${package_path}$PATH_GAME/$GAME_IMAGE"
 						break;
