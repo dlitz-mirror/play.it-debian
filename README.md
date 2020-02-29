@@ -1,14 +1,15 @@
-# ./play.it: Installer for drm-free commercial games
+# ./play.it: Installer for DRM-free commercial games
 
 The canonical repository is https://forge.dotslashplay.it/play.it/scripts,
-issues and PRs raised at mirrors will be migrated.
+issues and merge requests raised at mirrors will be migrated.
 
 ## Description
 
-The ./play.it tool builds .deb, .pkg and .tbz2 packages from installers for
-Windows or Linux, mainly those sold by GOG and Humble Bundle. The goal is that
-a game installed via ./play.it is indistinguishable from a game installed via
-the official repositories of your favorite distribution.
+./play.it is a free software building native packages from installers for
+Windows or Linux, mainly those sold by stores focusing on DRM-free games
+distribution. The goal is that a game installed via ./play.it is
+indistinguishable from a game installed via the official repositories of your
+favourite distribution.
 
 The games are installed globally on multi-user systems, avoiding unnecessary
 duplication. The locations of save games, settings, mods, temporary files and
@@ -20,22 +21,26 @@ versions are needed.
 
 ## Installation
 
-For recent Debian-based distros: `apt install play.it` [![version]][repology]
+You can check on Repology if ./play.it is packaged for your distribution:
 
-[version]: https://repology.org/badge/latest-versions/play.it.svg
+[![latest packaged version]][repology]
+
+[latest packaged version]: https://repology.org/badge/latest-versions/play.it.svg
 [repology]: https://repology.org/metapackage/play.it
 
-For Archlinux users there is an AUR package [![aur]](https://aur.archlinux.org/packages/play.it/)
+For Debian and derivatives (Ubuntu, Linux Mint, etc.): `apt install play.it`
 
-[aur]: http://badge.kloud51.com/aur/v/play.it.svg
+For Arch Linux, AUR packages are provided:
+* stable version: https://aur.archlinux.org/packages/play.it/
+* development version: https://aur.archlinux.org/packages/play.it-git/
 
-For Gentoo-based users there is an overlay here: https://framagit.org/BetaRays/gentoo-overlay
+For Gentoo, an overlay is provided: https://framagit.org/BetaRays/gentoo-overlay
 
-For everyone else:
-
+If your distribution does not already have a package for ./play.it, you can
+install it from this git repository:
 ```
-git clone https://forge.dotslashplay.it/play.it/scripts.git
-cd play.it
+git clone https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+cd play.it.git
 make
 make install
 ```
