@@ -11,6 +11,3 @@ library_shellcheck:
         - make
     script:
         - ./tests/library_shellcheck.sh
-    artifacts:
-        paths:
-            - play.it-2/lib/libplayit2.sh
