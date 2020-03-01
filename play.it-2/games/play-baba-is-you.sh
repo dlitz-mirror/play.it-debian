@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200119.1
+script_version=20200301.1
 
 # Set game-specific variables
 
@@ -47,7 +47,6 @@ ARCHIVE_ITCH_URL='https://hempuli.itch.io/baba'
 ARCHIVE_ITCH_MD5='3694afc5579cdaad7448c9744aa8d063'
 ARCHIVE_ITCH_VERSION='1.0-itch1'
 ARCHIVE_ITCH_SIZE='87000'
-ARCHIVE_ITCH_TYPE='tar'
 
 ARCHIVE_GAME_BIN32_PATH='Baba Is You/bin32'
 ARCHIVE_GAME_BIN32_FILES='Chowdren'
