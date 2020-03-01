@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200119.2
+script_version=20200131.1
 
 # Set game-specific variables
 
@@ -71,7 +71,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal glx"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal glx xcursor"
 
 # Load common functions
 

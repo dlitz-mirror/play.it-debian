@@ -31,21 +31,31 @@ set -o errexit
 ###
 # Distance
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190721.1
+script_version=20200215.2
 
 # Set game-specific variables
 
 GAME_ID='distance'
 GAME_NAME='Distance'
 
-ARCHIVE_HUMBLE='distance_6839_linux.tar.gz'
+ARCHIVE_HUMBLE='distance_6895_linux.tar.gz'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/distance'
-ARCHIVE_HUMBLE_MD5='308b8276a490f641476098900180d1d3'
-ARCHIVE_HUMBLE_VERSION='1.3.0-humble190609'
-ARCHIVE_HUMBLE_SIZE='2400000'
+ARCHIVE_HUMBLE_MD5='8c71eb4ebd4dbe0b89ee90ba538eadd9'
+ARCHIVE_HUMBLE_VERSION='1.4.0-humble190905'
+ARCHIVE_HUMBLE_SIZE='2600000'
+
+ARCHIVE_HUMBLE_OLD4='distance_6842_linux.tar.gz'
+ARCHIVE_HUMBLE_OLD4_MD5='58e05033c1a0ae206718be5d5ee800db'
+ARCHIVE_HUMBLE_OLD4_VERSION='1.3.1-humble190618'
+ARCHIVE_HUMBLE_OLD4_SIZE='2400000'
+
+ARCHIVE_HUMBLE_OLD3='distance_6839_linux.tar.gz'
+ARCHIVE_HUMBLE_OLD3_MD5='308b8276a490f641476098900180d1d3'
+ARCHIVE_HUMBLE_OLD3_VERSION='1.3.0-humble190609'
+ARCHIVE_HUMBLE_OLD3_SIZE='2400000'
 
 ARCHIVE_HUMBLE_OLD2='distance_6802_linux.tar.gz'
 ARCHIVE_HUMBLE_OLD2_MD5='e98812e71ce42e667c33cdf3f38793b7'
@@ -88,7 +98,7 @@ PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 sdl2"
 PKG_BIN_DEPS_ARCH='lib32-libx11'
 PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 # Load common functions
 

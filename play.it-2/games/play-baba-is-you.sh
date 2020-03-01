@@ -3,7 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2019-2020, Erwann Duclos
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,12 @@ set -o errexit
 ###
 
 ###
-# Basingstoke
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# Baba Is You
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191107.1
+script_version=20200119.1
 
 # Set game-specific variables
 
@@ -45,7 +45,7 @@ GAME_NAME='Baba Is You'
 ARCHIVE_ITCH='BIY_linux.tar.gz'
 ARCHIVE_ITCH_URL='https://hempuli.itch.io/baba'
 ARCHIVE_ITCH_MD5='3694afc5579cdaad7448c9744aa8d063'
-ARCHIVE_ITCH_VERSION='1.0-itch'
+ARCHIVE_ITCH_VERSION='1.0-itch1'
 ARCHIVE_ITCH_SIZE='87000'
 ARCHIVE_ITCH_TYPE='tar'
 
@@ -56,7 +56,7 @@ ARCHIVE_GAME_BIN64_PATH='Baba Is You/bin64'
 ARCHIVE_GAME_BIN64_FILES='Chowdren'
 
 ARCHIVE_GAME_DATA_PATH='Baba Is You'
-ARCHIVE_GAME_DATA_FILES='./Data icon.bmp Assets.dat gamecontrollerdb.txt'
+ARCHIVE_GAME_DATA_FILES='Data icon.bmp Assets.dat gamecontrollerdb.txt'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Chowdren'
@@ -79,49 +79,48 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
 prepare_package_layout
-
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up

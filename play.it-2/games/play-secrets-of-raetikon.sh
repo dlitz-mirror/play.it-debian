@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Secrets of Raetikon
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190113.1
+script_version=20200203.4
 
 # Set game-specific variables
 
@@ -47,7 +47,6 @@ ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/secrets-of-rtikon'
 ARCHIVE_HUMBLE_MD5='16a81710ce12480c9cd75a6992d2956c'
 ARCHIVE_HUMBLE_SIZE='130000'
 ARCHIVE_HUMBLE_VERSION='1.1-humble140731'
-ARCHIVE_HUMBLE_TYPE='zip'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf'
@@ -62,6 +61,18 @@ ARCHIVE_GAME_DATA_PATH='Raetikon'
 ARCHIVE_GAME_DATA_FILES='data steam_appid.txt'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Create minimal configuration file to avoid a black screen on Intel chipset
+config_file="$HOME/.secrets-of-raetikon/Options.xml"
+if [ ! -e "$config_file" ]; then
+	mkdir --parents "$(dirname "$config_file")"
+	cat > "$config_file" <<- EOF
+	<root>
+	    <rendering>
+	        <postProcessing value="false" />
+	    </rendering>
+	</root>
+	EOF
+fi'
 APP_MAIN_EXE_BIN32='Raetikon'
 APP_MAIN_EXE_BIN64='Raetikon64'
 
@@ -72,13 +83,19 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ libxrandr glx"
+PKG_BIN32_DEPS_ARCH='lib32-libx11'
+PKG_BIN32_DEPS_DEB='libx11-6'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -113,7 +130,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

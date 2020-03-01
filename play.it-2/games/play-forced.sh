@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2019-2020, Erwann Duclos
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,52 +29,59 @@ set -o errexit
 ###
 
 ###
-# Butcher - Demo
+# Forced
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200131.2
+script_version=20200212.1
 
 # Set game-specific variables
 
-GAME_ID='butcher-demo'
-GAME_NAME='Butcher Demo'
+GAME_ID='forced'
+GAME_NAME='Forced'
 
-ARCHIVE_GOG='gog_butcher_demo_2.0.0.1.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/butcher_demo'
-ARCHIVE_GOG_MD5='03ed5d89ef38ef10a3318b8da7e62525'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.1'
-ARCHIVE_GOG_SIZE='110000'
-ARCHIVE_GOG_TYPE='mojosetup'
+# This DRM-free archive does not seem to be available from humblebundle.com anymore
+ARCHIVE_HUMBLE='FORCED_Linux.zip'
+ARCHIVE_HUMBLE_MD5='039f971dc0ae0741e52865a9f23280d3'
+ARCHIVE_HUMBLE_SIZE='3800000'
+ARCHIVE_HUMBLE_VERSION='1.22-humble1'
 
-ARCHIVE_DOC_PATH='data/noarch/docs' 
-ARCHIVE_DOC_FILES='*'
+ARCHIVE_GAME_BIN32_PATH='FORCED_Linux/FORCED'
+ARCHIVE_GAME_BIN32_FILES='FORCED.x86 FORCED_Data/*/x86'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='butcher'
+ARCHIVE_GAME_BIN64_PATH='FORCED_Linux/FORCED'
+ARCHIVE_GAME_BIN64_FILES='FORCED.x86_64 FORCED_Data/*/x86_64'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='butcher_Data'
-
-DATA_DIRS='./logs'
+ARCHIVE_GAME_DATA_PATH='FORCED_Linux/FORCED'
+ARCHIVE_GAME_DATA_FILES='FORCED_Data'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE='butcher'
-# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Work around the engine inability to handle non-US locales
+export LANG=C'
+APP_MAIN_EXE_BIN32='FORCED.x86'
+APP_MAIN_EXE_BIN64='FORCED.x86_64'
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='butcher_Data/Resources/UnityPlayer.png'
+APP_MAIN_ICON='FORCED_Data/Resources/UnityPlayer.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+DATA_DIRS='./logs ./FORCED_Data/Visual?Scripting'
+
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
-PKG_BIN_DEPS_ARCH='libx11'
-PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2"
+PKG_BIN32_DEPS_ARCH='lib32-libx11 lib32-libxext lib32-gdk-pixbuf2 lib32-glib2'
+PKG_BIN32_DEPS_DEB='libx11-6, libxext6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] x11-libs/libXext[abi_x86_32] x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11 libxext gdk-pixbuf2 glib2'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11 x11-libs/libXext x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
@@ -118,8 +124,9 @@ icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-PKG='PKG_BIN'
-launchers_write 'APP_MAIN'
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

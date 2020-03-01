@@ -3,7 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2019-2020, Erwann Duclos
+# Copyright (c) 2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,52 +30,38 @@ set -o errexit
 ###
 
 ###
-# Butcher - Demo
+# Zak McKracken and the Alien Mindbenders
 # build native packages from the original installers
-# send your bug reports to contact@dotslashplay.it
+# send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200131.2
+script_version=20200209.1
 
 # Set game-specific variables
 
-GAME_ID='butcher-demo'
-GAME_NAME='Butcher Demo'
+GAME_ID='zak-mckracken-and-the-alien-mindbenders'
+GAME_NAME='Zak McKracken and the Alien Mindbenders'
 
-ARCHIVE_GOG='gog_butcher_demo_2.0.0.1.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/butcher_demo'
-ARCHIVE_GOG_MD5='03ed5d89ef38ef10a3318b8da7e62525'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.1'
-ARCHIVE_GOG_SIZE='110000'
+ARCHIVE_GOG='zak_mckracken_and_the_alien_mindbenders_en_gog_2_20099.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/zak_mckracken_and_the_alien_mindbenders'
+ARCHIVE_GOG_MD5='eb144295c6387b71ac2e78986067ba30'
+ARCHIVE_GOG_SIZE='190000'
+ARCHIVE_GOG_VERSION='1.0-gog20099'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_DOC_PATH='data/noarch/docs' 
-ARCHIVE_DOC_FILES='*'
+ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='butcher'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
+ARCHIVE_GAME_MAIN_FILES='*.lfl *.mp3'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='butcher_Data'
+APP_MAIN_TYPE='scummvm'
+APP_MAIN_SCUMMID='zak'
+APP_MAIN_ICON='data/noarch/support/icon.png'
 
-DATA_DIRS='./logs'
+PACKAGES_LIST='PKG_MAIN'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_EXE='butcher'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='butcher_Data/Resources/UnityPlayer.png'
-
-PACKAGES_LIST='PKG_BIN PKG_DATA'
-
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
-PKG_BIN_DEPS_ARCH='libx11'
-PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
 
@@ -108,17 +94,16 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
+
+# Get icon
+
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Get game icon
-
-PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
 
 # Build package
