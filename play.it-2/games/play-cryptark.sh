@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200302.1
+script_version=20200302.2
 
 # Set game-specific variables
 
@@ -66,7 +66,7 @@ APP_MAIN_PRERUN='# Work around terminfo Mono bug, cf. https://github.com/mono/mo
 export TERM="${TERM%-256color}"'
 APP_MAIN_EXE_BIN32='Cryptark.bin.x86'
 APP_MAIN_EXE_BIN64='Cryptark.bin.x86_64'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+APP_MAIN_ICON='Cryptark.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
 
@@ -111,12 +111,12 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icon
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
