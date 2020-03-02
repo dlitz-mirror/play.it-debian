@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.6
+script_version=20210507.8
 
 # Set game-specific variables
 
@@ -50,7 +50,7 @@ ARCHIVE_BASE_0_SIZE='83000'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/tis100'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC_DATA_FILES='*.pdf'
+ARCHIVE_DOC_DATA_FILES='TIS-100?Reference?Manual.pdf'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='tis100.x86 tis100_Data/*/x86'
@@ -133,6 +133,14 @@ icons_get_from_package 'APP_MAIN'
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
+# Copy the manual in the game directory
+
+package_path=$(package_get_path 'PKG_DATA')
+manual_source="${package_path}${PATH_DOC}/TIS-100 Reference Manual.pdf"
+manual_destination="${package_path}${PATH_GAME}/TIS-100 Reference Manual.pdf"
+mkdir --parents "$(dirname "$manual_destination")"
+cp --link "$manual_source" "$manual_destination"
+
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
@@ -141,19 +149,7 @@ done
 
 # Build package
 
-manual='TIS-100 Reference Manual.pdf'
-cat >> "$postinst" << EOF
-if [ ! -e "$PATH_GAME/$manual" ]; then
-	ln --symbolic "$PATH_DOC/$manual" "$PATH_GAME"
-fi
-EOF
-cat >> "$prerm" << EOF
-if [ -e "$PATH_GAME/$manual" ]; then
-	rm "$PATH_GAME/$manual"
-fi
-EOF
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up
