@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200302.2
+script_version=20200302.3
 
 # Set game-specific variables
 
@@ -53,19 +53,18 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='*.bin.x86 lib/libmojoshader.so lib/libogg.so.0 lib/libopenal.so.1 lib/libpng15.so.15 lib/libSDL2-2.0.so.0 lib/libSDL2_image-2.0.so.0 lib/libtheoradec.so.1 lib/libtheorafile.so lib/libvorbis.so.0'
+ARCHIVE_GAME_BIN32_FILES='lib/libmojoshader.so lib/libogg.so.0 lib/libopenal.so.1 lib/libpng15.so.15 lib/libSDL2-2.0.so.0 lib/libSDL2_image-2.0.so.0 lib/libtheoradec.so.1 lib/libtheorafile.so lib/libvorbis.so.0'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='*.bin.x86_64 lib64/libmojoshader.so lib64/libogg.so.0 lib64/libopenal.so.1 lib64/libpng15.so.15 lib64/libSDL2-2.0.so.0 lib64/libSDL2_image-2.0.so.0 lib64/libtheoradec.so.1 lib64/libtheorafile.so lib64/libvorbis.so.0'
+ARCHIVE_GAME_BIN64_FILES='lib64/libmojoshader.so lib64/libogg.so.0 lib64/libopenal.so.1 lib64/libpng15.so.15 lib64/libSDL2-2.0.so.0 lib64/libSDL2_image-2.0.so.0 lib64/libtheoradec.so.1 lib64/libtheorafile.so lib64/libvorbis.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Cryptark.exe *.dll Content Cryptark.png FNA.dll.config gamecontrollerdb.txt monoconfig monomachineconfig'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='# Work around terminfo Mono bug, cf. https://github.com/mono/mono/issues/6752
-export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='Cryptark.bin.x86'
-APP_MAIN_EXE_BIN64='Cryptark.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='Cryptark.exe'
 APP_MAIN_ICON='Cryptark.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
@@ -74,14 +73,14 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 sdl2_image vorbis theora"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono openal sdl2 sdl2_image vorbis theora"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
