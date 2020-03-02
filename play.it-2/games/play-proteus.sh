@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200302.1
+script_version=20200302.2
 
 # Set game-specific variables
 
@@ -53,10 +53,10 @@ ARCHIVE_DOC_DATA_PATH='data'
 ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='Proteus.bin.x86 lib/libmono-2.0.so.1 lib/libSDL2-2.0.so.0 lib/libSDL2_mixer-2.0.so.0'
+ARCHIVE_GAME_BIN32_FILES='Proteus.bin.x86 lib/libmono-2.0.so.1 lib/libSDL2_mixer-2.0.so.0'
 
 ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='Proteus.bin.x86_64 lib64/libmono-2.0.so.1 lib64/libSDL2-2.0.so.0 lib64/libSDL2_mixer-2.0.so.0'
+ARCHIVE_GAME_BIN64_FILES='Proteus.bin.x86_64 lib64/libmono-2.0.so.1 lib64/libSDL2_mixer-2.0.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data'
 ARCHIVE_GAME_DATA_FILES='*.config *.dll *.exe resources Proteus.png mono'
