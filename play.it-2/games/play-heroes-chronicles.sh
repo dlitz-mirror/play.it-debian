@@ -155,7 +155,7 @@ PKG_BIN_DEPS="$PKG_COMMON_ID $PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -247,24 +247,21 @@ launchers_write 'APP_MAIN'
 
 # Build package
 
-cat > "$postinst" << EOF
-for dir in 'data' 'mp3'; do
-	if [ ! -e "$PATH_GAME/\$dir" ]; then
-		cp --force --recursive --symbolic-link --update "$PATH_GAME_COMMON/\$dir" "$PATH_GAME"
+PKG_DATA_POSTINST_RUN="# Link common files shared by the games series
+for dir in data mp3; do
+	if [ ! -e '$PATH_GAME'/\$dir ]; then
+		cp --force --recursive --symbolic-link --update '$PATH_GAME_COMMON'/\$dir '$PATH_GAME'
 	fi
-done
-EOF
-cat > "$prerm" << EOF
-for dir in 'data' 'mp3'; do
-	if [ -e "$PATH_GAME/\$dir" ]; then
-		rm --force --recursive "$PATH_GAME/\$dir"
+done"
+PKG_DATA_PRERM_RUN="# Delete links to common files shared by the games series
+for dir in data mp3; do
+	if [ -e '$PATH_GAME'/\$dir ]; then
+		rm --force --recursive '$PATH_GAME'/\$dir
 	fi
-done
-EOF
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
-GAME_NAME="$GAME_NAME_COMMON"
-write_metadata 'PKG_COMMON'
+done"
+write_metadata 'PKG_DATA' 'PKG_BIN'
+GAME_NAME="$GAME_NAME_COMMON" \
+	write_metadata 'PKG_COMMON'
 build_pkg
 
 # Clean up
