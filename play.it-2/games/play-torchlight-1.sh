@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,47 +31,37 @@ set -o errexit
 ###
 # Torchlight
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190221.1
+script_version=20210511.1
 
 # Set game-specific variables
 
 GAME_ID='torchlight-1'
 GAME_NAME='Torchlight'
 
-ARCHIVE_GOG='setup_torchlight_1.15(a)_(23675).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/torchlight'
-ARCHIVE_GOG_MD5='a29e51f55aae740f4046d227d33fa64b'
-ARCHIVE_GOG_VERSION='1.15-gog23675'
-ARCHIVE_GOG_SIZE='460000'
-ARCHIVE_GOG_TYPE='innosetup'
+ARCHIVE_BASE_1='setup_torchlight_1.15(a)_(23675).exe'
+ARCHIVE_BASE_1_MD5='a29e51f55aae740f4046d227d33fa64b'
+ARCHIVE_BASE_1_TYPE='innosetup'
+ARCHIVE_BASE_1_VERSION='1.15-gog23675'
+ARCHIVE_BASE_1_SIZE='460000'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/torchlight'
 
-ARCHIVE_GOG_OLD0='setup_torchlight_2.0.0.12.exe'
-ARCHIVE_GOG_OLD0_MD5='4b721e1b3da90f170d66f42e60a3fece'
-ARCHIVE_GOG_OLD0_VERSION='1.15-gog2.0.0.12'
-ARCHIVE_GOG_OLD0_SIZE='460000'
+ARCHIVE_BASE_0='setup_torchlight_2.0.0.12.exe'
+ARCHIVE_BASE_0_MD5='4b721e1b3da90f170d66f42e60a3fece'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_VERSION='1.15-gog2.0.0.12'
+ARCHIVE_BASE_0_SIZE='460000'
 
-ARCHIVE_DOC0_DATA_PATH='tmp'
-ARCHIVE_DOC0_DATA_FILES='*.txt'
-
-ARCHIVE_DOC1_DATA_PATH='.'
-ARCHIVE_DOC1_DATA_FILES='*.pdf'
-# Keep comaptibility with old archives
-ARCHIVE_DOC1_DATA_PATH_GOG_OLD0='app'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.pdf'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='torchlight.exe *.cfg *.dll'
-# Keep comaptibility with old archives
-ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='buildver.txt runicgames.ico torchlight.ico logo.bmp pak.zip icons music programs'
-# Keep comaptibility with old archives
-ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
-
-DATA_DIRS='./userdata'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='torchlight.exe'
@@ -81,31 +71,41 @@ PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
-# Easier upgrade from packages generated with pre-20181021.2 scripts
-PKG_DATA_PROVIDE='torchlight-data'
 
-PKG_BIN_ID="$GAME_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine xcursor glx"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine xcursor glx"
+
+# Use persistent storage for user data
+
+APP_WINE_LINK_DIRS='userdata:users/${USER}/Application Data/runic games/torchlight'
+DATA_DIRS="${DATA_DIRS} ./userdata"
+
+# Keep compatibility with old archives
+
+ARCHIVE_DOC_DATA_PATH_0='app'
+ARCHIVE_GAME_BIN_PATH_0='app'
+ARCHIVE_GAME_DATA_PATH_0='app'
+
 # Easier upgrade from packages generated with pre-20181021.2 scripts
+
+PKG_DATA_PROVIDE='torchlight-data'
 PKG_BIN_PROVIDE='torchlight'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -122,29 +122,20 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
 # Write launchers
 
 PKG='PKG_BIN'
-launcher_write 'APP_MAIN'
-
-# Store saved games and settings outside of WINE prefix
-
-# shellcheck disable=SC2016
-saves_path='$WINEPREFIX/drive_c/users/$(whoami)/Application Data/runic games/torchlight'
-# shellcheck disable=SC2016
-pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
-pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
-pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""
-pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/userdata\" \"$saves_path\""
-pattern="$pattern\\nfi#"
-sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
+launchers_write 'APP_MAIN'
 
 # Build package
 
