@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210514.2
+script_version=20210514.3
 
 # Set game-specific variables
 
@@ -106,7 +106,7 @@ PKG_BIN_ARCH='32'
 
 # binaries package — Linux version
 PKG_BIN_ID_LINUX="${PKG_BIN_ID}-linux"
-PKG_BIN_DEPS_LINUX="${PKG_COMMON_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal pulseaudio"
+PKG_BIN_DEPS_LINUX="${PKG_COMMON_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal"
 PKG_BIN_DEPS_ARCH_LINUX='lib32-libpulse lib32-libx11'
 PKG_BIN_DEPS_DEB_LINUX='libpulse0, libx11-6'
 PKG_BIN_DEPS_GENTOO_LINUX='media-sound/pulseaudio[abi_x86_32] x11-libs/libX11[abi_x86_32]'
@@ -268,6 +268,26 @@ fi'
 DATA_DIRS="$DATA_DIRS ./userdata"
 APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
 userdata:users/$USER/Application Data/11bitstudios/Anomaly 2'
+
+# Ensure PulseAudio is available when running the Linux version
+
+PKG_BIN_DEPS_LINUX="${PKG_BIN_DEPS_LINUX} pulseaudio"
+APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN_LINUX"'
+
+# Ensure PulseAudio is running
+PULSEAUDIO_IS_AVAILABLE=1
+if pulseaudio --check; then
+	KEEP_PULSEAUDIO_RUNNING=1
+else
+	KEEP_PULSEAUDIO_RUNNING=0
+fi
+pulseaudio --start'
+APP_MAIN_POSTRUN_LINUX="$APP_MAIN_POSTRUN_LINUX"'
+
+# Stop pulseaudio if it has specifically been started for the game
+if [ $KEEP_PULSEAUDIO_RUNNING -eq 0 ]; then
+	pulseaudio --kill
+fi'
 
 # Write launchers
 
