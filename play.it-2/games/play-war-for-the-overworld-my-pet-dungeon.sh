@@ -31,22 +31,28 @@ set -o errexit
 ###
 # War for the Overworld: My Pet Dungeon
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20200304.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: My Pet Dungeon'
 
-ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_2_0_7f1_30014.sh'
+ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_2_0_7f1_gog_36563.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_my_pet_dungeon'
-ARCHIVE_GOG_MD5='f9cd5f6fbe46d46c98837410f8cbfeee'
+ARCHIVE_GOG_MD5='55fd7104b3c3141bc38a2809ae470c92'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_VERSION='2.0.7f1-gog36563'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD3='war_for_the_overworld_my_pet_dungeon_2_0_7f1_30014.sh'
+ARCHIVE_GOG_OLD3_MD5='f9cd5f6fbe46d46c98837410f8cbfeee'
+ARCHIVE_GOG_OLD3_SIZE='1400'
+ARCHIVE_GOG_OLD3_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_OLD3_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD2='war_for_the_overworld_my_pet_dungeon_2_0_6f1_24637.sh'
 ARCHIVE_GOG_OLD2_MD5='7788aeeee1e9c7cd365eb595e772ff52'
