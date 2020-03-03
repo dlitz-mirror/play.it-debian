@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200310.3
+script_version=20200310.5
 
 # Set game-specific variables
 
@@ -49,14 +49,11 @@ ARCHIVE_GOG_MD5='8f8890d743c171fb341c9d9c87c52343'
 ARCHIVE_GOG_SIZE='400000'
 ARCHIVE_GOG_VERSION='1.0-gog2.1.0.7'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='*.pdf'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='*.pdf'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.cfg *.exe sound/*.exe sound/*.ini'
-
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='*.ico *.ogg game.* ldata levels sound/*.dig sound/*.lst sound/*.mdi sound/*.sbk sound/music.dat sound/sound.dat data/*.anm data/*.cat data/*.clm data/*.col data/*.cub data/*.jty data/*.obj data/*.pal data/*.raw data/*.rst data/*.tab data/*.tng data/*.txt data/dp_prefs data/a*.dat data/b*.dat data/c*.dat data/e*.dat data/f*.dat data/g*.dat data/h*.dat data/i*.dat data/l*.dat data/m*.dat data/p*.dat data/r*.dat data/s*.dat data/tables.dat data/ticon0-0.dat data/tmapa*.dat'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='*.cfg *.exe sound/*.exe sound/*.ini *.ico *.ogg game.* ldata levels sound/*.dig sound/*.lst sound/*.mdi sound/*.sbk sound/music.dat sound/sound.dat data'
 
 ARCHIVE_GAME_L10N_TXT_DE_PATH='keeper/data/german'
 ARCHIVE_GAME_L10N_TXT_DE_FILES='*'
@@ -141,10 +138,7 @@ APP_ADDON_TYPE='dosbox'
 APP_ADDON_EXE='deeper.exe'
 APP_ADDON_ICON='gfw_high_addon.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA PKG_L10N_TXT_DE PKG_L10N_TXT_EN PKG_L10N_TXT_ES PKG_L10N_TXT_FR PKG_L10N_TXT_IT PKG_L10N_TXT_NL PKG_L10N_TXT_PL PKG_L10N_TXT_SV PKG_L10N_VOICES_DE PKG_L10N_VOICES_EN PKG_L10N_VOICES_ES PKG_L10N_VOICES_FR PKG_L10N_VOICES_NL PKG_L10N_VOICES_PL PKG_L10N_VOICES_SV'
-
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PACKAGES_LIST='PKG_L10N_TXT_DE PKG_L10N_TXT_EN PKG_L10N_TXT_ES PKG_L10N_TXT_FR PKG_L10N_TXT_IT PKG_L10N_TXT_NL PKG_L10N_TXT_PL PKG_L10N_TXT_SV PKG_L10N_VOICES_DE PKG_L10N_VOICES_EN PKG_L10N_VOICES_ES PKG_L10N_VOICES_FR PKG_L10N_VOICES_NL PKG_L10N_VOICES_PL PKG_L10N_VOICES_SV PKG_MAIN'
 
 PKG_L10N_TXT_ID="${GAME_ID}-l10n-txt"
 PKG_L10N_TXT_DESCRIPTION='text localization'
@@ -212,8 +206,9 @@ PKG_L10N_VOICES_SV_ID="${PKG_L10N_VOICES_ID}-sv"
 PKG_L10N_VOICES_SV_PROVIDE="$PKG_L10N_VOICES_ID"
 PKG_L10N_VOICES_SV_DESCRIPTION="$PKG_L10N_VOICES_DESCRIPTION - Swedish"
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_L10N_TXT_ID $PKG_L10N_VOICES_ID $PKG_DATA_ID dosbox"
+PKG_MAIN_DEPS="$PKG_L10N_TXT_ID $PKG_L10N_VOICES_ID dosbox"
+# Easier upgrades from packages generated with pre-20200303.2
+PKG_MAIN_PROVIDE='dungeon-keeper-1-data'
 
 # Load common functions
 
@@ -251,6 +246,15 @@ ARCHIVE_L10N_TYPE='rar'
 ARCHIVE='ARCHIVE_L10N' \
 	extract_data_from "$ARCHIVE_L10N"
 tolower "$PLAYIT_WORKDIR/gamedata"
+
+# Remove files that should not be included in the base package
+# These files are provided by the localization packages
+rm --force --recursive \
+	"$PLAYIT_WORKDIR/gamedata/app/data/dd1text.dat" \
+	"$PLAYIT_WORKDIR/gamedata/app/data/text.dat" \
+	"$PLAYIT_WORKDIR/gamedata/app/sound/speech.dat" \
+	"$PLAYIT_WORKDIR/gamedata/app/sound/atlas"
+
 for lang in 'DE' 'EN' 'ES' 'FR' 'IT' 'NL' 'PL' 'SV'; do
 	PKG="PKG_L10N_TXT_$lang"
 	organize_data "GAME_L10N_TXT_$lang" "$PATH_GAME/data"
@@ -265,12 +269,12 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get game icons
 
-PKG='PKG_DATA'
+PKG='PKG_MAIN'
 icons_get_from_package 'APP_MAIN' 'APP_ADDON'
 
 # Write launchers
 
-PKG='PKG_BIN'
+PKG='PKG_MAIN'
 launchers_write 'APP_MAIN' 'APP_ADDON'
 
 # Build package
@@ -309,24 +313,24 @@ esac
 printf '\n'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_en"
-print_instructions 'PKG_L10N_TXT_EN' 'PKG_L10N_VOICES_EN' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_EN' 'PKG_L10N_VOICES_EN' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_es"
-print_instructions 'PKG_L10N_TXT_ES' 'PKG_L10N_VOICES_ES' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_ES' 'PKG_L10N_VOICES_ES' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_fr"
-print_instructions 'PKG_L10N_TXT_FR' 'PKG_L10N_VOICES_FR' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_FR' 'PKG_L10N_VOICES_FR' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_it"
-print_instructions 'PKG_L10N_TXT_IT' 'PKG_L10N_VOICES_EN' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_IT' 'PKG_L10N_VOICES_EN' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_nl"
-print_instructions 'PKG_L10N_TXT_NL' 'PKG_L10N_VOICES_NL' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_NL' 'PKG_L10N_VOICES_NL' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_pl"
-print_instructions 'PKG_L10N_TXT_PL' 'PKG_L10N_VOICES_PL' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_PL' 'PKG_L10N_VOICES_PL' 'PKG_MAIN'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_sv"
-print_instructions 'PKG_L10N_TXT_SV' 'PKG_L10N_VOICES_SV' 'PKG_DATA' 'PKG_BIN'
+print_instructions 'PKG_L10N_TXT_SV' 'PKG_L10N_VOICES_SV' 'PKG_MAIN'
 
 exit 0
