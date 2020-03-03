@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,32 +31,27 @@ set -o errexit
 ###
 # Anomaly 2
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190624.1
+script_version=20210514.1
 
 # Set game-specific variables
 
 GAME_ID='anomaly-2'
 GAME_NAME='Anomaly 2'
 
-ARCHIVES_LIST='ARCHIVE_LINUX_HUMBLE ARCHIVE_WINDOWS_HUMBLE'
+ARCHIVE_BASE_LINUX_0='Anomaly2_Linux_1387299615.zip'
+ARCHIVE_BASE_LINUX_0_MD5='46f0ecd5363106e9eae8642836c29dfc'
+ARCHIVE_BASE_LINUX_0_SIZE='2500000'
+ARCHIVE_BASE_LINUX_0_VERSION='1.0-humble1'
+ARCHIVE_BASE_LINUX_0_URL='https://www.humblebundle.com/store/anomaly-2'
 
-ARCHIVE_LINUX_HUMBLE='Anomaly2_Linux_1387299615.zip'
-ARCHIVE_LINUX_HUMBLE_URL='https://www.humblebundle.com/store/anomaly-2'
-ARCHIVE_LINUX_HUMBLE_MD5='46f0ecd5363106e9eae8642836c29dfc'
-ARCHIVE_LINUX_HUMBLE_SIZE='2500000'
-ARCHIVE_LINUX_HUMBLE_VERSION='1.0-humble1'
-
-ARCHIVE_WINDOWS_HUMBLE='Anomaly2_Windows_1387299615.zip'
-ARCHIVE_WINDOWS_HUMBLE_URL='https://www.humblebundle.com/store/anomaly-2'
-ARCHIVE_WINDOWS_HUMBLE_MD5='2b5ccffcbaee8cfebfd4bb74cacb9fbc'
-ARCHIVE_WINDOWS_HUMBLE_SIZE='2500000'
-ARCHIVE_WINDOWS_HUMBLE_VERSION='1.0-humble1'
-
-ARCHIVE_OPTIONAL_ICONS='anomaly-2_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_MD5='73ddbd1651e08d6c8bb4735e5e0a4a81'
+ARCHIVE_BASE_WINDOWS_0='Anomaly2_Windows_1387299615.zip'
+ARCHIVE_BASE_WINDOWS_0_MD5='2b5ccffcbaee8cfebfd4bb74cacb9fbc'
+ARCHIVE_BASE_WINDOWS_0_SIZE='2500000'
+ARCHIVE_BASE_WINDOWS_0_VERSION='1.0-humble1'
+ARCHIVE_BASE_WINDOWS_0_URL='https://www.humblebundle.com/store/anomaly-2'
 
 ARCHIVE_GAME_BIN_PATH_LINUX='Anomaly 2 Linux DRM-free'
 ARCHIVE_GAME_BIN_PATH_WINDOWS='Anomaly 2 Windows DRM-free/2013-12-17 03-20'
@@ -70,46 +65,18 @@ ARCHIVE_GAME_DATA_PATH_LINUX='Anomaly 2 Linux DRM-free'
 ARCHIVE_GAME_DATA_PATH_WINDOWS='Anomaly 2 Windows DRM-free/2013-12-17 03-20'
 ARCHIVE_GAME_DATA_FILES='*.idx *.str animations.dat common.dat scenes.dat sounds.dat templates.dat textures.dat'
 
+# optional icons pack
+ARCHIVE_OPTIONAL_ICONS='anomaly-2_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_MD5='73ddbd1651e08d6c8bb4735e5e0a4a81'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/anomaly-2/'
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='32x32 48x48 64x64 256x256'
 
-CONFIG_FILES='./userdata/config.bin'
-DATA_DIRS='./userdata/DefaultUser'
-DATA_FILES='./userdata/iPhoneProfiles'
-
+# game binary — Linux version
 APP_MAIN_TYPE_LINUX='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN_LINUX='NEW_LAUNCH_REQUIRED=0
-if [ -e "$HOME/.Anomaly 2" ] && [ ! -h "$HOME/.Anomaly 2" ]; then
-	NEW_LAUNCH_REQUIRED=1
-	if [ -e "$HOME/.Anomaly 2/config.bin" ]; then
-		mkdir --parents "$PATH_CONFIG/userdata"
-		cp "$HOME/.Anomaly 2/config.bin" "$PATH_CONFIG/userdata"
-	fi
-	if [ -e "$HOME/.Anomaly 2/DefaultUser" ]; then
-		mkdir --parents "$PATH_DATA/userdata"
-		cp --recursive "$HOME/.Anomaly 2/DefaultUser" "$PATH_DATA/userdata"
-	fi
-	if [ -e "$HOME/.Anomaly 2/iPhoneProfiles" ]; then
-		mkdir --parents "$PATH_DATA/userdata"
-		cp "$HOME/.Anomaly 2/iPhoneProfiles" "$PATH_DATA/userdata"
-	fi
-	mv "$HOME/.Anomaly 2" "$HOME/.Anomaly 2.old"
-fi
-if [ ! -e "$HOME/.Anomaly 2" ]; then
-	rm --force "$HOME/.Anomaly 2"
-	ln --symbolic "$PATH_PREFIX/userdata" "$HOME/.Anomaly 2"
-fi
-if [ $NEW_LAUNCH_REQUIRED -eq 1 ]; then
-	"$0"
-	exit 0
-fi
-gcc -m32 -o preload.so preload.c -ldl -shared -fPIC -Wall -Wextra
-pulseaudio --start
-LD_PRELOAD=./preload.so
-export LD_PRELOAD'
 APP_MAIN_EXE_LINUX='Anomaly2'
 
+# game binary — Windows version
 APP_MAIN_TYPE_WINDOWS='wine'
 APP_MAIN_EXE_WINDOWS='Anomaly 2.exe'
 APP_MAIN_ICON_WINDOWS='Anomaly 2.exe'
@@ -117,43 +84,64 @@ APP_MAIN_ICON_WINDOWS='Anomaly 2.exe'
 PACKAGES_LIST='PKG_COMMON PKG_DATA PKG_BIN'
 
 PKG_COMMON_ID="${GAME_ID}-data-common"
-PKG_COMMON_DESCRIPTIOn='data — common'
+PKG_COMMON_DESCRIPTIOn='data - common'
 
+# data packages — common properties
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_ID_LINUX="${PKG_DATA_ID}-linux"
-PKG_DATA_ID_WINDOWS="${PKG_DATA_ID}-windows"
 PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
-PKG_DATA_DESCRIPTION_LINUX="$PKG_DATA_DESCRIPTION — Linux"
-PKG_DATA_DESCRIPTION_WINDOWS="$PKG_DATA_DESCRIPTION — Windows"
 
+# data packages — Linux version
+PKG_DATA_ID_LINUX="${PKG_DATA_ID}-linux"
+PKG_DATA_DESCRIPTION_LINUX="${PKG_DATA_DESCRIPTION} - Linux"
+
+# data packages — Windows version
+PKG_DATA_ID_WINDOWS="${PKG_DATA_ID}-windows"
+PKG_DATA_DESCRIPTION_WINDOWS="${PKG_DATA_DESCRIPTION} - Windows"
+
+# binaries package — common properties
 PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ID_LINUX="${PKG_BIN_ID}-linux"
-PKG_BIN_ID_WINDOWS="${PKG_BIN_ID}-windows"
 PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_LINUX="$PKG_COMMON_ID $PKG_DATA_ID glibc libstdc++ glx openal gcc32 pulseaudio"
+
+# binaries package — Linux version
+PKG_BIN_ID_LINUX="${PKG_BIN_ID}-linux"
+PKG_BIN_DEPS_LINUX="${PKG_COMMON_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal gcc32 pulseaudio"
 PKG_BIN_DEPS_ARCH_LINUX='lib32-libpulse lib32-libx11'
 PKG_BIN_DEPS_DEB_LINUX='libpulse0, libx11-6'
 PKG_BIN_DEPS_GENTOO_LINUX='media-sound/pulseaudio[abi_x86_32] x11-libs/libX11[abi_x86_32]'
-PKG_BIN_DEPS_WINDOWS="$PKG_COMMON_ID $PKG_DATA_ID wine glx xcursor"
+
+# binaries package — Windows version
+PKG_BIN_ID_WINDOWS="${PKG_BIN_ID}-windows"
+PKG_BIN_DEPS_WINDOWS="${PKG_COMMON_ID} ${PKG_DATA_ID} wine glx xcursor"
+
+# Keep compatibility with pre-20200303.1 scripts
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Keep compatibility with pre-20200303.1 scripts
+if [ -e "$PATH_CONFIG/userdata/config.bin" ]; then
+	mkdir --parents "$PATH_DATA/userdata"
+	cp --remove-destination "$PATH_CONFIG/userdata/config.bin" "$PATH_DATA/userdata"
+	mv "$PATH_CONFIG/userdata/config.bin" "$PATH_CONFIG/userdata/config.bin.old"
+fi'
+APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN"
+APP_MAIN_PRERUN_WINDOWS="$APP_MAIN_PRERUN"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -169,7 +157,7 @@ fi
 # Try to load icons archive
 
 case "$ARCHIVE" in
-	('ARCHIVE_LINUX'*)
+	('ARCHIVE_BASE_LINUX'*)
 		ARCHIVE_MAIN="$ARCHIVE"
 		set_archive 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
 		ARCHIVE="$ARCHIVE_MAIN"
@@ -180,15 +168,13 @@ esac
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get icons
 
 case "$ARCHIVE" in
-	('ARCHIVE_LINUX'*)
-		if [ "$ARCHIVE_ICONS" ]; then
+	('ARCHIVE_BASE_LINUX'*)
+		if [ -n "$ARCHIVE_ICONS" ]; then
 			(
-				# shellcheck disable=SC2030
 				ARCHIVE='ARCHIVE_ICONS'
 				extract_data_from "$ARCHIVE_ICONS"
 			)
@@ -196,13 +182,87 @@ case "$ARCHIVE" in
 			organize_data 'ICONS' "$PATH_ICON_BASE"
 		fi
 	;;
-	('ARCHIVE_WINDOWS'*)
+	('ARCHIVE_BASE_WINDOWS'*)
 		PKG='PKG_BIN'
 		use_archive_specific_value 'APP_MAIN_ICON'
 		icons_get_from_package 'APP_MAIN'
 		icons_move_to 'PKG_DATA'
 	;;
 esac
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Hack to work around infinite loading times
+
+###
+# TODO
+# This hack could probably be included in the package, instead of built at run time
+###
+case "$ARCHIVE" in
+	('ARCHIVE_BASE_LINUX'*)
+		cat > "${PKG_BIN_PATH}${PATH_GAME}/preload.c" <<- EOF
+		#define _GNU_SOURCE
+		#include <dlfcn.h>
+		#include <semaphore.h>
+		#include <stdio.h>
+		#include <time.h>
+		#include <unistd.h>
+
+		static int (*_realSemTimedWait)(sem_t *, const struct timespec *) = NULL;
+
+		int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
+		    if (abs_timeout->tv_nsec >= 1000000000) {
+		        ((struct timespec *)abs_timeout)->tv_nsec -= 1000000000;
+		        ((struct timespec *)abs_timeout)->tv_sec++;
+		    }
+		    return _realSemTimedWait(sem, abs_timeout);
+		}
+		__attribute__((constructor)) void init(void) {
+		    _realSemTimedWait = dlsym(RTLD_NEXT, "sem_timedwait");
+		}
+		EOF
+	;;
+esac
+APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN_LINUX"'
+
+# Work around infinite loading time bug
+gcc -m32 -o preload.so preload.c -ldl -shared -fPIC -Wall -Wextra
+LD_PRELOAD=./preload.so
+export LD_PRELOAD'
+
+# Share saved games and config between Linux and Windows engines
+
+APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN_LINUX"'
+
+# Share saved games and config between Linux and Windows engines
+NEW_LAUNCH_REQUIRED=0
+if [ -e "$HOME/.Anomaly 2" ] && [ ! -h "$HOME/.Anomaly 2" ]; then
+	for file in \
+		config.bin \
+		DefaultUser \
+		iPhoneProfiles
+	do
+		if [ -e "$HOME/.Anomaly 2/$file" ]; then
+			mkdir --parents "$PATH_DATA/userdata"
+			cp --recursive "$HOME/.Anomaly 2/$file" "$PATH_DATA/userdata"
+		fi
+	done
+	mv "$HOME/.Anomaly 2" "$HOME/.Anomaly 2.old"
+	NEW_LAUNCH_REQUIRED=1
+fi
+if [ ! -e "$HOME/.Anomaly 2" ]; then
+	rm --force "$HOME/.Anomaly 2"
+	ln --symbolic "$PATH_PREFIX/userdata" "$HOME/.Anomaly 2"
+fi
+if [ $NEW_LAUNCH_REQUIRED -eq 1 ]; then
+	"$0"
+	exit 0
+fi'
+DATA_DIRS="$DATA_DIRS ./userdata"
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+userdata:users/$USER/Application Data/11bitstudios/Anomaly 2'
 
 # Write launchers
 
@@ -211,56 +271,6 @@ use_archive_specific_value 'APP_MAIN_TYPE'
 use_archive_specific_value 'APP_MAIN_PRERUN'
 use_archive_specific_value 'APP_MAIN_EXE'
 launchers_write 'APP_MAIN'
-
-# Hack to work around infinite loading times
-
-# shellcheck disable=SC2031
-case "$ARCHIVE" in
-	('ARCHIVE_LINUX'*)
-		if [ $DRY_RUN -eq 0 ]; then
-			cat > "${PKG_BIN_PATH}${PATH_GAME}/preload.c" <<- EOF
-			#define _GNU_SOURCE
-			#include <dlfcn.h>
-			#include <semaphore.h>
-			#include <stdio.h>
-			#include <time.h>
-			#include <unistd.h>
-
-			static int (*_realSemTimedWait)(sem_t *, const struct timespec *) = NULL;
-
-			int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout) {
-			    if (abs_timeout->tv_nsec >= 1000000000) {
-			        ((struct timespec *)abs_timeout)->tv_nsec -= 1000000000;
-			        ((struct timespec *)abs_timeout)->tv_sec++;
-			    }
-			    return _realSemTimedWait(sem, abs_timeout);
-			}
-			__attribute__((constructor)) void init(void) {
-			    _realSemTimedWait = dlsym(RTLD_NEXT, "sem_timedwait");
-			}
-			EOF
-		fi
-	;;
-esac
-
-# Store saved games and settings outside of WINE prefix
-
-# shellcheck disable=SC2031
-case "$ARCHIVE" in
-	('ARCHIVE_WINDOWS'*)
-		# shellcheck disable=SC2016
-		saves_path='$WINEPREFIX/drive_c/users/$(whoami)/Application Data/11bitstudios/Anomaly 2'
-		# shellcheck disable=SC2016
-		pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
-		pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
-		pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""
-		pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/userdata\" \"$saves_path\""
-		pattern="$pattern\\nfi#"
-		if [ $DRY_RUN -eq 0 ]; then
-			sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
-		fi
-	;;
-esac
 
 # Build package
 
