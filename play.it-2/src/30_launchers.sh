@@ -306,6 +306,58 @@ launcher_write_script_prefix_functions() {
 	local file
 	file="$1"
 	cat >> "$file" <<- 'EOF'
+	# Set localization and error reporting functions
+
+	# select strings matching the current locale
+	# strings must be prefixed by a two-letter language code and a colon
+	# USAGE: localize $string[…]
+	localize() {
+	    local lang
+	    local string
+	    local match
+	    for lang in "${LANG%%_*}" 'en'; do
+	        for string in "$@"; do
+	            if [ "${string%%:*}" = "$lang" ]; then
+	                echo "${string#*:}"
+	                match=1
+	            fi
+	        done
+	        if [ "$match" ]; then
+	            break
+	        fi
+	    done
+	}
+
+	# print a localized message on standard error output
+	# strings must be prefixed by a two-letter language code and a colon
+	# USAGE: display_message $string[…]
+	display_message() {
+	    local string
+	    localize "$@" | while read -r string; do
+	        printf "$string\n"
+	    done 1>&2
+	}
+
+	# print a localized error message on standard error output
+	# strings must be prefixed by a two-letter language code and a colon
+	# USAGE: display_error $string[…]
+	display_error() {
+	    display_message \
+	        'en:\033[1;31mError:\033[0m' \
+	        'fr:\033[1;31mErreur :\033[0m'
+	    display_message "$@"
+	}
+
+	# print a localized warning message on standard error output
+	# strings must be prefixed by a two-letter language code and a colon
+	# USAGE: display_warning $string[…]
+	display_warning() {
+	    display_message \
+	        'en:\033[1;33mWarning:\033[0m' \
+	        'fr:\033[1;33mAvertissement :\033[0m'
+	    display_message "$@"
+	}
+
 	# Set prefix-related functions
 
 	init_prefix_dirs() {
