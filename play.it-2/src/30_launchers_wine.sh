@@ -123,6 +123,7 @@ launcher_write_script_wine_prefix_build() {
 	FREETYPE_PROPERTIES="truetype:interpreter-version=35"
 
 	PATH_PREFIX="$WINEPREFIX/drive_c/$GAME_ID"
+	PREFIX_LOCK="$PATH_PREFIX/.$GAME_ID.lock"
 
 	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
 

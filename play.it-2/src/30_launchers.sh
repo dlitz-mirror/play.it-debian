@@ -564,12 +564,38 @@ launcher_write_script_prefix_functions() {
 	# create and initialize user prefix
 	# USAGE: prefix_build
 	prefix_build() {
+	    local reply
+	    # clean up the prefix if a lock file is still present from a previous run
+	    if [ -e "$PREFIX_LOCK" ]; then
+	        display_warning \
+	            "en:The game prefix ('$PATH_PREFIX') was not properly cleaned up (possibly from a previous game crash)." \
+	            "fr:Le répertoire de jeu ('$PATH_PREFIX') n'a pas été nettoyé correctement (possiblement à cause d'un précédent plantage du jeu)."
+	        while true; do
+	            display_message \
+	                "en:Clean up the game prefix? [(Y)es/(n)o/(q)uit]" \
+	                "fr:Nettoyer le répertoire de jeu ? [(O)ui/(n)on/(q)uitter]"
+	            read reply
+	            reply="$(echo "$reply" | tr '[:upper:]' '[:lower:]')"
+	            if [ -z "$reply" ] || [ "$reply" = "$(localize 'en:y' 'fr:o')" ]; then
+	                prefix_cleanup
+	                break
+	            elif [ "$reply" = "$(localize 'en:n' 'fr:n')" ]; then
+	                break
+	            elif [ "$reply" = "$(localize 'en:q' 'fr:q')" ]; then
+	                exit 1
+	            fi
+	            display_warning \
+	                "en:Invalid answer: '$reply'." \
+	                "fr:Réponse invalide : '$reply'."
+	        done
+	    fi
 	    prefix_create_dirs
 	    prefix_init_game_files
 	    prefix_init_user_dirs "$PATH_CONFIG" "$CONFIG_DIRS"
 	    prefix_init_user_dirs "$PATH_DATA" "$DATA_DIRS"
 	    prefix_init_user_files "$PATH_CONFIG" "$CONFIG_FILES"
 	    prefix_init_user_files "$PATH_DATA" "$DATA_FILES"
+	    touch "$PREFIX_LOCK"
 	}
 
 	# clean up and synchronize back user prefix
@@ -579,6 +605,7 @@ launcher_write_script_prefix_functions() {
 	    prefix_sync_user_dirs "$PATH_DATA" "$DATA_DIRS"
 	    prefix_sync_user_files "$PATH_CONFIG" "$CONFIG_FILES"
 	    prefix_sync_user_files "$PATH_DATA" "$DATA_FILES"
+	    rm --force "$PREFIX_LOCK"
 	}
 
 	EOF
@@ -613,6 +640,7 @@ launcher_write_script_prefix_build() {
 	# Build user prefix
 
 	PATH_PREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
+	PREFIX_LOCK="$PATH_PREFIX/.$GAME_ID.lock"
 	mkdir --parents \
 	    "$PATH_PREFIX" \
 	    "$PATH_CONFIG" \
