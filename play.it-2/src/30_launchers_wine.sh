@@ -182,53 +182,23 @@ launcher_write_script_wine_prefix_build() {
 	launcher_write_script_prefix_prepare "$file"
 
 	cat >> "$file" <<- 'EOF'
-	(
-	    cd "$PATH_GAME"
-	    find . -type d | while read -r dir; do
-	        if [ -h "$PATH_PREFIX/$dir" ]; then
-	            rm "$PATH_PREFIX/$dir"
-	        fi
-	    done
-	)
-	cp --recursive --remove-destination --symbolic-link "$PATH_GAME"/* "$PATH_PREFIX"
-	(
-	    cd "$PATH_PREFIX"
-	    find . -type l | while read -r link; do
-	        if [ ! -e "$link" ]; then
-	            rm "$link"
-	        fi
-	    done
-	    find . -depth -type d | while read -r dir; do
-	        if [ ! -e "$PATH_GAME/$dir" ]; then
-	            rmdir --ignore-fail-on-non-empty "$dir"
-	        fi
-	    done
-	)
+	prefix_build
 
 	# Move files that should be diverted to persistent paths to the game directory
 	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
 	    prefix_dir="$PATH_PREFIX/${line%%:*}"
 	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
 	    if [ ! -h "$wine_dir" ]; then
-	        mkdir --parents "$prefix_dir"
 	        if [ -d "$wine_dir" ]; then
-	            # Migrate existing user data to the persistent path
-	            find "$prefix_dir" -type l -delete
-	            cp --no-target-directory --recursive --remove-destination "$wine_dir" "$prefix_dir"
-	            rm --recursive "$wine_dir"
+	            mv --no-target-directory "$wine_dir" "$prefix_dir"
+	        fi
+	        if [ ! -d "$prefix_dir" ]; then
+	            mkdir --parents "$prefix_dir"
 	        fi
 	        mkdir --parents "$(dirname "$wine_dir")"
 	        ln --symbolic "$prefix_dir" "$wine_dir"
 	    fi
 	done
-
-	# Use persistent storage for user data
-	init_prefix_dirs   "$PATH_CONFIG" "$CONFIG_DIRS"
-	init_prefix_dirs   "$PATH_DATA"   "$DATA_DIRS"
-	init_userdir_files "$PATH_CONFIG" "$CONFIG_FILES"
-	init_userdir_files "$PATH_DATA"   "$DATA_FILES"
-	init_prefix_files  "$PATH_CONFIG" "$CONFIG_FILES"
-	init_prefix_files  "$PATH_DATA"   "$DATA_FILES"
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"
