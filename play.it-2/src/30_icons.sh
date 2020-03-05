@@ -229,17 +229,8 @@ sort_icons() {
 # CALLED BY: icons_include_png_from_directory
 icon_get_resolution_from_file() {
 	local file
-	local version_major_target
-	local version_minor_target
 	file="$1"
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	if
-		{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
-		[ -n "${file##* *}" ]
-	then
+	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
 		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
@@ -265,12 +256,6 @@ icons_linking_postinst() {
 	local path
 	local path_icon
 	local path_pkg
-	local version_major_target
-	local version_minor_target
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	path_pkg="$(get_value "${PKG}_PATH")"
 	[ -n "$path_pkg" ] || missing_pkg_error 'icons_linking_postinst' "$PKG"
 	path="${path_pkg}${PATH_GAME}"
@@ -281,7 +266,7 @@ icons_linking_postinst() {
 		[ "$name" ] || name="$GAME_ID"
 		for icon in $list; do
 			file="$(get_value "$icon")"
-			if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ]; then
+			if version_target_is_older_than '2.8'; then
 				# ensure compatibility with scripts targeting pre-2.8 library
 				if [ -e "$path/$file" ] || [ -e "$path"/$file ]; then
 					icon_get_resolution_from_file "$path/$file"
@@ -292,10 +277,7 @@ icons_linking_postinst() {
 				icon_get_resolution_from_file "$path/$file"
 			fi
 			path_icon="$PATH_ICON_BASE/$resolution/apps"
-			if
-				{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
-				[ -n "${file##* *}" ]
-			then
+			if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 				cat >> "$postinst" <<- EOF
 				if [ ! -e "$path_icon/$name.png" ]; then
 				  mkdir --parents "$path_icon"

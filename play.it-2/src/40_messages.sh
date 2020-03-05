@@ -193,3 +193,46 @@ error_launcher_missing_binary() {
 	return 1
 }
 
+# display an error when the calling script does not set its target library version
+# USAGE: error_missing_target_version
+# CALLS: print_error
+error_missing_target_version() {
+	local string
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='Ce script ne donne aucune indication sur les versions de la bibliothèque ./play.it avec lesquelles il est compatible.\n'
+			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			string='This script gives no indication about its compatibility level with the ./play.it library.\n'
+			string="$string"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	printf "$string" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
+}
+
+# display an error when the calling script is not compatible with the provided library version
+# USAGE: error_incompatible_versions
+# CALLS: print_error
+error_incompatible_versions() {
+	local string
+	print_error
+	case "${LANG%_*}" in
+		('fr')
+			string='Ce script nʼest pas compatible avec la version fournie de la bibliothèque ./play.it fournie.\n'
+			string="$string"'La bibliothèque utilisée fournit actuellement la version %s, mais le script attend une version ≥ %s et < %s.\n'
+		;;
+		('en'|*)
+			string='This script is not compatible with the ./play.it library version provided.\n'
+			string="$string"'The library in use currently provides version %s, but the script expects a version ≥ %s and < %s.\n'
+		;;
+	esac
+	printf "$string" \
+		"$VERSION_MAJOR_PROVIDED.$VERSION_MINOR_PROVIDED" \
+		"$VERSION_MAJOR_TARGET.$VERSION_MINOR_TARGET" \
+		"$((VERSION_MAJOR_TARGET + 1)).0"
+	return 1
+}
+

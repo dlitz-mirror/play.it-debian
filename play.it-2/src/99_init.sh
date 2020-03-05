@@ -3,38 +3,27 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
-	# Check library version against script target version
-
-	version_major_library="${library_version%%.*}"
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-
-	version_minor_library=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-
-	if [ $version_major_library -ne $version_major_target ] || [ $version_minor_library -lt $version_minor_target ]; then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				string1='Mauvaise version de libplayit2.sh\n'
-				string2='La version cible est : %s\n'
-			;;
-			('en'|*)
-				string1='Wrong version of libplayit2.sh\n'
-				string2='Target version is: %s\n'
-			;;
-		esac
-		printf "$string1"
-		# shellcheck disable=SC2154
-		printf "$string2" "$target_version"
-		exit 1
-	fi
-
 	# Set URLs for error messages
 
 	PLAYIT_GAMES_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/games/issues'
 	PLAYIT_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/scripts/issues'
+
+	# Check library version against script target version
+
+	if [ -z "${target_version:=}" ]; then
+		error_missing_target_version
+	fi
+	VERSION_MAJOR_PROVIDED="${library_version%%.*}"
+	VERSION_MAJOR_TARGET="${target_version%%.*}"
+	VERSION_MINOR_PROVIDED=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
+	VERSION_MINOR_TARGET=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
+	if \
+		[ $VERSION_MAJOR_PROVIDED -ne $VERSION_MAJOR_TARGET ] || \
+		[ $VERSION_MINOR_PROVIDED -lt $VERSION_MINOR_TARGET ]
+	then
+		error_incompatible_versions
+	fi
+	export VERSION_MAJOR_PROVIDED VERSION_MAJOR_TARGET VERSION_MINOR_PROVIDED VERSION_MINOR_TARGET
 
 	# Set allowed values for common options
 

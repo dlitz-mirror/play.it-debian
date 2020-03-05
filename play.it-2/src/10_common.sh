@@ -323,3 +323,15 @@ guess_tar_implementation() {
 		;;
 	esac
 }
+
+# Check if the script target version is older than the one given as an argument
+# USAGE: version_target_is_older_than $version
+version_target_is_older_than() {
+	local version version_major version_minor
+	version="$1"
+	version_major=$(printf '%s' "$version" | cut --delimiter='.' --fields=1)
+	version_minor=$(printf '%s' "$version" | cut --delimiter='.' --fields=2)
+	test $VERSION_MAJOR_TARGET -lt $version_major || \
+		test $VERSION_MINOR_TARGET -lt $version_minor
+}
+

@@ -4,13 +4,7 @@
 # CALLS: select_package_architecture_warning_unavailable select_package_architecture_error_unknown select_package_architecture_warning_unsupported
 select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
-	local version_major_target
-	local version_minor_target
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 6 ]; then
+	if version_target_is_older_than '2.6'; then
 		select_package_architecture_warning_unsupported
 		OPTION_ARCHITECTURE='all'
 		export OPTION_ARCHITECTURE
