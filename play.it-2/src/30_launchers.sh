@@ -516,7 +516,13 @@ launcher_write_script_prefix_functions() {
 	        for dir in $dirs; do
 	            [ -d "$dir" ] || continue
 	            if [ ! -h "$dir" ]; then
-	                prefix_move_to_userdir_and_symlink "$userdir" "$dir"
+	                if [ ! -e "$userdir/$dir" ] || [ -d "$userdir/$dir" ]; then
+	                    prefix_move_to_userdir_and_symlink "$userdir" "$dir"
+	                else
+	                    display_warning \
+	                        "en:Cannot overwrite '$userdir/$dir' with directory '$PATH_PREFIX/$dir'" \
+	                        "fr:Impossible d'écraser '$userdir/$dir' par le répertoire '$PATH_PREFIX/$dir'"
+	                fi
 	            fi
 	        done
 	    )
@@ -545,7 +551,13 @@ launcher_write_script_prefix_functions() {
 	        for file in $files; do
 	            [ -f "$file" ] || continue
 	            if [ ! -h "$file" ]; then
-	                prefix_move_to_userdir_and_symlink "$userdir" "$file"
+	                if [ ! -e "$userdir/$file" ] || [ -f "$userdir/$file" ]; then
+	                    prefix_move_to_userdir_and_symlink "$userdir" "$file"
+	                else
+	                    display_warning \
+	                        "en:Cannot overwrite '$userdir/$file' with file '$PATH_PREFIX/$file'" \
+	                        "fr:Impossible d'écraser '$userdir/$file' par le fichier '$PATH_PREFIX/$file'"
+	                fi
 	            fi
 	        done
 	    )
