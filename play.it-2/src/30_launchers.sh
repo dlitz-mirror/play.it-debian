@@ -442,6 +442,23 @@ launcher_write_script_prefix_functions() {
 	return 0
 }
 
+# write launcher script prefix prepare hook
+# USAGE: launcher_write_script_prefix_prepare $file
+# CALLED BY: launcher_write_script_prefix_build launcher_write_script_wine_prefix_build
+launcher_write_script_prefix_prepare() {
+	local file
+	file="$1"
+
+	if [ "$PREFIX_PREPARE" ]; then
+		cat >> "$file" <<- EOF
+		$PREFIX_PREPARE
+
+		EOF
+	fi
+
+	return 0
+}
+
 # write launcher script prefix initialization
 # USAGE: launcher_write_script_prefix_build $file
 # CALLED BY: launcher_write_build
@@ -452,11 +469,15 @@ launcher_write_script_prefix_build() {
 	# Build user prefix
 
 	PATH_PREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
-	for dir in "$PATH_PREFIX" "$PATH_CONFIG" "$PATH_DATA"; do
-	    if [ ! -e "$dir" ]; then
-	        mkdir --parents "$dir"
-	    fi
-	done
+	mkdir --parents \
+	    "$PATH_PREFIX" \
+	    "$PATH_CONFIG" \
+	    "$PATH_DATA"
+	EOF
+
+	launcher_write_script_prefix_prepare "$file"
+
+	cat >> "$file" <<- 'EOF'
 	(
 	    cd "$PATH_GAME"
 	    find . -type d | while read -r dir; do
