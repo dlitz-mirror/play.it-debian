@@ -586,7 +586,7 @@ launcher_write_script_prefix_functions() {
 	            display_message \
 	                "en:Clean up the game prefix? [(Y)es/(n)o/(q)uit]" \
 	                "fr:Nettoyer le répertoire de jeu ? [(O)ui/(n)on/(q)uitter]"
-	            read reply
+	            read reply || :
 	            reply="$(echo "$reply" | tr '[:upper:]' '[:lower:]')"
 	            if [ -z "$reply" ] || [ "$reply" = "$(localize 'en:y' 'fr:o')" ]; then
 	                prefix_cleanup
