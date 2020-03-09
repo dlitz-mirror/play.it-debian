@@ -31,10 +31,10 @@ set -o errexit
 ###
 # War for the Overworld
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20200309.1
 
 # Set game-specific variables
 
@@ -112,7 +112,7 @@ ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Linux'
 ARCHIVE_GAME_DATA_FILES='*_Data *.info'
 
-DATA_DIRS='./*_Data/GameData ./logs'
+DATA_DIRS='./*_Data/GameData ./logs ./*_Data/uiresources/wftoUI/menu/vids'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_GOG='WFTOGame.x86_64'
