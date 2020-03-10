@@ -21,6 +21,7 @@ launcher_write_script_wine_application_variables() {
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
+	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
 	return 0
@@ -145,6 +146,22 @@ launcher_write_script_wine_prefix_build() {
 	init_prefix_files "$PATH_DATA" "$DATA_FILES"
 	init_prefix_dirs "$PATH_CONFIG" "$CONFIG_DIRS"
 	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+
+	# Move files that should be diverted to persistent paths to the game directory
+	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
+	    prefix_dir="$PATH_PREFIX/${line%%:*}"
+	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
+	    if [ ! -h "$wine_dir" ]; then
+	        if [ -d "$wine_dir" ]; then
+	            mv --no-target-directory "$wine_dir" "$prefix_dir"
+	        fi
+	        if [ ! -d "$prefix_dir" ]; then
+	            mkdir --parents "$prefix_dir"
+	        fi
+	        mkdir --parents "$(dirname "$wine_dir")"
+	        ln --symbolic "$prefix_dir" "$wine_dir"
+	    fi
+	done
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"
