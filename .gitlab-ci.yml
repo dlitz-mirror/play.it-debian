@@ -1,5 +1,6 @@
 stages:
     - library_check
+    - wrapper_check
 
 library_shellcheck:
     stage: library_check
@@ -11,3 +12,12 @@ library_shellcheck:
         - make
     script:
         - ./tests/library_shellcheck.sh
+
+wrapper_shellcheck:
+    stage: wrapper_check
+    only:
+        - master@play.it/scripts
+        - /^staging-.*$/@play.it/scripts
+        - tags@play.it/scripts
+    script:
+        - ./tests/wrapper_shellcheck.sh
