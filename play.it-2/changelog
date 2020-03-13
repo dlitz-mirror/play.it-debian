@@ -1,5 +1,8 @@
 2.12
 
+  * New function `version_target_is_older_than` checking if the game script
+    target version is older than a given one
+
   * Add `toupper` function to convert files name to upper case
 
   * Use `dirname`/`basename` instead of built-in shell patterns
