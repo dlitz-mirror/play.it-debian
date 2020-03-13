@@ -1,5 +1,7 @@
 2.12
 
+  * Use PLAYIT_DOSBOX_BINARY in dosbox launchers if defined
+
   * Add --overwrite option
 
   * Add --icons option to allow including icons only if dependencies are
