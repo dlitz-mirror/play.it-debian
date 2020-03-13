@@ -1,5 +1,7 @@
 2.12
 
+  * Add --overwrite option
+
   * Add --icons option to allow including icons only if dependencies are
     present
 
