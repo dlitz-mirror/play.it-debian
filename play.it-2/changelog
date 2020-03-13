@@ -1,5 +1,7 @@
 2.12
 
+  * Add `toupper` function to convert files name to upper case
+
   * Use `dirname`/`basename` instead of built-in shell patterns
 
   * Add ability to set variables for package-specific postinst and prerm
