@@ -1,8 +1,5 @@
 # write launcher script
 # USAGE: launcher_write_script $app
-# NEEDED VARS: GAME_ID OPTION_ARCHITECTURE PACKAGES_LIST PATH_BIN
-# CALLS: error_missing_argument error_extra_arguments testvar liberror error_no_pkg skipping_pkg_warning missing_pkg_error launcher_write_script_headers launcher_write_script_prefix_functions launcher_write_script_wine_winecfg launcher_write_script_dosbox_application_variables launcher_write_script_native_application_variables launcher_write_script_scummvm_application_variables launcher_write_script_wine_application_variables launcher_write_script_prefix_functions launcher_write_script_prefix_build launcher_write_script_wine_prefix_build launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_winecfg_run launcher_write_script_wine_run error_launcher_missing_binary
-# CALLED BY:
 launcher_write_script() {
 	# check that this has been called with exactly one argument
 	if [ "$#" -eq 0 ]; then
@@ -46,8 +43,8 @@ launcher_write_script() {
 	# Check that the launcher target exists
 	local binary_file binary_path binary_found tested_package tested_package_path
 	case "$application_type" in
-		('scummvm')
-			# ScummVM games do not rely on a provided binary
+		('residualvm'|'scummvm')
+			# ResidualVM and ScummVM games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
@@ -143,6 +140,11 @@ launcher_write_script() {
 			launcher_write_script_scummvm_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
 			launcher_write_script_scummvm_run "$application" "$target_file"
+		;;
+		('residualvm')
+			launcher_write_script_residualvm_application_variables "$application" "$target_file"
+			launcher_write_script_game_variables "$target_file"
+			launcher_write_script_residualvm_run "$application" "$target_file"
 		;;
 		('wine')
 			if [ "$application_id" != "${GAME_ID}_winecfg" ]; then
@@ -401,7 +403,7 @@ launcher_write_script_prefix_build() {
 
 # write launcher script pre-run actions
 # USAGE: launcher_write_script_prerun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_wine_run
+# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_prerun() {
 	# parse arguments
 	local application
@@ -423,7 +425,7 @@ launcher_write_script_prerun() {
 
 # write launcher script post-run actions
 # USAGE: launcher_write_script_postrun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_wine_run
+# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_postrun() {
 	# parse arguments
 	local application
