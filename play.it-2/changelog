@@ -1,5 +1,8 @@
 2.12
 
+  * Add --icons option to allow including icons only if dependencies are
+    present
+
   * New function `version_target_is_older_than` checking if the game script
     target version is older than a given one
 
