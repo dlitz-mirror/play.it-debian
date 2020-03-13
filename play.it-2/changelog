@@ -1,3 +1,7 @@
+2.12
+
+  * Add support for LHA archives extraction
+
 2.11.4
 
   * Throw an explicit error when trying to write a launcher for a missing
