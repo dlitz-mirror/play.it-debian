@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,47 +30,37 @@ set -o errexit
 ###
 
 ###
-# Beneath a Steel Sky
+# Maniac Mansion
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200221.1
+script_version=20200209.1
 
 # Set game-specific variables
 
-GAME_ID='beneath-a-steel-sky'
-GAME_NAME='Beneath a Steel Sky'
+GAME_ID='maniac-mansion'
+GAME_NAME='Maniac Mansion'
 
-ARCHIVE_GOG='beneath_a_steel_sky_en_gog_2_20150.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/beneath_a_steel_sky'
-ARCHIVE_GOG_MD5='5cc68247b61ba31e37e842fd04409d98'
-ARCHIVE_GOG_SIZE='160000'
-ARCHIVE_GOG_VERSION='1.0-gog20150'
+ARCHIVE_GOG='maniac_mansion_en_gog_3_17899.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/maniac_mansion'
+ARCHIVE_GOG_MD5='508b5f4e9b399ded9140dddfc3679a7e'
+ARCHIVE_GOG_SIZE='89000'
+ARCHIVE_GOG_VERSION='1.0-gog17899'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD0='gog_beneath_a_steel_sky_2.1.0.4.sh'
-ARCHIVE_GOG_OLD0_MD5='603887dd11b4dec2ff43553ce40303a0'
-ARCHIVE_GOG_OLD0_SIZE='130000'
-ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.4'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
-
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
-
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='sky.cpt sky.dnr sky.dsk'
+ARCHIVE_GAME_MAIN_FILES='*.lfl'
 
 APP_MAIN_TYPE='scummvm'
-APP_MAIN_SCUMMID='sky'
+APP_MAIN_SCUMMID='maniac'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_PROVIDE_ARCH='bass'
 PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
@@ -103,9 +94,10 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 
-# Get icons
+# Get icon
 
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
@@ -115,18 +107,6 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 launchers_write 'APP_MAIN'
 
 # Build package
-
-if [ "$OPTION_PACKAGE" = 'arch' ]; then
-	PKG_MAIN_PROVIDE="$PKG_MAIN_PROVIDE_ARCH"
-elif [ "$OPTION_PACKAGE" = 'deb' ]; then
-	file="$PKG_MAIN_PATH/etc/apt/preferences.d/$GAME_ID"
-	mkdir --parents "${file%/*}"
-	cat > "$file" <<- EOF
-	Package: $GAME_ID
-	Pin: release o=Debian
-	Pin-Priority: -1
-	EOF
-fi
 
 write_metadata
 build_pkg

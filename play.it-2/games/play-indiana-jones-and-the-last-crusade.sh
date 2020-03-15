@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,47 +30,55 @@ set -o errexit
 ###
 
 ###
-# Beneath a Steel Sky
+# Indiana Jones and the Last Crusade
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200221.1
+script_version=20200209.1
 
 # Set game-specific variables
 
-GAME_ID='beneath-a-steel-sky'
-GAME_NAME='Beneath a Steel Sky'
+GAME_ID='indiana-jones-and-the-last-crusade'
+GAME_NAME='Indiana Jones and the Last Crusade'
 
-ARCHIVE_GOG='beneath_a_steel_sky_en_gog_2_20150.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/beneath_a_steel_sky'
-ARCHIVE_GOG_MD5='5cc68247b61ba31e37e842fd04409d98'
-ARCHIVE_GOG_SIZE='160000'
-ARCHIVE_GOG_VERSION='1.0-gog20150'
+ARCHIVE_GOG='indiana_jones_and_the_last_crusade_en_gog_2_20145.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/indiana_jones_and_the_last_crusade'
+ARCHIVE_GOG_MD5='b00d2c5498376718caad19db54265b29'
+ARCHIVE_GOG_SIZE='90000'
+ARCHIVE_GOG_VERSION='1.0-gog20145'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD0='gog_beneath_a_steel_sky_2.1.0.4.sh'
-ARCHIVE_GOG_OLD0_MD5='603887dd11b4dec2ff43553ce40303a0'
-ARCHIVE_GOG_OLD0_SIZE='130000'
-ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.4'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
+# Reference card and Grail Diary are missing from main archive
+ARCHIVE_OPTIONAL_DOC0='indiana_jones_last_crucade_reference_card.zip'
+ARCHIVE_OPTIONAL_DOC0_URL='https://www.gog.com/downloads/indiana_jones_and_the_last_crusade/73603'
+ARCHIVE_OPTIONAL_DOC0_MD5='e6d8dc70f1dc06f0e58fb1636970b8c0'
+ARCHIVE_OPTIONAL_DOC1='indiana_jones_last_crusade_grail_diary.zip'
+ARCHIVE_OPTIONAL_DOC1_URL='https://www.gog.com/downloads/indiana_jones_and_the_last_crusade/73613'
+ARCHIVE_OPTIONAL_DOC1_MD5='13eb5e708eb947107ee5d01930507df4'
 
-ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
+# Fix typos in file names
+ARCHIVE_OPTIONAL_DOC0_RENAME_FROM='Indiana Jones The Last Cusade - Reference Card.pdf'
+ARCHIVE_OPTIONAL_DOC0_RENAME_TO='indiana jones and the last crusade - reference card.pdf'
+ARCHIVE_OPTIONAL_DOC1_RENAME_FROM='Indiana Jones The Last Crusae - Grail Diary.pdf'
+ARCHIVE_OPTIONAL_DOC1_RENAME_TO='indiana jones and the last crusade - grail diary.pdf'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC_MAIN_FILES='*.txt'
+ARCHIVE_DOC0_MAIN_PATH='indiana_jones_last_crucade_reference_card'
+ARCHIVE_DOC0_MAIN_FILES='*.pdf'
+ARCHIVE_DOC1_MAIN_PATH='indiana_jones_last_crusade_grail_diary'
+ARCHIVE_DOC1_MAIN_FILES='*.pdf'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='sky.cpt sky.dnr sky.dsk'
+ARCHIVE_GAME_MAIN_FILES='*.lfl'
 
 APP_MAIN_TYPE='scummvm'
-APP_MAIN_SCUMMID='sky'
+APP_MAIN_SCUMMID='indy3'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_PROVIDE_ARCH='bass'
 PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
@@ -100,12 +109,44 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Try to load extra doc archives
+
+ARCHIVE_MAIN="$ARCHIVE"
+for i in 0 1; do
+	archive_set "ARCHIVE_DOC$i" "ARCHIVE_OPTIONAL_DOC$i"
+done
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+tolower "$PLAYIT_WORKDIR/gamedata"
+
+# Extract extra doc archives
+
+for i in 0 1; do
+	archive=$(get_value "ARCHIVE_DOC$i")
+	if [ "$archive" ]; then
+		(
+			ARCHIVE="ARCHIVE_DOC$i"
+			extract_data_from "$archive"
+			# Rename extracted files, if necessary
+			archdir="$PLAYIT_WORKDIR/gamedata/$(basename "$archive" .zip)"
+			if [ -d "$archdir" ]; then
+				cd "$archdir"
+				from=$(get_value "ARCHIVE_OPTIONAL_DOC${i}_RENAME_FROM")
+				to=$(get_value "ARCHIVE_OPTIONAL_DOC${i}_RENAME_TO")
+				if [ -n "$from" ] && [ -n "$to" ] && [ -e "$from" ] && [ ! -e "$to" ]; then
+					mv "$from" "$to"
+				fi
+			fi
+		)
+	fi
+done
+
 prepare_package_layout
 
-# Get icons
+# Get icon
 
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
@@ -115,18 +156,6 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 launchers_write 'APP_MAIN'
 
 # Build package
-
-if [ "$OPTION_PACKAGE" = 'arch' ]; then
-	PKG_MAIN_PROVIDE="$PKG_MAIN_PROVIDE_ARCH"
-elif [ "$OPTION_PACKAGE" = 'deb' ]; then
-	file="$PKG_MAIN_PATH/etc/apt/preferences.d/$GAME_ID"
-	mkdir --parents "${file%/*}"
-	cat > "$file" <<- EOF
-	Package: $GAME_ID
-	Pin: release o=Debian
-	Pin-Priority: -1
-	EOF
-fi
 
 write_metadata
 build_pkg

@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,7 +30,7 @@ set -o errexit
 ###
 
 ###
-# Beneath a Steel Sky
+# Blade Runner
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
@@ -38,38 +39,60 @@ script_version=20200221.1
 
 # Set game-specific variables
 
-GAME_ID='beneath-a-steel-sky'
-GAME_NAME='Beneath a Steel Sky'
+GAME_ID='blade-runner'
+GAME_NAME='Blade Runner'
 
-ARCHIVE_GOG='beneath_a_steel_sky_en_gog_2_20150.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/beneath_a_steel_sky'
-ARCHIVE_GOG_MD5='5cc68247b61ba31e37e842fd04409d98'
-ARCHIVE_GOG_SIZE='160000'
-ARCHIVE_GOG_VERSION='1.0-gog20150'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
 
-ARCHIVE_GOG_OLD0='gog_beneath_a_steel_sky_2.1.0.4.sh'
-ARCHIVE_GOG_OLD0_MD5='603887dd11b4dec2ff43553ce40303a0'
-ARCHIVE_GOG_OLD0_SIZE='130000'
-ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.4'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_EN='blade_runner_1_0_svm_src_34722.sh'
+ARCHIVE_GOG_EN_URL='https://www.gog.com/game/blade_runner'
+ARCHIVE_GOG_EN_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_EN_MD5='d9dd6f98eb8dc9401d5499a1d48e5d76'
+ARCHIVE_GOG_EN_SIZE='1700000'
+ARCHIVE_GOG_EN_VERSION='1.0-gog34722'
+
+ARCHIVE_GOG_FR='blade_runner_french_1_0_svm_src_34722.sh'
+ARCHIVE_GOG_FR_URL='https://www.gog.com/game/blade_runner'
+ARCHIVE_GOG_FR_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_FR_MD5='98ee3723ac6114a6b464af0b07f76757'
+ARCHIVE_GOG_FR_SIZE='1700000'
+ARCHIVE_GOG_FR_VERSION='1.0-gog34722'
+
+ARCHIVE_OPTIONAL_SUBTITLES='Blade_Runner_Subtitles-v6.zip'
+ARCHIVE_OPTIONAL_SUBTITLES_URL='https://www.scummvm.org/games/#bladerunner'
+ARCHIVE_OPTIONAL_SUBTITLES_MD5='f9b4e5738d3c6092cac3485c41f47cb2'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
+ARCHIVE_DOC0_MAIN_FILES='*.txt'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_DOC1_MAIN_PATH='data/noarch/game/data'
+ARCHIVE_DOC1_MAIN_FILES='*.pdf'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='sky.cpt sky.dnr sky.dsk'
+ARCHIVE_DOC2_MAIN_PATH='.'
+ARCHIVE_DOC2_MAIN_FILES='readme.txt'
+
+ARCHIVE_GAME0_MAIN_PATH='data/noarch/game/data'
+ARCHIVE_GAME0_MAIN_FILES='*.dat *.mix *.tlk'
+
+ARCHIVE_GAME1_MAIN_PATH='.'
+ARCHIVE_GAME1_MAIN_FILES='subtitles.mix'
 
 APP_MAIN_TYPE='scummvm'
-APP_MAIN_SCUMMID='sky'
+APP_MAIN_SCUMMID='bladerunner'
 APP_MAIN_ICON='data/noarch/support/icon.png'
+
+APP_RESTORED_TYPE='scummvm'
+APP_RESTORED_SCUMMID='bladerunner-final'
+APP_RESTORED_ID="${GAME_ID}-restored"
+APP_RESTORED_NAME="$GAME_NAME with restored content"
+APP_RESTORED_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_PROVIDE_ARCH='bass'
+PKG_MAIN_ID="$GAME_ID"
+PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
+PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
+PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
 PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
@@ -100,9 +123,26 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Try to load subtitles archive
+
+ARCHIVE_MAIN="$ARCHIVE"
+archive_set 'ARCHIVE_SUBTITLES' 'ARCHIVE_OPTIONAL_SUBTITLES'
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+
+# Extract subtitles data
+
+if [ "$ARCHIVE_SUBTITLES" ]; then
+	(
+		ARCHIVE='ARCHIVE_SUBTITLES'
+		extract_data_from "$ARCHIVE_SUBTITLES"
+	)
+fi
+
+tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 
 # Get icons
@@ -112,21 +152,9 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
+launchers_write 'APP_MAIN' 'APP_RESTORED'
 
 # Build package
-
-if [ "$OPTION_PACKAGE" = 'arch' ]; then
-	PKG_MAIN_PROVIDE="$PKG_MAIN_PROVIDE_ARCH"
-elif [ "$OPTION_PACKAGE" = 'deb' ]; then
-	file="$PKG_MAIN_PATH/etc/apt/preferences.d/$GAME_ID"
-	mkdir --parents "${file%/*}"
-	cat > "$file" <<- EOF
-	Package: $GAME_ID
-	Pin: release o=Debian
-	Pin-Priority: -1
-	EOF
-fi
 
 write_metadata
 build_pkg

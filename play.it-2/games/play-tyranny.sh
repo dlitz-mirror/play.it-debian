@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Tyranny
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190224.1
+script_version=20200302.1
 
 # Set game-specific variables
 
@@ -58,7 +58,9 @@ ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='Tyranny.x86 Tyranny_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='Tyranny.x86_64 Tyranny_Data/*/x86_64 Tyranny'
+ARCHIVE_GAME_BIN64_FILES='Tyranny.x86_64 Tyranny_Data/*/x86_64'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN64_FILES_GOG_OLD0='Tyranny Tyranny_Data/*/x86_64'
 
 ARCHIVE_GAME_AREAS_PATH='data/noarch/game'
 ARCHIVE_GAME_AREAS_FILES='Tyranny_Data/bundles/st_ar_*'
@@ -125,6 +127,11 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Write launchers
 
 use_archive_specific_value 'APP_MAIN_EXE_BIN64'
@@ -134,10 +141,7 @@ done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64' 'PKG_AREAS'
+write_metadata
 build_pkg
 
 # Clean up
