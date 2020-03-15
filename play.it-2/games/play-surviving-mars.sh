@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Surviving Mars
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181005.1
+script_version=20200315.1
 
 # Set game-specific variables
 
@@ -43,11 +43,11 @@ GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars'
 
 ARCHIVE_GOG='surviving_mars_sagan_rc3_update_24111.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars'
 ARCHIVE_GOG_MD5='22e5cbc7188ff1cb8fd5dabf7cdca0bf'
 ARCHIVE_GOG_SIZE='4700000'
 ARCHIVE_GOG_VERSION='235.636-rc3-gog24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars'
 
 ARCHIVE_GOG_OLD3='surviving_mars_sagan_rc1_update_23676.sh'
 ARCHIVE_GOG_OLD3_MD5='2e5058a9f1076f894c0b074fd24e3597'
@@ -73,8 +73,9 @@ ARCHIVE_GOG_OLD0_VERSION='231.139'
 ARCHIVE_GOG_OLD0_SIZE='3950000'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
-ARCHIVE_OPTIONAL_LIBSSL64='libssl_1.0.0_64-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
+ARCHIVE_OPTIONAL_LIBSSL='libssl_1.0.0_64-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBSSL_URL='https://www.dotslashplay.it/ressources/libssl/'
+ARCHIVE_OPTIONAL_LIBSSL_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -101,7 +102,7 @@ PKG_BIN_DEPS_ARCH='openssl-1.0'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -124,16 +125,18 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Use libSSL 1.0.0 64-bit archive (Debian packages only)
+# Check for libSSL 1.0.0 archive presence
 
-if [ "$OPTION_PACKAGE" = 'deb' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
+case "$OPTION_PACKAGE" in
+	('deb')
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_LIBSSL' 'ARCHIVE_OPTIONAL_LIBSSL'
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+esac
 
 # Extract game data
 
@@ -146,14 +149,12 @@ PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Include libSSL 1.0.0 64-bit (Debian packages only)
+# Include libSSL 1.0.0
 
-if [ "$ARCHIVE_LIBSSL64" ]; then
-	(
-		ARCHIVE='ARCHIVE_LIBSSL64'
-		extract_data_from "$ARCHIVE_LIBSSL64"
-	)
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+if [ -n "$ARCHIVE_LIBSSL" ]; then
+	ARCHIVE='ARCHIVE_LIBSSL' \
+		extract_data_from "$ARCHIVE_LIBSSL"
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
 	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
@@ -161,7 +162,7 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

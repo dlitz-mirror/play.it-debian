@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Digital Deluxe Upgrade for Surviving Mars.
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181005.1
+script_version=20200315.1
 
 # Set game-specific variables
 
@@ -44,11 +44,11 @@ GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars: Digital Deluxe Upgrade'
 
 ARCHIVE_GOG='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc3_update_24111.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_digital_deluxe_edition_upgrade_pack'
 ARCHIVE_GOG_MD5='60cddca455eb1882e0ca7ebf4e26838a'
 ARCHIVE_GOG_SIZE='66000'
 ARCHIVE_GOG_VERSION='24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_digital_deluxe_edition_upgrade_pack'
 
 ARCHIVE_GOG_OLD3='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc1_update_23676.sh'
 ARCHIVE_GOG_OLD3_MD5='7ba5d3ab5626f1a18015b9516adf29af'
@@ -88,7 +88,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -111,7 +111,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

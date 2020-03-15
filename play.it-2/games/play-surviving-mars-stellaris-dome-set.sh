@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Stellaris Dome Set for Surviving Mars.
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181005.1
+script_version=20200315.1
 
 # Set game-specific variables
 
@@ -44,11 +44,11 @@ GAME_ID='surviving-mars'
 GAME_NAME='Surviving Mars: Stellaris Dome Set'
 
 ARCHIVE_GOG='surviving_mars_stellaris_dome_set_sagan_rc3_update_24111.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_stellaris_dome_set'
 ARCHIVE_GOG_MD5='7759d7fa7f9d99a693a828a6c5db601f'
 ARCHIVE_GOG_SIZE='4000'
 ARCHIVE_GOG_VERSION='24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_stellaris_dome_set'
 
 ARCHIVE_GOG_OLD1='surviving_mars_stellaris_dome_set_sagan_rc1_update_23676.sh'
 ARCHIVE_GOG_OLD1_MD5='2b0f7100813779cdd847be15b6599fea'
@@ -63,10 +63,10 @@ ARCHIVE_GOG_OLD0_VERSION='3-gog21661'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='./*'
+ARCHIVE_DOC_MAIN_FILES='*'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='./DLC'
+ARCHIVE_GAME_MAIN_FILES='DLC'
 
 PACKAGES_LIST='PKG_MAIN'
 
@@ -75,7 +75,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -98,7 +98,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
