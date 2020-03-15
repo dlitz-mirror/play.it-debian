@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200315.1
+script_version=20200315.2
 
 # Set game-specific variables
 
@@ -99,6 +99,7 @@ PACKAGES_LIST='PKG_DATA PKG_BIN'
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx"
 PKG_BIN_DEPS_ARCH='openssl-1.0'
+PKG_BIN_DEPS_GENTOO='dev-libs/openssl-compat'
 
 # Load common functions
 
