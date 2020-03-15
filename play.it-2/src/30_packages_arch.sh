@@ -97,7 +97,7 @@ pkg_set_deps_arch() {
 		('32')
 			pkg_set_deps_arch32 "$@"
 		;;
-		('64')
+		(*)
 			pkg_set_deps_arch64 "$@"
 		;;
 	esac
