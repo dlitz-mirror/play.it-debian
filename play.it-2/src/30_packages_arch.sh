@@ -3,6 +3,14 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_ARCH
 # CALLED BY: write_metadata
 pkg_write_arch() {
+	local pkg_id_orig
+	pkg_id_orig="$pkg_id"
+	use_archive_specific_value "${pkg}_ARCH"
+	local architecture
+	architecture="$(get_value "${pkg}_ARCH")"
+	if [ "$architecture" = '32' ]; then
+		pkg_id="lib32-$pkg_id"
+	fi
 	local pkg_deps
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
@@ -58,6 +66,13 @@ pkg_write_arch() {
 		EOF
 	fi
 
+	if [ "$architecture" = '32' ]; then
+		cat >> "$target" <<- EOF
+		conflict = $pkg_id_orig
+		provides = $pkg_id_orig
+		EOF
+	fi
+
 	target="$pkg_path/.INSTALL"
 
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
@@ -97,9 +112,6 @@ pkg_write_arch() {
 # CALLS: pkg_set_deps_arch32 pkg_set_deps_arch64
 # CALLED BY: pkg_write_arch
 pkg_set_deps_arch() {
-	use_archive_specific_value "${pkg}_ARCH"
-	local architecture
-	architecture="$(get_value "${pkg}_ARCH")"
 	case $architecture in
 		('32')
 			pkg_set_deps_arch32 "$@"
