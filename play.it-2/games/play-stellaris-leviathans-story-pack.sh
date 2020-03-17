@@ -31,22 +31,34 @@ set -o errexit
 ###
 # Stellaris - Leviathans Story Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191024.2
+script_version=20200317.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Leviathans Story Pack'
 
-ARCHIVE_GOG='stellaris_leviathans_story_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG='stellaris_leviathans_story_pack_2_6_0_4_36778.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_leviathans_story_pack'
-ARCHIVE_GOG_MD5='222245675ab243eb2dd990b74b6697be'
+ARCHIVE_GOG_MD5='07f28a2b8d630d7ffd9c3238ff8a1ee5'
 ARCHIVE_GOG_SIZE='59000'
-ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_leviathans_story_pack_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD7_MD5='5d44187db3807e5b3e4ca49fb6a18bdb'
+ARCHIVE_GOG_OLD7_SIZE='59000'
+ARCHIVE_GOG_OLD7_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_leviathans_story_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD6_MD5='222245675ab243eb2dd990b74b6697be'
+ARCHIVE_GOG_OLD6_SIZE='59000'
+ARCHIVE_GOG_OLD6_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD5='stellaris_leviathans_story_pack_2_4_1_1_33112.sh'
 ARCHIVE_GOG_OLD5_MD5='73a7523954232438a950c2712f1b6214'

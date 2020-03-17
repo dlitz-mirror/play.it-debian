@@ -31,22 +31,34 @@ set -o errexit
 ###
 # Stellaris - Plantoids Species Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191024.2
+script_version=20200317.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Plantoids Species Pack'
 
-ARCHIVE_GOG='stellaris_plantoids_species_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG='stellaris_plantoids_species_pack_2_6_0_4_36778.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
-ARCHIVE_GOG_MD5='e0a472efa9de93df6daaef409546d37f'
+ARCHIVE_GOG_MD5='964cd3bc5c24ee45eeeaf76a1f929276'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_plantoids_species_pack_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD7_MD5='4253557911f830776d6765fa3d0ea7c7'
+ARCHIVE_GOG_OLD7_SIZE='1400'
+ARCHIVE_GOG_OLD7_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_plantoids_species_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD6_MD5='e0a472efa9de93df6daaef409546d37f'
+ARCHIVE_GOG_OLD6_SIZE='1400'
+ARCHIVE_GOG_OLD6_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD5='stellaris_plantoids_species_pack_2_4_1_1_33112.sh'
 ARCHIVE_GOG_OLD5_MD5='77a7baf5e6c053df54a94cbad695880b'
