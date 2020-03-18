@@ -1,3 +1,7 @@
+2.11.4
+
+  * Use safer `find | while read` constructs in prefix functions
+
 2.11.3
 
   * Fix cdrom type (file or directory) detection for DOSBox games
