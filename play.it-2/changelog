@@ -1,5 +1,7 @@
 2.11.4
 
+  * Fix APT version detection with APT ≥ 2.0.0
+
   * Use safer `find | while read` constructs in prefix functions
 
 2.11.3
