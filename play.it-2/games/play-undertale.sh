@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200328.2
+script_version=20200328.4
 
 # Set game-specific variables
 
@@ -73,6 +73,9 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='assets'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around Mesa-related startup crash
+# cf. https://gitlab.freedesktop.org/mesa/mesa/issues/1310
+export radeonsi_sync_compile=true'
 APP_MAIN_EXE='runner'
 APP_MAIN_ICON='assets/icon.png'
 # Keep compatibility with old archives
