@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # Undertale
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200328.1
 
 # Set game-specific variables
 
 GAME_ID='undertale'
 GAME_NAME='Undertale'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD ARCHIVE_GOG_OLDER'
 
 ARCHIVE_GOG='undertale_en_1_08_18328.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/undertale'
@@ -50,35 +49,35 @@ ARCHIVE_GOG_SIZE='160000'
 ARCHIVE_GOG_VERSION='1.08-gog18328'
 ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD='undertale_en_1_06_15928.sh'
-ARCHIVE_GOG_OLD_MD5='54f9275d3def027e9f3f65a61094a662'
-ARCHIVE_GOG_OLD_SIZE='160000'
-ARCHIVE_GOG_OLD_VERSION='1.06-gog15928'
-ARCHIVE_GOG_OLD_TYPE='mojosetup'
+ARCHIVE_GOG_OLD1='undertale_en_1_06_15928.sh'
+ARCHIVE_GOG_OLD1_MD5='54f9275d3def027e9f3f65a61094a662'
+ARCHIVE_GOG_OLD1_SIZE='160000'
+ARCHIVE_GOG_OLD1_VERSION='1.06-gog15928'
+ARCHIVE_GOG_OLD1_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLDER='gog_undertale_2.0.0.1.sh'
-ARCHIVE_GOG_OLDER_MD5='e740df4e15974ad8c21f45ebe8426fb0'
-ARCHIVE_GOG_OLDER_SIZE='160000'
-ARCHIVE_GOG_OLDER_VERSION='1.001-gog2.0.0.1'
-
-ARCHIVE_LIBSSL_32='libssl_1.0.0_32-bit.tar.gz'
-ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
+ARCHIVE_GOG_OLD0='gog_undertale_2.0.0.1.sh'
+ARCHIVE_GOG_OLD0_MD5='e740df4e15974ad8c21f45ebe8426fb0'
+ARCHIVE_GOG_OLD0_SIZE='160000'
+ARCHIVE_GOG_OLD0_VERSION='1.001-gog2.0.0.1'
 
 ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./runner ./UNDERTALE'
+ARCHIVE_GAME_BIN_FILES='runner'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_FILES_OLD1='UNDERTALE'
+ARCHIVE_GAME_BIN_FILES_OLD0='UNDERTALE'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./assets'
+ARCHIVE_GAME_DATA_FILES='assets'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='runner'
-APP_MAIN_EXE_OLD='UNDERTALE'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='assets/icon.png'
-APP_MAIN_ICON_RES='64'
+# Keep compatibility with old archives
+APP_MAIN_EXE_OLD1='UNDERTALE'
+APP_MAIN_EXE_OLD0='UNDERTALE'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -87,75 +86,87 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu openal libxrandr"
-PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Use libSSL 1.0.0 32-bit archive
+# Ensure availability of 32-bit libssl.so.1.0.0
 
-if [ "$OPTION_PACKAGE" != 'arch' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	set_archive 'ARCHIVE_LIBSSL' 'ARCHIVE_LIBSSL_32'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
+case "$OPTION_PACKAGE" in
+	('arch')
+		# Use package from official repositories
+		PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH lib32-openssl-1.0"
+	;;
+	('deb')
+		# Use archive provided by ./play.it
+		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
+		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://www.dotslashplay.it/ressources/libssl/'
+		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
+		ARCHIVE="$ARCHIVE_MAIN"
+		if [ "$ARCHIVE_LIBSSL32" ]; then
+			ARCHIVE='ARCHIVE_LIBSSL32' \
+				extract_data_from "$ARCHIVE_LIBSSL32"
+			mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+			mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+			rm --recursive "$PLAYIT_WORKDIR/gamedata"
+		fi
+	;;
+	('gentoo')
+		# Use package from official repositories
+		PKG_BIN_DEPS_GENTOO="$PKG_BIN_DEPS_GENTOO dev-libs/openssl-compat[abi_x86_32]"
+	;;
+	(*)
+		# Unsupported package type, throw an error
+		liberror 'OPTION_PACKAGE' "$0"
+	;;
+esac
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Include libSSL into the game directory
+# Get game icon
 
-if [ "$ARCHIVE_LIBSSL" ]; then
-	(
-		# shellcheck disable=SC2030
-		ARCHIVE='ARCHIVE_LIBSSL'
-		extract_data_from "$ARCHIVE_LIBSSL"
-	)
-	dir='libs'
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$dir"
-	APP_MAIN_LIBS="$dir"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
 PKG='PKG_BIN'
-# shellcheck disable=SC2031
-if [ "$ARCHIVE" = 'ARCHIVE_GOG_OLDER' ]; then
-	APP_MAIN_EXE="$APP_MAIN_EXE_OLD"
-fi
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
