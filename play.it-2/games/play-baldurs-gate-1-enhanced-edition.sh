@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200220.4
+script_version=20200220.5
 
 # Set game-specific variables
 
@@ -262,36 +262,38 @@ esac
 
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_PRE25'*)
-		# No 64-bit binary provided
 		# Old 32-bit version depends on libjson.so.0
 		PKG_BIN32_DEPS="$PKG_BIN32_DEPS json"
 		case "$OPTION_PACKAGE" in
-			('arch')
-				cat > "$postinst" <<- EOF
-				if [ ! -e /usr/lib32/libjson.so.0 ] && [ -e /usr/lib32/libjson-c.so ] ; then
-				    mkdir --parents "$PATH_GAME/${APP_MAIN_LIBS:=libs}"
-				    ln --symbolic /usr/lib32/libjson-c.so "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
-				fi
-				EOF
+			('arch'|'gentoo')
+				LIB_PATH='/usr/lib32'
 			;;
 			('deb')
-				cat > "$postinst" <<- EOF
-				if [ ! -e /lib/i386-linux-gnu/libjson.so.0 ]; then
-				    mkdir --parents "$PATH_GAME/${APP_MAIN_LIBS:=libs}"
-				    for file in\
-				        libjson-c.so\
-				        libjson-c.so.2\
-				        libjson-c.so.3
-				    do
-				        if [ -e "/lib/i386-linux-gnu/\$file" ] ; then
-				            ln --symbolic "/lib/i386-linux-gnu/\$file" "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
-				            break
-				        fi
-				    done
-				fi
-				EOF
+				LIB_PATH='/lib/i386-linux-gnu'
+			;;
+			(*)
+				# Unsupported package type, throw an error
+				liberror 'OPTION_PACKAGE' "$0"
 			;;
 		esac
+		cat > "$postinst" <<- EOF
+		if \
+		    [ ! -e "$LIB_PATH/libjson.so.0" ] && \
+		    [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0" ]
+		then
+		    for file in \
+		        libjson-c.so \
+		        libjson-c.so.2 \
+		        libjson-c.so.3
+		    do
+		        if [ -e "$LIB_PATH/\$file" ] ; then
+		            mkdir --parents "$PATH_GAME/${APP_MAIN_LIBS:=libs}"
+		            ln --symbolic "$LIB_PATH/\$file" "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
+		            break
+		        fi
+		    done
+		fi
+		EOF
 		cat > "$prerm" <<- EOF
 		if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0" ]; then
 		    rm "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
