@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -29,17 +29,17 @@ set -o errexit
 ###
 
 ###
-# Heroes of Might and Magic V
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# Heroes of Might and Magic Ⅴ
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180802.1
+script_version=20200425.1
 
 # Set game-specific variables
 
 GAME_ID='heroes-of-might-and-magic-5'
-GAME_NAME='Heroes of Might and Magic V'
+GAME_NAME='Heroes of Might and Magic Ⅴ'
 
 ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
 
@@ -64,35 +64,61 @@ ARCHIVE_GOG_FR_PART1_MD5='4d56a95f779c9583cdfdc451ca865927'
 ARCHIVE_GOG_FR_PART1_TYPE='rar'
 
 ARCHIVE_DOC_L10N_PATH='game'
-ARCHIVE_DOC_L10N_FILES='./*.txt ./*.pdf ./editor?documentation/homm5_combat_replay.pdf ./editor?documentation/homm5_dialogs_replay.pdf ./editor?documentation/homm5_preset_editor.pdf ./editor?documentation/homm5_spectator_mode.pdf ./editor?documentation/homm5_users_campaign_editor.pdf'
+ARCHIVE_DOC_L10N_FILES='*.txt *.pdf editor?documentation/homm5_combat_replay.pdf editor?documentation/homm5_dialogs_replay.pdf editor?documentation/homm5_preset_editor.pdf editor?documentation/homm5_spectator_mode.pdf editor?documentation/homm5_users_campaign_editor.pdf'
 
 ARCHIVE_DOC_DATA_PATH='game'
-ARCHIVE_DOC_DATA_FILES='./editor?documentation'
+ARCHIVE_DOC_DATA_FILES='editor?documentation'
 
 ARCHIVE_GAME_BIN_PATH='game'
-ARCHIVE_GAME_BIN_FILES='./bin ./bina1'
+ARCHIVE_GAME_BIN_FILES='bin bina1'
 
 ARCHIVE_GAME_L10N_PATH='game'
-ARCHIVE_GAME_L10N_FILES='./dataa1/a1p1-texts.pak ./dataa1/a1-sound.pak ./dataa1/a1-texts.pak ./dataa1/p3-texts.pak ./dataa1/texts.pak ./datals/p5-texts.pak ./datals/p6-texts.pak ./data/p3-texts.pak ./data/sound.pak ./data/texts.pak ./music/cs/death-berein.ogg ./music/cs/death-nico.ogg ./music/cs/heart-griffin.ogg ./music/cs/isabel-trap.ogg ./music/cs/nico-vampire.ogg ./music/cs/ritual-isabel.ogg ./video/intro.ogg ./video/outro.ogg'
+ARCHIVE_GAME_L10N_FILES='dataa1/a1p1-texts.pak dataa1/a1-sound.pak dataa1/a1-texts.pak dataa1/p3-texts.pak dataa1/texts.pak datals/p5-texts.pak datals/p6-texts.pak data/p3-texts.pak data/sound.pak data/texts.pak music/cs/death-berein.ogg music/cs/death-nico.ogg music/cs/heart-griffin.ogg music/cs/isabel-trap.ogg music/cs/nico-vampire.ogg music/cs/ritual-isabel.ogg video/intro.ogg video/outro.ogg'
 
 ARCHIVE_GAME_DATA_PATH='game'
-ARCHIVE_GAME_DATA_FILES='./data ./dataa1 ./datals ./duelpresets ./editor ./hwcursors ./music ./profiles ./splasha1.bmp ./splash.bmp ./video'
+ARCHIVE_GAME_DATA_FILES='data dataa1 datals duelpresets editor hwcursors music profiles splasha1.bmp splash.bmp video'
 
 DATA_DIRS='./profiles'
 DATA_FILES='./*.log'
 
 APP_MAIN_TYPE='wine'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Store user data outside of WINE prefix (base game)
+user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/My Games/Heroes of Might and Magic V/Profiles"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/profiles"
+	ln --symbolic "$PATH_DATA/profiles" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Store user data outside of WINE prefix (Hammer of Fate)
+user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/My Games/Heroes of Might and Magic V/Hammers of Fate/Profiles"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/profiles"
+	ln --symbolic "$PATH_DATA/profiles" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Run the game binary from its parent directory
+cd "$(dirname "$APP_EXE")"
+APP_EXE=$(basename "$APP_EXE")'
 APP_MAIN_EXE='bin/h5_game.exe'
 APP_MAIN_ICON='bin/h5_game.exe'
 
 APP_HOF_ID="${GAME_ID}_hof"
 APP_HOF_TYPE='wine'
+APP_HOF_PRERUN="$APP_MAIN_PRERUN"
 APP_HOF_EXE='bina1/h5_game.exe'
 APP_HOF_ICON='bina1/h5_game.exe'
 APP_HOF_NAME="$GAME_NAME - Hammers of Fate"
 
 APP_EDIT_ID="${GAME_ID}_edit"
 APP_EDIT_TYPE='wine'
+APP_EDIT_PRERUN="$APP_MAIN_PRERUN"
 APP_EDIT_EXE='bin/h5_mapeditor.exe'
 APP_EDIT_ICON='bin/h5_mapeditor.exe'
 APP_EDIT_ICON_ID='128'
@@ -100,6 +126,7 @@ APP_EDIT_NAME="$GAME_NAME - Map Editor"
 
 APP_HOFEDIT_ID="${GAME_ID}_hofedit"
 APP_HOFEDIT_TYPE='wine'
+APP_HOFEDIT_PRERUN="$APP_MAIN_PRERUN"
 APP_HOFEDIT_EXE='bina1/h5_mapeditor.exe'
 APP_HOFEDIT_ICON='bina1/h5_mapeditor.exe'
 APP_HOFEDIT_ICON_ID='128'
@@ -122,31 +149,30 @@ PKG_BIN_DEPS="$PKG_DATA_ID $PKG_L10N_ID wine"
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -165,31 +191,7 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_HOF' 'APP_EDIT' 'APP_HOFEDIT'
-# shellcheck disable=SC2016
-pattern='s|^cd "$PATH_PREFIX"$'
-pattern="$pattern|cd \"\$PATH_PREFIX/\${APP_EXE%/*}\"|"
-pattern="$pattern;s|^wine \"\$APP_EXE\" \$APP_OPTIONS \$@$"
-pattern="$pattern|wine \"\${APP_EXE##*/}\" \$APP_OPTIONS \$@|"
-sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
-
-# Store saved games outside of WINE prefix
-
-# shellcheck disable=SC2016
-saves_path_base='$WINEPREFIX/drive_c/users/$(whoami)/My Documents/My Games/Heroes of Might and Magic V'
-saves_path1="$saves_path_base/Profiles"
-saves_path2="$saves_path_base/Hammers of Fate/Profiles"
-# shellcheck disable=SC2016
-pattern='s#^init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"$#&'
-pattern="$pattern\\nif [ ! -e \"$saves_path1\" ]; then"
-pattern="$pattern\\n\\tmkdir --parents \"${saves_path1%/*}\""
-pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/profiles\" \"$saves_path1\""
-pattern="$pattern\\nfi"
-pattern="$pattern\\nif [ ! -e \"$saves_path2\" ]; then"
-pattern="$pattern\\n\\tmkdir --parents \"${saves_path2%/*}\""
-pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/profiles\" \"$saves_path2\""
-pattern="$pattern\\nfi#"
-sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
+launchers_write 'APP_MAIN' 'APP_HOF' 'APP_EDIT' 'APP_HOFEDIT'
 
 # Build package
 
