@@ -34,19 +34,37 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200317.1
+script_version=20200427.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Plantoids Species Pack'
 
-ARCHIVE_GOG='stellaris_plantoids_species_pack_2_6_0_4_36778.sh'
+ARCHIVE_GOG='stellaris_plantoids_species_pack_2_6_3_2_37617.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
-ARCHIVE_GOG_MD5='964cd3bc5c24ee45eeeaf76a1f929276'
+ARCHIVE_GOG_MD5='3d59dfca210276978d2444b0c17e51ac'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_VERSION='2.6.3.2-gog37617'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD10='stellaris_plantoids_species_pack_2_6_2_37285.sh'
+ARCHIVE_GOG_OLD10_MD5='536278f1362432c45cc02e7bd7daf94f'
+ARCHIVE_GOG_OLD10_SIZE='1400'
+ARCHIVE_GOG_OLD10_VERSION='2.6.2-gog37285'
+ARCHIVE_GOG_OLD10_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD9='stellaris_plantoids_species_pack_2_6_1_1_36932.sh'
+ARCHIVE_GOG_OLD9_MD5='cc65ed49c5403a40fa969a175f9103fe'
+ARCHIVE_GOG_OLD9_SIZE='1400'
+ARCHIVE_GOG_OLD9_VERSION='2.6.1.1-gog36932'
+ARCHIVE_GOG_OLD9_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD8='stellaris_plantoids_species_pack_2_6_0_4_36778.sh'
+ARCHIVE_GOG_OLD8_MD5='964cd3bc5c24ee45eeeaf76a1f929276'
+ARCHIVE_GOG_OLD8_SIZE='1400'
+ARCHIVE_GOG_OLD8_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD7='stellaris_plantoids_species_pack_2_5_1_33517.sh'
 ARCHIVE_GOG_OLD7_MD5='4253557911f830776d6765fa3d0ea7c7'
