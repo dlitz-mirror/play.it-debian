@@ -1,5 +1,7 @@
 2.12
 
+  * Drop script identification by MD5 hash from wrapper script
+
   * Forcefully set errexit setting on library initialization
 
   * Use PLAYIT_DOSBOX_BINARY in dosbox launchers if defined
