@@ -2,8 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
+# Copyright (c) 2015-2019, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,66 +29,68 @@ set -o errexit
 ###
 
 ###
-# Digital Deluxe Upgrade for Surviving Mars.
+# Stellaris - Utopia
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200315.2
+script_version=20200317.1
 
 # Set game-specific variables
 
-# copy GAME_ID from play-surviving-mars.sh
-GAME_ID='surviving-mars'
-GAME_NAME='Surviving Mars: Digital Deluxe Upgrade'
+GAME_ID='stellaris'
+GAME_ID_UTOPIA="${GAME_ID}-utopia"
+GAME_NAME='Stellaris - Utopia'
 
-ARCHIVE_GOG='surviving_mars_digital_deluxe_edition_upgrade_pack_cernan_update_29871.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_digital_deluxe_edition_upgrade_pack'
-ARCHIVE_GOG_MD5='d4446a7a747ab2e087b48b241aedc9eb'
-ARCHIVE_GOG_SIZE='70000'
-ARCHIVE_GOG_VERSION='245618-gog29871'
+ARCHIVE_GOG='stellaris_utopia_2_6_0_4_36778.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_utopia'
+ARCHIVE_GOG_MD5='62d4e68bb8ccc9bf7fce7f6b26434119'
+ARCHIVE_GOG_SIZE='76000'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD4='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc3_update_24111.sh'
-ARCHIVE_GOG_OLD4_MD5='60cddca455eb1882e0ca7ebf4e26838a'
-ARCHIVE_GOG_OLD4_SIZE='66000'
-ARCHIVE_GOG_OLD4_VERSION='24111'
+ARCHIVE_GOG_OLD5='stellaris_utopia_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD5_MD5='1abe439fe5742f30aa5ef81e5e6713a3'
+ARCHIVE_GOG_OLD5_SIZE='76000'
+ARCHIVE_GOG_OLD5_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD4='stellaris_utopia_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD4_MD5='151695f24d4c4c3312fb33b36816adfa'
+ARCHIVE_GOG_OLD4_SIZE='76000'
+ARCHIVE_GOG_OLD4_VERSION='2.5.0.5-gog33395'
 ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD3='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc1_update_23676.sh'
-ARCHIVE_GOG_OLD3_MD5='7ba5d3ab5626f1a18015b9516adf29af'
-ARCHIVE_GOG_OLD3_SIZE='66000'
-ARCHIVE_GOG_OLD3_VERSION='23676'
+ARCHIVE_GOG_OLD3='stellaris_utopia_2_4_1_1_33112.sh'
+ARCHIVE_GOG_OLD3_MD5='1ed23e905b2113316fd486a2b4187d96'
+ARCHIVE_GOG_OLD3_SIZE='76000'
+ARCHIVE_GOG_OLD3_VERSION='2.4.1.1-gog33112'
 ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD2='surviving_mars_digital_deluxe_edition_upgrade_pack_en_davinci_rc1_22763.sh'
-ARCHIVE_GOG_OLD2_MD5='195f0d1a28047112ced2d9cc31df5e52'
-ARCHIVE_GOG_OLD2_SIZE='67000'
-# Switching to the build number directly in future
-ARCHIVE_GOG_OLD2_VERSION='22763'
+ARCHIVE_GOG_OLD2='stellaris_utopia_2_4_1_33088.sh'
+ARCHIVE_GOG_OLD2_MD5='58ff7592156c0a034a3768a7f30d7bd7'
+ARCHIVE_GOG_OLD2_SIZE='76000'
+ARCHIVE_GOG_OLD2_VERSION='2.4.1-gog33088'
 ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD1='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180619_curiosity_hotfix_3_21661.sh'
-ARCHIVE_GOG_OLD1_MD5='cef24bda9587c1923139ea0c86df317a'
-ARCHIVE_GOG_OLD1_SIZE='66000'
-ARCHIVE_GOG_OLD1_VERSION='3-gog21661'
+ARCHIVE_GOG_OLD1='stellaris_utopia_2_4_0_7_33057.sh'
+ARCHIVE_GOG_OLD1_MD5='ecb0896b7c482c22f9f8eabe6429d10a'
+ARCHIVE_GOG_OLD1_SIZE='76000'
+ARCHIVE_GOG_OLD1_VERSION='2.4.0.7-gog33057'
 ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD0='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180423_opportunity_rc1_20289.sh'
-ARCHIVE_GOG_OLD0_MD5='a574de12f4b7f3aa1f285167109bb6a3'
-ARCHIVE_GOG_OLD0_SIZE="66000"
-ARCHIVE_GOG_OLD0_VERSION="1-gog20289"
+ARCHIVE_GOG_OLD0='stellaris_utopia_2_3_3_1_30901.sh'
+ARCHIVE_GOG_OLD0_MD5='dcef997fda77ef77b9aeae6064218f5e'
+ARCHIVE_GOG_OLD0_SIZE='76000'
+ARCHIVE_GOG_OLD0_VERSION='2.3.3.1-gog30901'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
-ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='*'
-
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='DLC'
+ARCHIVE_GAME_MAIN_FILES='dlc/dlc014_utopia'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-digital-deluxe-upgrade-pack"
+PKG_MAIN_ID="$GAME_ID_UTOPIA"
 PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions

@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Broken Sword II: The Smoking Mirror
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20180714.1
+script_version=20200221.1
 
 # Set game-specific variables
 
@@ -48,17 +48,17 @@ ARCHIVE_GOG_MD5='003e43babbdb7abc04c64f7482b27329'
 ARCHIVE_GOG_SIZE='1200000'
 ARCHIVE_GOG_VERSION='1.0-gog1.0.0.2'
 
-ARCHIVE_DOC0_DATA_PATH='broken sword 2 - the smoking mirror/docs'
-ARCHIVE_DOC0_DATA_FILES='./*'
+ARCHIVE_DOC0_MAIN_PATH='broken sword 2 - the smoking mirror/docs'
+ARCHIVE_DOC0_MAIN_FILES='*.txt'
 
-ARCHIVE_DOC1_DATA_PATH='broken sword 2 - the smoking mirror/data'
-ARCHIVE_DOC1_DATA_FILES='./*.txt'
+ARCHIVE_DOC1_MAIN_PATH='broken sword 2 - the smoking mirror/data'
+ARCHIVE_DOC1_MAIN_FILES='*.txt'
 
 ARCHIVE_GAME0_MAIN_PATH='broken sword 2 - the smoking mirror/data'
-ARCHIVE_GAME0_MAIN_FILES='./*.clu ./*.inf ./*.tab ./*.bmp'
+ARCHIVE_GAME0_MAIN_FILES='*.clu *.inf *.tab *.bmp'
 
 ARCHIVE_GAME1_MAIN_PATH='broken sword 2 - the smoking mirror/data/extras'
-ARCHIVE_GAME1_MAIN_FILES='./*'
+ARCHIVE_GAME1_MAIN_FILES='*'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='sword2'
@@ -70,31 +70,30 @@ PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -111,7 +110,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

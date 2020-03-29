@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200121.4
+script_version=20200316.1
 
 # Set game-specific variables
 
@@ -80,10 +80,10 @@ ARCHIVE_GOG_OLD0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
 ARCHIVE_GOG_OLD0_VERSION='1.09-gog27873'
 ARCHIVE_GOG_OLD0_SIZE='680000'
 
-# devilutionX 1.0.0 release
+# devilutionX 1.0.1 release
 ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.7z'
-ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.0.0'
-ARCHIVE_REQUIRED_DEVILUTIONX_MD5='10e74b73bd7c499ddc73d8faf8279e3b'
+ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.0.1'
+ARCHIVE_REQUIRED_DEVILUTIONX_MD5='f20edf9e2f53efb634890c54f0a79b6a'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf license.txt patch.txt readme.txt update.txt README.txt'

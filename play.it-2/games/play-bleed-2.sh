@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,67 +29,58 @@ set -o errexit
 ###
 
 ###
-# Digital Deluxe Upgrade for Surviving Mars.
+# Bleed 2
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200315.2
+script_version=20200320.1
 
 # Set game-specific variables
 
-# copy GAME_ID from play-surviving-mars.sh
-GAME_ID='surviving-mars'
-GAME_NAME='Surviving Mars: Digital Deluxe Upgrade'
+GAME_ID='bleed-2'
+GAME_NAME='Bleed 2'
 
-ARCHIVE_GOG='surviving_mars_digital_deluxe_edition_upgrade_pack_cernan_update_29871.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_digital_deluxe_edition_upgrade_pack'
-ARCHIVE_GOG_MD5='d4446a7a747ab2e087b48b241aedc9eb'
-ARCHIVE_GOG_SIZE='70000'
-ARCHIVE_GOG_VERSION='245618-gog29871'
-ARCHIVE_GOG_TYPE='mojosetup_unzip'
+ARCHIVE_ITCH='bleed2-02112018-bin'
+ARCHIVE_ITCH_URL='https://bootdiskrevolution.itch.io/bleed-2'
+ARCHIVE_ITCH_MD5='756324f1843c289719c6630a834e8f59'
+ARCHIVE_ITCH_SIZE='350000'
+ARCHIVE_ITCH_VERSION='1.0-itch180211'
+ARCHIVE_ITCH_TYPE='mojosetup'
 
-ARCHIVE_GOG_OLD4='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc3_update_24111.sh'
-ARCHIVE_GOG_OLD4_MD5='60cddca455eb1882e0ca7ebf4e26838a'
-ARCHIVE_GOG_OLD4_SIZE='66000'
-ARCHIVE_GOG_OLD4_VERSION='24111'
-ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
+ARCHIVE_DOC_DATA_PATH='data'
+ARCHIVE_DOC_DATA_FILES='Linux.README'
 
-ARCHIVE_GOG_OLD3='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc1_update_23676.sh'
-ARCHIVE_GOG_OLD3_MD5='7ba5d3ab5626f1a18015b9516adf29af'
-ARCHIVE_GOG_OLD3_SIZE='66000'
-ARCHIVE_GOG_OLD3_VERSION='23676'
-ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN32_PATH='data'
+ARCHIVE_GAME_BIN32_FILES='lib Bleed2.bin.x86'
 
-ARCHIVE_GOG_OLD2='surviving_mars_digital_deluxe_edition_upgrade_pack_en_davinci_rc1_22763.sh'
-ARCHIVE_GOG_OLD2_MD5='195f0d1a28047112ced2d9cc31df5e52'
-ARCHIVE_GOG_OLD2_SIZE='67000'
-# Switching to the build number directly in future
-ARCHIVE_GOG_OLD2_VERSION='22763'
-ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN64_PATH='data'
+ARCHIVE_GAME_BIN64_FILES='lib64 Bleed2.bin.x86_64'
 
-ARCHIVE_GOG_OLD1='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180619_curiosity_hotfix_3_21661.sh'
-ARCHIVE_GOG_OLD1_MD5='cef24bda9587c1923139ea0c86df317a'
-ARCHIVE_GOG_OLD1_SIZE='66000'
-ARCHIVE_GOG_OLD1_VERSION='3-gog21661'
-ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_DATA_PATH='data'
+ARCHIVE_GAME_DATA_FILES='Content *.dll *.dll.config Bleed2.exe Bleed?2.bmp monoconfig monomachineconfig steam_appid.txt'
 
-ARCHIVE_GOG_OLD0='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180423_opportunity_rc1_20289.sh'
-ARCHIVE_GOG_OLD0_MD5='a574de12f4b7f3aa1f285167109bb6a3'
-ARCHIVE_GOG_OLD0_SIZE="66000"
-ARCHIVE_GOG_OLD0_VERSION="1-gog20289"
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
+APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Work around terminfo Mono bug, cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Work around Mono unpredictable behaviour with non-US locales
+export LANG=C'
+APP_MAIN_EXE_BIN32='Bleed2.bin.x86'
+APP_MAIN_EXE_BIN64='Bleed2.bin.x86_64'
+APP_MAIN_ICON='Bleed 2.bmp'
 
-ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='*'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='DLC'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glx openal libudev1"
 
-PKG_MAIN_ID="${GAME_ID}-digital-deluxe-upgrade-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
@@ -125,6 +115,17 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Extract icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Write launchers
+
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

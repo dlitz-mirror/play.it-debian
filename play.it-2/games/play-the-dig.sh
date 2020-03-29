@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200202.4
+script_version=20200307.1
 
 # Set game-specific variables
 
@@ -59,7 +59,10 @@ ARCHIVE_GOG_FR_VERSION='1.0-gog20100'
 ARCHIVE_GOG_FR_TYPE='mojosetup'
 
 ARCHIVE_DOC_L10N_PATH='data/noarch/docs'
-ARCHIVE_DOC_L10N_FILES='*'
+ARCHIVE_DOC_L10N_FILES='*.pdf *.txt'
+ARCHIVE_DOC0_L10N_PATH_GOG_EN='data/noarch/docs/english'
+ARCHIVE_DOC0_L10N_PATH_GOG_FR='data/noarch/docs/french'
+ARCHIVE_DOC0_L10N_FILES='*.pdf'
 
 ARCHIVE_GAME_L10N_PATH='data/noarch/data'
 ARCHIVE_GAME_L10N_FILES='digvoice.bun language.bnd video/digtxt.trs video/sq14sc14.san video/sq14sc22.san video/sq17.san video/sq18b.san video/sq18sc15.san video/sq1.san video/sq2.san video/sq3.san video/sq4.san video/sq8a.san video/sq8b.san video/sq8c.san video/sq9.san'

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200208.1
+script_version=20200307.1
 
 # Set game-specific variables
 
@@ -69,6 +69,9 @@ ARCHIVE_GOG_FR_OLD0_VERSION='1.0-gog2.2.0.27'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
+ARCHIVE_DOC0_MAIN_PATH_GOG_EN='data/noarch/docs/english'
+ARCHIVE_DOC0_MAIN_PATH_GOG_FR='data/noarch/docs/french'
+ARCHIVE_DOC0_MAIN_FILES='*.pdf'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
 ARCHIVE_GAME_MAIN_FILES='atlantis.000 atlantis.001 monster.sou'

@@ -31,22 +31,34 @@ set -o errexit
 ###
 # Stellaris - Synthetic Dawn Story Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191024.2
+script_version=20200317.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Synthetic Dawn Story Pack'
 
-ARCHIVE_GOG='stellaris_synthetic_dawn_story_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG='stellaris_synthetic_dawn_story_pack_2_6_0_4_36778.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_synthetic_dawn_story_pack'
-ARCHIVE_GOG_MD5='bef6e627ff8e4e1d0890bfacff979261'
+ARCHIVE_GOG_MD5='d3520644ec752147a4d9eb9b8c6b7595'
 ARCHIVE_GOG_SIZE='49000'
-ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_synthetic_dawn_story_pack_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD6_MD5='651b7fdba97f8b12a57118bd5af75315'
+ARCHIVE_GOG_OLD6_SIZE='49000'
+ARCHIVE_GOG_OLD6_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD5='stellaris_synthetic_dawn_story_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD5_MD5='bef6e627ff8e4e1d0890bfacff979261'
+ARCHIVE_GOG_OLD5_SIZE='49000'
+ARCHIVE_GOG_OLD5_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD4='stellaris_synthetic_dawn_story_pack_2_4_1_1_33112.sh'
 ARCHIVE_GOG_OLD4_MD5='39b5ff1e84024fa579054a4b69043f8f'

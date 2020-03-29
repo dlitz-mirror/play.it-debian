@@ -31,22 +31,34 @@ set -o errexit
 ###
 # Stellaris - Humanoids Species Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191024.2
+script_version=20200317.2
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Humanoids Species Pack'
 
-ARCHIVE_GOG='stellaris_humanoids_species_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG='stellaris_humanoids_species_pack_2_6_0_4_36778.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_humanoids_species_pack'
-ARCHIVE_GOG_MD5='3bfe1467c1d040625de13f72eb744ce5'
+ARCHIVE_GOG_MD5='1319f37c51e676f40708c1a9657376b2'
 ARCHIVE_GOG_SIZE='120000'
-ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_humanoids_species_pack_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD7_MD5='0832471cf232a1a5d5567258c98fa99b'
+ARCHIVE_GOG_OLD7_SIZE='120000'
+ARCHIVE_GOG_OLD7_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_humanoids_species_pack_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD6_MD5='3bfe1467c1d040625de13f72eb744ce5'
+ARCHIVE_GOG_OLD6_SIZE='120000'
+ARCHIVE_GOG_OLD6_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD5='stellaris_humanoids_species_pack_2_4_1_1_33112.sh'
 ARCHIVE_GOG_OLD5_MD5='c4ca371cdb0695d2050d70ce52e60914'

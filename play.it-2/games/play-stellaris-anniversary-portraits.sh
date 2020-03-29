@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Stellaris - Anniversary Portraits + Creatures of the Void Portrait Pack
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191024.2
+script_version=20200317.1
 
 # Set game-specific variables
 
@@ -45,14 +45,26 @@ GAME_NAME='Stellaris'
 GAME_NAME_ANNIVERSARY="$GAME_NAME - Anniversary Portraits"
 GAME_NAME_VOID="$GAME_NAME - Creatures of the Void Portrait Pack"
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD7 ARCHIVE_GOG_OLD6 ARCHIVE_GOG_OLD5 ARCHIVE_GOG_OLD4 ARCHIVE_GOG_OLD3 ARCHIVE_GOG_OLD2 ARCHIVE_GOG_OLD1 ARCHIVE_GOG_OLD0 ARCHIVE_GOG_UNMERGED_OLD2 ARCHIVE_GOG_UNMERGED_OLD1 ARCHIVE_GOG_UNMERGED_OLD0'
+ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD9 ARCHIVE_GOG_OLD8 ARCHIVE_GOG_OLD7 ARCHIVE_GOG_OLD6 ARCHIVE_GOG_OLD5 ARCHIVE_GOG_OLD4 ARCHIVE_GOG_OLD3 ARCHIVE_GOG_OLD2 ARCHIVE_GOG_OLD1 ARCHIVE_GOG_OLD0 ARCHIVE_GOG_UNMERGED_OLD2 ARCHIVE_GOG_UNMERGED_OLD1 ARCHIVE_GOG_UNMERGED_OLD0'
 
-ARCHIVE_GOG='stellaris_anniversary_portraits_2_5_0_5_33395.sh'
+ARCHIVE_GOG='stellaris_anniversary_portraits_2_6_0_4_36778.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
-ARCHIVE_GOG_MD5='813ca5d320ba55c5300b9cb10454a4e5'
+ARCHIVE_GOG_MD5='98758b31ee405cd615d2036b79d7cc0f'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD9='stellaris_anniversary_portraits_2_5_1_33517.sh'
+ARCHIVE_GOG_OLD9_MD5='3231b08ff883239e98bea2a9adb841e2'
+ARCHIVE_GOG_OLD9_SIZE='1400'
+ARCHIVE_GOG_OLD9_VERSION='2.5.1-gog33517'
+ARCHIVE_GOG_OLD9_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD8='stellaris_anniversary_portraits_2_5_0_5_33395.sh'
+ARCHIVE_GOG_OLD8_MD5='813ca5d320ba55c5300b9cb10454a4e5'
+ARCHIVE_GOG_OLD8_SIZE='1400'
+ARCHIVE_GOG_OLD8_VERSION='2.5.0.5-gog33395'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD7='stellaris_anniversary_portraits_2_4_1_1_33112.sh'
 ARCHIVE_GOG_OLD7_MD5='d91b95860510e7ce2fad6a8a5b562172'

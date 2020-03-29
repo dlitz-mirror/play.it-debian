@@ -3,7 +3,8 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
+# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,67 +31,48 @@ set -o errexit
 ###
 
 ###
-# Digital Deluxe Upgrade for Surviving Mars.
+# Full Throttle Remastered
 # build native packages from the original installers
-# send your bug reports to contact@dotslashplay.it
+# send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200315.2
+script_version=20200309.1
 
 # Set game-specific variables
 
-# copy GAME_ID from play-surviving-mars.sh
-GAME_ID='surviving-mars'
-GAME_NAME='Surviving Mars: Digital Deluxe Upgrade'
+GAME_ID='full-throttle-remastered'
+GAME_NAME='Full Throttle Remastered'
 
-ARCHIVE_GOG='surviving_mars_digital_deluxe_edition_upgrade_pack_cernan_update_29871.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_digital_deluxe_edition_upgrade_pack'
-ARCHIVE_GOG_MD5='d4446a7a747ab2e087b48b241aedc9eb'
-ARCHIVE_GOG_SIZE='70000'
-ARCHIVE_GOG_VERSION='245618-gog29871'
+ARCHIVE_GOG='full_throttle_remastered_en_gog_3_20993.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/full_throttle_remastered'
+ARCHIVE_GOG_MD5='2f4bf151e225e7dfa9bec31ed49b721c'
+ARCHIVE_GOG_SIZE='5400000'
+ARCHIVE_GOG_VERSION='1.0-gog20993'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
-ARCHIVE_GOG_OLD4='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc3_update_24111.sh'
-ARCHIVE_GOG_OLD4_MD5='60cddca455eb1882e0ca7ebf4e26838a'
-ARCHIVE_GOG_OLD4_SIZE='66000'
-ARCHIVE_GOG_OLD4_VERSION='24111'
-ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-ARCHIVE_GOG_OLD3='surviving_mars_digital_deluxe_edition_upgrade_pack_sagan_rc1_update_23676.sh'
-ARCHIVE_GOG_OLD3_MD5='7ba5d3ab5626f1a18015b9516adf29af'
-ARCHIVE_GOG_OLD3_SIZE='66000'
-ARCHIVE_GOG_OLD3_VERSION='23676'
-ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='readme.txt'
 
-ARCHIVE_GOG_OLD2='surviving_mars_digital_deluxe_edition_upgrade_pack_en_davinci_rc1_22763.sh'
-ARCHIVE_GOG_OLD2_MD5='195f0d1a28047112ced2d9cc31df5e52'
-ARCHIVE_GOG_OLD2_SIZE='67000'
-# Switching to the build number directly in future
-ARCHIVE_GOG_OLD2_VERSION='22763'
-ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='Throttle gamecontrollerdb.txt lib'
 
-ARCHIVE_GOG_OLD1='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180619_curiosity_hotfix_3_21661.sh'
-ARCHIVE_GOG_OLD1_MD5='cef24bda9587c1923139ea0c86df317a'
-ARCHIVE_GOG_OLD1_SIZE='66000'
-ARCHIVE_GOG_OLD1_VERSION='3-gog21661'
-ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='full.data'
 
-ARCHIVE_GOG_OLD0='surviving_mars_digital_deluxe_edition_upgrade_pack_en_180423_opportunity_rc1_20289.sh'
-ARCHIVE_GOG_OLD0_MD5='a574de12f4b7f3aa1f285167109bb6a3'
-ARCHIVE_GOG_OLD0_SIZE="66000"
-ARCHIVE_GOG_OLD0_VERSION="1-gog20289"
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE='Throttle'
+APP_MAIN_ICON='data/noarch/support/icon.png'
 
-ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC_MAIN_FILES='*'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='DLC'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
-
-PKG_MAIN_ID="${GAME_ID}-digital-deluxe-upgrade-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libudev1 openal"
 
 # Load common functions
 
@@ -123,8 +105,24 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+(
+	cd "$PLAYIT_WORKDIR/gamedata/data/noarch/game"
+	mv 'full.data.split00' 'full.data'
+	cat 'full.data.split01' >>'full.data'
+	rm 'full.data.split01'
+)
 prepare_package_layout
+
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
