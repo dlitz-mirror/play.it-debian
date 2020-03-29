@@ -1,5 +1,7 @@
 2.12
 
+  * Add ability to use system-provided Mono runtime
+
   * Drop script identification by MD5 hash from wrapper script
 
   * Forcefully set errexit setting on library initialization
