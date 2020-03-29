@@ -1,5 +1,7 @@
 2.12
 
+  * Forcefully set errexit setting on library initialization
+
   * Use PLAYIT_DOSBOX_BINARY in dosbox launchers if defined
 
   * Add --overwrite option
