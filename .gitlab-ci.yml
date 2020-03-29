@@ -19,5 +19,7 @@ wrapper_shellcheck:
         - master@play.it/scripts
         - /^staging-.*$/@play.it/scripts
         - tags@play.it/scripts
+    before_script:
+        - make
     script:
         - ./tests/wrapper_shellcheck.sh
