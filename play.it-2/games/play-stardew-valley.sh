@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200401.1
+script_version=20200401.2
 
 # Set game-specific variables
 
@@ -80,19 +80,18 @@ ARCHIVE_GOG_OLD0_VERSION='1.2.33-gog2.8.0.10'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='lib mcs.bin.x86 StardewValley.bin.x86'
+ARCHIVE_GAME_BIN32_FILES='lib mcs.bin.x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='lib64 mcs.bin.x86_64 StardewValley.bin.x86_64'
+ARCHIVE_GAME_BIN64_FILES='lib64 mcs.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='Content mono *.dll *.dll.config monoconfig StardewValley.exe'
+ARCHIVE_GAME_DATA_FILES='Content mono monoconfig StardewValley.exe BmFont.dll GalaxyCSharp.dll GalaxyCSharp.dll.config libSkiaSharp.dll Lidgren.Network.dll MonoGame.Framework.dll MonoGame.Framework.dll.config SkiaSharp.dll StardewValley.GameData.dll xTile.dll xTilePipeline.dll'
 
-APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='StardewValley.bin.x86'
-APP_MAIN_EXE_BIN64='StardewValley.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='StardewValley.exe'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
@@ -101,14 +100,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 glx alsa"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono openal sdl2 glx alsa"
+PKG_BIN32_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil, libmono-windowsbase4.0-cil'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
