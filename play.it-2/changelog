@@ -1,5 +1,8 @@
 2.11.4
 
+  * Throw an explicit error when trying to write a launcher for a missing
+    binary
+
   * Use safer `find | while read` constructs in prefix functions
 
   * Arch Linux: Fix bugs in dependencies handling
