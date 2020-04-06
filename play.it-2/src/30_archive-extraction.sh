@@ -85,22 +85,6 @@ extract_data_from() {
 	done
 }
 
-# print data extraction message
-# USAGE: extract_data_from_print $file
-# NEEDED VARS: (LANG)
-# CALLED BY: extract_data_from
-extract_data_from_print() {
-	case "${LANG%_*}" in
-		('fr')
-			string='Extraction des données de %s'
-		;;
-		('en'|*)
-			string='Extracting data from %s'
-		;;
-	esac
-	printf "$string" "$1"
-}
-
 # extract data from 7z archive
 # USAGE: archive_extraction_7z $archive $destination
 # CALLS: error_archive_extraction_7z_no_extractor_found

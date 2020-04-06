@@ -197,25 +197,6 @@ archive_integrity_check_md5() {
 	[ "$file_sum" = "$archive_sum" ] || archive_integrity_check_error "$file"
 }
 
-# print integrity check message
-# USAGE: archive_integrity_check_print $file
-# CALLED BY: archive_integrity_check_md5
-archive_integrity_check_print() {
-	local file
-	local string
-	file="$1"
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='Contrôle de l’intégrité de %s'
-		;;
-		('en'|*)
-			string='Checking integrity of %s'
-		;;
-	esac
-	printf "$string" "$(basename "$file")"
-}
-
 # get list of available archives, exported as ARCHIVES_LIST
 # USAGE: archives_get_list
 archives_get_list() {

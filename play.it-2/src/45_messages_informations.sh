@@ -48,3 +48,54 @@ information_package_already_exists() {
 	return 0
 }
 
+# print integrity check message
+# USAGE: information_file_integrity_check $file
+information_file_integrity_check() {
+	local message file
+	file=$(basename "$1")
+	case "${LANG%_*}" in
+		('fr')
+			string='Contrôle de lʼintégrité de %s'
+		;;
+		('en'|*)
+			string='Checking integrity of %s'
+		;;
+	esac
+	printf "$message" "$file"
+	return 0
+}
+
+# print data extraction message
+# USAGE: information_archive_data_extraction $file
+information_archive_data_extraction() {
+	local message file
+	file="$1"
+	case "${LANG%_*}" in
+		('fr')
+			string='Extraction des données de %s'
+		;;
+		('en'|*)
+			string='Extracting data from %s'
+		;;
+	esac
+	printf "$message" "$file"
+	return 0
+}
+
+# print package building message
+# USAGE: information_package_building $file
+information_package_building() {
+	local message file
+	file="$1"
+	case "${LANG%_*}" in
+		('fr')
+			message='Construction de %s'
+		;;
+		('en'|*)
+			message='Building %s'
+		;;
+	esac
+	printf "$message" "$file"
+	return 0
+}
+

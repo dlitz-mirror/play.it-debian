@@ -150,6 +150,18 @@ pkg_build_print_already_exists() {
 	information_package_already_exists "$1"
 }
 
+archive_integrity_check_print() {
+	information_file_integrity_check "$1"
+}
+
+extract_data_from_print() {
+	information_archive_data_extraction "$1"
+}
+
+pkg_print() {
+	information_package_building "$1"
+}
+
 # Keep compatibility with 2.10 and older
 
 write_bin() {

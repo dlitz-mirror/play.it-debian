@@ -85,23 +85,6 @@ build_pkg() {
 	done
 }
 
-# print package building message
-# USAGE: pkg_print $file
-# NEEDED VARS: (LANG)
-# CALLED BY: pkg_build_arch pkg_build_deb pkg_build_gentoo
-pkg_print() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			string='Construction de %s'
-		;;
-		('en'|*)
-			string='Building %s'
-		;;
-	esac
-	printf "$string" "$1"
-}
-
 # guess package format to build from host OS
 # USAGE: packages_guess_format $variable_name
 # NEEDED VARS: (LANG) DEFAULT_OPTION_PACKAGE
