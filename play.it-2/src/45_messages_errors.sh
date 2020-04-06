@@ -264,7 +264,7 @@ error_architecture_not_supported() {
 	architecture="$1"
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼarchitecture demandée n’est pas gérée : %s\n'
+			message='Lʼarchitecture demandée nʼest pas gérée : %s\n'
 		;;
 		('en'|*)
 			message='Selected architecture is not supported: %s\n'
@@ -301,7 +301,7 @@ error_not_enough_free_space() {
 	local message directory
 	case "${LANG%_*}" in
 		('fr')
-			message='Il nʼy a pas assez d’espace libre dans les différents répertoires testés :\n'
+			message='Il nʼy a pas assez dʼespace libre dans les différents répertoires testés :\n'
 		;;
 		('en'|*)
 			message='There is not enough free space in the tested directories:\n'

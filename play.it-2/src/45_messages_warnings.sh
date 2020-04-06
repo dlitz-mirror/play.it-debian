@@ -24,7 +24,7 @@ warning_architecture_not_available() {
 	architecture="$1"
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼarchitecture demandée n’est pas disponible : %s\n'
+			message='Lʼarchitecture demandée nʼest pas disponible : %s\n'
 		;;
 		('en'|*)
 			message='Selected architecture is not available: %s\n'
@@ -42,7 +42,7 @@ warning_option_not_supported() {
 	option="$1"
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼoption %s n’est pas gérée par ce script.\n'
+			message='Lʼoption %s nʼest pas gérée par ce script.\n'
 		;;
 		('en'|*)
 			message='%s option is not supported by this script.\n'
