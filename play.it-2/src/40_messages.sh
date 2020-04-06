@@ -1,175 +1,153 @@
-# display an error if a function is called without an argument
+# display an error when a function is called without an argument, but is expecting some
 # USAGE: error_missing_argument $function
-# CALLS: print_error
 error_missing_argument() {
-	local function
+	local message function
 	function="$1"
-	local string
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			# shellcheck disable=SC1112
-			string='La fonction "%s" ne peut pas être appelée sans argument.\n'
+			message='La fonction "%s" ne peut pas être appelée sans argument.\n'
 		;;
 		('en'|*)
-			string='"%s" function can not be called without an argument.\n'
+			message='"%s" function can not be called without an argument.\n'
 		;;
 	esac
-	printf "$string" "$function"
-	exit 1
+	print_error
+	printf "$message" "$function"
+	return 1
 }
 
-# display an error if a function is called more than one argument
+# display an error when a function is called with multiple arguments, but is expecting no more than one
 # USAGE: error_extra_arguments $function
-# CALLS: print_error
 error_extra_arguments() {
-	local function
+	local message function
 	function="$1"
-	local string
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			# shellcheck disable=SC1112
-			string='La fonction "%s" ne peut pas être appelée avec plus d’un argument.\n'
+			message='La fonction "%s" ne peut pas être appelée avec plus dʼun argument.\n'
 		;;
 		('en'|*)
-			string='"%s" function can not be called with mor than one single argument.\n'
+			message='"%s" function can not be called with mor than one single argument.\n'
 		;;
 	esac
-	printf "$string" "$function"
-	exit 1
+	print_error
+	printf "$message" "$function"
+	return 1
 }
 
-# display an error if function is called while $PKG is unset
+# display an error when a function requiring $PKG to be set is called while it is unset
 # USAGE: error_no_pkg $function
-# CALLS: print_error
 error_no_pkg() {
-	local function
+	local message function
 	function="$1"
-	local string
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			# shellcheck disable=SC1112
-			string='La fonction "%s" ne peut pas être appelée lorsque $PKG n’a pas de valeur définie.\n'
+			message='La fonction "%s" ne peut pas être appelée lorsque $PKG nʼa pas de valeur définie.\n'
 		;;
 		('en'|*)
-			string='"%s" function can not be called when $PKG is not set.\n'
+			message='"%s" function can not be called when $PKG is not set.\n'
 		;;
 	esac
-	printf "$string" "$function"
+	print_error
+	printf "$message" "$function"
 	exit 1
 }
 
-# display an error if a file is expected and something else has been given
+# display an error when a file is expected and something else has been given
 # USAGE: error_not_a_file $param
-# CALLS: print_error
 error_not_a_file() {
-	if [ $# -lt 1 ]; then
-		error_missing_argument 'error_not_a_file'
-	fi
-	if [ $# -gt 1 ]; then
-		error_extra_arguments 'error_not_a_file'
-	fi
-	local param
+	local message param
 	param="$1"
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			string='"%s" nʼest pas un fichier valide.\n'
+			message='"%s" nʼest pas un fichier valide.\n'
 		;;
 		('en'|*)
-			string='"%s" is not a valid file.\n'
+			message='"%s" is not a valid file.\n'
 		;;
 	esac
-	printf "$string" "$param"
-	exit 1
+	print_error
+	printf "$message" "$param"
+	return 1
 }
 
 # display an error when an unknown application type is used
 # USAGE: error_unknown_application_type $app_type
-# CALLS: print_error
 error_unknown_application_type() {
-	local application_type
+	local message application_type
 	application_type="$1"
-	local string
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			string='Le type dʼapplication "%s" est inconnu.\n'
-			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+			message='Le type dʼapplication "%s" est inconnu.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
 		;;
 		('en'|*)
-			string='"%s" application type is unknown.\n'
-			string="$string"'Please report this issue in our bug tracker: %s\n'
+			message='"%s" application type is unknown.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-	printf "$string" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	exit 1
+	print_error
+	printf "$message" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
 }
 
-# display an error when the tar implementation isn’t recognized
+# display an error when the available tar implementation is not supported
 # USAGE: error_unknown_tar_implementation
-# CALLS: print_error
 error_unknown_tar_implementation() {
-	local string
-	print_error
+	local message
 	case "${LANG%_*}" in
 		('fr')
-			string='La version de tar présente sur ce système nʼest pas reconnue.\n'
-			string="$string"'./play.it ne peut utiliser que GNU tar ou bsdtar.\n'
-			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+			message='La version de tar présente sur ce système nʼest pas reconnue.\n'
+			message="$message"'./play.it ne peut utiliser que GNU tar ou bsdtar.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
 		;;
 		('en'|*)
-			string='The tar implementation on this system wasnʼt recognized.\n'
-			string="$string"'./play.it can only use GNU tar or bsdtar.\n'
-			string="$string"'Please report this issue in our bug tracker: %s\n'
+			message='The tar implementation on this system wasnʼt recognized.\n'
+			message="$message"'./play.it can only use GNU tar or bsdtar.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-	printf "$string" "$PLAYIT_BUG_TRACKER_URL"
-	exit 1
+	print_error
+	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
+	return 1
 }
 
-# display a message if a required dependency is missing
+# display a message when a required dependency is missing
 # USAGE: error_dependency_not_found $command_name
-# CALLED BY: check_deps check_deps_7z
-# CALLS: dependency_provided_by
 error_dependency_not_found() {
-	local command_name provider
+	local message command_name provider
 	command_name="$1"
 	provider="$(dependency_provided_by "$command_name")"
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			string='%s est introuvable. Installez %s avant de lancer ce script.\n'
+			message='%s est introuvable. Installez %s avant de lancer ce script.\n'
 		;;
 		('en'|*)
-			string='%s not found. Install %s before running this script.\n'
+			message='%s not found. Install %s before running this script.\n'
 		;;
 	esac
-	printf "$string" "$command_name" "$provider"
+	print_error
+	printf "$message" "$command_name" "$provider"
 	return 1
 }
 
 # display an error when trying to extract an archive but no extractor is present
 # USAGE: error_archive_no_extractor_found $archive_type
-# CALLS: print_error
 error_archive_no_extractor_found() {
-	local archive_type string
+	local message archive_type
 	archive_type="$1"
-	print_error
 	case "${LANG%_*}" in
 		('fr')
-			string='Ce script a essayé dʼextraire le contenu dʼune archive de type "%s", mais aucun outil approprié nʼa été trouvé.\n'
-			string="$string"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+			message='Ce script a essayé dʼextraire le contenu dʼune archive de type "%s", mais aucun outil approprié nʼa été trouvé.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
 		;;
 		('en'|*)
-			string='This script tried to extract the contents of a "%s" archive, but not appropriate tool could be found.\n'
-			string="$string"'Please report this issue in our bug tracker: %s\n'
+			message='This script tried to extract the contents of a "%s" archive, but not appropriate tool could be found.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-	printf "$string" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	exit 1
+	print_error
+	printf "$message" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
 }
 
 # Display an error when trying to write a launcher for a missing binary
