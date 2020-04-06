@@ -6,45 +6,6 @@ archive_set_main() {
 	[ -n "$SOURCE_ARCHIVE" ] || archive_set_error_not_found "$@"
 }
 
-# display an error message if a required archive is not found
-# list all the archives that could fulfill the requirements, with their download URL if provided by the script
-# USAGE: archive_set_error_not_found $archive[…]
-# CALLED BY: archive_set_main
-archive_set_error_not_found() {
-	local archive
-	local archive_name
-	local archive_url
-	local string
-	local string_multiple
-	local string_single
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string_multiple='Aucun des fichiers suivants n’est présent :'
-			string_single='Le fichier suivant est introuvable :'
-		;;
-		('en'|*)
-			string_multiple='None of the following files could be found:'
-			string_single='The following file could not be found:'
-		;;
-	esac
-	if [ "$#" -eq 1 ]; then
-		string="$string_single"
-	else
-		string="$string_multiple"
-	fi
-	print_error
-	printf '%s\n' "$string"
-	for archive in "$@"; do
-		archive_name="$(get_value "$archive")"
-		archive_url="$(get_value "${archive}_URL")"
-		printf '%s' "$archive_name"
-		[ -n "$archive_url" ] && printf ' — %s' "$archive_url"
-		printf '\n'
-	done
-	return 1
-}
-
 # set a single archive for data extraction
 # USAGE: archive_set $name $archive[…]
 # CALLS: archive_get_infos archive_check_for_extra_parts
@@ -199,43 +160,6 @@ archive_guess_type() {
 	export ${archive?}_TYPE
 }
 
-# display an error message if archive_guess_type failed to guess the type of an archive
-# USAGE: archive_guess_type_error $archive
-# CALLED BY: archive_guess_type
-archive_guess_type_error() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='ARCHIVE_TYPE n’est pas défini pour %s et n’a pas pu être détecté automatiquement.'
-		;;
-		('en'|*)
-			string='ARCHIVE_TYPE is not set for %s and could not be guessed.'
-		;;
-	esac
-	print_error
-	printf "$string\\n" "$archive"
-	return 1
-}
-
-# print the name and path to the archive currently in use
-# USAGE: archive_print_file_in_use $file
-# CALLED BY: archive_get_infos
-archive_print_file_in_use() {
-	local file
-	local string
-	file="$1"
-	case "${LANG%_*}" in
-		('fr')
-			string='Utilisation de %s'
-		;;
-		('en'|*)
-			string='Using %s'
-		;;
-	esac
-	printf "$string\\n" "$file"
-}
-
 # check integrity of target file
 # USAGE: archive_integrity_check $archive $file
 # CALLS: archive_integrity_check_md5 liberror
@@ -290,29 +214,6 @@ archive_integrity_check_print() {
 		;;
 	esac
 	printf "$string" "$(basename "$file")"
-}
-
-# print an error message if an integrity check fails
-# USAGE: archive_integrity_check_error $file
-# CALLED BY: archive_integrity_check_md5
-archive_integrity_check_error() {
-	local string1
-	local string2
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string1='Somme de contrôle incohérente. %s n’est pas le fichier attendu.'
-			string2='Utilisez --checksum=none pour forcer son utilisation.'
-		;;
-		('en'|*)
-			string1='Hashsum mismatch. %s is not the expected file.'
-			string2='Use --checksum=none to force its use.'
-		;;
-	esac
-	print_error
-	printf "$string1\\n" "$(basename "$1")"
-	printf "$string2\\n"
-	return 1
 }
 
 # get list of available archives, exported as ARCHIVES_LIST

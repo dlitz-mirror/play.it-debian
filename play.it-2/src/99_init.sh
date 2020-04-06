@@ -130,17 +130,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 				export OVERWRITE_PACKAGES
 			;;
 			('--'*)
-				print_error
-				case "${LANG%_*}" in
-					('fr')
-						string='Option inconnue : %s\n'
-					;;
-					('en'|*)
-						string='Unkown option: %s\n'
-					;;
-				esac
-				printf "$string" "$1"
-				return 1
+				error_option_unknown "$1"
 			;;
 			(*)
 				if [ -f "$1" ]; then
@@ -199,18 +189,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		[ "$OPTION_PACKAGE" = 'deb' ] && \
 		[ "$OPTION_COMPRESSION" = 'bzip2' ]
 	then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				# shellcheck disable=SC1112
-				string='Le mode de compression bzip2 n’est pas compatible avec la génération de paquets deb.'
-			;;
-			('en'|*)
-				string='bzip2 compression mode is not compatible with deb packages generation.'
-			;;
-		esac
-		printf '%s\n' "$string"
-		exit 1
+		error_compression_method_not_compatible 'bzip2' 'deb'
 	fi
 
 	# Do not allow none compression when building Gentoo packages
@@ -219,18 +198,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		[ "$OPTION_PACKAGE" = 'gentoo' ] && \
 		[ "$OPTION_COMPRESSION" = 'none' ]
 	then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				# shellcheck disable=SC1112
-				string='Le mode de compression none n’est pas compatible avec la génération de paquets gentoo.'
-			;;
-			('en'|*)
-				string='none compression mode is not compatible with gentoo packages generation.'
-			;;
-		esac
-		printf '%s\n' "$string"
-		exit 1
+		error_compression_method_not_compatible 'none' 'gentoo'
 	fi
 
 	# Restrict packages list to target architecture

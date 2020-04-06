@@ -102,23 +102,6 @@ pkg_print() {
 	printf "$string" "$1"
 }
 
-# print package building message
-# USAGE: pkg_build_print_already_exists $file
-# NEEDED VARS: (LANG)
-# CALLED BY: pkg_build_arch pkg_build_deb pkg_build_gentoo
-pkg_build_print_already_exists() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			string='%s existe déjà.\n'
-		;;
-		('en'|*)
-			string='%s already exists.\n'
-		;;
-	esac
-	printf "$string" "$1"
-}
-
 # guess package format to build from host OS
 # USAGE: packages_guess_format $variable_name
 # NEEDED VARS: (LANG) DEFAULT_OPTION_PACKAGE
@@ -146,21 +129,7 @@ packages_guess_format() {
 			eval $variable_name=\'gentoo\'
 		;;
 		(*)
-			print_warning
-			case "${LANG%_*}" in
-				('fr')
-					# shellcheck disable=SC1112
-					string1='L’auto-détection du format de paquet le plus adapté a échoué.\n'
-					string2='Le format de paquet %s sera utilisé par défaut.\n'
-				;;
-				('en'|*)
-					string1='Most pertinent package format auto-detection failed.\n'
-					string2='%s package format will be used by default.\n'
-				;;
-			esac
-			printf "$string1"
-			printf "$string2" "$DEFAULT_OPTION_PACKAGE"
-			printf '\n'
+			warning_package_format_guessing_failed "$DEFAULT_OPTION_PACKAGE"
 			eval $variable_name=\'$DEFAULT_OPTION_PACKAGE\'
 		;;
 	esac

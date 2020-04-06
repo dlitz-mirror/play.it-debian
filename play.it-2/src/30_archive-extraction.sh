@@ -164,23 +164,3 @@ archive_extraction_innosetup() {
 	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null
 }
 
-# print error if available version of innoextract is too low
-# USAGE: archive_extraction_innosetup_error_version $archive
-# CALLED BY: archive_extraction_innosetup
-archive_extraction_innosetup_error_version() {
-	local archive
-	archive="$1"
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de l’archive suivante :'
-		;;
-		('en'|*)
-			string='Available innoextract version is too old to extract data from the following archive:'
-		;;
-	esac
-	printf "$string %s\\n" "$archive"
-	exit 1
-}
-

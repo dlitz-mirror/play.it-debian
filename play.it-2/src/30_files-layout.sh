@@ -19,25 +19,6 @@ prepare_package_layout() {
 	done
 }
 
-# display an error when calling prepare_package_layout() without argument while
-# $PACKAGES_LIST is unset or empty
-# USAGE: prepare_package_layout_error_no_list
-# NEEDED VARS: (LANG)
-prepare_package_layout_error_no_list() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='prepare_package_layout ne peut pas être appelé sans argument si $PACKAGES_LIST n’est pas défini.'
-		;;
-		('en'|*)
-			string='prepare_package_layout can not be called without argument if $PACKAGES_LIST is not set.'
-		;;
-	esac
-	printf '%s\n' "$string"
-	return 1
-}
-
 # put files from archive in the right package directories
 # USAGE: organize_data $id $path
 organize_data() {
@@ -100,23 +81,5 @@ organize_data() {
 		done
 		set +o noglob
 	fi
-}
-
-# display an error when calling organize_data() with $PKG unset or empty
-# USAGE: organize_data_error_missing_pkg
-# NEEDED VARS: (LANG)
-organize_data_error_missing_pkg() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='organize_data ne peut pas être appelé si $PKG n’est pas défini.\n'
-		;;
-		('en'|*)
-			string='organize_data can not be called if $PKG is not set.\n'
-		;;
-	esac
-	printf "$string"
-	return 1
 }
 
