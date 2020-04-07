@@ -194,16 +194,16 @@ get_value() {
 check_option_validity() {
 	local option_name option_value allowed_values
 	option_name="$1"
-	option_value="$(get_value "OPTION_$name")"
-	allowed_values="$(get_value "ALLOWED_VALUES_$name")"
+	option_value=$(get_value "OPTION_${option_name}")
+	allowed_values=$(get_value "ALLOWED_VALUES_${option_name}")
 	for allowed_value in $allowed_values; do
-		if [ "$value" = "$allowed_value" ]; then
+		if [ "$option_value" = "$allowed_value" ]; then
 			# leaves the function with a success code if the tested value is valid
 			return 0
 		fi
 	done
 	# if we did not leave the function before this point, the tested value is not valid
-	option_name=$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')" "$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')
+	option_name=$(printf '%s' "$option_name" | tr '[:upper:]' '[:lower:]')
 	error_option_invalid "$option_name" "$option_value"
 }
 

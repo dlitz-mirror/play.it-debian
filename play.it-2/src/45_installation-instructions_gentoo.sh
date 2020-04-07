@@ -3,7 +3,6 @@
 print_instructions_gentoo() {
 	local pkg_path
 	local str_format
-	local str_comment
 	printf 'quickunpkg --'
 	for pkg in "$@"; do
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then

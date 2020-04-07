@@ -486,6 +486,7 @@ launcher_write_desktop() {
 	local application_type
 	if [ "$application" = 'APP_WINECFG' ]; then
 		application_id="${GAME_ID}_winecfg"
+		# shellcheck disable=SC2153
 		application_name="$GAME_NAME - WINE configuration"
 		application_category='Settings'
 		application_type='wine'

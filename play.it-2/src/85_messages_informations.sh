@@ -55,10 +55,10 @@ information_file_integrity_check() {
 	file=$(basename "$1")
 	case "${LANG%_*}" in
 		('fr')
-			string='Contrôle de lʼintégrité de %s'
+			message='Contrôle de lʼintégrité de %s'
 		;;
 		('en'|*)
-			string='Checking integrity of %s'
+			message='Checking integrity of %s'
 		;;
 	esac
 	printf "$message" "$file"
@@ -72,10 +72,10 @@ information_archive_data_extraction() {
 	file="$1"
 	case "${LANG%_*}" in
 		('fr')
-			string='Extraction des données de %s'
+			message='Extraction des données de %s'
 		;;
 		('en'|*)
-			string='Extracting data from %s'
+			message='Extracting data from %s'
 		;;
 	esac
 	printf "$message" "$file"
@@ -112,7 +112,7 @@ information_required_gentoo_overlays() {
 			message='\nYou may need the following overlays to install these packages: %s\n'
 		;;
 	esac
-	printf "$printf" "$overlays"
+	printf "$message" "$overlays"
 	return 0
 }
 

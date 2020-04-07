@@ -188,7 +188,7 @@ error_option_invalid() {
 		;;
 	esac
 	print_error
-	printf "$message" "$option_value" "$option_name"
+	printf "$message" "$option_value" "$option_name" "$option_name"
 	return 1
 }
 

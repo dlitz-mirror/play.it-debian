@@ -8,16 +8,16 @@ help() {
 	case "${LANG%_*}" in
 		('fr')
 			if [ "$script_name" = 'play.it' ]; then
-				message='\nUtilisation : % ARCHIVE [OPTION]…\n\n'
+				message='\nUtilisation : %s ARCHIVE [OPTION]…\n\n'
 			else
-				message='\nUtilisation : %s %s [OPTION]… [ARCHIVE]\n\n'
+				message='\nUtilisation : %s [OPTION]… [ARCHIVE]\n\n'
 			fi
 		;;
 		('en'|*)
 			if [ "$script_name" = 'play.it' ]; then
-				message='\nUsage: % ARCHIVE [OPTION]…\n\n'
+				message='\nUsage: %s ARCHIVE [OPTION]…\n\n'
 			else
-				message='\nUsage: %s %s [OPTION]… [ARCHIVE]\n\n'
+				message='\nUsage: %s [OPTION]… [ARCHIVE]\n\n'
 			fi
 		;;
 	esac
@@ -46,16 +46,16 @@ help() {
 	case "${LANG%_*}" in
 		('fr')
 			if [ -n "${ARCHIVES_LIST##* *}" ]; then
-				message='Ce script reconnaît les archives suivantes :\n'
-			else
 				message='Ce script reconnaît lʼarchive suivante :\n'
+			else
+				message='Ce script reconnaît les archives suivantes :\n'
 			fi
 		;;
 		('en'|*)
 			if [ -n "${ARCHIVES_LIST##* *}" ]; then
-				message='This script can work on the following archives:\n'
-			else
 				message='This script can work on the following archive:\n'
+			else
+				message='This script can work on the following archives:\n'
 			fi
 		;;
 	esac
@@ -126,7 +126,7 @@ help_compression() {
 			message="$message"'\t%s\tcompression bzip2\n\n'                                    # bzip2
 		;;
 		('en'|*)
-			message='\tGenerated packages compression method selection\n\n\'
+			message='\tGenerated packages compression method selection\n\n'
 			message="$message"'\t%s\tno compression\n'                                       # none
 			message="$message"'\t%s\tgzip compression (fast)\n'                              # gzip
 			message="$message"'\t%s\txz compression (slower but more efficient than gzip)\n' # xz
@@ -174,7 +174,7 @@ help_package() {
 			message='\tGenerated package type selection\n\n'
 			message="$message"'\t%s\t.pkg.tar package (Arch Linux)\n' # arch
 			message="$message"'\t%s\t.deb package (Debian, Ubuntu)\n' # deb
-			nessage="$message"'\t%s\t.tbz2 package (Gentoo)\n\n'      #gentoo
+			message="$message"'\t%s\t.tbz2 package (Gentoo)\n\n'      #gentoo
 		;;
 	esac
 	printf -- '--package=arch|deb|gentoo\n'
