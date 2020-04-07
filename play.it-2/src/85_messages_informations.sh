@@ -99,3 +99,69 @@ information_package_building() {
 	return 0
 }
 
+# print notification about required overlays when building Gentoo packages
+# USAGE: information_required_gentoo_overlays $overlays
+information_required_gentoo_overlays() {
+	local message overlays
+	overlays="$1"
+	case "${LANG%_*}" in
+		('fr')
+			message='\nVous pouvez avoir besoin des overlays suivants pour installer ces paquets : %s\n'
+		;;
+		('en'|*)
+			message='\nYou may need the following overlays to install these packages: %s\n'
+		;;
+	esac
+	printf "$printf" "$overlays"
+	return 0
+}
+
+# print common part of packages installation instructions
+# USAGE: information_installation_instructions_common $game_name
+information_installation_instructions_common() {
+	local message game_name
+	game_name="$1"
+	case "${LANG%_*}" in
+		('fr')
+			message='\nInstallez "%s" en lançant la série de commandes suivantes en root :\n'
+		;;
+		('en'|*)
+			message='\nInstall "%s" by running the following commands as root:\n'
+		;;
+	esac
+	printf "$message" "$game_name"
+}
+
+# print variant precision for packages installation instructions
+# USAGE: information_installation_instructions_variant $variant
+information_installation_instructions_variant() {
+	local message variant
+	variant="$1"
+	case "${LANG%_*}" in
+		('fr')
+			message='\nversion %s :\n'
+		;;
+		('en'|*)
+			message='\n%s version:\n'
+		;;
+	esac
+	printf "$message" "$variant"
+	return 0
+}
+
+# add comment to packages installation instructions on Gentoo
+# USAGE: information_installation_instructions_gentoo_comment
+information_installation_instructions_gentoo_comment() {
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='ou mettez les paquets dans un PKGDIR (dans un dossier nommé games-playit) et emergez-les'
+		;;
+		('en'|*)
+			message='or put the packages in a PKGDIR (in a folder named games-playit) and emerge them'
+		;;
+	esac
+	printf "$message"
+	return 0
+}
+

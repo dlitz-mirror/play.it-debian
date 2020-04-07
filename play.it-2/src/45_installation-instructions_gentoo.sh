@@ -18,14 +18,8 @@ print_instructions_gentoo() {
 		fi
 		printf "$str_format" "$pkg_path"
 	done
-	case "${LANG%_*}" in
-		('fr')
-			str_comment='ou mettez les paquets dans un PKGDIR (dans un dossier nommé games-playit) et emergez-les'
-		;;
-		('en'|*)
-			str_comment='or put the packages in a PKGDIR (in a folder named games-playit) and emerge them'
-		;;
-	esac
-	printf ' # %s %s\n' 'https://downloads.dotslashplay.it/resources/gentoo/' "$str_comment"
+	printf ' # https://downloads.dotslashplay.it/resources/gentoo/ '
+	information_installation_instructions_gentoo_comment
+	printf '\n'
 }
 
