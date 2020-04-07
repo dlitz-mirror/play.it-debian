@@ -1,7 +1,7 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
 # NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) PACKAGES_LIST (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
-# CALLS: liberror pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
+# CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
 		write_metadata $PACKAGES_LIST
@@ -14,9 +14,11 @@ write_metadata() {
 	local pkg_path
 	local pkg_provide
 	for pkg in "$@"; do
-		testvar "$pkg" 'PKG' || liberror 'pkg' 'write_metadata'
+		if ! testvar "$pkg" 'PKG'; then
+			error_invalid_argument 'pkg' 'write_metadata'
+		fi
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
-			skipping_pkg_warning 'write_metadata' "$pkg"
+			warning_skip_package 'write_metadata' "$pkg"
 			continue
 		fi
 
@@ -25,7 +27,9 @@ write_metadata() {
 		pkg_id="$(get_value "${pkg}_ID")"
 		pkg_maint="$(whoami)@$(hostname)"
 		pkg_path="$(get_value "${pkg}_PATH")"
-		[ -n "$pkg_path" ] || missing_pkg_error 'write_metadata' "$pkg"
+		if [ -z "$pkg_path" ]; then
+			error_invalid_argument 'pkg' 'write_metadata'
+		fi
 		[ "$DRY_RUN" -eq 1 ] && continue
 		pkg_provide="$(get_value "${pkg}_PROVIDE")"
 
@@ -43,7 +47,7 @@ write_metadata() {
 				pkg_write_gentoo
 			;;
 			(*)
-				liberror 'OPTION_PACKAGE' 'write_metadata'
+				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
 			;;
 		esac
 	done
@@ -53,7 +57,7 @@ write_metadata() {
 # build .pkg.tar or .deb package
 # USAGE: build_pkg [$pkg…]
 # NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) PACKAGES_LIST (PKG_PATH) PLAYIT_WORKDIR
-# CALLS: liberror pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
+# CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
 		build_pkg $PACKAGES_LIST
@@ -61,13 +65,17 @@ build_pkg() {
 	fi
 	local pkg_path
 	for pkg in "$@"; do
-		testvar "$pkg" 'PKG' || liberror 'pkg' 'build_pkg'
+		if ! testvar "$pkg" 'PKG'; then
+			error_invalid_argument 'pkg' 'build_pkg'
+		fi
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
-			skipping_pkg_warning 'build_pkg' "$pkg"
+			warning_skip_package 'build_pkg' "$pkg"
 			return 0
 		fi
 		pkg_path="$(get_value "${pkg}_PATH")"
-		[ -n "$pkg_path" ] || missing_pkg_error 'build_pkg' "$PKG"
+		if [ -z "$pkg_path" ]; then
+			error_invalid_argument 'PKG' 'build_pkg'
+		fi
 		case $OPTION_PACKAGE in
 			('arch')
 				pkg_build_arch "$pkg_path"
@@ -79,7 +87,7 @@ build_pkg() {
 				pkg_build_gentoo "$pkg_path"
 			;;
 			(*)
-				liberror 'OPTION_PACKAGE' 'build_pkg'
+				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
 			;;
 		esac
 	done

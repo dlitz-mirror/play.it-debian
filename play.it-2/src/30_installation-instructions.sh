@@ -62,7 +62,7 @@ print_instructions() {
 				print_instructions_gentoo "$@"
 			;;
 			(*)
-				liberror 'OPTION_PACKAGE' 'print_instructions'
+				error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
 			;;
 		esac
 	fi
@@ -94,7 +94,7 @@ print_instructions_architecture_specific() {
 			print_instructions_gentoo "$@"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' 'print_instructions'
+			error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
 		;;
 	esac
 }

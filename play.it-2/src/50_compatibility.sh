@@ -75,11 +75,11 @@ compat_pkg_write_gentoo_prerm() {
 }
 
 liberror() {
-	error_invalid_argument "$@"
+	error_invalid_argument "$1" "$2"
 }
 
 skipping_pkg_warning() {
-	warning_skip_package "$@"
+	warning_skip_package "$1" "$2"
 }
 
 archive_set_error_not_found() {
@@ -87,15 +87,15 @@ archive_set_error_not_found() {
 }
 
 archive_guess_type_error() {
-	error_archive_type_not_set "$@"
+	error_archive_type_not_set "$1"
 }
 
 archive_print_file_in_use() {
-	information_file_in_use "$@"
+	information_file_in_use "$1"
 }
 
 archive_integrity_check_error() {
-	error_hashsum_mismatch "$@"
+	error_hashsum_mismatch "$1"
 }
 
 select_package_architecture_warning_unavailable() {

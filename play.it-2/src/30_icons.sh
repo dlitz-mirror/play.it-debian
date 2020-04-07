@@ -43,7 +43,9 @@ icons_get_from_package() {
 	local path
 	local path_pkg
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_get_from_package'
+	fi
 	path="${path_pkg}${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
 }
@@ -64,7 +66,7 @@ icons_get_from_workdir() {
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
-# CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar liberror
+# CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar
 icons_get_from_path() {
 	local app
 	local destination
@@ -78,17 +80,23 @@ icons_get_from_path() {
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_get_from_package'
+	fi
 	for app in "$@"; do
-		testvar "$app" 'APP' || liberror 'app' 'icons_get_from_package'
+		if ! testvar "$app" 'APP'; then
+			error_invalid_argument 'app' 'icons_get_from_package'
+		fi
 		list="$(get_value "${app}_ICONS_LIST")"
 		[ -n "$list" ] || list="${app}_ICON"
 		for icon in $list; do
 			use_archive_specific_value "$icon"
 			file="$(get_value "$icon")"
-			[ -z "$file" ] && icon_path_empty_error "$icon"
+			if [ -z "$file" ]; then
+				error_variable_not_set 'icons_get_from_path' '$'"$icon"
+			fi
 			if [ $DRY_RUN -eq 0 ] && [ ! -f "$directory/$file" ]; then
-				icon_file_not_found_error "$directory/$file"
+				error_icon_file_not_found "$directory/$file"
 			fi
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
@@ -123,7 +131,7 @@ icon_extract_png_from_file() {
 			icon_copy_png "$file" "$destination"
 		;;
 		(*)
-			liberror 'extension' 'icon_extract_png_from_file'
+			error_invalid_argument 'extension' 'icon_extract_png_from_file'
 		;;
 	esac
 }
@@ -214,7 +222,9 @@ icons_include_png_from_directory() {
 	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_include_png_from_directory' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_include_png_from_directory'
+	fi
 	for file in "$directory"/*.png; do
 		icon_get_resolution_from_file "$file"
 		path_icon="$PATH_ICON_BASE/$resolution/apps"
@@ -269,7 +279,9 @@ icons_linking_postinst() {
 	local path_icon
 	local path_pkg
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_linking_postinst' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_linking_postinst'
+	fi
 	path="${path_pkg}${PATH_GAME}"
 	for app in "$@"; do
 		list="$(get_value "${app}_ICONS_LIST")"
@@ -336,14 +348,14 @@ icons_move_to() {
 	# Get source path, ensure it is set
 	source_path=$(get_value "${source_package}_PATH")
 	if [ -z "$source_path" ]; then
-		missing_pkg_error 'icons_move_to' "$source_package"
+		error_invalid_argument 'PKG' 'icons_move_to'
 	fi
 	source_directory="${source_path}${PATH_ICON_BASE}"
 
 	# Get destination path, ensure it is set
 	destination_path=$(get_value "${destination_package}_PATH")
 	if [ -z "$destination_path" ]; then
-		missing_pkg_error 'icons_move_to' "$destination_package"
+		error_invalid_argument 'destination_package' 'icons_move_to'
 	fi
 	destination_directory="${destination_path}${PATH_ICON_BASE}"
 

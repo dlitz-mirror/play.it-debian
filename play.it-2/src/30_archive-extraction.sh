@@ -1,13 +1,13 @@
 # extract data from given archive
 # USAGE: extract_data_from $archive[…]
 # NEEDED_VARS: (ARCHIVE) (ARCHIVE_PASSWD) (ARCHIVE_TYPE) (LANG) (PLAYIT_WORKDIR)
-# CALLS: liberror extract_7z extract_data_from_print
+# CALLS: extract_7z
 extract_data_from() {
 	[ "$PLAYIT_WORKDIR" ] || return 1
 	[ "$ARCHIVE" ] || return 1
 	local file
 	for file in "$@"; do
-		extract_data_from_print "$(basename "$file")"
+		information_archive_data_extraction "$(basename "$file")"
 
 		local destination
 		destination="$PLAYIT_WORKDIR/gamedata"
@@ -75,7 +75,7 @@ extract_data_from() {
 				set_standard_permissions "$destination"
 			;;
 			(*)
-				liberror 'ARCHIVE_TYPE' 'extract_data_from'
+				error_invalid_argument 'ARCHIVE_TYPE' 'extract_data_from'
 			;;
 		esac
 
@@ -125,7 +125,6 @@ archive_extraction_lha() {
 
 # extract data from InnoSetup archive
 # USAGE: archive_extraction_innosetup $archive_type $archive $destination
-# CALLS: archive_extraction_innosetup_error_version
 archive_extraction_innosetup() {
 	local archive
 	local archive_type
@@ -142,7 +141,7 @@ archive_extraction_innosetup() {
 		head --lines=1 |\
 		grep --ignore-case 'unexpected setup data version' 1>/dev/null )
 	then
-		archive_extraction_innosetup_error_version "$archive"
+		error_innoextract_version_too_old "$archive"
 	fi
 	printf '\n'
 	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null

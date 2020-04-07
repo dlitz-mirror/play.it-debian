@@ -1,6 +1,6 @@
 # set package distribution-specific architecture
 # USAGE: set_architecture $pkg
-# CALLS: liberror set_architecture_arch set_architecture_deb set_architecture_gentoo
+# CALLS: set_architecture_arch set_architecture_deb set_architecture_gentoo
 # NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) (PKG_ARCH)
 # CALLED BY: set_temp_directories write_metadata
 set_architecture() {
@@ -18,14 +18,14 @@ set_architecture() {
 			set_architecture_gentoo "$architecture"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' 'set_architecture'
+			error_invalid_argument 'OPTION_PACKAGE' 'set_architecture'
 		;;
 	esac
 }
 
 # set package distribution-specific architectures
 # USAGE: set_supported_architectures $pkg
-# CALLS: liberror set_architecture set_architecture_gentoo
+# CALLS: set_architecture set_architecture_gentoo
 # NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) (PKG_ARCH)
 # CALLED BY: write_bin write_bin_set_native_noprefix write_metadata_gentoo
 set_supported_architectures() {
@@ -40,7 +40,7 @@ set_supported_architectures() {
 			set_supported_architectures_gentoo "$architecture"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' 'set_supported_architectures'
+			error_invalid_argument 'OPTION_PACKAGE' 'set_supported_architectures'
 		;;
 	esac
 }
@@ -138,7 +138,9 @@ toupper_shell() {
 # USAGE: use_archive_specific_value $var_name
 use_archive_specific_value() {
 	[ -n "$ARCHIVE" ] || return 0
-	testvar "$ARCHIVE" 'ARCHIVE' || liberror 'ARCHIVE' 'use_archive_specific_value'
+	if ! testvar "$ARCHIVE" 'ARCHIVE'; then
+		error_invalid_argument 'ARCHIVE' 'use_archive_specific_value'
+	fi
 	local name_real
 	name_real="$1"
 	local name
@@ -158,7 +160,9 @@ use_archive_specific_value() {
 # USAGE: use_package_specific_value $var_name
 use_package_specific_value() {
 	[ -n "$PKG" ] || return 0
-	testvar "$PKG" 'PKG' || liberror 'PKG' 'use_package_specific_value'
+	if ! testvar "$PKG" 'PKG'; then
+		error_invalid_argument 'PKG' 'use_package_specific_value'
+	fi
 	local name_real
 	name_real="$1"
 	local name

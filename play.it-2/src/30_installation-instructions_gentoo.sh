@@ -7,7 +7,7 @@ print_instructions_gentoo() {
 	printf 'quickunpkg --'
 	for pkg in "$@"; do
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
-			skipping_pkg_warning 'print_instructions_gentoo' "$pkg"
+			warning_skip_package 'print_instructions_gentoo' "$pkg"
 			return 0
 		fi
 		pkg_path="$(get_value "${pkg}_PKG")"

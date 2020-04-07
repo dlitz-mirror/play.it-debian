@@ -4,7 +4,9 @@
 # NEEDED VARS: (LANG) (PACKAGES_LIST) PLAYIT_WORKDIR (PKG_PATH)
 prepare_package_layout() {
 	if [ -z "$1" ]; then
-		[ -n "$PACKAGES_LIST" ] || prepare_package_layout_error_no_list
+		if [ -z "$PACKAGES_LIST" ]; then
+			error_variable_not_set 'prepare_package_layout' '$PACKAGES_LIST'
+		fi
 		prepare_package_layout $PACKAGES_LIST
 		return 0
 	fi
@@ -26,19 +28,19 @@ organize_data() {
 
 	# This function requires PKG to be set
 	if [ -z "$PKG" ]; then
-		organize_data_error_missing_pkg
+		error_variable_not_set 'organize_data' '$PKG'
 	fi
 
 	# Check that the current package is part of the target architectures
 	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		skipping_pkg_warning 'organize_data' "$PKG"
+		warning_skip_package 'organize_data' "$PKG"
 		return 0
 	fi
 
 	# Get current package path, check that it is set
 	pkg_path=$(get_value "${PKG}_PATH")
 	if [ -z "$pkg_path" ]; then
-		missing_pkg_error 'organize_data' "$PKG"
+		error_invalid_argument 'PKG' 'organize_data'
 	fi
 
 	use_archive_specific_value "ARCHIVE_${1}_PATH"

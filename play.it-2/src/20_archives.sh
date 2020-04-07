@@ -1,9 +1,11 @@
 # set main archive for data extraction
 # USAGE: archive_set_main $archive[…]
-# CALLS: archive_set archive_set_error_not_found
+# CALLS: archive_set
 archive_set_main() {
 	archive_set 'SOURCE_ARCHIVE' "$@"
-	[ -n "$SOURCE_ARCHIVE" ] || archive_set_error_not_found "$@"
+	if [ -z "$SOURCE_ARCHIVE" ]; then
+		error_archive_not_found "$@"
+	fi
 }
 
 # set a single archive for data extraction
@@ -74,7 +76,7 @@ archive_check_for_extra_parts() {
 
 # get informations about a single archive and export them
 # USAGE: archive_get_infos $archive $name $file
-# CALLS: archive_guess_type archive_integrity_check archive_print_file_in_use check_deps
+# CALLS: archive_guess_type archive_integrity_check check_deps
 # CALLED BY: archive_set
 archive_get_infos() {
 	local file
@@ -85,7 +87,7 @@ archive_get_infos() {
 	ARCHIVE="$1"
 	name="$2"
 	file="$3"
-	archive_print_file_in_use "$file"
+	information_file_in_use "$file"
 	eval $name=\"$file\"
 	md5="$(get_value "${ARCHIVE}_MD5")"
 	type="$(get_value "${ARCHIVE}_TYPE")"
@@ -110,7 +112,6 @@ archive_get_infos() {
 
 # try to guess archive type from file name
 # USAGE: archive_guess_type $archive $file
-# CALLS: archive_guess_type_error
 # CALLED BY: archive_get_infos
 archive_guess_type() {
 	local archive
@@ -153,7 +154,7 @@ archive_guess_type() {
 			type='7z'
 		;;
 		(*)
-			archive_guess_type_error "$archive"
+			error_archive_type_not_set "$archive"
 		;;
 	esac
 	eval ${archive}_TYPE=\'$type\'
@@ -162,7 +163,7 @@ archive_guess_type() {
 
 # check integrity of target file
 # USAGE: archive_integrity_check $archive $file
-# CALLS: archive_integrity_check_md5 liberror
+# CALLS: archive_integrity_check_md5
 archive_integrity_check() {
 	local archive
 	local file
@@ -177,24 +178,25 @@ archive_integrity_check() {
 			return 0
 		;;
 		(*)
-			liberror 'OPTION_CHECKSUM' 'archive_integrity_check'
+			error_invalid_argument 'OPTION_CHECKSUM' 'archive_integrity_check'
 		;;
 	esac
 }
 
 # check integrity of target file against MD5 control sum
 # USAGE: archive_integrity_check_md5 $archive $file
-# CALLS: archive_integrity_check_print archive_integrity_check_error
 # CALLED BY: archive_integrity_check
 archive_integrity_check_md5() {
 	local archive
 	local file
 	archive="$1"
 	file="$2"
-	archive_integrity_check_print "$file"
+	information_file_integrity_check "$file"
 	archive_sum="$(get_value "${ARCHIVE}_MD5")"
 	file_sum="$(md5sum "$file" | awk '{print $1}')"
-	[ "$file_sum" = "$archive_sum" ] || archive_integrity_check_error "$file"
+	if [ "$file_sum" != "$archive_sum" ]; then
+		error_hashsum_mismatch "$file"
+	fi
 }
 
 # get list of available archives, exported as ARCHIVES_LIST

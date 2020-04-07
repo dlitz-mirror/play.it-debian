@@ -45,7 +45,7 @@ print_instructions_deb_common() {
 	local str_format
 	for pkg in "$@"; do
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
-			skipping_pkg_warning 'print_instructions_deb_common' "$pkg"
+			warning_skip_package 'print_instructions_deb_common' "$pkg"
 			return 0
 		fi
 		pkg_path="$(get_value "${pkg}_PKG")"

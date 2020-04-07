@@ -351,14 +351,13 @@ pkg_set_deps_arch64() {
 # build .pkg.tar package
 # USAGE: pkg_build_arch $pkg_path
 # NEEDED VARS: (OPTION_COMPRESSION) (LANG) PLAYIT_WORKDIR
-# CALLS: pkg_print
 # CALLED BY: build_pkg
 pkg_build_arch() {
 	local pkg_filename
 	pkg_filename="$PWD/$(basename "$1").pkg.tar"
 
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
-		pkg_build_print_already_exists "$(basename "$pkg_filename")"
+		information_package_already_exists "$(basename "$pkg_filename")"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg?}_PKG
 		return 0
@@ -396,11 +395,11 @@ pkg_build_arch() {
 		;;
 		('none') ;;
 		(*)
-			liberror 'OPTION_COMPRESSION' 'pkg_build_arch'
+			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_arch'
 		;;
 	esac
 
-	pkg_print "$(basename "$pkg_filename")"
+	information_package_building "$(basename "$pkg_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"

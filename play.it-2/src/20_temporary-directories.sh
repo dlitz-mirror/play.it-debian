@@ -13,7 +13,7 @@ get_tmp_dir() {
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
 # NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: set_temp_directories_error_no_size set_temp_directories_error_not_enough_space set_temp_directories_pkg testvar get_tmp_dir
+# CALLS: set_temp_directories_pkg testvar get_tmp_dir
 set_temp_directories() {
 	local base_directory
 	local free_space
@@ -37,7 +37,7 @@ set_temp_directories() {
 		if [ "$ARCHIVE_SIZE" ]; then
 			needed_space=$((ARCHIVE_SIZE * 2))
 		else
-			set_temp_directories_error_no_size
+			error_variable_not_set 'set_temp_directories' '$ARCHIVE_SIZE'
 		fi
 		[ "$XDG_RUNTIME_DIR" ] || XDG_RUNTIME_DIR="/run/user/$(id -u)"
 		[ "$XDG_CACHE_HOME" ]  || XDG_CACHE_HOME="$HOME/.cache"
@@ -62,7 +62,11 @@ set_temp_directories() {
 		if [ -n "$base_directory" ]; then
 			mkdir --parents "$base_directory"
 		else
-			set_temp_directories_error_not_enough_space
+			error_not_enough_free_space \
+				"$XDG_RUNTIME_DIR" \
+				"$tmpdir" \
+				"$XDG_CACHE_HOME" \
+				"$PWD"
 		fi
 	fi
 

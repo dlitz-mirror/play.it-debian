@@ -227,7 +227,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' "$0"
+			error_invalid_argument 'OPTION_PACKAGE' "$0"
 		;;
 	esac
 

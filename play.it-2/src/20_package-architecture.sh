@@ -1,11 +1,10 @@
 # select package architecture to build
 # USAGE: select_package_architecture
 # NEEDED_VARS: OPTION_ARCHITECTURE PACKAGES_LIST
-# CALLS: select_package_architecture_warning_unavailable select_package_architecture_error_unknown select_package_architecture_warning_unsupported
 select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
 	if version_target_is_older_than '2.6'; then
-		select_package_architecture_warning_unsupported
+		warning_option_not_supported '--architecture'
 		OPTION_ARCHITECTURE='all'
 		export OPTION_ARCHITECTURE
 		return 0
@@ -50,7 +49,7 @@ select_package_architecture() {
 	case "$OPTION_ARCHITECTURE" in
 		('32')
 			if [ -z "$packages_list_32" ]; then
-				select_package_architecture_warning_unavailable
+				warning_architecture_not_available "$OPTION_ARCHITECTURE"
 				OPTION_ARCHITECTURE='all'
 				return 0
 			fi
@@ -58,14 +57,14 @@ select_package_architecture() {
 		;;
 		('64')
 			if [ -z "$packages_list_64" ]; then
-				select_package_architecture_warning_unavailable
+				warning_architecture_not_available "$OPTION_ARCHITECTURE"
 				OPTION_ARCHITECTURE='all'
 				return 0
 			fi
 			PACKAGES_LIST="$packages_list_64 $packages_list_all"
 		;;
 		(*)
-			select_package_architecture_error_unknown
+			error_architecture_not_supported "$OPTION_ARCHITECTURE"
 		;;
 	esac
 	export PACKAGES_LIST
