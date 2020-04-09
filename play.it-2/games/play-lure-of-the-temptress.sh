@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200221.1
+script_version=20200221.2
 
 # Set game-specific variables
 
@@ -58,10 +58,12 @@ ARCHIVE_GOG_FR_SIZE='94000'
 ARCHIVE_GOG_FR_VERSION='1.1-gog20099'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*'
+ARCHIVE_DOC0_MAIN_FILES='*.txt'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data/scream'
-ARCHIVE_DOC1_MAIN_FILES='*.txt'
+ARCHIVE_DOC1_MAIN_PATH_GOG_EN='data/noarch/docs/english'
+# There is no French manual in the archive; fall back to English one instead
+ARCHIVE_DOC1_MAIN_PATH_GOG_FR='data/noarch/docs/english'
+ARCHIVE_DOC1_MAIN_FILES='*.pdf *.txt'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
 ARCHIVE_GAME_MAIN_FILES='*.vga'

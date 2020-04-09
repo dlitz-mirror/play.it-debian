@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2020, Antoine Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,42 +30,68 @@ set -o errexit
 ###
 
 ###
-# Memoranda
+# Touhou Hifuu Nightmare Diary ~ Violet Detector
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200328.1
+script_version=20200508.2
 
 # Set game-specific variables
 
-SCRIPT_DEPS='convert'
+GAME_ID='touhou-hifuu-nightmare-diary-violet-detector'
+GAME_NAME='Touhou Hifuu Nightmare Diary ~ Violet Detector'
 
-GAME_ID='memoranda'
-GAME_NAME='Memoranda'
+SCRIPT_DEPS='iconv'
 
-ARCHIVE_GOG='gog_memoranda_2.2.0.3.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/memoranda'
-ARCHIVE_GOG_MD5='9671ebb592d4b4a028fd80f76e96c1a1'
-ARCHIVE_GOG_SIZE='800000'
-ARCHIVE_GOG_VERSION='1.0-gog2.2.0.3'
+ARCHIVES_LIST='ARCHIVE_DISC ARCHIVE_DISC_RAW'
 
-ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBSSL32_URL='https://www.dotslashplay.it/ressources/libssl/'
-ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
+ARCHIVE_DISC='violet-detector.iso'
+ARCHIVE_DISC_MD5='d6198341c3c92befbeb713fdccc189e7'
+ARCHIVE_DISC_VERSION='1.00a-disc'
+ARCHIVE_DISC_SIZE='370000'
+ARCHIVE_DISC_TYPE='iso'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='runner'
+ARCHIVE_DISC_RAW='violet-detector-raw.iso'
+ARCHIVE_DISC_RAW_MD5='7bbcf834290e33c0bb656a43a9d39ffe'
+ARCHIVE_DISC_RAW_VERSION="$ARCHIVE_DISC_VERSION"
+ARCHIVE_DISC_RAW_SIZE="$ARCHIVE_DISC_SIZE"
+ARCHIVE_DISC_RAW_TYPE="$ARCHIVE_DISC_TYPE"
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='assets'
+ARCHIVE_DOC_DATA_PATH='th165'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='# Work around Mesa-related startup crash
-# cf. https://gitlab.freedesktop.org/mesa/mesa/issues/1310
-export radeonsi_sync_compile=true'
-APP_MAIN_EXE='runner'
-APP_MAIN_ICON='assets/icon.png'
+ARCHIVE_GAME_BIN_PATH='th165'
+ARCHIVE_GAME_BIN_FILES='*.exe'
+
+ARCHIVE_GAME_DATA_PATH='th165'
+ARCHIVE_GAME_DATA_FILES='*.dat'
+
+DATA_DIRS='./userdata'
+
+APP_MAIN_TYPE='wine'
+APP_MAIN_PRERUN='# Use Japanese locale to avoid issues with characters display
+export LANG=ja_JP.UTF-8'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Store saved games and settings outside of WINE prefix
+user_data_path="$WINEPREFIX/drive_c/users/$USER/Application Data/ShanghaiAlice/th165"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/userdata"
+	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+APP_MAIN_EXE='th165.exe'
+APP_MAIN_ICON='th165.exe'
+
+APP_CONFIG_ID="${GAME_ID}_config"
+APP_CONFIG_TYPE='wine'
+APP_CONFIG_PRERUN="$APP_MAIN_PRERUN"
+APP_CONFIG_EXE='custom.exe'
+APP_CONFIG_ICON='custom.exe'
+APP_CONFIG_NAME="$GAME_NAME - configuration"
+APP_CONFIG_CAT='Settings'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -73,10 +99,11 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal libxrandr glu"
-PKG_BIN_DEPS_ARCH='lib32-zlib lib32-libxxf86vm lib32-libxext lib32-libx11 lib32-openssl-1.0 lib32-gcc-libs'
-PKG_BIN_DEPS_DEB='zlib1g, libxxf86vm1, libxext6, libx11-6, libgcc-s1 | libgcc1'
-PKG_BIN_DEPS_GENTOO='sys-libs/zlib[abi_x86_32] x11-libs/libXxf86vm[abi_x86_32] x11-libs/libXext[abi_x86_32] x11-libs/libX11[abi_x86_32] dev-libs/openssl-compat[abi_x86_32]'
+PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS_DEB='fonts-wqy-microhei'
+PKG_BIN_DEPS_ARCH='wqy-microhei'
+PKG_BIN_DEPS_GENTOO='media-fonts/wqy-microhei'
+PKG_BIN_POSTINST_WARN='You may need to generate the ja_JP.UTF-8 locale to play this game'
 
 # Load common functions
 
@@ -106,53 +133,29 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Use libSSL 1.0.0 32-bit archive (Debian packages only)
-
-case "$OPTION_PACKAGE" in
-	('deb')
-		ARCHIVE_MAIN="$ARCHIVE"
-		archive_set 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
-		ARCHIVE="$ARCHIVE_MAIN"
-	;;
-	('arch'|'gentoo')
-		# Both Arch Linux and Gentoo still have official libSSL 1.0.0 packages
-	;;
-	(*)
-		liberror 'OPTION_PACKAGE' "$0"
-	;;
-esac
-
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Get game icon
+# Convert the text files to UTF-8 encoding
 
-PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
-
-# Build 512×512 icon from the 1024×1024 provided one
-
-PATH_ICON="${PATH_ICON_BASE}/512x512/apps"
-mkdir --parents "${PKG_DATA_PATH}${PATH_ICON}"
-convert "${PKG_DATA_PATH}${PATH_GAME}/${APP_MAIN_ICON}" -resize 512 "${PKG_DATA_PATH}${PATH_ICON}/${GAME_ID}.png"
-
-# Include libSSL 1.0.0 (Debian packages only)
-
-if [ "$ARCHIVE_LIBSSL32" ]; then
-	ARCHIVE='ARCHIVE_LIBSSL32' \
-		extract_data_from "$ARCHIVE_LIBSSL32"
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
+if [ $DRY_RUN -eq 0 ]; then
+	find "${PKG_DATA_PATH}${PATH_DOC}" -name '*.txt' -exec \
+		sh -c 'contents=$(iconv --from-code CP932 --to-code UTF-8 "$1"); printf "%s" "$contents" > "$1"' -- '{}' \;
 fi
+
+# Extract game icons
+
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN' 'APP_CONFIG'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 
 PKG='PKG_BIN'
-launchers_write 'APP_MAIN'
+launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Build package
 

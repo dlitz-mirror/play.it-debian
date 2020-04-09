@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2019-2020, Erwann Duclos
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,48 +29,47 @@ set -o errexit
 ###
 
 ###
-# Baba Is You
+# Triple Triad Gold
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200301.3
+script_version=20200311.1
 
 # Set game-specific variables
 
-GAME_ID='baba-is-you'
-GAME_NAME='Baba Is You'
+GAME_ID='triple-triad-gold'
+GAME_NAME='Triple Triad Gold'
 
-ARCHIVE_ITCH='BIY_linux.tar.gz'
-ARCHIVE_ITCH_URL='https://hempuli.itch.io/baba'
-ARCHIVE_ITCH_MD5='3694afc5579cdaad7448c9744aa8d063'
-ARCHIVE_ITCH_VERSION='1.0-itch1'
-ARCHIVE_ITCH_SIZE='87000'
+ARCHIVE_OFFICIAL='ttg09.zip'
+ARCHIVE_OFFICIAL_URL='https://ttg.qhimm.com/'
+ARCHIVE_OFFICIAL_MD5='ec517c23236f2ad9217e1488f27b3dab'
+ARCHIVE_OFFICIAL_VERSION='0.9-official1'
+ARCHIVE_OFFICIAL_SIZE='4400'
 
-ARCHIVE_GAME_BIN32_PATH='Baba Is You/bin32'
-ARCHIVE_GAME_BIN32_FILES='Chowdren'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
 
-ARCHIVE_GAME_BIN64_PATH='Baba Is You/bin64'
-ARCHIVE_GAME_BIN64_FILES='Chowdren'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='*.dat'
 
-ARCHIVE_GAME_DATA_PATH='Baba Is You'
-ARCHIVE_GAME_DATA_FILES='Data icon.bmp Assets.dat gamecontrollerdb.txt'
+CONFIG_FILES='./settings.dat'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='Chowdren'
-APP_MAIN_EXE_BIN64='Chowdren'
-APP_MAIN_ICON='icon.bmp'
+APP_WINETRICKS='mfc42'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+APP_MAIN_TYPE='wine'
+APP_MAIN_EXE='triple triad gold.exe'
+APP_MAIN_ICON='triple triad gold.exe'
+APP_MAIN_ICON_ID='128'
+
+PACKAGES_LIST='PKG_DATA PKG_BIN'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glx glibc libstdc++ libxrandr alsa"
-
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN_ID="$GAME_ID"
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
@@ -104,19 +102,20 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get game icon
 
-PKG='PKG_DATA'
+PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

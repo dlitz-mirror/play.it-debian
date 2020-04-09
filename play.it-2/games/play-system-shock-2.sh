@@ -34,19 +34,24 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200207.2
+script_version=20200207.3
 
 # Set game-specific variables
 
 GAME_ID='system-shock-2'
 GAME_NAME='System Shock 2'
 
-ARCHIVE_GOG='setup_system_shock_2_2.47_nd_(22087).exe'
+ARCHIVE_GOG='setup_system_shocktm_2_2.48_(31077).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/system_shock_2'
-ARCHIVE_GOG_MD5='cc2ff390b566364447dc5bd05757fe57'
-ARCHIVE_GOG_SIZE='670000'
-ARCHIVE_GOG_VERSION='2.47-gog22087'
-ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_MD5='b8bbec00aef894db6641e46a0446cbb2'
+ARCHIVE_GOG_SIZE='660000'
+ARCHIVE_GOG_VERSION='2.48-gog31077'
+
+ARCHIVE_GOG_OLD4='setup_system_shock_2_2.47_nd_(22087).exe'
+ARCHIVE_GOG_OLD4_MD5='cc2ff390b566364447dc5bd05757fe57'
+ARCHIVE_GOG_OLD4_SIZE='670000'
+ARCHIVE_GOG_OLD4_VERSION='2.47-gog22087'
+ARCHIVE_GOG_OLD4_TYPE='innosetup1.7'
 
 ARCHIVE_GOG_OLD3='setup_system_shock_2_2.46_update_3_(19935).exe'
 ARCHIVE_GOG_OLD3_MD5='cdafcdea01556eccab899f94503843df'
@@ -72,29 +77,29 @@ ARCHIVE_GOG_OLD0_VERSION='2.46-gog11004'
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf *.txt *.wri doc editor/*.txt'
 # Keep compatibility with old archives
-ARCHIVE_DOC_DATA_PATH_GOG_OLD1='app'
 ARCHIVE_DOC_DATA_PATH_GOG_OLD2='app'
+ARCHIVE_DOC_DATA_PATH_GOG_OLD1='app'
 ARCHIVE_DOC_DATA_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME0_BIN_PATH='.'
 ARCHIVE_GAME0_BIN_FILES='*.ax *.bnd *.cfg *.crt *.dll *.exe *.osm */*.cfg */*.dll */*.exe'
 # Keep compatibility with old archives
-ARCHIVE_GAME0_BIN_PATH_GOG_OLD1='app'
 ARCHIVE_GAME0_BIN_PATH_GOG_OLD2='app'
+ARCHIVE_GAME0_BIN_PATH_GOG_OLD1='app'
 ARCHIVE_GAME0_BIN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME1_BIN_PATH='__support/app'
 ARCHIVE_GAME1_BIN_FILES='*.cfg *.ini'
 # Keep compatibility with old archives
-ARCHIVE_GAME1_BIN_PATH_GOG_OLD1='app/__support/app'
 ARCHIVE_GAME1_BIN_PATH_GOG_OLD2='app/__support/app'
+ARCHIVE_GAME1_BIN_PATH_GOG_OLD1='app/__support/app'
 ARCHIVE_GAME1_BIN_PATH_GOG_OLD0='app/__support/app'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.bin *.dif *.dml ilist.* patch* binds data sq_scripts'
 # Keep compatibility with old archives
-ARCHIVE_GAME_DATA_PATH_GOG_OLD1='app'
 ARCHIVE_GAME_DATA_PATH_GOG_OLD2='app'
+ARCHIVE_GAME_DATA_PATH_GOG_OLD1='app'
 ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_FILES='./*.bnd ./*.cfg ./*.ini'
@@ -105,7 +110,7 @@ DATA_FILES='./*.log'
 APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='shock2.exe'
+APP_MAIN_EXE='ss2.exe'
 # shellcheck disable=SC2016
 APP_MAIN_POSTRUN='# Work around issues with configuration persistence
 for cfg in *.cfg; do
@@ -115,7 +120,16 @@ for cfg in *.cfg; do
 		ln --symbolic "$PATH_CONFIG/$cfg" "$cfg"
 	fi
 done'
-APP_MAIN_ICON='shock2.exe'
+APP_MAIN_ICON='ss2.exe'
+# Keep compatibility with old archives
+APP_MAIN_EXE_OLD3='shock2.exe'
+APP_MAIN_EXE_OLD2='shock2.exe'
+APP_MAIN_EXE_OLD1='shock2.exe'
+APP_MAIN_EXE_OLD0='shock2.exe'
+APP_MAIN_ICON_OLD3='shock2.exe'
+APP_MAIN_ICON_OLD2='shock2.exe'
+APP_MAIN_ICON_OLD1='shock2.exe'
+APP_MAIN_ICON_OLD0='shock2.exe'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
