@@ -21,29 +21,46 @@ versions are needed.
 
 ## Installation
 
-You can check on Repology if ./play.it is packaged for your distribution:
+### Distributions providing ./play.it
 
-[![latest packaged version]][repology]
+The following distributions provide installation instructions in their official
+documentation:
 
-[latest packaged version]: https://repology.org/badge/latest-versions/play.it.svg
-[repology]: https://repology.org/metapackage/play.it
+* [Arch Linux]
+* [Debian]
+* [Gentoo]
 
-For Debian and derivatives (Ubuntu, Linux Mint, etc.): `apt install play.it`
+[Arch Linux]: https://wiki.archlinux.org/index.php/Play.it#Installation
+[Debian]: https://wiki.debian.org/Games/PlayIt#Installation
+[Gentoo]: https://wiki.gentoo.org/wiki/Play.it#Installation
 
-For Arch Linux, AUR packages are provided:
-* stable version: https://aur.archlinux.org/packages/play.it/
-* development version: https://aur.archlinux.org/packages/play.it-git/
+In most cases, these instructions should work in the same way for derivatives
+of these distributions.
 
-For Gentoo, an overlay is provided: https://framagit.org/BetaRays/gentoo-overlay
+### Installation from git
 
 If your distribution does not already have a package for ./play.it, you can
-install it from this git repository:
+install it from this git repository.
+
+#### Latest stable version
+
 ```
-git clone https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+git clone --branch 2.11.4 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
 cd play.it.git
 make
 make install
 ```
+
+#### Current development version
+
+```
+git clone --branch master --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+cd play.it.git
+make
+make install
+```
+
+## Usage
 
 Once installed, you just need to provide a [supported game installer] as the
 first argument to create the package.
