@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180408.3
+script_version=20200410.1
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='rakuen'
 GAME_NAME='Rakuen'
 
 ARCHIVE_HUMBLE='rakuen_linux.tgz'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/rakuen'
 ARCHIVE_HUMBLE_MD5='cae92b2e92cd4e15796a7faa765d2e64'
 ARCHIVE_HUMBLE_VERSION='1.0-humble1'
 ARCHIVE_HUMBLE_SIZE='200000'
