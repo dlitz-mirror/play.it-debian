@@ -55,7 +55,7 @@ ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'
 
 ARCHIVE_OPTIONAL_ICONS='deponia-2_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/deponia-2/'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/deponia-2/'
 ARCHIVE_OPTIONAL_ICONS_MD5='4469f0e85881f0db2c266dcb6222717c'
 
 ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'

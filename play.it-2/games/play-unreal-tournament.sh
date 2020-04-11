@@ -50,7 +50,7 @@ ARCHIVE_GOG_SIZE='640000'
 ARCHIVE_GOG_VERSION='451-gog2.0.0.5'
 
 ARCHIVE_REQUIRED_ENGINE='ut99v451-linux.2019-07-21.tar.gz'
-ARCHIVE_REQUIRED_ENGINE_URL='https://www.dotslashplay.it/ressources/unreal-tournament/'
+ARCHIVE_REQUIRED_ENGINE_URL='https://downloads.dotslashplay.it/resources/unreal-tournament/'
 ARCHIVE_REQUIRED_ENGINE_MD5='6cf7b84c8ce719a74d1c7724152d5c70'
 
 ARCHIVE_DOC_DATA_PATH='app'

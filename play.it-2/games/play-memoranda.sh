@@ -51,7 +51,7 @@ ARCHIVE_GOG_SIZE='800000'
 ARCHIVE_GOG_VERSION='1.0-gog2.2.0.3'
 
 ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBSSL32_URL='https://www.dotslashplay.it/ressources/libssl/'
+ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
 ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'

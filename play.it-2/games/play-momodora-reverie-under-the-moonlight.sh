@@ -56,7 +56,7 @@ ARCHIVE_GOG_OLD0_VERSION='1.02a-gog20149'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_OPTIONAL_LIBCURL='libcurl3_7.60.0_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBCURL_URL='https://www.dotslashplay.it/ressources/libcurl/'
+ARCHIVE_OPTIONAL_LIBCURL_URL='https://downloads.dotslashplay.it/resources/libcurl/'
 ARCHIVE_OPTIONAL_LIBCURL_MD5='7206100f065d52de5a4c0b49644aa052'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'

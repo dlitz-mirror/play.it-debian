@@ -49,7 +49,7 @@ ARCHIVE_GOG_SIZE='1500000'
 ARCHIVE_GOG_VERSION='2.12.508-gog2.0.0.2'
 
 ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBPNG32_URL='https://www.dotslashplay.it/ressources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG32_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
