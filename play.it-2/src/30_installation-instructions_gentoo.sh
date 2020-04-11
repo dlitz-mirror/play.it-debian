@@ -26,6 +26,6 @@ print_instructions_gentoo() {
 			str_comment='or put the packages in a PKGDIR (in a folder named games-playit) and emerge them'
 		;;
 	esac
-	printf ' # %s %s\n' 'https://www.dotslashplay.it/ressources/gentoo/' "$str_comment"
+	printf ' # %s %s\n' 'https://downloads.dotslashplay.it/resources/gentoo/' "$str_comment"
 }
 

@@ -9,6 +9,8 @@
 
   * Debian: Fix APT version detection with APT ≥ 2.0.0
 
+  * Gentoo: Update download link for quickunpkg
+
 2.11.3
 
   * Fix cdrom type (file or directory) detection for DOSBox games
