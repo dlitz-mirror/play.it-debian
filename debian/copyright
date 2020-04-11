@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: ./play.it
 Upstream-Contact: Antoine Le Gonidec <vv221@dotslashplay.it>
-Source: https://framagit.org/vv221/play.it.git
+Source: https://forge.dotslashplay.it/play.it/scripts.git
 Disclaimer: This package is not part of Debian. It is provided as a convenience
  for integrating non-free games with the users expectations of Debian.
 License: BSD-2-Clause
