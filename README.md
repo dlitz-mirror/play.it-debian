@@ -26,11 +26,9 @@ versions are needed.
 The following distributions provide installation instructions in their official
 documentation:
 
-* [Arch Linux]
 * [Debian]
 * [Gentoo]
 
-[Arch Linux]: https://wiki.archlinux.org/index.php/Play.it#Installation
 [Debian]: https://wiki.debian.org/Games/PlayIt#Installation
 [Gentoo]: https://wiki.gentoo.org/wiki/Play.it#Installation
 
