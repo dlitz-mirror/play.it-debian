@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200413.16
+script_version=20200413.17
 
 # Set game-specific variables
 
@@ -138,7 +138,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 sdl2_mixer"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2 sdl2_mixer"
 # Keep compatibility with old archives
 PKG_BIN32_DEPS_SDL1="$PKG_DATA_ID glibc libstdc++ glx glu sdl1.2"
 PKG_BIN32_DEPS_ARCH_SDL1='lib32-sdl_mixer'
