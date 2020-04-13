@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200413.14
+script_version=20200413.15
 
 # Set game-specific variables
 
@@ -55,10 +55,10 @@ ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC1_DATA_FILES='*.html *.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='WorldOfGoo.bin32 libs32 res/*/*.binltl res/*/*/*.binltl'
+ARCHIVE_GAME_BIN32_FILES='WorldOfGoo.bin32 res/*/*.binltl res/*/*/*.binltl'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='WorldOfGoo.bin64 libs64 res/*/*.binltl64 res/*/*/*.binltl64'
+ARCHIVE_GAME_BIN64_FILES='WorldOfGoo.bin64 res/*/*.binltl64 res/*/*/*.binltl64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='icons properties res'
@@ -88,7 +88,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glu vorbis sdl1.2"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx glu sdl1.2"
 PKG_BIN32_DEPS_ARCH='lib32-sdl_mixer'
 PKG_BIN32_DEPS_DEB='libsdl-mixer1.2'
 PKG_BIN32_DEPS_GENTOO='media-libs/sdl-mixer[vorbis,abi_x86_32]'
