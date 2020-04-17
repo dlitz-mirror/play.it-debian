@@ -41,7 +41,7 @@ prepare_package_layout_error_no_list() {
 # put files from archive in the right package directories
 # USAGE: organize_data $id $path
 organize_data() {
-	local pkg_path archive_path archive_files destination_path source_path
+	local pkg_path archive_path archive_files source_path destination_path source_files_pattern source_file destination_file
 
 	# This function requires PKG to be set
 	if [ -z "$PKG" ]; then
@@ -78,15 +78,15 @@ organize_data() {
 		[ -d "$source_path" ]
 	then
 		mkdir --parents "$destination_path"
-		(
-			cd "$source_path"
-			for file in $archive_files; do
-				if [ -e "$file" ]; then
-					cp --recursive --force --link --parents --no-dereference --preserve=links "$file" "$pkg_path"
-					rm --recursive "$file"
+		for source_files_pattern in $archive_files; do
+			for source_file in "$source_path"/$source_files_pattern; do
+				if [ -e "$source_file" ]; then
+					destination_file="${destination_path}/${source_file#$source_path}"
+					mkdir --parents "$(dirname "$destination_file")"
+					mv "$source_file" "$destination_file"
 				fi
 			done
-		)
+		done
 	fi
 }
 
