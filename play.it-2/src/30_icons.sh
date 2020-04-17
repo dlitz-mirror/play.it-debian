@@ -322,17 +322,36 @@ icons_linking_postinst() {
 
 # move icons to the target package
 # USAGE: icons_move_to $pkg
-# NEEDED VARS: PATH_ICON_BASE PKG
 icons_move_to() {
-	local destination
-	local source
-	destination="$1"
-	destination_path="$(get_value "${destination}_PATH")"
-	[ -n "$destination_path" ] || missing_pkg_error 'icons_move_to' "$destination"
-	source="$PKG"
-	source_path="$(get_value "${source}_PATH")"
-	[ -n "$source_path" ] || missing_pkg_error 'icons_move_to' "$source"
-	[ "$DRY_RUN" -eq 1 ] && return 0
+	###
+	# TODO
+	# Check that $PKG is set to a valid package
+	# Check that $destination_package is set to a valid package
+	# Check that $PATH_ICON_BASE is set to an absolute path
+	###
+
+	local source_package source_path destination_package destination_path
+
+	source_package="$PKG"
+	destination_package="$1"
+
+	# Get source path, ensure it is set
+	source_path=$(get_value "${source_package}_PATH")
+	if [ -z "$source_path" ]; then
+		missing_pkg_error 'icons_move_to' "$source_package"
+	fi
+
+	# Get destination path, ensure it is set
+	destination_path=$(get_value "${destination_package}_PATH")
+	if [ -z "$destination_path" ]; then
+		missing_pkg_error 'icons_move_to' "$destination_package"
+	fi
+
+	# If called in dry-run mode, return early
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
+
 	(
 		cd "$source_path"
 		cp --link --parents --recursive --no-dereference --preserve=links "./$PATH_ICON_BASE" "$destination_path"
