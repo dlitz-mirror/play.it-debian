@@ -162,7 +162,7 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set options not already set by script arguments to default values
 
 	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'PREFIX'; do
-		if [ -z "$(get_value "OPTION_$option")" ]\
+		if [ -z "$(get_value "OPTION_$option")" ] \
 		&& [ -n "$(get_value "DEFAULT_OPTION_$option")" ]; then
 			# shellcheck disable=SC2046
 			eval OPTION_$option=\"$(get_value "DEFAULT_OPTION_$option")\"
