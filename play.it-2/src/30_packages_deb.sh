@@ -38,7 +38,11 @@ pkg_write_deb() {
 	PKG="$pkg" \
 		get_package_version
 
+	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"
+	chmod 755 "$control_directory"
+
+	# Write main metadata file, enforce correct permissions
 	cat > "$control_file" <<- EOF
 	Package: $pkg_id
 	Version: $PKG_VERSION
@@ -73,6 +77,9 @@ pkg_write_deb() {
 		 ./play.it script version $script_version
 		EOF
 	fi
+	chmod 644 "$control_file"
+
+	# Write postinst/prerm scripts, enforce correct permissions
 	if [ -e "$postinst" ]; then
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
