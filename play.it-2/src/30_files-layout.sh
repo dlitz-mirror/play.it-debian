@@ -40,33 +40,46 @@ prepare_package_layout_error_no_list() {
 
 # put files from archive in the right package directories
 # USAGE: organize_data $id $path
-# NEEDED VARS: (LANG) PLAYIT_WORKDIR (PKG) (PKG_PATH)
 organize_data() {
-	[ -n "$PKG" ] || organize_data_error_missing_pkg
-	if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
+	local pkg_path archive_path archive_files destination_path source_path
+
+	# This function requires PKG to be set
+	if [ -z "$PKG" ]; then
+		organize_data_error_missing_pkg
+	fi
+
+	# Check that the current package is part of the target architectures
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
 		skipping_pkg_warning 'organize_data' "$PKG"
 		return 0
 	fi
-	local pkg_path
-	if [ "$DRY_RUN" -eq 1 ]; then
-		pkg_path="$(get_value "${PKG}_PATH")"
-		[ -n "$pkg_path" ] || missing_pkg_error 'organize_data' "$PKG"
+
+	# Get current package path, check that it is set
+	pkg_path=$(get_value "${PKG}_PATH")
+	if [ -z "$pkg_path" ]; then
+		missing_pkg_error 'organize_data' "$PKG"
+	fi
+
+	use_archive_specific_value "ARCHIVE_${1}_PATH"
+	archive_path=$(get_value "ARCHIVE_${1}_PATH")
+	use_archive_specific_value "ARCHIVE_${1}_FILES"
+	archive_files=$(get_value "ARCHIVE_${1}_FILES")
+	destination_path="${pkg_path}${2}"
+	source_path="$PLAYIT_WORKDIR/gamedata/$archive_path"
+
+	# When called in dry-run mode, return early
+	if [ $DRY_RUN -eq 1 ]; then
 		return 0
 	fi
-	use_archive_specific_value "ARCHIVE_${1}_PATH"
-	use_archive_specific_value "ARCHIVE_${1}_FILES"
-	local archive_path
-	archive_path="$(get_value "ARCHIVE_${1}_PATH")"
-	local archive_files
-	archive_files="$(get_value "ARCHIVE_${1}_FILES")"
 
-	if [ "$archive_path" ] && [ "$archive_files" ] && [ -d "$PLAYIT_WORKDIR/gamedata/$archive_path" ]; then
-		pkg_path="$(get_value "${PKG}_PATH")"
-		[ -n "$pkg_path" ] || missing_pkg_error 'organize_data' "$PKG"
-		pkg_path="${pkg_path}$2"
-		mkdir --parents "$pkg_path"
+	if \
+		[ -n "$archive_path" ] && \
+		[ -n "$archive_files" ] && \
+		[ -d "$source_path" ]
+	then
+		mkdir --parents "$destination_path"
 		(
-			cd "$PLAYIT_WORKDIR/gamedata/$archive_path"
+			cd "$source_path"
 			for file in $archive_files; do
 				if [ -e "$file" ]; then
 					cp --recursive --force --link --parents --no-dereference --preserve=links "$file" "$pkg_path"
