@@ -330,7 +330,8 @@ icons_move_to() {
 	# Check that $PATH_ICON_BASE is set to an absolute path
 	###
 
-	local source_package source_path destination_package destination_path
+	local source_package      source_path      source_directory
+	local destination_package destination_path destination_directory
 
 	source_package="$PKG"
 	destination_package="$1"
@@ -340,24 +341,23 @@ icons_move_to() {
 	if [ -z "$source_path" ]; then
 		missing_pkg_error 'icons_move_to' "$source_package"
 	fi
+	source_directory="${source_path}${PATH_ICON_BASE}"
 
 	# Get destination path, ensure it is set
 	destination_path=$(get_value "${destination_package}_PATH")
 	if [ -z "$destination_path" ]; then
 		missing_pkg_error 'icons_move_to' "$destination_package"
 	fi
+	destination_directory="${destination_path}${PATH_ICON_BASE}"
 
 	# If called in dry-run mode, return early
 	if [ $DRY_RUN -eq 1 ]; then
 		return 0
 	fi
 
-	(
-		cd "$source_path"
-		cp --link --parents --recursive --no-dereference --preserve=links "./$PATH_ICON_BASE" "$destination_path"
-		rm --recursive "./$PATH_ICON_BASE"/*
-		rmdir --ignore-fail-on-non-empty --parents "${PATH_ICON_BASE#/}"
-	)
+	mkdir --parents "$(dirname "$destination_directory")"
+	mv --no-target-directory "$source_directory" "$destination_directory"
+	rmdir --ignore-fail-on-non-empty --parents "$(dirname "$source_directory")"
 }
 
 # print an error message if an icon can not be found
