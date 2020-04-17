@@ -1,7 +1,12 @@
 # get default temporary dir
 # USAGE: get_tmp_dir
 get_tmp_dir() {
-	printf '%s' "${TMPDIR:-/tmp}"
+	local tmpdir
+
+	# Convert TMPDIR to an absolute path before returning it
+	tmpdir=$(realpath "${TMPDIR:-/tmp}")
+
+	printf '%s' "$tmpdir"
 	return 0
 }
 
