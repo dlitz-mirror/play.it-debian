@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201003.2
+script_version=20201003.3
 
 # Set game-specific variables
 
@@ -56,10 +56,10 @@ ARCHIVE_DOC_DATA_PATH="Melody's Escape"
 ARCHIVE_DOC_DATA_FILES='Licenses README.txt'
 
 ARCHIVE_GAME_BIN_PATH="Melody's Escape"
-ARCHIVE_GAME_BIN_FILES='MelodysEscape.bin.x86 lib *.dll FNA.dll.config *.so MelodysEscape.exe'
+ARCHIVE_GAME_BIN_FILES='MelodysEscape.bin.x86 libMonoPosixHelper.so lib/libbass.so lib/libbassmix.so lib/libmojoshader.so BassPlugins/libbassflac.so lib/libmono-2.0.so.1'
 
 ARCHIVE_GAME_DATA_PATH="Melody's Escape"
-ARCHIVE_GAME_DATA_FILES='BassPlugins BundledMusic Calibration Content Mods mono'
+ARCHIVE_GAME_DATA_FILES='BundledMusic Calibration Content Mods mono MelodysEscape.exe *.dll FNA.dll.config'
 
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='16x16 32x32 48x48 64x64 128x128 256x256'
@@ -77,7 +77,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 sdl2_image"
 
 # Load common functions
 
