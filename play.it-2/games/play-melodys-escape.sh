@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201003.1
+script_version=20201003.2
 
 # Set game-specific variables
 
@@ -66,6 +66,9 @@ ARCHIVE_ICONS_FILES='16x16 32x32 48x48 64x64 128x128 256x256'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_LIBS='lib'
+APP_MAIN_PRERUN='# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 APP_MAIN_EXE='MelodysEscape.bin.x86'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
