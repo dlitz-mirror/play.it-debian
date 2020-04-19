@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200420.1
+script_version=20200420.2
 
 # Set game-specific variables
 
@@ -67,6 +67,9 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Content Terraria.png monoconfig monomachineconfig open-folder *.dll *.dll.config *.exe'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 APP_MAIN_EXE_BIN32='Terraria.bin.x86'
 APP_MAIN_EXE_BIN64='Terraria.bin.x86_64'
 APP_MAIN_ICON='Terraria.png'
@@ -74,6 +77,7 @@ APP_MAIN_ICON='Terraria.png'
 APP_SERVER_ID="$GAME_ID-server"
 APP_SERVER_NAME="$GAME_NAME Server"
 APP_SERVER_TYPE='native'
+APP_SERVER_PRERUN="$APP_MAIN_PRERUN"
 APP_SERVER_EXE_BIN32='TerrariaServer.bin.x86'
 APP_SERVER_EXE_BIN64='TerrariaServer.bin.x86_64'
 APP_SERVER_ICON='Terraria.png'
