@@ -5,6 +5,8 @@
 
   * Use safer `find | while read` constructs in prefix functions
 
+  * Drop unrequired spawning of subshell by organize_data
+
   * Arch Linux: Fix bugs in dependencies handling
 
   * Debian: Fix APT version detection with APT ≥ 2.0.0
