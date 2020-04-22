@@ -28,9 +28,11 @@ documentation:
 
 * [Debian]
 * [Gentoo]
+* [Ubuntu] (French article)
 
 [Debian]: https://wiki.debian.org/Games/PlayIt#Installation
 [Gentoo]: https://wiki.gentoo.org/wiki/Play.it#Installation
+[Ubuntu]: https://doc.ubuntu-fr.org/jeux/play.it#installation
 
 In most cases, these instructions should work in the same way for derivatives
 of these distributions.
