@@ -9,6 +9,8 @@
 
   * Drop unrequired spawning of subshell by move_icons_to
 
+  * Ensure $PLAYIT_WORKDIR is always an absolute path
+
   * Arch Linux: Fix bugs in dependencies handling
 
   * Debian: Fix APT version detection with APT ≥ 2.0.0
