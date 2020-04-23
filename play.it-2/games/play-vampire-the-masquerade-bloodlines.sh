@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.15
+script_version=20210507.16
 
 # Set game-specific variables
 
@@ -174,6 +175,29 @@ DATA_DIRS='./vampire/maps/graphs ./vampire/python ./vampire/save ./unofficial_pa
 
 ARCHIVE_GAME_BIN_PATH_GOG_EN_0='app'
 ARCHIVE_GAME_DATA_PATH_GOG_EN_0='app'
+
+# Tweak the keyboard layout for French dispositions
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Find the keyboard layout and variant and changes it to us-azerty if it needs to be
+KEYBOARD_LAYOUT=$(LANG=C setxkbmap -query | awk "/layout:/ {print \$2}")
+RESTORE_VARIANT=0
+if [ $KEYBOARD_LAYOUT = "fr" ]; then
+	KEYBOARD_VARIANT=$(LANG=C setxkbmap -query | awk "/variant:/ {print \$2}")
+	if [ $KEYBOARD_VARIANT != "us-azerty" ]; then
+		setxkbmap -variant us-azerty
+		RESTORE_VARIANT=1
+	fi
+fi'
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Restore the keyboard variant if it has been changed earlier
+if [ $RESTORE_VARIANT -eq 1 ]; then
+	setxkbmap -variant "$KEYBOARD_VARIANT"
+fi'
+APP_UP_PRERUN="$APP_MAIN_PRERUN"
+APP_UP_POSTRUN="$APP_MAIN_POSTRUN"
 
 # Load common functions
 
