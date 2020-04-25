@@ -78,7 +78,9 @@ organize_data() {
 		[ -d "$source_path" ]
 	then
 		mkdir --parents "$destination_path"
+		set -o noglob
 		for source_files_pattern in $archive_files; do
+			set +o noglob
 			for source_file in "$source_path"/$source_files_pattern; do
 				if [ -e "$source_file" ]; then
 					destination_file="${destination_path}/${source_file#$source_path}"
@@ -86,7 +88,9 @@ organize_data() {
 					mv "$source_file" "$destination_file"
 				fi
 			done
+			set -o noglob
 		done
+		set +o noglob
 	fi
 }
 
