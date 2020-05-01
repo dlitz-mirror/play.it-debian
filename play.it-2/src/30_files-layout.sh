@@ -85,7 +85,15 @@ organize_data() {
 				if [ -e "$source_file" ]; then
 					destination_file="${destination_path}/${source_file#$source_path}"
 					mkdir --parents "$(dirname "$destination_file")"
-					mv "$source_file" "$destination_file"
+					cp \
+						--recursive \
+						--force \
+						--link \
+						--no-dereference \
+						--no-target-directory \
+						--preserve=links \
+						"$source_file" "$destination_file"
+					rm --force --recursive "$source_file"
 				fi
 			done
 			set -o noglob
