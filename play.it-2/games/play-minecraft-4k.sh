@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Minecraft 4K
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190507.2
+script_version=20200502.1
 
 # Set game-specific variables
 
@@ -52,7 +52,7 @@ ARCHIVE_ARCHIVEORG_TYPE='zip_unclean'
 ARCHIVE_GAME_MAIN_PATH='.'
 ARCHIVE_GAME_MAIN_FILES='M.class'
 
-APP_MAIN_TYPE='java'
+APP_MAIN_TYPE='java-class'
 APP_MAIN_EXE='M'
 
 PACKAGES_LIST='PKG_MAIN'
@@ -93,12 +93,31 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Write launchers
+# Write launcher
 
-launchers_write 'APP_MAIN'
+target_file="${PKG_MAIN_PATH}${PATH_BIN}/${GAME_ID}"
 if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place --regexp-extended 's/^(java .*)-jar(.*)/\1\2/' "${PKG_MAIN_PATH}${PATH_BIN}/$GAME_ID"
+	mkdir --parents "$(dirname "$target_file")"
+	touch "$target_file"
+	chmod 755 "$target_file"
+	launcher_write_script_headers "$target_file"
+	launcher_write_script_java_application_variables 'APP_MAIN' "$target_file"
+	launcher_write_script_game_variables "$target_file"
+	launcher_write_script_user_files "$target_file"
+	launcher_write_script_prefix_variables "$target_file"
+	launcher_write_script_prefix_functions "$target_file"
+	launcher_write_script_prefix_build "$target_file"
+	cat >> "$target_file" <<- 'EOF'
+	# Run the game
+
+	cd "$PATH_PREFIX"
+
+	JAVA_OPTIONS="$(eval printf -- '%b' \"$JAVA_OPTIONS\")"
+	java $JAVA_OPTIONS "$APP_EXE" $APP_OPTIONS "$@"
+
+	EOF
 fi
+launcher_write_desktop 'APP_MAIN'
 
 # Build package
 
