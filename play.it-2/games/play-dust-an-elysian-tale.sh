@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200502.2
+script_version=20200502.3
 
 # Set game-specific variables
 
@@ -56,10 +56,10 @@ ARCHIVE_DOC_DATA_PATH='data'
 ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='DustAET.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='DustAET.bin.x86 lib/libmojoshader.so lib/libtheoraplay.so'
 
 ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='DustAET.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='DustAET.bin.x86_64 lib64/libmojoshader.so lib64/libtheoraplay.so'
 
 ARCHIVE_GAME_DATA_PATH='data'
 ARCHIVE_GAME_DATA_FILES='Content data de es fr it ja DustAET.exe Dust?An?Elysian?Tail.bmp monoconfig *.dll *.dll.config'
@@ -78,7 +78,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ vorbis sdl2 theora"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 openal vorbis theora"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
