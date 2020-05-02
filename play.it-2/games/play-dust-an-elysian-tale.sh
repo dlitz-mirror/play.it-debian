@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200502.1
+script_version=20200502.2
 
 # Set game-specific variables
 
@@ -65,6 +65,9 @@ ARCHIVE_GAME_DATA_PATH='data'
 ARCHIVE_GAME_DATA_FILES='Content data de es fr it ja DustAET.exe Dust?An?Elysian?Tail.bmp monoconfig *.dll *.dll.config'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 APP_MAIN_EXE_BIN32='DustAET.bin.x86'
 APP_MAIN_EXE_BIN64='DustAET.bin.x86_64'
 APP_MAIN_ICON='Dust An Elysian Tail.bmp'
