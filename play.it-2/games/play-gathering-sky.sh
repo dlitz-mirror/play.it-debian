@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.1
+script_version=20200602.2
 
 # Set game-specific variables
 
@@ -53,22 +53,43 @@ ARCHIVE_HUMBLE_0_SIZE='1200000'
 ARCHIVE_HUMBLE_0_VERSION='1.0-humble1'
 ARCHIVE_HUMBLE_0_TYPE='zip_unclean'
 
-ARCHIVE_GAME_MAIN_PATH='packr/linux/GatheringSky'
-ARCHIVE_GAME_MAIN_FILES='desktop-0.1.jar'
+ARCHIVE_GAME_DATA_PATH='packr/linux/GatheringSky'
+ARCHIVE_GAME_DATA_FILES='desktop-0.1.jar'
 
-APP_MAIN_TYPE='java'
-APP_MAIN_JAVA_OPTIONS='-Xmx1G'
-APP_MAIN_EXE='desktop-0.1.jar'
+ARCHIVE_GAME_BIN_SHIPPED_PATH='packr/linux/GatheringSky'
+ARCHIVE_GAME_BIN_SHIPPED_FILES='config.json GatheringSky jre'
+
+# Common to both launchers
 APP_MAIN_ICONS_LIST='APP_MAIN_ICON_16 APP_MAIN_ICON_32 APP_MAIN_ICON_128'
 APP_MAIN_ICON_16='images/Icon_16.png'
 APP_MAIN_ICON_32='images/Icon_32.png'
 APP_MAIN_ICON_128='images/Icon_128.png'
+# Using system-provided Java
+APP_MAIN_TYPE_BIN_SYSTEM='java'
+APP_MAIN_JAVA_OPTIONS_BIN_SYSTEM='-Xmx1G'
+APP_MAIN_EXE_BIN_SYSTEM='desktop-0.1.jar'
+# Using shipped binaries
+APP_MAIN_TYPE_BIN_SHIPPED='native'
+APP_MAIN_EXE_BIN_SHIPPED='GatheringSky'
 
-PACKAGES_LIST='PKG_MAIN'
+PACKAGES_LIST='PKG_BIN_SHIPPED PKG_BIN_SYSTEM PKG_DATA'
 
-PKG_MAIN_DEPS='java'
-# Easier upgrade from packages generated with pre-20190120.3 scripts
-PKG_MAIN_PROVIDE='gathering-sky-data'
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+# Common to both binaries packages
+PKG_BIN_ID="$GAME_ID"
+# Using system-provided Java
+PKG_BIN_SYSTEM_ID="${PKG_BIN_ID}-bin-system"
+PKG_BIN_SYSTEM_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_SYSTEM_DEPS="$PKG_DATA_ID java"
+PKG_BIN_SYSTEM_DESCRIPTION='Using system-provided Java'
+# Using shipped binaries
+PKG_BIN_SHIPPED_ARCH='64'
+PKG_BIN_SHIPPED_ID="${PKG_BIN_ID}-bin-shipped"
+PKG_BIN_SHIPPED_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_SHIPPED_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN_SYSTEM_DESCRIPTION='Using shipped binaries'
 
 # Load common functions
 
@@ -115,17 +136,25 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Get game icons
 
 (
-	ARCHIVE_JAR="${PKG_MAIN_PATH}${PATH_GAME}/desktop-0.1.jar"
+	ARCHIVE_JAR="${PKG_DATA_PATH}${PATH_GAME}/desktop-0.1.jar"
 	ARCHIVE_JAR_TYPE='zip'
 	ARCHIVE='ARCHIVE_JAR'
 	extract_data_from "$ARCHIVE_JAR"
 )
+PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
+for PKG in 'PKG_BIN_SHIPPED' 'PKG_BIN_SYSTEM'; do
+	###
+	# TODO
+	# Using the package specific value of APP_TYPE should always be done by the library
+	###
+	use_package_specific_value 'APP_MAIN_TYPE'
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 
@@ -138,6 +167,24 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-print_instructions
+case "${LANG%_*}" in
+	('fr')
+		message='Utilisation des binaires fournis par %s :'
+		bin_shipped='les développeurs'
+		bin_system='le système'
+	;;
+	('en'|*)
+		message='Using binaries provided by %s:'
+		bin_shipped='the developers'
+		bin_system='the system'
+	;;
+esac
+printf '\n'
+# shellcheck disable=SC2059
+printf "$message" "$bin_shipped"
+print_instructions 'PKG_BIN_SHIPPED' 'PKG_DATA'
+# shellcheck disable=SC2059
+printf "$message" "$bin_system"
+print_instructions 'PKG_BIN_SYSTEM' 'PKG_DATA'
 
 exit 0
