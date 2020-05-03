@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200602.2
+script_version=20200602.3
 
 # Set game-specific variables
 
@@ -147,14 +147,33 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-for PKG in 'PKG_BIN_SHIPPED' 'PKG_BIN_SYSTEM'; do
-	###
-	# TODO
-	# Using the package specific value of APP_TYPE should always be done by the library
-	###
-	use_package_specific_value 'APP_MAIN_TYPE'
-	launchers_write 'APP_MAIN'
-done
+###
+# TODO
+# Using the package specific value of APP_TYPE should always be done by the library
+###
+
+PKG='PKG_BIN_SHIPPED'
+use_package_specific_value 'APP_MAIN_TYPE'
+launchers_write 'APP_MAIN'
+
+###
+# TODO
+# A file presence check introduced by the 2.11.4 update is bypassed
+# The check itself should probably be improved instead
+###
+
+PKG='PKG_BIN_SYSTEM'
+use_package_specific_value 'APP_MAIN_TYPE'
+binary_file="${PKG_BIN_SYSTEM_PATH}${PATH_GAME}/${APP_MAIN_EXE_BIN_SYSTEM}"
+if [ $DRY_RUN -eq 0 ]; then
+	mkdir --parents "$(dirname "$binary_file")"
+	touch "$binary_file"
+fi
+launchers_write 'APP_MAIN'
+if [ $DRY_RUN -eq 0 ]; then
+	rm "$binary_file"
+	rmdir --ignore-fail-on-non-empty --parents "$(dirname "$binary_file")"
+fi
 
 # Build package
 
