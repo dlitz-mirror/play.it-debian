@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,22 +32,26 @@ set -o errexit
 ###
 # Gathering Sky
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190120.3
+script_version=20200503.1
 
 # Set game-specific variables
 
 GAME_ID='gathering-sky'
 GAME_NAME='Gathering Sky'
 
-ARCHIVE_HUMBLE='GatheringSky_Linux_64bit.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/gathering-sky'
-ARCHIVE_HUMBLE_MD5='c590edce835070a1ac2ae47ac620dc48'
-ARCHIVE_HUMBLE_SIZE='1200000'
-ARCHIVE_HUMBLE_VERSION='1.0-humble1'
-ARCHIVE_HUMBLE_TYPE='zip_unclean'
+ARCHIVES_LIST='
+ARCHIVE_HUMBLE_0
+'
+
+ARCHIVE_HUMBLE_0='GatheringSky_Linux_64bit.zip'
+ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/gathering-sky'
+ARCHIVE_HUMBLE_0_MD5='c590edce835070a1ac2ae47ac620dc48'
+ARCHIVE_HUMBLE_0_SIZE='1200000'
+ARCHIVE_HUMBLE_0_VERSION='1.0-humble1'
+ARCHIVE_HUMBLE_0_TYPE='zip_unclean'
 
 ARCHIVE_GAME_MAIN_PATH='packr/linux/GatheringSky'
 ARCHIVE_GAME_MAIN_FILES='desktop-0.1.jar'
@@ -91,7 +95,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
