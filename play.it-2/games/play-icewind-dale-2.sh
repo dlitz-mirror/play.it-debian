@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.1
+script_version=20200503.2
 
 # Set game-specific variables
 
@@ -76,7 +76,7 @@ CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./override ./portraits ./scripts'
 DATA_FILES='./chitin.key ./dialog*.tlk'
 
-APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}') csmt=off"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='iwd2.exe'
