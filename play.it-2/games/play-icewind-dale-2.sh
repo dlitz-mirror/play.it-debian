@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.2
+script_version=20200503.3
 
 # Set game-specific variables
 
@@ -76,7 +76,7 @@ CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./override ./portraits ./scripts'
 DATA_FILES='./chitin.key ./dialog*.tlk'
 
-APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}') csmt=off"
+APP_WINETRICKS='csmt=off'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='iwd2.exe'
@@ -105,7 +105,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks xrandr"
+PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
@@ -158,6 +158,16 @@ replacement3='CD2:=C:\\'"${GAME_ID}"'\\cd2\\'
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern1}/${replacement1}/;s/${pattern2}/${replacement2}/;s/${pattern3}/${replacement3}/" \
+		"${PKG_L10N_PATH}${PATH_GAME}/icewind2.ini"
+fi
+
+# Default to windowed mode on first launch
+
+pattern='Full Screen=.\+'
+replacement='Full Screen=0'
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place \
+		"s/${pattern}/${replacement}/" \
 		"${PKG_L10N_PATH}${PATH_GAME}/icewind2.ini"
 fi
 
