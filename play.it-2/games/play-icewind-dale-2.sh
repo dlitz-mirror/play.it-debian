@@ -34,12 +34,14 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.4
+script_version=20200503.5
 
 # Set game-specific variables
 
 GAME_ID='icewind-dale-2'
 GAME_NAME='Icewind Dale Ⅱ'
+
+SCRIPT_DEPS='unix2dos'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_EN_0
@@ -148,6 +150,7 @@ icons_move_to 'PKG_DATA'
 
 # Update game path in .ini file
 
+config_file="${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
 pattern1='HD0:=.\+'
 replacement1='HD0:=C:\\'"${GAME_ID}"'\\'
 pattern2='CD1:=.\+'
@@ -157,18 +160,21 @@ replacement3='CD2:=C:\\'"${GAME_ID}"'\\cd2\\'
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern1}/${replacement1}/;s/${pattern2}/${replacement2}/;s/${pattern3}/${replacement3}/" \
-		"${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
+		"$config_file"
 fi
+unix2dos "$config_file" 2>/dev/null
 
 # Default to windowed mode on first launch
 
+config_file="${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
 pattern='Full Screen=.\+'
 replacement='Full Screen=0'
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern}/${replacement}/" \
-		"${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
+		"$config_file"
 fi
+unix2dos "$config_file" 2>/dev/null
 
 # Write launchers
 
