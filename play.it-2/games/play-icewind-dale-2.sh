@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.3
+script_version=20200503.4
 
 # Set game-specific variables
 
@@ -64,17 +64,16 @@ ARCHIVE_DOC_L10N_PATH='app'
 ARCHIVE_DOC_L10N_FILES='manual.pdf patch.txt readme.htm'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='binkw32.dll *.exe keymap.ini'
+ARCHIVE_GAME_BIN_FILES='binkw32.dll icewind2.ini keymap.ini *.exe'
 
 ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='characters sounds *.tlk icewind2.ini language.ini party.ini override/narr002.wav override/guiinv.chu override/charstr.2da override/00bpak0.bcs data/guimos.bif cd2/data/intro.mve cd2/data/middle.mve cd2/data/sndvo.bif cd2/data/end.mve'
+ARCHIVE_GAME_L10N_FILES='characters override sounds language.ini party.ini *.tlk'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='cd2 chitin.key data music override scripts'
+ARCHIVE_GAME_DATA_FILES='cd2 chitin.key data music scripts'
 
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./override ./portraits ./scripts'
-DATA_FILES='./chitin.key ./dialog*.tlk'
 
 APP_WINETRICKS='csmt=off'
 
@@ -158,7 +157,7 @@ replacement3='CD2:=C:\\'"${GAME_ID}"'\\cd2\\'
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern1}/${replacement1}/;s/${pattern2}/${replacement2}/;s/${pattern3}/${replacement3}/" \
-		"${PKG_L10N_PATH}${PATH_GAME}/icewind2.ini"
+		"${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
 fi
 
 # Default to windowed mode on first launch
@@ -168,7 +167,7 @@ replacement='Full Screen=0'
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern}/${replacement}/" \
-		"${PKG_L10N_PATH}${PATH_GAME}/icewind2.ini"
+		"${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
 fi
 
 # Write launchers
