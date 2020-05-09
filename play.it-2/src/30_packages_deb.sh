@@ -3,7 +3,20 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_DEB
 # CALLED BY: write_metadata
 pkg_write_deb() {
-	local pkg_deps
+	###
+	# TODO
+	# $pkg should be passed as a function argument, not inherited from the calling function
+	# $pkg_path should be computed from $pkg, not inherited from the calling function
+	###
+
+	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
+
+	control_directory="$pkg_path/DEBIAN"
+	control_file="$control_directory/control"
+	postinst_script="$control_directory/postinst"
+	prerm_script="$control_directory/prerm"
+
+	# Get package dependencies list
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
 		# shellcheck disable=SC2046
@@ -17,17 +30,20 @@ pkg_write_deb() {
 			pkg_deps="$(get_value "${pkg}_DEPS_DEB")"
 		fi
 	fi
-	local pkg_size
+
+	# Get package size
 	pkg_size=$(du --total --block-size=1K --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
-	local target
-	target="$pkg_path/DEBIAN/control"
 
-	PKG="$pkg"
-	get_package_version
+	# Get package version
+	PKG="$pkg" \
+		get_package_version
 
-	mkdir --parents "${target%/*}"
+	# Create metadata directory, enforce correct permissions
+	mkdir --parents "$control_directory"
+	chmod 755 "$control_directory"
 
-	cat > "$target" <<- EOF
+	# Write main metadata file, enforce correct permissions
+	cat > "$control_file" <<- EOF
 	Package: $pkg_id
 	Version: $PKG_VERSION
 	Architecture: $pkg_architecture
@@ -36,57 +52,53 @@ pkg_write_deb() {
 	Installed-Size: $pkg_size
 	Section: non-free/games
 	EOF
-
 	if [ -n "$pkg_provide" ]; then
-		cat >> "$target" <<- EOF
+		cat >> "$control_file" <<- EOF
 		Conflicts: $pkg_provide
 		Provides: $pkg_provide
 		Replaces: $pkg_provide
 		EOF
 	fi
-
 	if [ -n "$pkg_deps" ]; then
-		cat >> "$target" <<- EOF
+		cat >> "$control_file" <<- EOF
 		Depends: $pkg_deps
 		EOF
 	fi
-
 	if [ -n "$pkg_description" ]; then
 		# shellcheck disable=SC2154
-		cat >> "$target" <<- EOF
+		cat >> "$control_file" <<- EOF
 		Description: $GAME_NAME - $pkg_description
 		 ./play.it script version $script_version
 		EOF
 	else
 		# shellcheck disable=SC2154
-		cat >> "$target" <<- EOF
+		cat >> "$control_file" <<- EOF
 		Description: $GAME_NAME
 		 ./play.it script version $script_version
 		EOF
 	fi
+	chmod 644 "$control_file"
 
+	# Write postinst/prerm scripts, enforce correct permissions
 	if [ -e "$postinst" ]; then
-		target="$pkg_path/DEBIAN/postinst"
-		cat > "$target" <<- EOF
+		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
 		$(cat "$postinst")
 
 		exit 0
 		EOF
-		chmod 755 "$target"
+		chmod 755 "$postinst_script"
 	fi
-
 	if [ -e "$prerm" ]; then
-		target="$pkg_path/DEBIAN/prerm"
-		cat > "$target" <<- EOF
+		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
 		$(cat "$prerm")
 
 		exit 0
 		EOF
-		chmod 755 "$target"
+		chmod 755 "$prerm_script"
 	fi
 }
 

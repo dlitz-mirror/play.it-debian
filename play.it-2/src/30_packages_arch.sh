@@ -97,7 +97,7 @@ pkg_set_deps_arch() {
 		('32')
 			pkg_set_deps_arch32 "$@"
 		;;
-		('64')
+		(*)
 			pkg_set_deps_arch64 "$@"
 		;;
 	esac
@@ -209,7 +209,7 @@ pkg_set_deps_arch32() {
 				pkg_dep='xorg-xrandr'
 			;;
 			(*)
-				pkg_deps="$dep"
+				pkg_dep="$dep"
 			;;
 		esac
 		pkg_deps="$pkg_deps $pkg_dep"
