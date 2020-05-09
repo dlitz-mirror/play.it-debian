@@ -49,7 +49,7 @@ ARCHIVE_HUMBLE_SIZE='71000'
 ARCHIVE_HUMBLE_VERSION='1.17b-humble160829'
 
 ARCHIVE_OPTIONAL_ICONS='regency-solitaire_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/regency-solitaire/'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/regency-solitaire/'
 ARCHIVE_OPTIONAL_ICONS_MD5='01a7c7b168e2cb315d2058ff5e6a53aa'
 
 ARCHIVE_GAME_BIN_PATH='RegencySolitaireV117b'

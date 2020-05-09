@@ -1,7 +1,7 @@
 # write launcher script
 # USAGE: launcher_write_script $app
 # NEEDED VARS: GAME_ID OPTION_ARCHITECTURE PACKAGES_LIST PATH_BIN
-# CALLS: error_missing_argument error_extra_arguments testvar liberror error_no_pkg skipping_pkg_warning missing_pkg_error launcher_write_script_headers launcher_write_script_prefix_functions launcher_write_script_wine_winecfg launcher_write_script_dosbox_application_variables launcher_write_script_native_application_variables launcher_write_script_scummvm_application_variables launcher_write_script_wine_application_variables launcher_write_script_prefix_functions launcher_write_script_prefix_build launcher_write_script_wine_prefix_build launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_winecfg_run launcher_write_script_wine_run
+# CALLS: error_missing_argument error_extra_arguments testvar liberror error_no_pkg skipping_pkg_warning missing_pkg_error launcher_write_script_headers launcher_write_script_prefix_functions launcher_write_script_wine_winecfg launcher_write_script_dosbox_application_variables launcher_write_script_native_application_variables launcher_write_script_scummvm_application_variables launcher_write_script_wine_application_variables launcher_write_script_prefix_functions launcher_write_script_prefix_build launcher_write_script_wine_prefix_build launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_winecfg_run launcher_write_script_wine_run error_launcher_missing_binary
 # CALLED BY:
 launcher_write_script() {
 	# check that this has been called with exactly one argument
@@ -42,6 +42,38 @@ launcher_write_script() {
 		application_id="$GAME_ID"
 	fi
 	target_file="${package_path}${PATH_BIN}/$application_id"
+
+	# Check that the launcher target exists
+	local binary_file binary_path
+	case "$application_type" in
+		('scummvm')
+			# ScummVM games do not rely on a provided binary
+		;;
+		('wine')
+			use_package_specific_value "${application}_EXE"
+			binary_file=$(get_value "${application}_EXE")
+			if [ "$binary_file" != 'winecfg' ]; then
+				binary_path="${package_path}${PATH_GAME}/$binary_file"
+				if \
+					[ $DRY_RUN -eq 0 ] && \
+					[ ! -f "$binary_path" ]
+				then
+					error_launcher_missing_binary "$binary_path"
+				fi
+			fi
+		;;
+		(*)
+			use_package_specific_value "${application}_EXE"
+			binary_file=$(get_value "${application}_EXE")
+			binary_path="${package_path}${PATH_GAME}/$binary_file"
+			if \
+				[ $DRY_RUN -eq 0 ] && \
+				[ ! -f "$binary_path" ]
+			then
+				error_launcher_missing_binary "$binary_path"
+			fi
+		;;
+	esac
 
 	# if called in dry run mode, return before writing anything
 	if [ "$DRY_RUN" -eq 1 ]; then
@@ -305,7 +337,7 @@ launcher_write_script_prefix_build() {
 	done
 	(
 	    cd "$PATH_GAME"
-	    find . -type d | while read dir; do
+	    find . -type d | while read -r dir; do
 	        if [ -h "$PATH_PREFIX/$dir" ]; then
 	            rm "$PATH_PREFIX/$dir"
 	        fi
@@ -314,12 +346,12 @@ launcher_write_script_prefix_build() {
 	cp --recursive --remove-destination --symbolic-link "$PATH_GAME"/* "$PATH_PREFIX"
 	(
 	    cd "$PATH_PREFIX"
-	    find . -type l | while read link; do
+	    find . -type l | while read -r link; do
 	        if [ ! -e "$link" ]; then
 	            rm "$link"
 	        fi
 	    done
-	    find . -depth -type d | while read dir; do
+	    find . -depth -type d | while read -r dir; do
 	        if [ ! -e "$PATH_GAME/$dir" ]; then
 	            rmdir --ignore-fail-on-non-empty "$dir"
 	        fi

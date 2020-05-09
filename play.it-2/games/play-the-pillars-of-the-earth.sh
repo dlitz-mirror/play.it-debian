@@ -50,7 +50,7 @@ ARCHIVE_GOG_VERSION='1.1.703-gog19574'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
 ARCHIVE_OPTIONAL_LIBPNG64='libpng_1.2_64-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBPNG64_URL='https://www.dotslashplay.it/ressources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG64_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG64_MD5='c7d675c8df2aac9bcb8132b501a10439'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'

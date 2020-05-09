@@ -59,7 +59,7 @@ ARCHIVE_HUMBLE_VERSION='2.01build425-humble141016'
 ARCHIVE_HUMBLE_SIZE='3700000'
 
 ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBPNG32_URL='https://www.dotslashplay.it/ressources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG32_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
 ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/docs'

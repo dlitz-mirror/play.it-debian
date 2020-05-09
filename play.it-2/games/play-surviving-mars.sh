@@ -80,7 +80,7 @@ ARCHIVE_GOG_OLD0_SIZE='3950000'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_OPTIONAL_LIBSSL='libssl_1.0.0_64-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBSSL_URL='https://www.dotslashplay.it/ressources/libssl/'
+ARCHIVE_OPTIONAL_LIBSSL_URL='https://downloads.dotslashplay.it/resources/libssl/'
 ARCHIVE_OPTIONAL_LIBSSL_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'

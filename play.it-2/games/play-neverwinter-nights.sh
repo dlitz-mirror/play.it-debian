@@ -94,15 +94,15 @@ ARCHIVE_GOG_PL_PART1_MD5='540c20cd68079c7a214af65296b4a8b1'
 ARCHIVE_GOG_PL_PART1_TYPE='rar'
 
 ARCHIVE_LINUX_COMMON='nwn-linux-common.tar.gz'
-ARCHIVE_LINUX_COMMON_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_COMMON_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_COMMON_MD5='9aa7dae2ba9111c96b10679fa085c66e'
 
 ARCHIVE_LINUX_168='nwn-linux-1.68.tar.gz'
-ARCHIVE_LINUX_168_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_168_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_168_MD5='7d46737ff2d25470f8d6b389bb53cd1a'
 
 ARCHIVE_LINUX_169='nwn-linux-1.69.tar.gz'
-ARCHIVE_LINUX_169_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_169_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_169_MD5='b703f017446440e386ae142c1aa74a71'
 
 ARCHIVE_NWMOVIES='nwmovies-mpv.tar.gz'

@@ -48,7 +48,7 @@ ARCHIVE_GOG_SIZE='130000'
 ARCHIVE_GOG_VERSION='1.0.0-gog2.0.0.1'
 
 ARCHIVE_EXTRA_ICONS='the-westport-independent_icons.tar.gz'
-ARCHIVE_EXTRA_ICONS_URL='https://www.dotslashplay.it/ressources/the-westport-independant/'
+ARCHIVE_EXTRA_ICONS_URL='https://downloads.dotslashplay.it/resources/the-westport-independant/'
 ARCHIVE_EXTRA_ICONS_MD5='054b51fe4c02f256b8130b40e93d28ae'
 
 ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'

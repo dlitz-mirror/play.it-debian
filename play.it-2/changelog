@@ -1,3 +1,24 @@
+2.11.4
+
+  * Throw an explicit error when trying to write a launcher for a missing
+    binary
+
+  * Use safer `find | while read` constructs in prefix functions
+
+  * Drop unrequired spawning of subshell by organize_data
+
+  * Drop unrequired spawning of subshell by move_icons_to
+
+  * Ensure $PLAYIT_WORKDIR is always an absolute path
+
+  * Arch Linux: Fix bugs in dependencies handling
+
+  * Debian: Fix APT version detection with APT ≥ 2.0.0
+
+  * Debian: Enforce correct permissions for packages metadata
+
+  * Gentoo: Update download link for quickunpkg
+
 2.11.3
 
   * Fix cdrom type (file or directory) detection for DOSBox games

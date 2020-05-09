@@ -68,7 +68,7 @@ ARCHIVE_GOG_PRE25_OLD0_SIZE='3200000'
 ARCHIVE_GOG_PRE25_OLD0_VERSION='2.3.67.3-gog2.5.0.7'
 
 ARCHIVE_OPTIONAL_ICONS='baldurs-gate-1-enhanced-edition_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/baldurs-gate-1-enhanced-edition/'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/baldurs-gate-1-enhanced-edition/'
 ARCHIVE_OPTIONAL_ICONS_MD5='58401cf80bc9f1a9e9a0896f5d74b02a'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
@@ -169,7 +169,7 @@ case "$OPTION_PACKAGE" in
 		# Use archive provided by ./play.it
 		ARCHIVE_MAIN="$ARCHIVE"
 		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
-		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://www.dotslashplay.it/ressources/libssl/'
+		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
 		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
 		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
 		ARCHIVE="$ARCHIVE_MAIN"
@@ -203,7 +203,7 @@ if [ -z "${PACKAGES_LIST##*PKG_BIN64*}" ]; then
 		('deb')
 			# Use archive provided by ./play.it
 			ARCHIVE_OPTIONAL_LIBSSL64='libssl_1.0.0_64-bit.tar.gz'
-			ARCHIVE_OPTIONAL_LIBSSL64_URL='https://www.dotslashplay.it/ressources/libssl/'
+			ARCHIVE_OPTIONAL_LIBSSL64_URL='https://downloads.dotslashplay.it/resources/libssl/'
 			ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 			ARCHIVE_MAIN="$ARCHIVE"
 			set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'

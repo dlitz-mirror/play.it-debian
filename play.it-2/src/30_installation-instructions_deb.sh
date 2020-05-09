@@ -6,9 +6,9 @@ print_instructions_deb() {
 		debian_version="$(apt --version 2>/dev/null | head --lines=1 | cut --delimiter=' ' --fields=2)"
 		debian_version_major="$(printf '%s' "$debian_version" | cut --delimiter='.' --fields='1')"
 		debian_version_minor="$(printf '%s' "$debian_version" | cut --delimiter='.' --fields='2')"
-		if [ $debian_version_major -ge 2 ] ||\
-		   [ $debian_version_major -eq 1 ] &&\
-		   [ ${debian_version_minor%~*} -ge 1 ]; then
+		if [ $debian_version_major -ge 2 ] || \
+			{ [ $debian_version_major -eq 1 ] && [ ${debian_version_minor%~*} -ge 1 ] ; }
+		then
 			print_instructions_deb_apt "$@"
 		else
 			print_instructions_deb_dpkg "$@"

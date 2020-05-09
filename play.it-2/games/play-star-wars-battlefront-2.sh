@@ -68,7 +68,7 @@ ARCHIVE_GOG_OLD0_PART2_MD5='5d4000fd480a80b6e7c7b73c5a745368'
 ARCHIVE_GOG_OLD0_PART2_TYPE='rar'
 
 ARCHIVE_OPTIONAL_ICONS='star-wars-battlefront-2_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_URL='https://www.dotslashplay.it/ressources/star-wars-battlefront-2/'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/star-wars-battlefront-2/'
 ARCHIVE_OPTIONAL_ICONS_MD5='322275011d37ac219f1c06c196477fa4'
 
 ARCHIVE_DOC_DATA_PATH='.'

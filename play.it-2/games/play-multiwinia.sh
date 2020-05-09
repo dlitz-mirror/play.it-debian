@@ -50,11 +50,11 @@ ARCHIVE_GOG_SIZE='66000'
 ARCHIVE_GOG_TYPE='mojosetup'
 
 ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBPNG32_URL='https://www.dotslashplay.it/ressources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG32_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
 ARCHIVE_OPTIONAL_LIBPNG64='libpng_1.2_64-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBPNG64_URL='https://www.dotslashplay.it/ressources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG64_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG64_MD5='c7d675c8df2aac9bcb8132b501a10439'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
