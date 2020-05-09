@@ -1,9 +1,8 @@
 stages:
-    - library_check
-    - wrapper_check
+    - syntax
 
 library_shellcheck:
-    stage: library_check
+    stage: syntax
     only:
         - master@play.it/scripts
         - /^staging-.*$/@play.it/scripts
@@ -11,10 +10,10 @@ library_shellcheck:
     before_script:
         - make
     script:
-        - ./tests/library_shellcheck.sh
+        - ./tests/syntax/library_shellcheck.sh
 
 wrapper_shellcheck:
-    stage: wrapper_check
+    stage: syntax
     only:
         - master@play.it/scripts
         - /^staging-.*$/@play.it/scripts
@@ -22,4 +21,4 @@ wrapper_shellcheck:
     before_script:
         - make
     script:
-        - ./tests/wrapper_shellcheck.sh
+        - ./tests/syntax/wrapper_shellcheck.sh
