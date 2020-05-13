@@ -31,22 +31,28 @@ set -o errexit
 ###
 # War for the Overworld: Seasonal Worker Skins
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20200304.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: Seasonal Worker Skins'
 
-ARCHIVE_GOG='war_for_the_overworld_seasonal_worker_skins_2_0_7f1_30014.sh'
+ARCHIVE_GOG='war_for_the_overworld_seasonal_worker_skins_2_0_7f1_gog_36563.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_worker_skin_collection'
-ARCHIVE_GOG_MD5='6b4c2c19a901547b1fe9a8a51edab522'
+ARCHIVE_GOG_MD5='ccc02cab316dff3f6a9351217f38f029'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_VERSION='2.0.7f1-gog36563'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='war_for_the_overworld_seasonal_worker_skins_2_0_7f1_30014.sh'
+ARCHIVE_GOG_OLD0_MD5='6b4c2c19a901547b1fe9a8a51edab522'
+ARCHIVE_GOG_OLD0_SIZE='1400'
+ARCHIVE_GOG_OLD0_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='goggame-1603890758.info'

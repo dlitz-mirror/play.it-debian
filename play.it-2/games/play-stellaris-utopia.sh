@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200317.1
+script_version=20200427.1
 
 # Set game-specific variables
 
@@ -42,12 +42,30 @@ GAME_ID='stellaris'
 GAME_ID_UTOPIA="${GAME_ID}-utopia"
 GAME_NAME='Stellaris - Utopia'
 
-ARCHIVE_GOG='stellaris_utopia_2_6_0_4_36778.sh'
+ARCHIVE_GOG='stellaris_utopia_2_6_3_2_37617.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_utopia'
-ARCHIVE_GOG_MD5='62d4e68bb8ccc9bf7fce7f6b26434119'
+ARCHIVE_GOG_MD5='988d9f3f2c920cd1f1e6f2a6447d4a1a'
 ARCHIVE_GOG_SIZE='76000'
-ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_VERSION='2.6.3.2-gog37617'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD8='stellaris_utopia_2_6_2_37285.sh'
+ARCHIVE_GOG_OLD8_MD5='2550f77f0a84f9075b942393bf763ec0'
+ARCHIVE_GOG_OLD8_SIZE='76000'
+ARCHIVE_GOG_OLD8_VERSION='2.6.2-gog37285'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD7='stellaris_utopia_2_6_1_1_36932.sh'
+ARCHIVE_GOG_OLD7_MD5='94a502ddae3bcd0127a288aaebfb2bd0'
+ARCHIVE_GOG_OLD7_SIZE='76000'
+ARCHIVE_GOG_OLD7_VERSION='2.6.1.1-gog36932'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD6='stellaris_utopia_2_6_0_4_36778.sh'
+ARCHIVE_GOG_OLD6_MD5='62d4e68bb8ccc9bf7fce7f6b26434119'
+ARCHIVE_GOG_OLD6_SIZE='76000'
+ARCHIVE_GOG_OLD6_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD5='stellaris_utopia_2_5_1_33517.sh'
 ARCHIVE_GOG_OLD5_MD5='1abe439fe5742f30aa5ef81e5e6713a3'

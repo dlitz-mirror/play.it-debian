@@ -34,19 +34,37 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200317.1
+script_version=20200427.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris - Horizon Signal'
 
-ARCHIVE_GOG='stellaris_horizon_signal_2_6_0_4_36778.sh'
+ARCHIVE_GOG='stellaris_horizon_signal_2_6_3_2_37617.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/stellaris_horizon_signal'
-ARCHIVE_GOG_MD5='ca8705bc38567b2d6cd923f36a4c73a2'
+ARCHIVE_GOG_MD5='26b1e116e2090da52b6b86b73bcd21ea'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_VERSION='2.6.3.2-gog37617'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD15='stellaris_horizon_signal_2_6_2_37285.sh'
+ARCHIVE_GOG_OLD15_MD5='2fd1629168d844efb449af0e8606ad0e'
+ARCHIVE_GOG_OLD15_SIZE='1400'
+ARCHIVE_GOG_OLD15_VERSION='2.6.2-gog37285'
+ARCHIVE_GOG_OLD15_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD14='stellaris_horizon_signal_2_6_1_1_36932.sh'
+ARCHIVE_GOG_OLD14_MD5='787decd211c93b92a0467112a0bdd6b3'
+ARCHIVE_GOG_OLD14_SIZE='1400'
+ARCHIVE_GOG_OLD14_VERSION='2.6.1.1-gog36932'
+ARCHIVE_GOG_OLD14_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_OLD13='stellaris_horizon_signal_2_6_0_4_36778.sh'
+ARCHIVE_GOG_OLD13_MD5='ca8705bc38567b2d6cd923f36a4c73a2'
+ARCHIVE_GOG_OLD13_SIZE='1400'
+ARCHIVE_GOG_OLD13_VERSION='2.6.0.4-gog36778'
+ARCHIVE_GOG_OLD13_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD12='stellaris_horizon_signal_2_5_1_33517.sh'
 ARCHIVE_GOG_OLD12_MD5='a36b3473ad1669cc39f86c287e66e6ad'

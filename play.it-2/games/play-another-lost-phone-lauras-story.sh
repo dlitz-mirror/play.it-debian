@@ -3,8 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, Dominique Derrier
-# Copyright (c) 2020, macaron
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,60 +30,52 @@ set -o errexit
 ###
 
 ###
-# Little Big Adventure 1
+# Another Lost Phone: Lauraʼs Story
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200329.2
+script_version=20200507.1
 
 # Set game-specific variables
 
-GAME_ID='little-big-adventure-1'
-GAME_NAME='Little Big Adventure'
+GAME_ID='another-lost-phone-lauras-story'
+GAME_NAME='Another Lost Phone: Lauraʼs Story'
 
-ARCHIVE_GOG='setup_little_big_adventure_1.0_(28186).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/little_big_adventure'
-ARCHIVE_GOG_MD5='43d4926dc8a56a95800e746ac9797201'
-ARCHIVE_GOG_SIZE='510000'
-ARCHIVE_GOG_VERSION='1.0-gog28186'
+ARCHIVE_INDIEGALA='another-lost-phone-lauras-story_lin.zip'
+ARCHIVE_INDIEGALA_MD5='0302bfe834c12bde582ec2dbf5e0a69f'
+ARCHIVE_INDIEGALA_SIZE='150000'
+ARCHIVE_INDIEGALA_VERSION='1.0-indiegala'
+ARCHIVE_INDIEGALA_TYPE='rar' # force using unar for extraction
 
-ARCHIVE_GOG_OLD0='setup_lba_2.1.0.22.exe'
-ARCHIVE_GOG_OLD0_MD5='c40177522adcbe50ea52590be57045f8'
-ARCHIVE_GOG_OLD0_SIZE='510000'
-ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.1.0.22'
+ARCHIVE_GAME_BIN32_PATH='.'
+ARCHIVE_GAME_BIN32_FILES='alp.x86 alp_Data/*/x86'
 
-ARCHIVE_DOC_MAIN_PATH='.'
-ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
-# Keep compatibility with old archives
-ARCHIVE_DOC_MAIN_PATH_GOG_OLD0='app'
+ARCHIVE_GAME_BIN64_PATH='.'
+ARCHIVE_GAME_BIN64_FILES='alp.x86_64 alp_Data/*/x86_64'
 
-ARCHIVE_GAME_MAIN_PATH='.'
-ARCHIVE_GAME_MAIN_FILES='*.cfg *.dll *.ini dos4gw.exe language.exe relent.exe loadpats.exe setup.exe setup.lst *.hqr lba.dat lba.gog setsound.bat vox sample.*'
-# Keep compatibility with old archives
-ARCHIVE_GAME_MAIN_PATH_GOG_OLD0='app'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='alp_Data'
 
-GAME_IMAGE='lba.dat'
+DATA_DIRS='./logs'
 
-CONFIG_FILES='*.cfg *.ini'
-DATA_FILES='*.LBA'
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='alp.x86'
+APP_MAIN_EXE_BIN64='alp.x86_64'
+# shellcheck disable=SC2016
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+APP_MAIN_ICON='alp_Data/Resources/UnityPlayer.png'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='relent.exe'
-APP_MAIN_ICON='app/goggame-1207658971.ico'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
-APP_SETUP_TYPE='dosbox'
-APP_SETUP_EXE='setup.exe'
-APP_SETUP_ID="${GAME_ID}_setup"
-APP_SETUP_NAME="$GAME_NAME - Setup"
-APP_SETUP_CAT='Settings'
-APP_SETUP_ICON="$APP_MAIN_ICON"
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-PACKAGES_LIST='PKG_MAIN'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1"
 
-PKG_MAIN_DEPS='dosbox'
-# Easier upgrade from packages generated with pre-20200210.3 scripts
-PKG_MAIN_PROVIDE='little-big-adventure-1-data'
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
@@ -118,15 +109,18 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
-# Extract icons
-
-icons_get_from_workdir 'APP_MAIN' 'APP_SETUP'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-launchers_write 'APP_MAIN' 'APP_SETUP'
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 
