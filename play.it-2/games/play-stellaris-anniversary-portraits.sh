@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.1
+script_version=20200515.2
 
 # Set game-specific variables
 
@@ -46,6 +46,7 @@ GAME_NAME_ANNIVERSARY="$GAME_NAME - Anniversary Portraits"
 GAME_NAME_VOID="$GAME_NAME - Creatures of the Void Portrait Pack"
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_14
 ARCHIVE_GOG_13
 ARCHIVE_GOG_12
 ARCHIVE_GOG_11
@@ -64,8 +65,14 @@ ARCHIVE_GOG_UNMERGED_2
 ARCHIVE_GOG_UNMERGED_1
 ARCHIVE_GOG_UNMERGED_0'
 
+ARCHIVE_GOG_14='stellaris_anniversary_portraits_2_7_1_38218.sh'
+ARCHIVE_GOG_14_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
+ARCHIVE_GOG_14_MD5='cbbf4772108cd00710c7a4bcac22a1f2'
+ARCHIVE_GOG_14_SIZE='1400'
+ARCHIVE_GOG_14_VERSION='2.7.1-gog38218'
+ARCHIVE_GOG_14_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_13='stellaris_anniversary_portraits_2_6_3_2_37617.sh'
-ARCHIVE_GOG_13_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
 ARCHIVE_GOG_13_MD5='a757a0b1c5470ed2ed9cb06cd00458e5'
 ARCHIVE_GOG_13_SIZE='1400'
 ARCHIVE_GOG_13_VERSION='2.6.3.2-gog37617'

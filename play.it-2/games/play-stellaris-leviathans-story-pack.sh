@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.1
+script_version=20200515.2
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Leviathans Story Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_12
 ARCHIVE_GOG_11
 ARCHIVE_GOG_10
 ARCHIVE_GOG_9
@@ -55,8 +56,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_12='stellaris_leviathans_story_pack_2_7_1_38218.sh'
+ARCHIVE_GOG_12_URL='https://www.gog.com/game/stellaris_leviathans_story_pack'
+ARCHIVE_GOG_12_MD5='bdbadd36dd8ef36926dad3ad0fa9ae39'
+ARCHIVE_GOG_12_SIZE='59000'
+ARCHIVE_GOG_12_VERSION='2.7.1-gog38218'
+ARCHIVE_GOG_12_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_11='stellaris_leviathans_story_pack_2_6_3_2_37617.sh'
-ARCHIVE_GOG_11_URL='https://www.gog.com/game/stellaris_leviathans_story_pack'
 ARCHIVE_GOG_11_MD5='f6365711a2892f36f58ec4be248f031f'
 ARCHIVE_GOG_11_SIZE='59000'
 ARCHIVE_GOG_11_VERSION='2.6.3.2-gog37617'

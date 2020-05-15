@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.1
+script_version=20200515.2
 
 # Set game-specific variables
 
@@ -46,6 +46,7 @@ GAME_NAME='Stellaris'
 # Archives using a name following the pattern "ARCHIVE_.*_[0-9]+" should be automatically listed by the library
 ###
 ARCHIVES_LIST='
+ARCHIVE_GOG_11
 ARCHIVE_GOG_10
 ARCHIVE_GOG_9
 ARCHIVE_GOG_8
@@ -64,8 +65,14 @@ ARCHIVE_GOG_32BIT_LIBATOMIC_2
 ARCHIVE_GOG_32BIT_LIBATOMIC_1
 ARCHIVE_GOG_32BIT_LIBATOMIC_0'
 
+ARCHIVE_GOG_11='stellaris_2_7_1_38218.sh'
+ARCHIVE_GOG_11_URL='https://www.gog.com/game/stellaris'
+ARCHIVE_GOG_11_MD5='35d23314ca8a5bbc04a9848aee24de67'
+ARCHIVE_GOG_11_SIZE='9600000'
+ARCHIVE_GOG_11_VERSION='2.7.1-gog38218'
+ARCHIVE_GOG_11_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_10='stellaris_2_6_3_2_37617.sh'
-ARCHIVE_GOG_10_URL='https://www.gog.com/game/stellaris'
 ARCHIVE_GOG_10_MD5='17debdff27680ff8481a5c3e4b282caa'
 ARCHIVE_GOG_10_SIZE='9400000'
 ARCHIVE_GOG_10_VERSION='2.6.3.2-gog37617'

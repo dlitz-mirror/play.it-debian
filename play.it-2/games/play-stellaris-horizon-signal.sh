@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.1
+script_version=20200515.2
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Horizon Signal'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_17
 ARCHIVE_GOG_16
 ARCHIVE_GOG_15
 ARCHIVE_GOG_14
@@ -60,8 +61,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_17='stellaris_horizon_signal_2_7_1_38218.sh'
+ARCHIVE_GOG_17_URL='https://www.gog.com/game/stellaris_horizon_signal'
+ARCHIVE_GOG_17_MD5='248a8f7346b5f56143b61d519917065c'
+ARCHIVE_GOG_17_SIZE='1400'
+ARCHIVE_GOG_17_VERSION='2.7.1-gog38218'
+ARCHIVE_GOG_17_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_16='stellaris_horizon_signal_2_6_3_2_37617.sh'
-ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_horizon_signal'
 ARCHIVE_GOG_16_MD5='26b1e116e2090da52b6b86b73bcd21ea'
 ARCHIVE_GOG_16_SIZE='1400'
 ARCHIVE_GOG_16_VERSION='2.6.3.2-gog37617'
