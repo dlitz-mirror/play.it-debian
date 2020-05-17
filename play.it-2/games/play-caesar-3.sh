@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200321.1
+script_version=20200517.1
 
 # Set game-specific variables
 
@@ -53,14 +53,8 @@ ARCHIVE_DOC_DATA_FILES='readme.txt *.pdf'
 ARCHIVE_GAME_BIN_PATH='app'
 ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.inf *.ini'
 
-ARCHIVE_GAME_MOVIES_PATH='app'
-ARCHIVE_GAME_MOVIES_FILES='smk'
-
-ARCHIVE_GAME_SOUNDS_PATH='app'
-ARCHIVE_GAME_SOUNDS_FILES='wavs'
-
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='555 *.555 *.emp *.eng *.map *.sg2 c3_model.txt mission1.pak'
+ARCHIVE_GAME_DATA_FILES='555 smk wavs *.555 *.emp *.eng *.map *.sg2 c3_model.txt mission1.pak'
 
 CONFIG_FILES='./caesar3.ini'
 DATA_FILES='./c3_model.txt ./status.txt ./*.sav'
@@ -71,17 +65,10 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='c3.exe'
 APP_MAIN_ICON='c3.exe'
 
-PACKAGES_LIST='PKG_MOVIES PKG_SOUNDS PKG_DATA PKG_BIN'
-
-PKG_MOVIES_ID="${GAME_ID}-movies"
-PKG_MOVIES_DESCRIPTION='movies'
-
-PKG_SOUNDS_ID="${GAME_ID}-sounds"
-PKG_SOUNDS_DESCRIPTION='sounds'
+PACKAGES_LIST='PKG_DATA PKG_BIN'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
-PKG_DATA_DEPS="$PKG_MOVIES_ID $PKG_SOUNDS_ID"
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
