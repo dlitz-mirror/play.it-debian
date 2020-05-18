@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180620.1
+script_version=20190911.1
 
 # Set game-specific variables
 
@@ -43,7 +43,7 @@ GAME_ID='tis-100'
 GAME_NAME='TIS-100'
 
 ARCHIVE_GOG='tis_100_en_11_27_2017_16765.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/tis-100'
+ARCHIVE_GOG_URL='https://www.gog.com/game/tis100'
 ARCHIVE_GOG_MD5='70518ec82ee8148697b704ed2c3c8953'
 ARCHIVE_GOG_VERSION='2017.11.27-gog16765'
 ARCHIVE_GOG_SIZE='83000'
@@ -106,6 +106,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

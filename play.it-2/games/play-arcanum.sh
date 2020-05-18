@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Arcanum: Of Steamworks and Magick Obscura
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180819.4
+script_version=20190327.2
 
 # Set game-specific variables
 
@@ -43,12 +43,18 @@ SCRIPT_DEPS='upx'
 GAME_ID='arcanum'
 GAME_NAME='Arcanum: Of Steamworks and Magick Obscura'
 
-ARCHIVE_GOG='setup_arcanum_-_of_steamworks_and_magick_obscura_1.0.7.4_(19476).exe'
+ARCHIVE_GOG='setup_arcanum_-_of_steamworks_and_magick_obscura_1.0.7.4_hotfix_(24155).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/arcanum_of_steamworks_and_magick_obscura'
-ARCHIVE_GOG_MD5='298a3315baebf40f3cc6cee4acae9947'
-ARCHIVE_GOG_TYPE='innosetup1.7'
+ARCHIVE_GOG_MD5='6d14d07f7cc8c9823cba5322cf2336f4'
+ARCHIVE_GOG_TYPE='innosetup'
 ARCHIVE_GOG_SIZE='1200000'
-ARCHIVE_GOG_VERSION='1.0.7.4-gog19476'
+ARCHIVE_GOG_VERSION='1.0.7.4-gog24155'
+
+ARCHIVE_GOG_OLD1='setup_arcanum_-_of_steamworks_and_magick_obscura_1.0.7.4_(19476).exe'
+ARCHIVE_GOG_OLD1_MD5='298a3315baebf40f3cc6cee4acae9947'
+ARCHIVE_GOG_OLD1_TYPE='innosetup1.7'
+ARCHIVE_GOG_OLD1_SIZE='1200000'
+ARCHIVE_GOG_OLD1_VERSION='1.0.7.4-gog19476'
 
 ARCHIVE_GOG_OLD0='setup_arcanum_2.0.0.15.exe'
 ARCHIVE_GOG_OLD0_MD5='c09523c61edd18abb97da97463e07a88'
@@ -56,7 +62,7 @@ ARCHIVE_GOG_OLD0_SIZE='1200000'
 ARCHIVE_GOG_OLD0_VERSION='1.0.7.4-gog2.0.0.15'
 
 ARCHIVE_DOC0_DATA_PATH='.'
-ARCHIVE_DOC0_DATA_FILES='./*.doc ./*.htm ./*.pdf ./*.txt ./documents'
+ARCHIVE_DOC0_DATA_FILES='*.doc *.htm *.pdf *.txt documents'
 # Keep compatibility with old archives
 ARCHIVE_DOC0_DATA_PATH_GOG_OLD0='app'
 
@@ -64,19 +70,19 @@ ARCHIVE_DOC1_DATA_PATH='__support/app'
 ARCHIVE_DOC1_DATA_FILES='./eula.*'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='./*.asi ./*.cfg ./*.exe ./*.inf ./binkw32.dll ./ddraw.dll ./mm_won.dll ./mss32.dll ./sierrapt.dll'
+ARCHIVE_GAME_BIN_FILES='*.asi *.cfg *.exe *.inf binkw32.dll ddraw.dll mm_won.dll mss32.dll sierrapt.dll'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_GOG_OLD0='app'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='./*.dat ./data ./modules'
+ARCHIVE_GAME_DATA_FILES='*.dat data modules'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_GOG_OLD0='app'
 
 CONFIG_FILES='./*.cfg'
 DATA_DIRS='./data ./modules/arcanum/maps ./modules/arcanum/saves'
 
-APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|awk '/*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='arcanum.exe'
@@ -94,43 +100,43 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract game icons
 
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Decompress UPX-packed executable
 
@@ -142,7 +148,7 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

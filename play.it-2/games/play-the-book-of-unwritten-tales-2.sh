@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,7 @@ ARCHIVE_GAME_DATA_FILES='./data ./launcher ./qt.conf Linux/*_Data'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Linux/BouT2.x86'
 APP_MAIN_EXE_BIN64='Linux/BouT2.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='Linux/BouT2_Data/Resources/UnityPlayer.png'
 
@@ -110,6 +111,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

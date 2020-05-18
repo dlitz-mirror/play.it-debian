@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181121.1
+script_version=20190729.1
 
 # Set game-specific variables
 
@@ -43,55 +43,86 @@ GAME_NAME='Heroes of Might and Magic III'
 
 SCRIPT_DEPS='iconv'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR_OLD0'
+ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR_OLD0 ARCHIVE_GOG_EN_OLD1 ARCHIVE_GOG_FR_OLD1'
 
-ARCHIVE_GOG_EN='setup_homm_3_complete_4.0_(10665).exe'
+ARCHIVE_GOG_EN='setup_heroes_of_might_and_magic_3_complete_4.0_(28740).exe'
 ARCHIVE_GOG_EN_URL='https://www.gog.com/game/heroes_of_might_and_magic_3_complete_edition'
-ARCHIVE_GOG_EN_MD5='0c97452fc4da4e8811173f21df873fab'
-ARCHIVE_GOG_EN_VERSION='4.0-gog10665'
+ARCHIVE_GOG_EN_MD5='8dcd6c4a8c72c65a6920665e28245c57'
+ARCHIVE_GOG_EN_VERSION='4.0-gog28740'
 ARCHIVE_GOG_EN_SIZE='1100000'
+ARCHIVE_GOG_EN_PART1='setup_heroes_of_might_and_magic_3_complete_4.0_(28740)-1.bin'
+ARCHIVE_GOG_EN_PART1_MD5='4285d54f27c40e815905c7069b6f9f84'
+ARCHIVE_GOG_EN_PART1_TYPE='innosetup'
 
-ARCHIVE_GOG_FR='setup_homm_3_complete_french_4.0_(10665).exe'
+ARCHIVE_GOG_FR='setup_heroes_of_might_and_magic_3_complete_4.0_(french)_(28740).exe'
 ARCHIVE_GOG_FR_URL='https://www.gog.com/game/heroes_of_might_and_magic_3_complete_edition'
-ARCHIVE_GOG_FR_MD5='6c3ee33a531bd0604679581ab267d8a3'
-ARCHIVE_GOG_FR_VERSION='4.0-gog10665'
+ARCHIVE_GOG_FR_MD5='be4b59590146299dbe77bda7a4ea4178'
+ARCHIVE_GOG_FR_VERSION='4.0-gog28740'
 ARCHIVE_GOG_FR_SIZE='1100000'
+ARCHIVE_GOG_FR_PART1='setup_heroes_of_might_and_magic_3_complete_4.0_(french)_(28740)-1.bin'
+ARCHIVE_GOG_FR_PART1_MD5='88b71e0fd44e5be1ad6791e74120c61c'
+ARCHIVE_GOG_FR_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_EN_OLD1='setup_homm_3_complete_4.0_(10665).exe'
+ARCHIVE_GOG_EN_OLD1_MD5='0c97452fc4da4e8811173f21df873fab'
+ARCHIVE_GOG_EN_OLD1_VERSION='4.0-gog10665'
+ARCHIVE_GOG_EN_OLD1_SIZE='1100000'
+
+ARCHIVE_GOG_FR_OLD1='setup_homm_3_complete_french_4.0_(10665).exe'
+ARCHIVE_GOG_FR_OLD1_MD5='6c3ee33a531bd0604679581ab267d8a3'
+ARCHIVE_GOG_FR_OLD1_VERSION='4.0-gog10665'
+ARCHIVE_GOG_FR_OLD1_SIZE='1100000'
 
 ARCHIVE_GOG_EN_OLD0='setup_homm3_complete_2.0.0.16.exe'
 ARCHIVE_GOG_EN_OLD0_MD5='263d58f8cc026dd861e9bbcadecba318'
 ARCHIVE_GOG_EN_OLD0_VERSION='3.0-gog2.0.0.16'
 ARCHIVE_GOG_EN_OLD0_SIZE='1100000'
-ARCHIVE_GOG_EN_OLD0_PATCH='patch_heroes_of_might_and_magic_3_complete_2.0.1.17.exe'
-ARCHIVE_GOG_EN_OLD0_PATCH_MD5='815b9c097cd57d0e269beb4cc718dad3'
+ARCHIVE_GOG_EN_OLD0_PART1='patch_heroes_of_might_and_magic_3_complete_2.0.1.17.exe'
+ARCHIVE_GOG_EN_OLD0_PART1_MD5='815b9c097cd57d0e269beb4cc718dad3'
+ARCHIVE_GOG_EN_OLD0_PART1_TYPE='innosetup'
 
 ARCHIVE_GOG_FR_OLD0='setup_homm3_complete_french_2.1.0.20.exe'
 ARCHIVE_GOG_FR_OLD0_MD5='ca8e4726acd7b5bc13c782d59c5a459b'
 ARCHIVE_GOG_FR_OLD0_VERSION='3.0-gog2.1.0.20'
 ARCHIVE_GOG_FR_OLD0_SIZE='1100000'
 
-ARCHIVE_DOC0_DATA_PATH='tmp'
-ARCHIVE_DOC0_DATA_FILES='*eula.txt'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='eula *.cnt *.hlp *.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_EN_OLD0='app'
+ARCHIVE_DOC_DATA_PATH_GOG_EN_OLD1='app'
+ARCHIVE_DOC_DATA_PATH_GOG_FR_OLD0='app'
+ARCHIVE_DOC_DATA_PATH_GOG_FR_OLD1='app'
 
-ARCHIVE_DOC1_DATA_PATH='app'
-ARCHIVE_DOC1_DATA_FILES='eula *.cnt *.hlp *.pdf *.txt'
+ARCHIVE_GAME0_BIN_WINE_PATH='.'
+ARCHIVE_GAME0_BIN_WINE_FILES='*.exe binkw32.dll ifc20.dll ifc21.dll mcp.dll mp3dec.asi mss32.dll smackw32.dll'
+# Keep compatibility with old archives
+ARCHIVE_GAME0_BIN_WINE_PATH_GOG_EN_OLD0='app'
+ARCHIVE_GAME0_BIN_WINE_PATH_GOG_EN_OLD1='app'
+ARCHIVE_GAME0_BIN_WINE_PATH_GOG_FR_OLD0='app'
+ARCHIVE_GAME0_BIN_WINE_PATH_GOG_FR_OLD1='app'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.exe binkw32.dll ifc20.dll ifc21.dll mcp.dll mp3dec.asi mss32.dll smackw32.dll'
+# Keep compatibility with old archives
+ARCHIVE_GAME1_BIN_WINE_PATH_GOG_EN_OLD0='tmp'
+ARCHIVE_GAME1_BIN_WINE_FILES_GOG_EN_OLD0='heroes3.exe'
 
-ARCHIVE_GAME_PATCH_BIN_PATH='tmp'
-ARCHIVE_GAME_PATCH_BIN_FILES='heroes3.exe'
-
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='data maps mp3'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_EN_OLD0='app'
+ARCHIVE_GAME_DATA_PATH_GOG_EN_OLD1='app'
+ARCHIVE_GAME_DATA_PATH_GOG_FR_OLD0='app'
+ARCHIVE_GAME_DATA_PATH_GOG_FR_OLD1='app'
 
 CONFIG_DIRS='./config'
 DATA_DIRS='./games ./maps ./random_maps'
 DATA_FILES='./data/h3ab_bmp.lod ./data/h3ab_spr.lod ./data/h3bitmap.lod ./data/h3sprite.lod'
 
 APP_REGEDIT='tweaks.reg'
-APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
-APP_MAIN_TYPE='wine'
+APP_MAIN_TYPE_BIN_WINE='wine'
+APP_MAIN_TYPE_BIN_VCMI='native'
 APP_MAIN_EXE='heroes3.exe'
 APP_MAIN_ICON='heroes3.exe'
 
@@ -107,7 +138,7 @@ APP_EDITOR_CAMPAIGN_EXE='h3ccmped.exe'
 APP_EDITOR_CAMPAIGN_ICON='h3ccmped.exe'
 APP_EDITOR_CAMPAIGN_NAME="$GAME_NAME - campaign editor"
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN_VCMI PKG_BIN_WINE PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
@@ -116,18 +147,27 @@ PKG_DATA_PROVIDE="${PKG_DATA_ID}"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
-PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
+
+PKG_BIN_VCMI_ID="${PKG_BIN_ID}-vcmi"
+PKG_BIN_VCMI_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_VCMI_DEPS="$PKG_DATA_ID"
+PKG_BIN_VCMI_DEPS_ARCH='vcmi'
+PKG_BIN_VCMI_DEPS_DEB='vcmi'
+PKG_BIN_VCMI_DEPS_GENTOO='games-strategy/vcmi' # overlay required: https://github.com/qdii/qdiilay
+
+PKG_BIN_WINE_ID="${PKG_BIN_ID}-wine"
+PKG_BIN_WINE_ID_GOG_EN="${PKG_BIN_WINE_ID}-en"
+PKG_BIN_WINE_ID_GOG_FR="${PKG_BIN_WINE_ID}-fr"
+PKG_BIN_WINE_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_WINE_ARCH='32'
+PKG_BIN_WINE_DEPS="$PKG_DATA_ID wine winetricks xrandr glx"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -147,54 +187,113 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
-
-# Load patch if using old GOG English archive
-
-if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD0' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	archive_set 'ARCHIVE_PATCH' 'ARCHIVE_GOG_EN_OLD0_PATCH'
-	[ "$ARCHIVE_PATCH" ] || archive_set_error_not_found 'ARCHIVE_GOG_EN_OLD0_PATCH'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-if [ "$ARCHIVE_PATCH" ]; then
-	(
-		ARCHIVE='ARCHIVE_PATCH'
-		extract_data_from "$ARCHIVE_PATCH"
-	)
-	PKG='PKG_BIN'
-	organize_data 'GAME_PATCH_BIN' "$PATH_GAME"
-fi
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_EN_OLD0')
+		extract_data_from "$SOURCE_ARCHIVE_PART1"
+		prepare_package_layout
+		rm --recursive "$PLAYIT_WORKDIR/gamedata"
+	;;
+esac
 
-# Allow to skip intro video on first launch
+# Allow to skip intro video on first launch + set default settings
 
-file="${PKG_BIN_PATH}${PATH_GAME}/$APP_REGEDIT"
-cat > "$file" << 'EOF'
-Windows Registry Editor Version 5.00
+file="${PKG_BIN_WINE_PATH}${PATH_GAME}/$APP_REGEDIT"
+if [ $DRY_RUN -eq 0 ];then
+	cat > "$file" <<- 'EOF'
+	Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\Software\New World Computing\Heroes of Might and Magic® III\1.0]
-"First Time"=dword:00000000
-"Music Volume"=dword:00000005
-"Sound Volume"=dword:00000005
-EOF
-iconv --from-code=UTF-8 --to-code=UTF-16 --output="$file" "$file"
+	[HKEY_LOCAL_MACHINE\Software\New World Computing\Heroes of Might and Magic® III\1.0]
+	"Animate SpellBook"=dword:00000001
+	"Autosave"=dword:00000001
+	"Bink Video"=dword:00000001
+	"Blackout Computer"=dword:00000000
+	"Combat Army Info Level"=dword:00000000
+	"Combat Auto Creatures"=dword:00000001
+	"Combat Auto Spells"=dword:00000001
+	"Combat Ballista"=dword:00000001
+	"Combat Catapult"=dword:00000001
+	"Combat First Aid Tent"=dword:00000001
+	"Combat Shade Level"=dword:00000000
+	"Combat Speed"=dword:00000000
+	"Computer Walk Speed"=dword:00000003
+	"First Time"=dword:00000000
+	"Last Music Volume"=dword:00000005
+	"Last Sound Volume"=dword:00000005
+	"Main Game Full Screen"=dword:00000001
+	"Main Game Show Menu"=dword:00000001
+	"Main Game X"=dword:0000000a
+	"Main Game Y"=dword:0000000a
+	"Move Reminder"=dword:00000001
+	"Music Volume"=dword:00000005
+	"Network Default Name"="Player"
+	"Quick Combat"=dword:00000000
+	"Show Combat Grid"=dword:00000000
+	"Show Combat Mouse Hex"=dword:00000000
+	"Show Intro"=dword:00000001
+	"Show Route"=dword:00000001
+	"Sound Volume"=dword:00000005
+	"Test Blit"=dword:00000000
+	"Test Decomp"=dword:00000000
+	"Test Read"=dword:00000000
+	"Town Outlines"=dword:00000001
+	"Video Subtitles"=dword:00000001
+	"Walk Speed"=dword:00000002
+	"Window Scroll Speed"=dword:00000001
+	EOF
+	iconv --from-code=UTF-8 --to-code=UTF-16 --output="$file" "$file"
+fi
 
 # Extract icons
 
-PKG='PKG_BIN'
+PKG='PKG_BIN_WINE'
 icons_get_from_package 'APP_MAIN' 'APP_EDITOR_MAP' 'APP_EDITOR_CAMPAIGN'
 icons_move_to 'PKG_DATA'
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_EDITOR_MAP' 'APP_EDITOR_CAMPAIGN'
+PKG='PKG_BIN_WINE'
+use_package_specific_value 'APP_MAIN_TYPE'
+launchers_write 'APP_MAIN' 'APP_EDITOR_MAP' 'APP_EDITOR_CAMPAIGN'
+
+PKG='PKG_BIN_VCMI'
+use_package_specific_value 'APP_MAIN_TYPE'
+launcher="${PKG_BIN_VCMI_PATH}${PATH_BIN}/$GAME_ID"
+if [ $DRY_RUN -eq 0 ]; then
+	mkdir --parents "${launcher%/*}"
+	touch "$launcher"
+	chmod 755 "$launcher"
+	launcher_write_script_headers "$launcher"
+	{
+		cat <<- 'EOF'
+		VCMI_DATA="${XDG_DATA_HOME:="$HOME/.local/share"}/vcmi"
+		EOF
+		cat <<- EOF
+		GAME_PATH="$PATH_GAME"
+		EOF
+		cat <<- 'EOF'
+
+		for dir in data maps mp3; do
+		    if [ ! -e "$VCMI_DATA/$dir" ]; then
+		        mkdir --parents "$VCMI_DATA"
+		        cp --recursive --remove-destination --symbolic-link "$GAME_PATH/$dir" "$VCMI_DATA"
+		    fi
+		done
+
+		vcmilauncher
+
+		exit 0
+		EOF
+	} >> "$launcher"
+fi
+launcher_write_desktop 'APP_MAIN'
 
 # Build package
 
@@ -207,6 +306,10 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-print_instructions
+printf '\n'
+printf 'VCMI:'
+print_instructions 'PKG_DATA' 'PKG_BIN_VCMI'
+printf 'WINE:'
+print_instructions 'PKG_DATA' 'PKG_BIN_WINE'
 
 exit 0

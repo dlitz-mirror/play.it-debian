@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ script_version=20180908.1
 # Set game-specific variables
 
 GAME_ID='nightmares-from-the-deep-2'
+# shellcheck disable=SC1112
 GAME_NAME='Nightmares From the Deep 2: The Siren’s Call'
 
 ARCHIVE_GOG='nightmares_from_the_deep_2_the_siren_s_call_en_gog_1_22645.sh'
@@ -103,6 +104,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

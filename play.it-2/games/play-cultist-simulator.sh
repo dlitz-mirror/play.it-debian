@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,23 +30,47 @@ set -o errexit
 
 ###
 # Cultist Simulator
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181216.2
+script_version=20190521.3
 
 # Set game-specific variables
 
 GAME_ID='cultist-simulator'
 GAME_NAME='Cultist Simulator'
 
-ARCHIVE_GOG='cultist_simulator_2018_12_b_1_25838.sh'
+ARCHIVE_GOG='cultist_simulator_2019_2_b_1_27664.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/cultist_simulator'
-ARCHIVE_GOG_MD5='24d89e01593a6860e841242818c5e0a4'
+ARCHIVE_GOG_MD5='acab3e94356ac2b7f22919c858e136b7'
 ARCHIVE_GOG_SIZE='430000'
-ARCHIVE_GOG_VERSION='2018.12.b.1-gog25838'
+ARCHIVE_GOG_VERSION='2019.2.b.1-gog27664'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD10='cultist_simulator_2019_1_k_1_26890.sh'
+ARCHIVE_GOG_OLD10_MD5='4902a7b52f6c28e4a069becd829092df'
+ARCHIVE_GOG_OLD10_SIZE='440000'
+ARCHIVE_GOG_OLD10_VERSION='2019.1.k.1-gog26890'
+ARCHIVE_GOG_OLD10_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD9='cultist_simulator_2019_1_i_4_26849.sh'
+ARCHIVE_GOG_OLD9_MD5='a9dd0bc41b522acf67e279bf32a46264'
+ARCHIVE_GOG_OLD9_SIZE='440000'
+ARCHIVE_GOG_OLD9_VERSION='2019.1.i.4-gog26849'
+ARCHIVE_GOG_OLD9_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD8='cultist_simulator_2019_1_i_1_26823.sh'
+ARCHIVE_GOG_OLD8_MD5='9f8e8e58150acec6a31b2ac9ca620a99'
+ARCHIVE_GOG_OLD8_SIZE='440000'
+ARCHIVE_GOG_OLD8_VERSION='2019.1.i.1-gog26823'
+ARCHIVE_GOG_OLD8_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD7='cultist_simulator_2018_12_b_1_25838.sh'
+ARCHIVE_GOG_OLD7_MD5='24d89e01593a6860e841242818c5e0a4'
+ARCHIVE_GOG_OLD7_SIZE='430000'
+ARCHIVE_GOG_OLD7_VERSION='2018.12.b.1-gog25838'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD6='cultist_simulator_2018_10_i_5_24471.sh'
 ARCHIVE_GOG_OLD6_MD5='d6f4c068f71dcc7bde8157c0ffd265da'
@@ -111,6 +135,7 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='export LANG=C'
 APP_MAIN_EXE_BIN32='CS.x86'
 APP_MAIN_EXE_BIN64='CS.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='CS_Data/Resources/UnityPlayer.png'
 
@@ -120,17 +145,23 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
+PKG_BIN32_DEPS_ARCH='lib32-gdk-pixbuf2 lib32-glib2'
+PKG_BIN32_DEPS_DEB='libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN32_DEPS_GENTOO='x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='gdk-pixbuf2 glib2'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -150,6 +181,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -161,7 +193,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

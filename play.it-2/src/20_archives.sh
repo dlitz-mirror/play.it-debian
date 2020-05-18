@@ -28,7 +28,7 @@ archive_set_error_not_found() {
 			string_single='The following file could not be found:'
 		;;
 	esac
-	if [ "$#" = 1 ]; then
+	if [ "$#" -eq 1 ]; then
 		string="$string_single"
 	else
 		string="$string_multiple"
@@ -44,8 +44,6 @@ archive_set_error_not_found() {
 	done
 	return 1
 }
-# compatibility alias
-set_archive_error_not_found() { archive_set_error_not_found "$@"; }
 
 # set a single archive for data extraction
 # USAGE: archive_set $name $archive[…]
@@ -86,8 +84,6 @@ archive_set() {
 	fi
 	unset $name
 }
-# compatibility alias
-set_archive() { archive_set "$@"; }
 
 # automatically check for presence of archives using the name of the base archive with a _PART1 to _PART9 suffix appended
 # returns an error if such an archive is set by the script but not found

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -109,11 +109,12 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Check dependencies
 
-if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD' ] || [ "$ARCHIVE" = 'ARCHIVE_GOG_FR_OLD' ]; then
+if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD' ] || [ "$ARCHIVE" = 'ARCHIVE_GOG_FR_OLD' ]; then
 	SCRIPT_DEPS="$SCRIPT_DEPS $SCRIPT_DEPS_GOG_OLD"
 	check_deps
 fi
@@ -121,9 +122,9 @@ fi
 # Extract data from game
 
 extract_data_from "$SOURCE_ARCHIVE"
-if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD' ] || [ "$ARCHIVE" = 'ARCHIVE_GOG_FR_OLD' ]; then
+if [ "$ARCHIVE" = 'ARCHIVE_GOG_EN_OLD' ] || [ "$ARCHIVE" = 'ARCHIVE_GOG_FR_OLD' ]; then
 	rm --force --recursive "$PLAYIT_WORKDIR/gamedata/data/noarch/dosbox"
-	eval ${ARCHIVE}_TYPE='rar'
+	eval "${ARCHIVE}_TYPE"=\'rar\'
 	extract_data_from "$PLAYIT_WORKDIR/gamedata/data/noarch/data/NoMouth.dat"
 fi
 tolower "$PLAYIT_WORKDIR/gamedata"

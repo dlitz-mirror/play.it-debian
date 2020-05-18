@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -94,15 +94,15 @@ ARCHIVE_GOG_PL_PART1_MD5='540c20cd68079c7a214af65296b4a8b1'
 ARCHIVE_GOG_PL_PART1_TYPE='rar'
 
 ARCHIVE_LINUX_COMMON='nwn-linux-common.tar.gz'
-ARCHIVE_LINUX_COMMON_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_COMMON_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_COMMON_MD5='9aa7dae2ba9111c96b10679fa085c66e'
 
 ARCHIVE_LINUX_168='nwn-linux-1.68.tar.gz'
-ARCHIVE_LINUX_168_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_168_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_168_MD5='7d46737ff2d25470f8d6b389bb53cd1a'
 
 ARCHIVE_LINUX_169='nwn-linux-1.69.tar.gz'
-ARCHIVE_LINUX_169_URL='https://www.dotslashplay.it/ressources/neverwinter-nights/'
+ARCHIVE_LINUX_169_URL='https://downloads.dotslashplay.it/resources/neverwinter-nights/'
 ARCHIVE_LINUX_169_MD5='b703f017446440e386ae142c1aa74a71'
 
 ARCHIVE_NWMOVIES='nwmovies-mpv.tar.gz'
@@ -191,6 +191,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Check presence of Linux client archive
@@ -217,6 +218,7 @@ if [ "$OPTION_PACKAGE" != 'arch' ]; then
 	ARCHIVE_MAIN="$ARCHIVE"
 	archive_set 'ARCHIVE_MOVIES' 'ARCHIVE_NWMOVIES'
 	ARCHIVE="$ARCHIVE_MAIN"
+	# shellcheck disable=SC2153
 	if [ "$ARCHIVE_MOVIES" ]; then
 		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_NWMOVIES"
 		PKG_BIN_DEPS="$PKG_BIN_DEPS $PKG_BIN_DEPS_NWMOVIES"
@@ -282,22 +284,29 @@ write_launcher 'APP_MAIN'
 if [ "$ARCHIVE_MOVIES" ]; then
 	file="${PKG_BIN_PATH}$PATH_BIN/$GAME_ID"
 	pattern='s/# Build prefix/&\n'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'if [ ! -d "$PATH_PREFIX" ]; then\n'
 	pattern="$pattern"'\tclean_prefix=1\n'
 	pattern="$pattern"'fi/;'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'s#cp --recursive --remove-destination --symbolic-link "$PATH_GAME"/\* "$PATH_PREFIX"#&\n'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'if [ "$clean_prefix" = 1 ]; then\n'
 	pattern="$pattern"'\tif [ ! -e nwmovies/nwmovies.so ]; then'
 	pattern="$pattern"'\t\t(\n'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'\t\t\tcd "$PATH_PREFIX"\n'
 	pattern="$pattern"'\t\t\tsed --in-place "s/mpv /mpv --fs --no-osc /" ./nwmovies/nwplaymovie\n'
 	pattern="$pattern"'\t\t\t./nwmovies/nwmovies_install.pl build >/dev/null 2>\&1\n'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'\t\t\tcp --no-dereference --parents nwmovies/nwmovies.so nwmovies/libdis/libdisasm.so nwmovies/nwplaymovie nwplaymovie "$PATH_DATA"\n'
 	pattern="$pattern"'\t\t)\n'
 	pattern="$pattern"'\tfi\n'
 	pattern="$pattern"'fi#;'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'s#^"\./$APP_EXE" $APP_OPTIONS $@$#'
 	pattern="$pattern"'if [ ! -e nwmovies.ini ]; then\n'
+	# shellcheck disable=SC2016
 	pattern="$pattern"'\t"./$APP_EXE" $APP_OPTIONS $@\n'
 	pattern="$pattern"'fi\n&#'
 	sed --in-place "$pattern" "$file"

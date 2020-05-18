@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@ ARCHIVE_GOG_SIZE='130000'
 ARCHIVE_GOG_VERSION='1.0.0-gog2.0.0.1'
 
 ARCHIVE_EXTRA_ICONS='the-westport-independent_icons.tar.gz'
-ARCHIVE_EXTRA_ICONS_URL='https://www.dotslashplay.it/ressources/the-westport-independant/'
+ARCHIVE_EXTRA_ICONS_URL='https://downloads.dotslashplay.it/resources/the-westport-independant/'
 ARCHIVE_EXTRA_ICONS_MD5='054b51fe4c02f256b8130b40e93d28ae'
 
 ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'
@@ -103,6 +103,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Try to load icons archive

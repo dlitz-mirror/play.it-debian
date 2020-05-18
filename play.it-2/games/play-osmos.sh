@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -67,6 +67,7 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Osmos.bin32'
 APP_MAIN_EXE_BIN64='Osmos.bin64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='1>./logs/$(date +%F-%R).log 2>&1'
 unset APP_MAIN_ICONS_LIST
 for res in 16 22 32 36 48 64 72 96 128 192 256; do
@@ -104,6 +105,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -129,7 +131,9 @@ done
 
 # Allow persistent logging via output redirection to work
 
+# shellcheck disable=SC2016
 sed --in-place 's|"\./$APP_EXE" $APP_OPTIONS $@|eval &|' "${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID"
+# shellcheck disable=SC2016
 sed --in-place 's|"\./$APP_EXE" $APP_OPTIONS $@|eval &|' "${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"
 
 # Build package

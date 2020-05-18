@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,19 +34,37 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181128.1
+script_version=20190501.2
 
 # Set game-specific variables
 
 GAME_ID='renowned-explorers-international-society'
 GAME_NAME='Renowned Explorers: More To Explore'
 
-ARCHIVE_GOG='renowned_explorers_international_society_more_to_explore_dlc_512_25169.sh'
+ARCHIVE_GOG='renowned_explorers_international_society_more_to_explore_dlc_522_26056.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/renowned_explorers_more_to_explore'
-ARCHIVE_GOG_MD5='94112f4cfc91fa67855a310618bdeacf'
+ARCHIVE_GOG_MD5='46b6534ff70a9efa4fc21b2ba139b52f'
 ARCHIVE_GOG_SIZE='69000'
-ARCHIVE_GOG_VERSION='512-gog25169'
+ARCHIVE_GOG_VERSION='522-gog26056'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD6='renowned_explorers_international_society_more_to_explore_dlc_520_25983.sh'
+ARCHIVE_GOG_OLD6_MD5='3d3e97fc73e63ac992c9afa9f620282e'
+ARCHIVE_GOG_OLD6_SIZE='69000'
+ARCHIVE_GOG_OLD6_VERSION='520-gog25983'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD5='renowned_explorers_international_society_more_to_explore_dlc_516_25864.sh'
+ARCHIVE_GOG_OLD5_MD5='db21406827c77caecb92c96bb2f4e473'
+ARCHIVE_GOG_OLD5_SIZE='69000'
+ARCHIVE_GOG_OLD5_VERSION='516-gog25864'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='renowned_explorers_international_society_more_to_explore_dlc_512_25169.sh'
+ARCHIVE_GOG_OLD4_MD5='94112f4cfc91fa67855a310618bdeacf'
+ARCHIVE_GOG_OLD4_SIZE='69000'
+ARCHIVE_GOG_OLD4_VERSION='512-gog25169'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='renowned_explorers_international_society_more_to_explore_dlc_508_23701.sh'
 ARCHIVE_GOG_OLD3_MD5='5f43443fc81111bc27461e39145c6db6'
@@ -87,10 +105,10 @@ PKG_MAIN_PROVIDE='renowned-explorers-more-to-explore'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -110,6 +128,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

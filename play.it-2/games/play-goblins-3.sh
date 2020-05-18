@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Goblins Quest 3
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180813.3
+script_version=20200214.1
 
 # Set game-specific variables
 
@@ -68,31 +68,32 @@ ARCHIVE_GOG_FR_OLD0_SIZE='210000'
 ARCHIVE_GOG_FR_OLD0_VERSION='1.02-gog2.1.0.64'
 
 ARCHIVE_GAME_DATA_DISK_PATH='.'
-ARCHIVE_GAME_DATA_DISK_FILES='./imd.itk ./*.lic ./*.stk ./*.mp3'
+ARCHIVE_GAME_DATA_DISK_FILES='imd.itk *.lic *.stk *.mp3'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_DISK_PATH_GOG_EN_OLD0='app'
 ARCHIVE_GAME_DATA_DISK_PATH_GOG_FR_OLD0='app'
 
 ARCHIVE_GAME_L10N_PATH='.'
-ARCHIVE_GAME_L10N_FILES='./??gob3.itk'
+ARCHIVE_GAME_L10N_FILES='??gob3.itk'
 # Keep compatibility with old archives
 ARCHIVE_GAME_L10N_PATH_GOG_EN_OLD0='app'
 ARCHIVE_GAME_L10N_PATH_GOG_FR_OLD0='app'
 
 ARCHIVE_GAME_DATA_FLOPPY_PATH='fdd'
-ARCHIVE_GAME_DATA_FLOPPY_FILES='./*'
+ARCHIVE_GAME_DATA_FLOPPY_FILES='*'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_FLOPPY_PATH_GOG_EN_OLD0='app/fdd'
 ARCHIVE_GAME_DATA_FLOPPY_PATH_GOG_FR_OLD0='app/fdd'
 
 ARCHIVE_DOC_MAIN_PATH='.'
-ARCHIVE_DOC_MAIN_FILES='./*.pdf'
+ARCHIVE_DOC_MAIN_FILES='*.pdf'
 # Keep compatibility with old archives
 ARCHIVE_DOC_MAIN_PATH_GOG_EN_OLD0='app'
 ARCHIVE_DOC_MAIN_PATH_GOG_FR_OLD0='app'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='gob'
+# shellcheck disable=SC2016
 APP_MAIN_PRERUN='if [ -e "$PATH_GAME/frgob3.itk" ]; then
 	APP_OPTIONS="-q fr $APP_OPTIONS"
 	export APP_OPTIONS
@@ -126,33 +127,33 @@ PKG_MAIN_DEPS="$PKG_DATA_ID scummvm"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Extract data from game
+# Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
@@ -166,7 +167,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 PKG='PKG_MAIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
@@ -192,8 +193,10 @@ case "${LANG%_*}" in
 	;;
 esac
 printf '\n'
+# shellcheck disable=SC2059
 printf "$version_string" "$version_disk"
 print_instructions 'PKG_L10N' 'PKG_DATA_DISK' 'PKG_MAIN'
+# shellcheck disable=SC2059
 printf "$version_string" "$version_floppy"
 print_instructions 'PKG_DATA_FLOPPY' 'PKG_MAIN'
 

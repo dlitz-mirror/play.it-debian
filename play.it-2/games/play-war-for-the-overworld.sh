@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,22 +31,28 @@ set -o errexit
 ###
 # War for the Overworld
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181121.1
+script_version=20200309.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld'
 
-ARCHIVE_GOG='war_for_the_overworld_2_0_6f1_24637.sh'
+ARCHIVE_GOG='war_for_the_overworld_2_0_7f1_30014.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld'
-ARCHIVE_GOG_MD5='e58f2720ed974185e9e5b29d08aa6238'
+ARCHIVE_GOG_MD5='a352307c8fbf70c33bdfdd97a82c6530'
 ARCHIVE_GOG_SIZE='4700000'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog24637'
+ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD7='war_for_the_overworld_2_0_6f1_24637.sh'
+ARCHIVE_GOG_OLD7_MD5='e58f2720ed974185e9e5b29d08aa6238'
+ARCHIVE_GOG_OLD7_SIZE='4700000'
+ARCHIVE_GOG_OLD7_VERSION='2.0.6f1-gog24637'
+ARCHIVE_GOG_OLD7_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD6='war_for_the_overworld_2_0_5_24177.sh'
 ARCHIVE_GOG_OLD6_MD5='79b604f0d19caf3af5fdc4cb3903b370'
@@ -106,11 +112,12 @@ ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Linux'
 ARCHIVE_GAME_DATA_FILES='*_Data *.info'
 
-DATA_DIRS='./*_Data/GameData ./logs'
+DATA_DIRS='./*_Data/GameData ./logs ./*_Data/uiresources/wftoUI/menu/vids'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_GOG='WFTOGame.x86_64'
 APP_MAIN_EXE_HUMBLE='WFTO.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON_GOG='WFTOGame_Data/Resources/UnityPlayer.png'
 APP_MAIN_ICON_HUMBLE='WFTO_Data/Resources/UnityPlayer.png'
@@ -131,10 +138,10 @@ PKG_BIN_DEPS_GOG_OLD3="$PKG_BIN_DEPS_HUMBLE"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -154,6 +161,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -161,6 +169,11 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Tweaks for old versions
 
@@ -173,28 +186,26 @@ do
 	fi
 done
 
-file="${PKG_DATA_PATH}${PATH_GAME}"/*_Data/uiresources/maps/Stonegate.unity.png
-if [ -e "$file" ]; then
-	(
-		cd "${file%/*}"
-		mv "${file##*/}" 'stonegate.unity.png'
-	)
-fi
+for file in\
+	"${PKG_DATA_PATH}${PATH_GAME}/WFTO_Data/uiresources/maps/Stonegate.unity.png"\
+	"${PKG_DATA_PATH}${PATH_GAME}/WFTOGame_Data/uiresources/maps/Stonegate.unity.png"
+do
+	if [ -e "$file" ]; then
+		mv "$file" "$(dirname "$file")/stonegate.unity.png"
+	fi
+done
 
 # Write launchers
 
 PKG='PKG_BIN'
 use_archive_specific_value 'APP_MAIN_EXE'
 use_archive_specific_value 'APP_MAIN_ICON'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build packages
 
 use_archive_specific_value 'PKG_BIN_DEPS'
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up

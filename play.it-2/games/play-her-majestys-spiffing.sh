@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ script_version=20181125.1
 # Set game-specific variables
 
 GAME_ID='her-majestys-spiffing'
+# shellcheck disable=SC1112
 GAME_NAME='Her Majesty’s SPIFFING'
 
 ARCHIVE_HUMBLE='HMS_Linux.zip'
@@ -62,6 +63,7 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='hms.x86'
 APP_MAIN_EXE_BIN64='hms.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='hms_Data/Resources/UnityPlayer.png'
 
@@ -81,7 +83,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -101,6 +103,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

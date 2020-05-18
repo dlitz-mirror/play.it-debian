@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -79,7 +79,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN64_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
@@ -100,12 +100,14 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Set packages list according to source archive
 
 if [ "$ARCHIVE" = 'ARCHIVE_HUMBLE_OLD' ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_OLD"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 
@@ -120,6 +122,7 @@ ARCHIVE="$ARCHIVE_MAIN"
 extract_data_from "$SOURCE_ARCHIVE"
 if [ "$ARCHIVE_ICONS" ]; then
 	(
+		# shellcheck disable=SC2030
 		ARCHIVE='ARCHIVE_ICONS'
 		extract_data_from "$ARCHIVE_ICONS"
 	)
@@ -138,6 +141,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
+# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_HUMBLE')
 		PKG='PKG_BIN32'
@@ -161,6 +165,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_HUMBLE')
 		print_instructions

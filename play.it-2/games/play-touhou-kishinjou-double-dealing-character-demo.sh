@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181114.2
+script_version=20190626.9
 
 # Set game-specific variables
 
@@ -45,7 +45,7 @@ GAME_NAME='Touhou Kishinjou ~ Double Dealing Character - Demo'
 SCRIPT_DEPS='iconv'
 
 ARCHIVE_PLAYISM='DoubleDealingCharacterDemo.zip'
-ARCHIVE_PLAYISM_URL='http://playism-games.com/game/215/double-dealing-character'
+ARCHIVE_PLAYISM_URL='https://playism.com/product/touhou-kishinjo'
 ARCHIVE_PLAYISM_MD5='76a751e8becb51689c2256d218cda788'
 ARCHIVE_PLAYISM_VERSION='0.01b-playism'
 ARCHIVE_PLAYISM_SIZE='190000'
@@ -79,17 +79,17 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
 PKG_BIN_DEPS_DEB='fonts-wqy-microhei'
 PKG_BIN_DEPS_ARCH='wqy-microhei'
 PKG_BIN_DEPS_GENTOO='media-fonts/wqy-microhei'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -109,6 +109,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -119,16 +120,12 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Convert the text files to UTF-8 encoding
 
-for file in "${PKG_DATA_PATH}${PATH_DOC}"/*.txt; do
-	contents="$(iconv --from-code SHIFT-JIS "$file")"
-	printf '%s' "$contents" > "$file"
-done
-
-# Fix website link
-
-pattern='s|http://www16\.big\.or\.jp/.zun/|http://www16.big.or.jp/~zun/|'
-file="${PKG_DATA_PATH}${PATH_DOC}/readme.txt"
-sed --in-place "$pattern" "$file"
+if [ $DRY_RUN -eq 0 ]; then
+	for file in "${PKG_DATA_PATH}${PATH_DOC}"/*.txt; do
+		contents="$(iconv --from-code CP932 --to-code UTF-8 "$file")"
+		printf '%s' "$contents" > "$file"
+	done
+fi
 
 # Extract game icons
 
@@ -139,17 +136,21 @@ icons_move_to 'PKG_DATA'
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_CONFIG'
+launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Store saved games and settings outside of WINE prefix
 
+# shellcheck disable=SC2016
 saves_path='$WINEPREFIX/drive_c/users/$(whoami)/Application Data/ShanghaiAlice/th14tr'
+# shellcheck disable=SC2016
 pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
 pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
 pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""
 pattern="$pattern\\n\\tln --symbolic \"\$PATH_DATA/userdata\" \"$saves_path\""
 pattern="$pattern\\nfi#"
-sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
+fi
 
 # Build package
 

@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,30 +31,39 @@ set -o errexit
 
 ###
 # Momodora: Reverie Under the Moonlight
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20181016.1
+script_version=20190224.1
 
 # Set game-specific variables
 
 GAME_ID='momodora-reverie-under-the-moonlight'
 GAME_NAME='Momodora: Reverie Under the Moonlight'
 
-ARCHIVE_GOG='momodora_reverie_under_the_moonlight_en_20180418_20149.sh'
+ARCHIVE_GOG='momodora_reverie_under_the_moonlight_1_062_24682.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/momodora_reverie_under_the_moonlight'
-ARCHIVE_GOG_MD5='5ec0d0e8475ced69fbaf3881652d78c1'
+ARCHIVE_GOG_MD5='9da233f084d0a86e4068ca90c89e4f05'
 ARCHIVE_GOG_SIZE='330000'
-ARCHIVE_GOG_VERSION='1.02a-gog20149'
+ARCHIVE_GOG_VERSION='1.062-gog24682'
 ARCHIVE_GOG_TYPE='mojosetup'
 
+ARCHIVE_GOG_OLD0='momodora_reverie_under_the_moonlight_en_20180418_20149.sh'
+ARCHIVE_GOG_OLD0_MD5='5ec0d0e8475ced69fbaf3881652d78c1'
+ARCHIVE_GOG_OLD0_SIZE='330000'
+ARCHIVE_GOG_OLD0_VERSION='1.02a-gog20149'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
+
 ARCHIVE_OPTIONAL_LIBCURL='libcurl3_7.60.0_32-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBCURL_URL='https://www.dotslashplay.it/ressources/libcurl/'
+ARCHIVE_OPTIONAL_LIBCURL_URL='https://downloads.dotslashplay.it/resources/libcurl/'
 ARCHIVE_OPTIONAL_LIBCURL_MD5='7206100f065d52de5a4c0b49644aa052'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
+
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='Installation?Notes.pdf Update.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game/GameFiles'
 ARCHIVE_GAME_BIN_FILES='MomodoraRUtM runtime/i386/lib/i386-linux-gnu/libssl.so.1.0.0 runtime/i386/lib/i386-linux-gnu/libcrypto.so.1.0.0'
@@ -80,10 +89,10 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu openal libxrandr libcurl"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -103,6 +112,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Use libcurl 3 32-bit archive
@@ -133,8 +143,7 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
-chmod +x "${PKG_BIN_PATH}${PATH_GAME}/MomodoraRUtM"
+launcher_write 'APP_MAIN'
 
 # Build package
 

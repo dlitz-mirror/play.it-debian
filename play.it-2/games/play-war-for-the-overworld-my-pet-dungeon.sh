@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,19 +34,25 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181121.1
+script_version=20191221.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: My Pet Dungeon'
 
-ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_2_0_6f1_24637.sh'
+ARCHIVE_GOG='war_for_the_overworld_my_pet_dungeon_2_0_7f1_30014.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_my_pet_dungeon'
-ARCHIVE_GOG_MD5='7788aeeee1e9c7cd365eb595e772ff52'
+ARCHIVE_GOG_MD5='f9cd5f6fbe46d46c98837410f8cbfeee'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog24637'
+ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD2='war_for_the_overworld_my_pet_dungeon_2_0_6f1_24637.sh'
+ARCHIVE_GOG_OLD2_MD5='7788aeeee1e9c7cd365eb595e772ff52'
+ARCHIVE_GOG_OLD2_SIZE='1400'
+ARCHIVE_GOG_OLD2_VERSION='2.0.6f1-gog24637'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD1='war_for_the_overworld_my_pet_dungeon_2_0_5_24177.sh'
 ARCHIVE_GOG_OLD1_MD5='eb45d5ee8c699d9ded7d15b82ad1efa3'
@@ -73,10 +79,10 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -96,6 +102,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

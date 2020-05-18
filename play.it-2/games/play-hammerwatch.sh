@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -86,6 +86,7 @@ DATA_DIRS='./levels ./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Hammerwatch.bin.x86'
 APP_MAIN_EXE_BIN64='Hammerwatch.bin.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='Hammerwatch.exe'
 
@@ -105,7 +106,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -125,6 +126,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -146,7 +148,9 @@ done
 
 # Copy 'Hammerwatch.exe' into game prefix
 
+# shellcheck disable=SC2016
 pattern='s/^\tcp --parents --dereference --remove-destination "$APP_EXE" "$PATH_PREFIX"$/&\n'
+# shellcheck disable=SC2016
 pattern="$pattern"'\tcp --parents --remove-destination "Hammerwatch.exe" "$PATH_PREFIX"/'
 file1="${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID"
 file2="${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"

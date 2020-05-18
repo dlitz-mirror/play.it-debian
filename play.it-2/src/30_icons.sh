@@ -41,8 +41,6 @@ icons_get_from_package() {
 	path="${path_pkg}${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
 }
-# compatibility alias
-extract_and_sort_icons_from() { icons_get_from_package "$@"; }
 
 # get .png file(s) from various icon sources in temporary work directory
 # USAGE: icons_get_from_package $app[…]
@@ -53,8 +51,6 @@ icons_get_from_workdir() {
 	path="$PLAYIT_WORKDIR/gamedata"
 	icons_get_from_path "$path" "$@"
 }
-# compatibility alias
-get_icon_from_temp_dir() { icons_get_from_workdir "$@"; }
 
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
@@ -82,11 +78,13 @@ icons_get_from_path() {
 			use_archive_specific_value "$icon"
 			file="$(get_value "$icon")"
 			[ -z "$file" ] && icon_path_empty_error "$icon"
-			[ -f "$directory/$file" ] || icon_file_not_found_error "$directory/$file"
+			if [ $DRY_RUN -eq 0 ] && [ ! -f "$directory/$file" ]; then
+				icon_file_not_found_error "$directory/$file"
+			fi
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
+			icons_include_png_from_directory "$app" "$destination"
 		done
-		icons_include_png_from_directory "$app" "$destination"
 	done
 }
 
@@ -120,29 +118,13 @@ icon_extract_png_from_file() {
 		;;
 	esac
 }
-# compatibility alias
-extract_icon_from() {
-	local destination
-	local file
-	destination="$PLAYIT_WORKDIR/icons"
-	for file in "$@"; do
-		extension="${file##*.}"
-		if [ "$extension" = 'exe' ]; then
-			mkdir --parents "$destination"
-			icon_extract_ico_from_exe "$file" "$destination"
-		else
-			icon_extract_png_from_file "$file" "$destination"
-		fi
-	done
-}
-
 
 # extract .png file(s) for .exe
 # USAGE: icon_extract_png_from_exe $file $destination
 # CALLS: icon_extract_ico_from_exe icon_extract_png_from_ico
 # CALLED BY: icon_extract_png_from_file
 icon_extract_png_from_exe() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -158,7 +140,7 @@ icon_extract_png_from_exe() {
 # USAGE: icon_extract_ico_from_exe $file $destination
 # CALLED BY: icon_extract_png_from_exe
 icon_extract_ico_from_exe() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	local options
@@ -182,7 +164,7 @@ icon_extract_png_from_ico() { icon_convert_to_png "$@"; }
 # USAGE: icon_convert_to_png $file $destination
 # CALLED BY: icon_extract_png_from_bmp icon_extract_png_from_ico
 icon_convert_to_png() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	local name
@@ -196,7 +178,7 @@ icon_convert_to_png() {
 # USAGE: icon_copy_png $file $destination
 # CALLED BY: icon_extract_png_from_file
 icon_copy_png() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -210,7 +192,7 @@ icon_copy_png() {
 # CALLS: icon_get_resolution_from_file
 # CALLED BY: icons_get_from_path
 icons_include_png_from_directory() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local directory
 	local file
@@ -274,7 +256,7 @@ icon_get_resolution_from_file() {
 # USAGE: icons_linking_postinst $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
 icons_linking_postinst() {
-	[ "$DRY_RUN" = '1' ] && return 0
+	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local file
 	local icon
@@ -337,31 +319,46 @@ icons_linking_postinst() {
 		done
 	done
 }
-# compatibility alias
-postinst_icons_linking() { icons_linking_postinst "$@"; }
 
 # move icons to the target package
 # USAGE: icons_move_to $pkg
-# NEEDED VARS: PATH_ICON_BASE PKG
 icons_move_to() {
-	local destination
-	local source
-	destination="$1"
-	destination_path="$(get_value "${destination}_PATH")"
-	[ -n "$destination_path" ] || missing_pkg_error 'icons_move_to' "$destination"
-	source="$PKG"
-	source_path="$(get_value "${source}_PATH")"
-	[ -n "$source_path" ] || missing_pkg_error 'icons_move_to' "$source"
-	[ "$DRY_RUN" = '1' ] && return 0
-	(
-		cd "$source_path"
-		cp --link --parents --recursive --no-dereference --preserve=links "./$PATH_ICON_BASE" "$destination_path"
-		rm --recursive "./$PATH_ICON_BASE"/*
-		rmdir --ignore-fail-on-non-empty --parents "${PATH_ICON_BASE#/}"
-	)
+	###
+	# TODO
+	# Check that $PKG is set to a valid package
+	# Check that $destination_package is set to a valid package
+	# Check that $PATH_ICON_BASE is set to an absolute path
+	###
+
+	local source_package      source_path      source_directory
+	local destination_package destination_path destination_directory
+
+	source_package="$PKG"
+	destination_package="$1"
+
+	# Get source path, ensure it is set
+	source_path=$(get_value "${source_package}_PATH")
+	if [ -z "$source_path" ]; then
+		missing_pkg_error 'icons_move_to' "$source_package"
+	fi
+	source_directory="${source_path}${PATH_ICON_BASE}"
+
+	# Get destination path, ensure it is set
+	destination_path=$(get_value "${destination_package}_PATH")
+	if [ -z "$destination_path" ]; then
+		missing_pkg_error 'icons_move_to' "$destination_package"
+	fi
+	destination_directory="${destination_path}${PATH_ICON_BASE}"
+
+	# If called in dry-run mode, return early
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
+
+	mkdir --parents "$(dirname "$destination_directory")"
+	mv --no-target-directory "$source_directory" "$destination_directory"
+	rmdir --ignore-fail-on-non-empty --parents "$(dirname "$source_directory")"
 }
-# compatibility alias
-move_icons_to() { icons_move_to "$@"; }
 
 # print an error message if an icon can not be found
 # USAGE: icon_file_not_found_error $file

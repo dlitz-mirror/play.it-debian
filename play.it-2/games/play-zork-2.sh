@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,16 @@ set -o errexit
 
 ###
 # Zork II: The Wizard of Frobozz
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190303.3
 
 # Set game-specific variables
 
 GAME_ID='zork-2'
 GAME_NAME='Zork II: The Wizard of Frobozz'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='setup_zork2_2.1.0.17.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_zork_anthology'
@@ -49,61 +47,63 @@ ARCHIVE_GOG_MD5='2ea2cf45bb6cf76b0365567e81f27aab'
 ARCHIVE_GOG_SIZE='23000'
 ARCHIVE_GOG_VERSION='1.0-gog2.1.0.17'
 
-ARCHIVE_DOC1_PATH='app'
-ARCHIVE_DOC1_FILES='./*.htm ./*.pdf ./*.txt'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='*.htm *.pdf *.txt'
 
-ARCHIVE_DOC2_PATH='tmp'
-ARCHIVE_DOC2_FILES='./gog_eula.txt ./eula.txt'
-
-ARCHIVE_GAME_PATH='app'
-ARCHIVE_GAME_FILES='./goggame-*.ico ./*.com ./*.inf ./data ./save'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='*.com *.inf data save'
 
 DATA_DIRS='./save'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='_zork2.com'
-APP_MAIN_ICON='./goggame-1207661503.ico'
-APP_MAIN_ICON_RES='16 32 48 256'
+APP_MAIN_ICON='app/goggame-1207661503.ico'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ARCH='32'
-PKG_MAIN_DEPS_DEB='dosbox'
-PKG_MAIN_DEPS_ARCH='dosbox'
+PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-organize_data 'DOC1' "$PATH_DOC"
-organize_data 'DOC2' "$PATH_DOC"
-organize_data 'GAME' "$PATH_GAME"
+# Extract icons
 
-extract_and_sort_icons_from 'APP_MAIN'
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-write_launcher 'APP_MAIN'
+launcher_write 'APP_MAIN'
 
 # Build package
 

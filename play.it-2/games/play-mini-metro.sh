@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,18 +35,23 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180926.4
+script_version=20190520.3
 
 # Set game-specific variables
 
 GAME_ID='mini-metro'
 GAME_NAME='Mini Metro'
 
-ARCHIVE_HUMBLE='MiniMetro-release-37a-linux.tar.gz'
+ARCHIVE_HUMBLE='MiniMetro-release-38-linux.tar.gz'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/mini-metro'
-ARCHIVE_HUMBLE_MD5='879d12ce7255feebf7406f65519112dd'
-ARCHIVE_HUMBLE_VERSION='1.37a-humble180913'
-ARCHIVE_HUMBLE_SIZE='310000'
+ARCHIVE_HUMBLE_MD5='1535053549257fd3139a46ed91c193a4'
+ARCHIVE_HUMBLE_VERSION='1.38-humble181120'
+ARCHIVE_HUMBLE_SIZE='320000'
+
+ARCHIVE_HUMBLE_OLD3='MiniMetro-release-37a-linux.tar.gz'
+ARCHIVE_HUMBLE_OLD3_MD5='879d12ce7255feebf7406f65519112dd'
+ARCHIVE_HUMBLE_OLD3_VERSION='1.37a-humble180913'
+ARCHIVE_HUMBLE_OLD3_SIZE='310000'
 
 ARCHIVE_HUMBLE_OLD2='MiniMetro-release-37-linux.tar.gz'
 ARCHIVE_HUMBLE_OLD2_MD5='0ee6efa77a16e7775253334640b6d20a'
@@ -78,6 +83,7 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='export LANG=C'
 APP_MAIN_EXE_BIN32='Mini Metro.x86'
 APP_MAIN_EXE_BIN64='Mini Metro.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='Mini Metro_Data/Resources/UnityPlayer.png'
 
@@ -88,16 +94,22 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
+PKG_BIN32_DEPS_ARCH='lib32-gdk-pixbuf2 lib32-glib2'
+PKG_BIN32_DEPS_DEB='libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN32_DEPS_GENTOO='x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='gdk-pixbuf2 glib2'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -117,6 +129,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -128,7 +141,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

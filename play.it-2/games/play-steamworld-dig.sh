@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +30,16 @@ set -o errexit
 
 ###
 # SteamWorld Dig
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200218.1
 
 # Set game-specific variables
 
 GAME_ID='steamworld-dig'
 GAME_NAME='SteamWorld Dig'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_HUMBLE'
 
 ARCHIVE_GOG='gog_steamworld_dig_2.0.0.7.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/steamworld_dig'
@@ -55,26 +53,21 @@ ARCHIVE_HUMBLE_MD5='de6ff6273c4e397413d852472d51e788'
 ARCHIVE_HUMBLE_SIZE='77000'
 ARCHIVE_HUMBLE_VERSION='1.10-humble140220'
 
-ARCHIVE_DOC1_DATA_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC1_DATA_FILES='./*'
-
-ARCHIVE_DOC2_DATA_PATH_GOG='data/noarch/game'
-ARCHIVE_DOC2_DATA_PATH_HUMBLE='SteamWorldDig'
-ARCHIVE_DOC2_DATA_FILES='./readme.txt ./Licenses'
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_DOC_DATA_PATH_HUMBLE='SteamWorldDig'
+ARCHIVE_DOC_DATA_FILES='readme.txt Licenses'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='SteamWorldDig'
-ARCHIVE_GAME_BIN_FILES='./SteamWorldDig'
+ARCHIVE_GAME_BIN_FILES='SteamWorldDig'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='SteamWorldDig'
-ARCHIVE_GAME_DATA_FILES='./icon.* ./BundlePC'
+ARCHIVE_GAME_DATA_FILES='icon.* BundlePC'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='SteamWorldDig'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='icon.png'
-APP_MAIN_ICON_RES='48'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -82,49 +75,55 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libgl1-mesa-glx | libgl1, libopenal1"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-glibc lib32-gcc-libs lib32-libgl lib32-openal"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC1_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "DOC2_${PKG#PKG_}" "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up

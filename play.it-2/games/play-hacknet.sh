@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2018, VA
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2018-2020, VA
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -107,6 +107,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -133,6 +134,7 @@ done
 
 # Fix a crash when starting from some terminals
 
+# shellcheck disable=SC2016
 pattern='s#^"\./$APP_EXE" .*#& > ./logs/$(date +%F-%R).log#'
 sed --in-place "$pattern" "${PKG_BIN32_PATH}${PATH_BIN}/$GAME_ID"
 sed --in-place "$pattern" "${PKG_BIN64_PATH}${PATH_BIN}/$GAME_ID"

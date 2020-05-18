@@ -54,7 +54,7 @@ pkg_write_gentoo() {
 	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$pkg_id/$pkg_id-$PKG_VERSION.ebuild"
 
 	cat > "$target" <<- EOF
-	EAPI=6
+	EAPI=7
 	RESTRICT="fetch strip binchecks"
 	EOF
 	local pkg_architectures
@@ -241,7 +241,12 @@ pkg_set_deps_gentoo() {
 				pkg_dep='virtual/wine[staging,abi_x86_64]'
 			;;
 			('winetricks')
-				pkg_dep="app-emulation/winetricks$architecture_suffix"
+				pkg_dep='app-emulation/winetricks
+				|| (
+					x11-terms/xterm
+					gnome-extra/zenity
+					kde-apps/kdialog
+				)'
 			;;
 			('xcursor')
 				pkg_dep="x11-libs/libXcursor$architecture_suffix"
@@ -300,7 +305,7 @@ pkg_build_gentoo() {
 	fi
 
 	pkg_print "$pkg_filename_base"
-	if [ "$DRY_RUN" = '1' ]; then
+	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg}_PKG

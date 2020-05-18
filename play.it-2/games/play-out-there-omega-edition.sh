@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,7 @@ APP_MAIN_TYPE_HUMBLE_WINDOWS='wine'
 APP_MAIN_EXE_LINUX_BIN32='OutThereOmega.x86'
 APP_MAIN_EXE_LINUX_BIN64='OutThereOmega.x86_64'
 APP_MAIN_EXE_WINDOWS_BIN='outthereomega.exe'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON_HUMBLE_LINUX='OutThereOmega_Data/Resources/UnityPlayer.png'
 APP_MAIN_ICON_HUMBLE_WINDOWS='outthereomega.exe'
@@ -108,7 +109,7 @@ PKG_WINDOWS_BIN_PROVIDE="$GAME_ID"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -128,6 +129,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Set archive-specific variables
@@ -136,6 +138,7 @@ use_archive_specific_value 'APP_MAIN_ICON'
 use_archive_specific_value 'APP_MAIN_TYPE'
 use_archive_specific_value 'PACKAGES_LIST'
 use_archive_specific_value 'PKG_DATA_ID'
+# shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
 # Extract game data
@@ -172,7 +175,9 @@ esac
 
 case "$ARCHIVE" in
 	('ARCHIVE_HUMBLE_WINDOWS')
+		# shellcheck disable=SC2016
 		saves_path='$WINEPREFIX/drive_c/users/$(whoami)/Local Settings/Application Data/MiClos Studio/OutThereOmegaEdition'
+		# shellcheck disable=SC2016
 		pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
 		pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
 		pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""

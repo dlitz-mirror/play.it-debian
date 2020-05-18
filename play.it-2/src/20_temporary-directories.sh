@@ -1,7 +1,12 @@
 # get default temporary dir
 # USAGE: get_tmp_dir
 get_tmp_dir() {
-	printf '%s' "${TMPDIR:-/tmp}"
+	local tmpdir
+
+	# Convert TMPDIR to an absolute path before returning it
+	tmpdir=$(realpath "${TMPDIR:-/tmp}")
+
+	printf '%s' "$tmpdir"
 	return 0
 }
 
@@ -19,12 +24,12 @@ set_temp_directories() {
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
 	# If there is only a single package, make it the default one for the current instance
-	[ $# = 1 ] && PKG="$1"
+	[ $# -eq 1 ] && PKG="$1"
 
 	# Look for a directory with enough free space to work in
 	tmpdir="$(get_tmp_dir)"
 	unset base_directory
-	if [ "$NO_FREE_SPACE_CHECK" = '1' ]; then
+	if [ "$NO_FREE_SPACE_CHECK" -eq 1 ]; then
 		base_directory="$tmpdir/play.it"
 		mkdir --parents "$base_directory"
 		chmod 777 "$base_directory"

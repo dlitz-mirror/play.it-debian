@@ -38,19 +38,7 @@ if [ "$#" = 0 ]; then
 fi
 
 if [ ! -f "$INPUT_FILE" ]; then
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='%s n’est pas un fichier valide\n'
-		;;
-		('en'|*)
-			string='%s is not a valid file\n'
-		;;
-	esac
-	# shellcheck disable=SC2059
-	printf "$string" "$INPUT_FILE"
-	exit 1
+	error_not_a_file "$INPUT_FILE"
 fi
 
 # Locate script by file name

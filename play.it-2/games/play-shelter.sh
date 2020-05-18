@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -100,6 +100,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -121,7 +122,9 @@ write_launcher 'APP_MAIN'
 
 # Store saved games outside of WINE prefix
 
+# shellcheck disable=SC2016
 saves_path='$WINEPREFIX/drive_c/users/$(whoami)/Application Data/Might and Delight/Shelter'
+# shellcheck disable=SC2016
 pattern='s#init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"#&'
 pattern="$pattern\\nif [ ! -e \"$saves_path\" ]; then"
 pattern="$pattern\\n\\tmkdir --parents \"${saves_path%/*}\""

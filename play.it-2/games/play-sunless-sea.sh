@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine Le Gonidec
-# Copyright (c) 2018-2019, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,21 +35,27 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190119.1
+script_version=20190627.3
 
 # Set game-specific variables
 
 GAME_ID='sunless-sea'
 GAME_NAME='Sunless Sea'
 
-ARCHIVES_LIST='ARCHIVE_GOG_ZUBMARINER ARCHIVE_GOG_ZUBMARINER_OLD0 ARCHIVE_GOG_ZUBMARINER_OLD1 ARCHIVE_GOG ARCHIVE_GOG_OLD1 ARCHIVE_GOG_OLD0 ARCHIVE_HUMBLE ARCHIVE_HUMBLE_OLD0'
+ARCHIVES_LIST='ARCHIVE_GOG_ZUBMARINER ARCHIVE_GOG_ZUBMARINER_OLD2 ARCHIVE_GOG_ZUBMARINER_OLD1 ARCHIVE_GOG_ZUBMARINER_OLD0 ARCHIVE_GOG ARCHIVE_GOG_OLD2 ARCHIVE_GOG_OLD1 ARCHIVE_GOG_OLD0 ARCHIVE_HUMBLE ARCHIVE_HUMBLE_OLD0'
 
-ARCHIVE_GOG_ZUBMARINER='sunless_sea_zubmariner_2_2_6_3150_24613.sh'
+ARCHIVE_GOG_ZUBMARINER='sunless_sea_zubmariner_2_2_7_3165_29003.sh'
 ARCHIVE_GOG_ZUBMARINER_URL='https://www.gog.com/game/sunless_sea_zubmariner'
 ARCHIVE_GOG_ZUBMARINER_TYPE='mojosetup'
-ARCHIVE_GOG_ZUBMARINER_MD5='427440ff2f5e57e5e556bbaa1ffcfa7c'
-ARCHIVE_GOG_ZUBMARINER_VERSION='2.2.6.3150-gog24613'
+ARCHIVE_GOG_ZUBMARINER_MD5='7527c8f7a87c6d8f04a0cf2d75f30f4c'
+ARCHIVE_GOG_ZUBMARINER_VERSION='2.2.7.3165-gog29003'
 ARCHIVE_GOG_ZUBMARINER_SIZE='930000'
+
+ARCHIVE_GOG_ZUBMARINER_OLD2='sunless_sea_zubmariner_2_2_6_3150_24613.sh'
+ARCHIVE_GOG_ZUBMARINER_OLD2_TYPE='mojosetup'
+ARCHIVE_GOG_ZUBMARINER_OLD2_MD5='427440ff2f5e57e5e556bbaa1ffcfa7c'
+ARCHIVE_GOG_ZUBMARINER_OLD2_VERSION='2.2.6.3150-gog24613'
+ARCHIVE_GOG_ZUBMARINER_OLD2_SIZE='930000'
 
 ARCHIVE_GOG_ZUBMARINER_OLD1='sunless_sea_zubmariner_en_v2_2_4_3141_21326.sh'
 ARCHIVE_GOG_ZUBMARINER_OLD1_MD5='438471f35119ca0131971082f6eb805c'
@@ -62,12 +68,18 @@ ARCHIVE_GOG_ZUBMARINER_OLD0_MD5='692cd0dac832d5254bd38d7e1a05b918'
 ARCHIVE_GOG_ZUBMARINER_OLD0_VERSION='2.2.2.3130-gog2.5.0.6'
 ARCHIVE_GOG_ZUBMARINER_OLD0_SIZE='870000'
 
-ARCHIVE_GOG='sunless_sea_2_2_6_3150_24613.sh'
+ARCHIVE_GOG='sunless_sea_2_2_7_3165_29003.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/sunless_sea'
-ARCHIVE_GOG_MD5='1ea56377e7636f354656c1f791f29a5c'
-ARCHIVE_GOG_VERSION='2.2.6.3150-gog24613'
+ARCHIVE_GOG_MD5='0feebd54ae67c772d189e19d2042fe91'
+ARCHIVE_GOG_VERSION='2.2.7.3165-gog29003'
 ARCHIVE_GOG_TYPE='mojosetup'
 ARCHIVE_GOG_SIZE='760000'
+
+ARCHIVE_GOG_OLD2='sunless_sea_2_2_6_3150_24613.sh'
+ARCHIVE_GOG_OLD2_MD5='1ea56377e7636f354656c1f791f29a5c'
+ARCHIVE_GOG_OLD2_VERSION='2.2.6.3150-gog24613'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup'
+ARCHIVE_GOG_OLD2_SIZE='760000'
 
 ARCHIVE_GOG_OLD1='sunless_sea_en_v2_2_4_3141_21326.sh'
 ARCHIVE_GOG_OLD1_MD5='df453a83ac1fb2767bdeafafb40f037a'
@@ -121,6 +133,7 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Sunless Sea.x86'
 APP_MAIN_EXE_BIN64='Sunless Sea.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICONS_LIST='APP_MAIN_ICON1 APP_MAIN_ICON2'
 APP_MAIN_ICON1='Sunless Sea_Data/Resources/UnityPlayer.png'
@@ -136,17 +149,23 @@ PKG_DATA_ID_GOG_ZUBMARINER="${GAME_ID}-zubmariner-data"
 PKG_DATA_DESCRIPTION_GOG_ZUBMARINER='data (including Zubmariner DLC)'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glu xcursor"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1"
+PKG_BIN32_DEPS_ARCH='lib32-libx11'
+PKG_BIN32_DEPS_DEB='libx11-6'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -166,6 +185,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -173,10 +193,10 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 case "$ARCHIVE" in
 	('ARCHIVE_HUMBLE'*)
-		eval ${ARCHIVE}_TYPE=\'mojosetup\'
+		eval "${ARCHIVE}_TYPE"=\'mojosetup\'
 		archive="$PLAYIT_WORKDIR/gamedata/Sunless Sea.sh"
 		extract_data_from "$archive"
-		rm "$archive"
+		rm --force "$archive"
 	;;
 esac
 prepare_package_layout
@@ -185,7 +205,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

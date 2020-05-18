@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # Torin’s Passage
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190420.3
 
 # Set game-specific variables
 
 GAME_ID='torins-passage'
-GAME_NAME='Torin’s Passage'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
+GAME_NAME='Torinʼs Passage'
 
 ARCHIVE_GOG='setup_torins_passage_2.0.0.7.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/torins_passage'
@@ -49,14 +48,11 @@ ARCHIVE_GOG_MD5='a7398abdb6964bf6a6446248f138d05e'
 ARCHIVE_GOG_SIZE='348952'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.7'
 
-ARCHIVE_DOC_PATH='app'
-ARCHIVE_DOC_FILES='./torin.txt ./*.pdf'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='torin.txt *.pdf'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./*.exe ./resource.cfg'
-
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./*.drv ./*.shp ./*.hlp ./*.scr ./install.txt ./movie ./patches ./*.000 ./*.aud ./*.sfx ./*.err ./version ./torinhr.ico'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='*.exe resource.cfg *.drv *.shp *.hlp *.scr install.txt movie patches *.000 *.aud *.sfx *.err version'
 
 DATA_FILES='./version ./AUTOSAVE.* ./TORINSG.*'
 CONFIG_FILES='./resource.cfg ./TORIN.PRF'
@@ -64,56 +60,53 @@ CONFIG_FILES='./resource.cfg ./TORIN.PRF'
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='sierrah.exe'
 APP_MAIN_OPTIONS='resource.cfg'
-APP_MAIN_ICON='torinhr.ico'
-APP_MAIN_ICON_RES='16 24 32 256'
+APP_MAIN_ICON='app/torinhr.ico'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB='dosbox'
-PKG_BIN_DEPS_ARCH='dosbox'
+PKG_BIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Extract icons
 
-PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-extract_and_sort_icons_from 'APP_MAIN'
-rm "${PKG_DATA_PATH}${PATH_GAME}/$APP_MAIN_ICON"
-
+icons_get_from_workdir 'APP_MAIN' >/dev/null 2>&1
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,49 +31,50 @@ set -o errexit
 
 ###
 # Keep Talking and Nobody Explodes
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180409.2
+script_version=20190629.1
 
 # Set game-specific variables
 
 GAME_ID='keep-talking-and-nobody-explodes'
 GAME_NAME='Keep Talking and Nobody Explodes'
 
-ARCHIVES_LIST='ARCHIVE_HUMBLE'
-
-ARCHIVE_HUMBLE='Keep_Talking_and_Nobody_Explodes_1.6.1_-_Linux.zip'
+ARCHIVE_HUMBLE='Keep_Talking_and_Nobody_Explodes_1.8.3_-_StandaloneLinuxUniversal_Default.zip'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/keep-talking-and-nobody-explodes'
-ARCHIVE_HUMBLE_MD5='ac321144f9ed9dc6797d35a33bd0b0e7'
-ARCHIVE_HUMBLE_VERSION='1.6.1-humble171219'
-ARCHIVE_HUMBLE_SIZE='940000'
-ARCHIVE_HUMBLE_TYPE='zip'
+ARCHIVE_HUMBLE_MD5='212e7d380c7214f87b05aa405fa41662'
+ARCHIVE_HUMBLE_VERSION='1.8.3-humble190307'
+ARCHIVE_HUMBLE_SIZE='860000'
 
-ARCHIVE_MANUAL='Bomb-Defusal-Manual_1.pdf'
-ARCHIVE_MANUAL_URL='http://www.bombmanual.com/manual/1/pdf/Bomb-Defusal-Manual_1.pdf'
-ARCHIVE_MANUAL_MD5='fde93a9ad8de6ab04bdff40359145e11'
-ARCHIVE_MANUAL_TYPE='misc'
+ARCHIVE_HUMBLE_OLD0='Keep_Talking_and_Nobody_Explodes_1.6.1_-_Linux.zip'
+ARCHIVE_HUMBLE_OLD0_MD5='ac321144f9ed9dc6797d35a33bd0b0e7'
+ARCHIVE_HUMBLE_OLD0_VERSION='1.6.1-humble171219'
+ARCHIVE_HUMBLE_OLD0_SIZE='940000'
+
+ARCHIVE_OPTIONAL_MANUAL='Bomb-Defusal-Manual_1.pdf'
+ARCHIVE_OPTIONAL_MANUAL_URL='http://www.bombmanual.com/manual/1/pdf/Bomb-Defusal-Manual_1.pdf'
+ARCHIVE_OPTIONAL_MANUAL_MD5='fde93a9ad8de6ab04bdff40359145e11'
+ARCHIVE_OPTIONAL_MANUAL_TYPE='misc'
 
 ARCHIVE_GAME_BIN32_PATH='Keep Talking and Nobody Explodes'
-ARCHIVE_GAME_BIN32_FILES='./ktane.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='ktane.x86 ktane_Data/*/x86'
 
 ARCHIVE_GAME_BIN64_PATH='Keep Talking and Nobody Explodes'
-ARCHIVE_GAME_BIN64_FILES='./ktane.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='ktane.x86_64 ktane_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='Keep Talking and Nobody Explodes'
-ARCHIVE_GAME_DATA_FILES='*_Data/level* *_Data/StreamingAssets *_Data/Managed *_Data/Mono/etc *_Data/*.assets *_Data/Resources *_Data/*.resS *_Data/globalgamemanagers *_Data/boot.config *_Data/*.resource *_Data/ScreenSelector.png'
+ARCHIVE_GAME_DATA_FILES='ktane_Data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='ktane.x86'
 APP_MAIN_EXE_BIN64='ktane.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='ktane_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -80,34 +82,50 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx gtk2"
+PKG_BIN32_DEPS_ARCH='lib32-gdk-pixbuf2 lib32-glib2'
+PKG_BIN32_DEPS_DEB='libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN32_DEPS_GENTOO='x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='gdk-pixbuf2 glib2'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Check for optional archives
 
-ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'GAME_MANUAL' 'ARCHIVE_MANUAL'
-ARCHIVE="$ARCHIVE_MAIN"
+CURRENT_ARCHIVE="$ARCHIVE"
+archive_set 'ARCHIVE_MANUAL' 'ARCHIVE_OPTIONAL_MANUAL'
+ARCHIVE="$CURRENT_ARCHIVE"
 
 # Extract game data
 
@@ -117,21 +135,22 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Include game manual
 
-if [ "$GAME_MANUAL" ]; then
+if [ "$ARCHIVE_MANUAL" ]; then
 	path="${PKG_DATA_PATH}${PATH_DOC}"
 	mkdir --parents "$path"
-	cp "$GAME_MANUAL" "$path"
+	cp "$ARCHIVE_MANUAL" "$path"
 fi
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
+PKG='PKG_DATA'
+icons_linking_postinst 'APP_MAIN'
 write_metadata 'PKG_DATA'
 write_metadata 'PKG_BIN32' 'PKG_BIN64'
 build_pkg

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,6 +39,7 @@ script_version=20180802.1
 # Set game-specific variables
 
 GAME_ID='oddworld-abes-oddysee'
+# shellcheck disable=SC1112
 GAME_NAME='Oddworld: Abe’s Oddysee'
 
 ARCHIVE_GOG='setup_abes_oddysee_1.0_(19071).exe'
@@ -93,6 +94,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

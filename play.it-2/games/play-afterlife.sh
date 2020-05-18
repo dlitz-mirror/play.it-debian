@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +31,11 @@ set -o errexit
 
 ###
 # Afterlife
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190310.4
 
 # Set game-specific variables
 
@@ -55,82 +56,73 @@ ARCHIVE_GOG_FR_MD5='56b3efee60bc490c68f8040587fc1878'
 ARCHIVE_GOG_FR_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_GOG_FR_SIZE='250000'
 
-ARCHIVE_DOC1_PATH='data/noarch/docs'
-ARCHIVE_DOC1_FILES='./*'
+ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
 
-ARCHIVE_DOC2_PATH='data/noarch/data'
-ARCHIVE_DOC2_FILES='./*.txt'
+ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/data'
-ARCHIVE_GAME_BIN_FILES='./*.exe ./*.ini ./alife/*.bat ./alife/*.exe ./alife/*.ini'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/data'
-ARCHIVE_GAME_DATA_FILES='./*'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
+ARCHIVE_GAME_MAIN_FILES='*.asc *.exe *.ini alife.* alife'
 
 CONFIG_FILES='./*.ini */*.ini'
 DATA_DIRS='./save'
 
 APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='alife/afterdos.bat'
+APP_MAIN_PRERUN='cd alife'
+APP_MAIN_EXE='afterdos.bat'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-APP_MAIN_ICON_RES='256'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_PROVIDE="$PKG_DATA_ID"
-PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
-PKG_DATA_ID_GOG_FR="${PKG_DATA_ID}-fr"
-PKG_DATA_DESCRIPTION='data'
-
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ARCH='32'
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
-PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, dosbox"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID dosbox"
+PKG_MAIN_ID="$GAME_ID"
+PKG_MAIN_ID_GOG_EN="${PKG_MAIN_ID}-en"
+PKG_MAIN_ID_GOG_FR="${PKG_MAIN_ID}-fr"
+PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
+PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.4'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 tolower "$PLAYIT_WORKDIR/gamedata"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Get icon
 
-PKG='PKG_DATA'
-organize_data 'DOC1'      "$PATH_DOC"
-organize_data 'DOC2'      "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-get_icon_from_temp_dir 'APP_MAIN'
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
-
-sed -i 's|$APP_EXE $APP_OPTIONS $@|cd ${APP_EXE%/*}\n${APP_EXE##*/} $APP_OPTIONS $@|' "${PKG_BIN_PATH}${PATH_BIN}/${GAME_ID}"
+launchers_write 'APP_MAIN'
 
 # Build package
 

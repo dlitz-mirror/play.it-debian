@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,7 @@ ARCHIVE_ICONS_FILES='./16x16 ./32x32 ./48x48 ./256x256'
 CONFIG_FILES='./config.ini'
 
 APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
 APP_MAIN_PRERUN='mkdir --parents "$HOME/.local/share/Daedalic Entertainment GmbH/The Whispered World Special Edition/Savegames"'
 APP_MAIN_EXE='TWWSE'
 APP_MAIN_LIBS='libs64'
@@ -113,6 +114,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Try to load icons archive

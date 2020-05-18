@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ script_version=20180725.1
 # Set game-specific variables
 
 GAME_ID='ryan-norths-to-be-or-not-to-be'
+# shellcheck disable=SC1112
 GAME_NAME='Ryan North’s To Be or Not To Be'
 
 ARCHIVE_HUMBLE='tobe_linux_3270.zip'
@@ -62,6 +63,7 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='To Be or Not To Be.x86'
 APP_MAIN_EXE_BIN64='To Be or Not To Be.x86_64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='To Be or Not To Be_Data/Resources/UnityPlayer.png'
@@ -103,6 +105,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

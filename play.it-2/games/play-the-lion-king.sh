@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190713.1
 
 # Set game-specific variables
 
@@ -44,7 +44,6 @@ GAME_NAME='The Lion King'
 ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_the_lion_king_2.0.0.2.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/disney_the_lion_king'
 ARCHIVE_GOG_MD5='3b4f1118785e1f1cc769ae41379b7940'
 ARCHIVE_GOG_SIZE='16000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.2'
@@ -84,6 +83,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

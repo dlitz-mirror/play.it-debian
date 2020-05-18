@@ -1,9 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,25 +32,31 @@ set -o errexit
 
 ###
 # Faster Than Light
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181023.5
+script_version=20190501.3
 
 # Set game-specific variables
 
 GAME_ID='faster-than-light'
 GAME_NAME='Faster Than Light'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD3 ARCHIVE_GOG_OLD2 ARCHIVE_GOG_OLD1 ARCHIVE_PRE16_GOG_OLD0 ARCHIVE_HUMBLE ARCHIVE_PRE16_HUMBLE_OLD0'
+ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD4 ARCHIVE_GOG_OLD3 ARCHIVE_GOG_OLD2 ARCHIVE_GOG_OLD1 ARCHIVE_PRE16_GOG_OLD0 ARCHIVE_HUMBLE ARCHIVE_HUMBLE_OLD1 ARCHIVE_PRE16_HUMBLE_OLD0'
 
-ARCHIVE_GOG='ftl_advanced_edition_1_6_8_24110.sh'
+ARCHIVE_GOG='ftl_advanced_edition_1_6_9_25330.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/faster_than_light'
-ARCHIVE_GOG_MD5='4d654aeca32de557c109fa5c642ff455'
+ARCHIVE_GOG_MD5='c3598ab0c07d1f038eb1642da066b6a5'
 ARCHIVE_GOG_SIZE='230000'
-ARCHIVE_GOG_VERSION='1.6.8-gog24110'
+ARCHIVE_GOG_VERSION='1.6.9-gog25330'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='ftl_advanced_edition_1_6_8_24110.sh'
+ARCHIVE_GOG_OLD4_MD5='4d654aeca32de557c109fa5c642ff455'
+ARCHIVE_GOG_OLD4_SIZE='230000'
+ARCHIVE_GOG_OLD4_VERSION='1.6.8-gog24110'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='ftl_advanced_edition_1_6_7_24012.sh'
 ARCHIVE_GOG_OLD3_MD5='43392da0d11548b1c16f1263fc5fad65'
@@ -74,11 +81,16 @@ ARCHIVE_PRE16_GOG_OLD0_MD5='2c24b70b31316acefedc082e9441a69a'
 ARCHIVE_PRE16_GOG_OLD0_SIZE='220000'
 ARCHIVE_PRE16_GOG_OLD0_VERSION='1.5.13-gog2.0.0.2'
 
-ARCHIVE_HUMBLE='FTL-linux-1.6.8.tar.gz'
+ARCHIVE_HUMBLE='FTL.1.6.9.tar.gz'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/ftl-faster-than-light'
-ARCHIVE_HUMBLE_MD5='5898d476dae289dae20d93ecfc1b8390'
+ARCHIVE_HUMBLE_MD5='c70d9cbc55217a5f83e0d51189240ec2'
 ARCHIVE_HUMBLE_SIZE='230000'
-ARCHIVE_HUMBLE_VERSION='1.6.8-humble180928'
+ARCHIVE_HUMBLE_VERSION='1.6.9-humble181120'
+
+ARCHIVE_HUMBLE_OLD1='FTL-linux-1.6.8.tar.gz'
+ARCHIVE_HUMBLE_OLD1_MD5='5898d476dae289dae20d93ecfc1b8390'
+ARCHIVE_HUMBLE_OLD1_SIZE='230000'
+ARCHIVE_HUMBLE_OLD1_VERSION='1.6.8-humble180928'
 
 ARCHIVE_PRE16_HUMBLE_OLD0='FTL.1.5.13.tar.gz'
 ARCHIVE_PRE16_HUMBLE_OLD0_MD5='791e0bc8de73fcdcd5f461a4548ea2d8'
@@ -143,16 +155,16 @@ PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx alsa"
 PKG_BIN32_DEPS_PRE16="$PKG_DATA_ID sdl glu"
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS_GOG"
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 # Keep compatibility with old archives
 PKG_BIN64_DEPS_PRE16="$PKG_BIN32_DEPS_PRE16"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -172,6 +184,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -200,7 +213,7 @@ for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 			use_archive_specific_value "APP_MAIN_LIBS_${PKG#PKG_}"
 		;;
 	esac
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

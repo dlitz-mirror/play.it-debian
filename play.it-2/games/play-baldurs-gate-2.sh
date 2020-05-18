@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@ script_version=20181028.1
 SCRIPT_DEPS='unix2dos'
 
 GAME_ID='baldurs-gate-2'
+# shellcheck disable=SC1112
 GAME_NAME='Baldur’s Gate II'
 
 ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD0'
@@ -95,7 +96,7 @@ ARCHIVE_GAME1_DATA_FILES='*.ico *.mpi music scripts script?compiler override dat
 CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./save'
 
-APP_WINETRICKS="vd=\$(xrandr|grep '\*'|awk '{print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|grep '\\*'|awk '{print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bgmain.exe'
@@ -128,7 +129,7 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks xrandr"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -148,6 +149,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -174,10 +176,10 @@ icons_move_to 'PKG_DATA'
 # Tweak paths in baldur.ini
 
 file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
-pattern="s/\\(HD0:\\)=.\+/\\1=C:\\\\$GAME_ID\\\\/"
+pattern="s/\\(HD0:\\)=.\\+/\\1=C:\\\\$GAME_ID\\\\/"
 sed --in-place "$pattern" "$file"
 for drive in 'CD1' 'CD2' 'CD3' 'CD4' 'CD5' 'CD6'; do
-	pattern="s/\\($drive:\\)=.\+/\\1=C:\\\\$GAME_ID\\\\data\\\\/"
+	pattern="s/\\($drive:\\)=.\\+/\\1=C:\\\\$GAME_ID\\\\data\\\\/"
 	sed --in-place "$pattern" "$file"
 done
 unix2dos "$file" > /dev/null 2>&1

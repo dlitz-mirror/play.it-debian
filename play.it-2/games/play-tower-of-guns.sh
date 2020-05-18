@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID glx sdl2 sdl2_mixer vorbis openal"
 target_version='2.10'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -95,6 +95,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -110,7 +111,9 @@ write_launcher 'APP_MAIN'
 
 # Change to the binary directory before running it
 
+# shellcheck disable=SC2016
 pattern='s|^cd "\$PATH_PREFIX"$|cd "$PATH_PREFIX/${APP_EXE%/*}"|'
+# shellcheck disable=SC2016
 pattern="$pattern"';s|^"\./\$APP_EXE" \$APP_OPTIONS \$@$|"./${APP_EXE##*/}" $APP_OPTIONS $@|'
 sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}"/*
 

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -71,7 +71,7 @@ CONFIG_FILES='./*.ini'
 DATA_DIRS='./characters ./mpsave ./override ./portraits ./scripts'
 DATA_FILES='./chitin.key ./dialog*.tlk'
 
-APP_WINETRICKS="vd=\$(xrandr|awk '/\*/ {print \$1}')"
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='iwd2.exe'
@@ -117,6 +117,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -139,8 +140,8 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 file="${PKG_L10N_PATH}${PATH_GAME}/icewind2.ini"
 pattern="s/HD0:=.\\+/HD0:=C:\\\\${GAME_ID}\\\\/"
-pattern="$pattern;s/CD1:=.\+/CD1:=C:\\\\${GAME_ID}\\\\data\\\\/"
-pattern="$pattern;s/CD2:=.\+/CD2:=C:\\\\${GAME_ID}\\\\cd2\\\\/"
+pattern="$pattern;s/CD1:=.\\+/CD1:=C:\\\\${GAME_ID}\\\\data\\\\/"
+pattern="$pattern;s/CD2:=.\\+/CD2:=C:\\\\${GAME_ID}\\\\cd2\\\\/"
 sed --in-place "$pattern" "$file"
 
 # Write launchers

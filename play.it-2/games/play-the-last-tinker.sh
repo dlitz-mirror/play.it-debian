@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -116,6 +116,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Check that all parts of the installer are present
@@ -139,7 +140,7 @@ use_archive_specific_value 'APP_MAIN_ICON_RES'
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 
-if [ $ARCHIVE = 'ARCHIVE_GOG_WINDOWS' ] || [ $ARCHIVE = 'ARCHIVE_GOG_WINDOWS_OLD' ]; then
+if [ "$ARCHIVE" = 'ARCHIVE_GOG_WINDOWS' ] || [ "$ARCHIVE" = 'ARCHIVE_GOG_WINDOWS_OLD' ]; then
 	PKG='PKG_BIN'
 	extract_and_sort_icons_from 'APP_MAIN'
 	move_icons_to 'PKG_DATA'
@@ -154,7 +155,7 @@ write_launcher 'APP_MAIN'
 
 # Build package
 
-if [ $ARCHIVE = 'ARCHIVE_GOG_LINUX' ]; then
+if [ "$ARCHIVE" = 'ARCHIVE_GOG_LINUX' ]; then
 	postinst_icons_linking 'APP_MAIN'
 fi
 write_metadata 'PKG_DATA'

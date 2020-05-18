@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # About Love, Hate and the Other Ones
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190602.1
 
 # Set game-specific variables
 
 GAME_ID='about-love-hate-and-the-other-ones'
 GAME_NAME='About Love, Hate and the Other Ones'
-
-ARCHIVES_LIST='ARCHIVE_HUMBLE'
 
 ARCHIVE_HUMBLE='aboutloveandhate-1.3.1.deb'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/about-love-hate-and-the-other-ones'
@@ -49,23 +48,26 @@ ARCHIVE_HUMBLE_MD5='65c314a2a970b5c787d4e7e2a837e211'
 ARCHIVE_HUMBLE_SIZE='570000'
 ARCHIVE_HUMBLE_VERSION='1.3.1-humble150312'
 
-ARCHIVE_DOC_PATH='usr/local/games/loveandhate'
-ARCHIVE_DOC_FILES='./README'
+ARCHIVE_DOC_DATA_PATH='usr/local/games/loveandhate'
+ARCHIVE_DOC_DATA_FILES='README'
 
 ARCHIVE_GAME_BIN32_PATH='usr/local/games/loveandhate/bin32'
-ARCHIVE_GAME_BIN32_FILES='./loveandhate'
+ARCHIVE_GAME_BIN32_FILES='loveandhate'
 
 ARCHIVE_GAME_BIN64_PATH='usr/local/games/loveandhate/bin64'
-ARCHIVE_GAME_BIN64_FILES='./loveandhate'
+ARCHIVE_GAME_BIN64_FILES='loveandhate'
 
 ARCHIVE_GAME_DATA_PATH='usr/local/games/loveandhate'
-ARCHIVE_GAME_DATA_FILES='./bin'
+ARCHIVE_GAME_DATA_FILES='bin'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='loveandhate'
 APP_MAIN_EXE_BIN64='loveandhate'
-APP_MAIN_ICON_PATH='usr/share/icons/hicolor'
-APP_MAIN_ICON_RES='16 24 32 48 64 128 256'
+APP_MAIN_ICONS_LIST=''
+for icon_resolution in '16' '24' '32' '48' '64' '128' '256'; do
+	export APP_MAIN_ICON_${icon_resolution}="usr/share/icons/hicolor/${icon_resolution}x${icon_resolution}/apps/loveandhate.png"
+	APP_MAIN_ICONS_LIST="$APP_MAIN_ICONS_LIST APP_MAIN_ICON_${icon_resolution}"
+done
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
 
@@ -73,57 +75,60 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS_DEB="$PKG_DATA_ID, libc6, libgl1-mesa-glx | libgl1, libxcursor1, libxrandr2"
-PKG_BIN32_DEPS_ARCH="$PKG_DATA_ID lib32-glibc lib32-libgl lib32-libxcursor lib32-libxrandr"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx openal sdl2"
+PKG_BIN32_DEPS_ARCH='lib32-libx11'
+PKG_BIN32_DEPS_DEB='libx11-6'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11'
 PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_ARCH="$PKG_DATA_ID glibc libgl libxcursor libxrandr"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11'
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN32'
-organize_data 'GAME_BIN32' "$PATH_GAME"
-
-PKG='PKG_BIN64'
-organize_data 'GAME_BIN64' "$PATH_GAME"
+# Get icons
 
 PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
-
-for res in $APP_MAIN_ICON_RES; do
-	PATH_ICON="$PATH_ICON_BASE/${res}x${res}/apps"
-	mkdir --parents "${PKG_DATA_PATH}${PATH_ICON}"
-	mv "$PLAYIT_WORKDIR/gamedata/$APP_MAIN_ICON_PATH/${res}x${res}/apps/loveandhate.png" "${PKG_DATA_PATH}${PATH_ICON}/$GAME_ID.png"
-done
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
@@ -133,14 +138,10 @@ build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-printf '\n'
-printf '32-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN32'
-printf '64-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN64'
+print_instructions
 
 exit 0

@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181001.5
+script_version=20190724.1
 
 # Set game-specific variables
 
@@ -48,6 +49,7 @@ ARCHIVE_GOG_SIZE='1500000'
 ARCHIVE_GOG_VERSION='2.12.508-gog2.0.0.2'
 
 ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBPNG32_URL='https://downloads.dotslashplay.it/resources/libpng/'
 ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
@@ -78,15 +80,17 @@ PKG_DATA_PROVIDE='trine-data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu gtk2 alsa openal vorbis libudev1"
+PKG_BIN_DEPS_ARCH='lib32-libpng12'
+PKG_BIN_DEPS_GENTOO='media-libs/libpng:1.2[abi_x86_32]'
 # Easier upgrade from packages generated with pre-20181001.2 scripts
 PKG_BIN_PROVIDE='trine'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -106,13 +110,18 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Use libpng 1.2 32-bit archive
+# Use libpng 1.2 archive for systems no longer providing it
 
-ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_LIBPNG32' 'ARCHIVE_OPTIONAL_LIBPNG32'
-ARCHIVE="$ARCHIVE_MAIN"
+case "$OPTION_PACKAGE" in
+	('deb')
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_LIBPNG32' 'ARCHIVE_OPTIONAL_LIBPNG32'
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+esac
 
 # Extract game data
 
@@ -120,45 +129,38 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Include libpng 1.2 32-bit
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Set execution permissions on all binaries
+
+if [ $DRY_RUN -eq 0 ]; then
+	find "${PKG_BIN_PATH}${PATH_GAME}/bin" -type f -exec chmod 755 '{}' +
+fi
+
+# Include libpng 1.2
 
 if [ "$ARCHIVE_LIBPNG32" ]; then
 	(
 		ARCHIVE='ARCHIVE_LIBPNG32'
 		extract_data_from "$ARCHIVE_LIBPNG32"
 	)
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR/gamedata/libpng12.so.0.50.0" "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	ln --symbolic './libpng12.so.0.50.0' "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS/libpng12.so.0"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
-chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/bin"/*
+launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-
-if [ "$ARCHIVE_LIBPNG32" ]; then
-	cat > "$postinst" <<- EOF
-	if [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
-	    ln --symbolic ./libpng12.so.0.50.0 "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
-	fi
-	EOF
-
-	cat > "$prerm" <<- EOF
-	if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
-	    rm "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
-	fi
-	EOF
-fi
-write_metadata 'PKG_BIN'
-
+write_metadata
 build_pkg
 
 # Clean up

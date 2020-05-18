@@ -1,16 +1,13 @@
-image: base/archlinux
-
 stages:
-    - check
+    - library_check
 
-shellcheck:
-    stage: check
+library_shellcheck:
+    stage: library_check
+    only:
+        - master@play.it/scripts
+        - /^staging-.*$/@play.it/scripts
+        - tags@play.it/scripts
     before_script:
-        - pacman -Sy
-        - pacman --noconfirm -S make shellcheck
+        - make
     script:
-        - ./tests/shellcheck-lib.sh
-        - ./tests/shellcheck-main-script.sh
-    artifacts:
-        paths:
-            - play.it-2/lib/libplayit2.sh
+        - ./tests/library_shellcheck.sh

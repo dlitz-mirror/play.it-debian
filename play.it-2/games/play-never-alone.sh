@@ -1,10 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2019, Antoine Le Gonidec
-# Copyright (c) 2017-2019, Solène Huault
-# Copyright (c) 2018-2019, BetaRays
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,10 @@ set -o errexit
 ###
 # Never Alone
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190113.1
+script_version=20200204.3
 
 # Set game-specific variables
 
@@ -49,8 +49,13 @@ ARCHIVE_HUMBLE_MD5='3da062abaaa9e3e6ff97d4c82c8ea3c3'
 ARCHIVE_HUMBLE_SIZE='4900000'
 ARCHIVE_HUMBLE_VERSION='1.04-humble161008'
 
+ARCHIVE_OPTIONAL_MESAFIX='neveralonefix.c'
+ARCHIVE_OPTIONAL_MESAFIX_URL='https://github.com/dscharrer/void/blob/master/hacks/neveralonefix.c'
+ARCHIVE_OPTIONAL_MESAFIX_MD5='61898247276ec22c30ff83a887aff819'
+ARCHIVE_OPTIONAL_MESAFIX_TYPE='file'
+
 ARCHIVE_GAME_BIN_PATH='NeverAlone_ArcticCollection_Linux.1.04'
-ARCHIVE_GAME_BIN_FILES='Never_Alone.x64 Never_Alone_Data/*/x86_64'
+ARCHIVE_GAME_BIN_FILES='Never_Alone.x64 Never_Alone_Data/Mono Never_Alone_Data/Plugins'
 
 ARCHIVE_GAME_VIDEOS_PATH='NeverAlone_ArcticCollection_Linux.1.04'
 ARCHIVE_GAME_VIDEOS_FILES='Never_Alone_Data/StreamingAssets/Videos'
@@ -61,7 +66,17 @@ ARCHIVE_GAME_DATA_FILES='Never_Alone_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN_MESAFIX='# Load dscharrerʼs hack to work around shadows rendering issue
+APP_OPTIONS="./$APP_EXE $APP_OPTIONS"
+APP_EXE="neveralonefix.c"
+if [ -h "neveralonefix.c" ]; then
+	hack_path=$(realpath "neveralonefix.c")
+	rm "neveralonefix.c"
+	cp "$hack_path" "neveralonefix.c"
+fi'
 APP_MAIN_EXE='Never_Alone.x64'
+# shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='Never_Alone_Data/Resources/UnityPlayer.png'
 
@@ -72,16 +87,24 @@ PKG_VIDEOS_DESCRIPTION='videos'
 
 PKG_DATA_ID="$GAME_ID-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_VIDEOS_ID"
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_VIDEOS_ID $PKG_DATA_ID glibc libstdc++ glu xcursor"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor"
+PKG_BIN_DEPS_ARCH='libx11'
+PKG_BIN_DEPS_DEB='libx11-6'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+# Extra dependencies required to build dscharrerʼs Mesa hack
+PKG_BIN_DEPS_ARCH_MESAFIX="$PKG_BIN_DEPS_ARCH gcc mesa pkgconf"
+PKG_BIN_DEPS_DEB_MESAFIX="$PKG_BIN_DEPS_DEB, gcc, libgl-dev | libgl1-mesa-dev, libglvnd-dev | libgl1-mesa-dev, pkg-config"
+PKG_BIN_DEPS_GENTOO_MESAFIX="$PKG_BIN_DEPS_GENTOO sys-devel/gcc media-libs/mesa dev-util/pkgconfig"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -101,7 +124,14 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
+
+# Load dscharrerʼs Mesa fix if available
+
+ARCHIVE_MAIN="$ARCHIVE"
+archive_set 'ARCHIVE_MESAFIX' 'ARCHIVE_OPTIONAL_MESAFIX'
+ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
@@ -110,17 +140,30 @@ set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Include dscharrerʼs Mesa fix
+
+if [ -n "$ARCHIVE_MESAFIX" ]; then
+	cp "$ARCHIVE_MESAFIX" "${PKG_BIN_PATH}${PATH_GAME}/neveralonefix.c"
+	chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/neveralonefix.c"
+	APP_MAIN_PRERUN="$APP_MAIN_PRERUN_MESAFIX"
+	PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH_MESAFIX"
+	PKG_BIN_DEPS_DEB="$PKG_BIN_DEPS_DEB_MESAFIX"
+	PKG_BIN_DEPS_GENTOO="$PKG_BIN_DEPS_GENTOO_MESAFIX"
+fi
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN' 'PKG_VIDEOS'
+write_metadata
 build_pkg
 
 # Clean up

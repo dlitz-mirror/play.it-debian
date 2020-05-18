@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -106,6 +106,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -135,8 +136,8 @@ write_launcher 'APP_MAIN' 'APP_SETTINGS'
 cat > "${PKG_BIN_PATH}${PATH_GAME}/install-path.reg" << EOF
 REGEDIT4
 
-[HKEY_LOCAL_MACHINE\Software\Ubisoft\Beyond Good & Evil]
-"Install path"="C:\\\beyond-good-and-evil"
+[HKEY_LOCAL_MACHINE\\Software\\Ubisoft\\Beyond Good & Evil]
+"Install path"="C:\\\\$GAME_ID"
 EOF
 
 # Build package

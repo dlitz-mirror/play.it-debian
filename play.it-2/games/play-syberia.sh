@@ -2,8 +2,9 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2020, Igor Telmenko
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,14 +36,20 @@ set -o errexit
 # send your bug reports to mopi@dotslashplay.it
 ###
 
-script_version=20180619.1
+script_version=20200104.4
 
 # Set game-specific variables
 
 GAME_ID='syberia'
 GAME_NAME='Syberia'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD'
+ARCHIVES_LIST='ARCHIVE_GOG_RU ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD'
+
+ARCHIVE_GOG_RU='setup_syberia_russian_1.0.0_hotfix3_(18946).exe'
+ARCHIVE_GOG_RU_URL='https://www.gog.com/game/syberia'
+ARCHIVE_GOG_RU_MD5='cdf5ac1869d57d139495a20102d5ffb4'
+ARCHIVE_GOG_RU_SIZE='1600000'
+ARCHIVE_GOG_RU_VERSION='1.0.0.3-gog18946'
 
 ARCHIVE_GOG_EN='setup_syberia_1.0.0_hotfix3_(18946).exe'
 ARCHIVE_GOG_EN_URL='https://www.gog.com/game/syberia'
@@ -70,15 +77,15 @@ ARCHIVE_DOC_L10N_PATH='app'
 ARCHIVE_DOC_L10N_FILES='./*.pdf ./*.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./binkw32.dll ./ck2.dll ./ckzlib.dll ./dlls ./dvd.dll ./launch ./*.exe ./vxmath.dll'
+ARCHIVE_GAME_BIN_FILES='dlls *.dll *.exe *.ini */*.ini'
 
 ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='./data/string.dat ./data/animations/momo/mo_tcheque.nmo ./sounds/*_docu??_*.mp3 ./sounds/*_inter??_*.mp3 ./sounds/*_tel??_*.mp3 ./sounds/*_ticket??_*.mp3 ./sounds/ka*.mp3 ./sounds/pack? ./textures/ingame/cal_aigle*.tga ./textures/ingame/cal_argent*.tga ./textures/ingame/cal_automate*.tga ./textures/ingame/cal_coupdemain*.tga ./textures/ingame/cal_ecluses*.tga ./textures/ingame/cal_fabrication*.tga ./textures/ingame/cal_grotte*.tga ./textures/ingame/cal_oiseau*.tga ./textures/ingame/cal_zeppelin*.tga ./textures/ingame/cel_maman.tga ./textures/ingame/cel_patron.tga ./textures/ingame/inventory_closeup_aguidetouris*.syj ./textures/ingame/inventory_closeup_aregistrehotel*.syj ./textures/ingame/inventory_closeup_blivreamerzone*.syj ./textures/ingame/inventory_closeup_blivrechampignon*.syj ./textures/ingame/inventory_closeup_bplanyouks*.syj ./textures/ingame/inventory_closeup_csansretour*.syj ./textures/ingame/inventory_closeup_vconfessioncure*.syj ./textures/ingame/inventory_closeup_vdepliantval*.syj ./textures/ingame/inventory_closeup_vfacturehuissier*.syj ./textures/ingame/inventory_closeup_vfax*.syj ./textures/ingame/inventory_closeup_vlettreanna*.syj ./textures/ingame/inventory_closeup_vlettreinnacheve*.syj ./textures/ingame/inventory_closeup_clivremusee*.syj ./textures/ingame/inventory_closeup_vjournalanna*.syj ./textures/ingame/inventory_closeup_acodeclienttemp.syj ./textures/ingame/inventory_closeup_apartition.syj ./textures/ingame/inventory_closeup_bdocdouanier.syj ./textures/ingame/inventory_closeup_btickettrain.syj ./textures/ingame/inventory_closeup_clettreastro.syj ./textures/ingame/inventory_closeup_vcoupurejournal.syj ./textures/ingame/inventory_closeup_vdocsortietraina.syj ./textures/ingame/inventory_closeup_vdocsortietrain.syj ./textures/ingame/inventory_closeup_vdocventeusine.syj ./textures/ingame/inventory_closeup_vjournalval.syj ./textures/ingame/inventory_closeup_vtickettrainval.syj ./textures/valreceptioninn/sc10069-0.syj ./video/an/c10_hansanna.syb ./video/anc10_hansanna.syb ./video/an/c2_hansannab.syb ./video/anc2_hansannab.syb ./video/an/c5_hansanna.syb ./video/anc5_hansanna.syb ./video/c10_hansanna.syb ./video/c2_hansannab.syb ./video/c5_hansanna.syb ./video/frc10_hansanna.syb ./video/frc2_hansannab.syb ./video/frc5_hansanna.syb'
+ARCHIVE_GAME_L10N_FILES='sounds splash cmo/citstation.cmo cmo/valreceptioninn.cmo data/font_syberia?.dat data/string.dat data/animations/momo/mo_tcheque.nmo video/an video/*_hansanna.syb video/*_hansannab.syb video/c1_intro.syb textures/ingame textures/valreceptioninn'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./cmo ./data ./sounds ./splash ./textures ./video'
+ARCHIVE_GAME_DATA_FILES='cmo data textures video'
 
-CONFIG_FILES='./*.ini ./launch/*.ini'
+CONFIG_FILES='./*.ini ./*/*.ini'
 
 APP_REGEDIT="$GAME_ID.reg"
 
@@ -91,14 +98,21 @@ PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
 PKG_L10N_ID="${GAME_ID}-l10n"
 PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
 PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_ID_GOG_RU="${PKG_L10N_ID}-ru"
 PKG_L10N_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_DESCRIPTION_GOG_EN='English localization'
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+PKG_L10N_DESCRIPTION_GOG_RU='Russian localization'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
+PKG_BIN_ID="$GAME_ID"
 PKG_BIN_ARCH='32'
+PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
+PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
+PKG_BIN_ID_GOG_RU="${PKG_BIN_ID}-ru"
+PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine"
 
 # Load common functions
@@ -127,6 +141,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -141,11 +156,13 @@ PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
 
-# Create player.ini file
+# Create player.ini file if one is not already provided
 
-cat > "${PKG_BIN_PATH}${PATH_GAME}/player.ini" << EOF
-800 600 16 0 BaseCMO.cmo
-EOF
+if [ ! -e "${PKG_BIN_PATH}${PATH_GAME}/player.ini" ]; then
+	cat > "${PKG_BIN_PATH}${PATH_GAME}/player.ini" <<- EOF
+	800 600 16 0 BaseCMO.cmo
+	EOF
+fi
 
 # Add workaround for crash before reaching game menu
 

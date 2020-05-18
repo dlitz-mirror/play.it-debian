@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2017-2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Deponia 2 - Chaos on Deponia
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181203.1
+script_version=20200215.1
 
 # Set game-specific variables
 
@@ -49,9 +49,14 @@ ARCHIVE_GOG_SIZE='3200000'
 ARCHIVE_GOG_VERSION='3.3.2351-gog2.1.0.3'
 
 ARCHIVE_HUMBLE='Deponia2_DEB_Full_3.2.2342_Multi_Daedalic_ESD.tar.gz'
+ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/chaos-on-deponia'
 ARCHIVE_HUMBLE_MD5='e7a71d5b8a83b2c2393095256b03553b'
 ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'
+
+ARCHIVE_OPTIONAL_ICONS='deponia-2_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/deponia-2/'
+ARCHIVE_OPTIONAL_ICONS_MD5='4469f0e85881f0db2c266dcb6222717c'
 
 ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_DOC0_DATA_PATH_HUMBLE='Chaos on Deponia'
@@ -67,6 +72,9 @@ ARCHIVE_GAME_BIN_FILES='config.ini Deponia2 libs64'
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Chaos on Deponia'
 ARCHIVE_GAME_DATA_FILES='characters data.vis lua scenes videos'
+
+ARCHIVE_ICONS_PATH='.'
+ARCHIVE_ICONS_FILES='16x16 32x32 48x48 256x256'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Deponia2'
@@ -85,10 +93,10 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -108,7 +116,14 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
+
+# Load icons archive if available
+
+ARCHIVE_MAIN="$ARCHIVE"
+archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
+ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
@@ -120,19 +135,27 @@ case "$ARCHIVE" in
 esac
 prepare_package_layout
 
-# Get icon
+# Include game icon
 
-use_archive_specific_value 'APP_MAIN_ICON'
-if [ "$APP_MAIN_ICON" ]; then
-	PKG='PKG_DATA'
-	icons_get_from_workdir 'APP_MAIN'
+PKG='PKG_DATA'
+if [ "$ARCHIVE_ICONS" ]; then
+	ARCHIVE='ARCHIVE_ICONS' \
+		extract_data_from "$ARCHIVE_ICONS"
+	organize_data 'ICONS' "$PATH_ICON_BASE"
+else
+	case "$ARCHIVE" in
+		('ARCHIVE_GOG')
+			use_archive_specific_value 'APP_MAIN_ICON'
+			icons_get_from_workdir 'APP_MAIN'
+		;;
+	esac
 fi
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

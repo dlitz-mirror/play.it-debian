@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2017-2018, Solène Huault
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -144,6 +144,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		exit 1
 	fi
 fi
+#shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -165,11 +166,13 @@ write_launcher 'APP_MAIN'
 
 # Store saved games outside of WINE prefix
 
+# shellcheck disable=SC2016
 save_path='$WINEPREFIX/drive_c/users/$(whoami)/Local Settings/Application Data/Daedalic Entertainment/Memoria/Savegames'
+# shellcheck disable=SC2016
 pattern='s#cp --force --recursive --symbolic-link --update "$PATH_GAME"/\* "$PATH_PREFIX"#&\n'
-pattern="$pattern\tmkdir --parents \"${save_path%/*}\"\n"
-pattern="$pattern\tmkdir --parents \"\$PATH_DATA/saves\"\n"
-pattern="$pattern\tln --symbolic \"\$PATH_DATA/saves\" \"$save_path\"#"
+pattern="$pattern\\tmkdir --parents \"${save_path%/*}\"\\n"
+pattern="$pattern\\tmkdir --parents \"\$PATH_DATA/saves\"\\n"
+pattern="$pattern\\tln --symbolic \"\$PATH_DATA/saves\" \"$save_path\"#"
 for file in "${PKG_BIN_PATH}${PATH_BIN}"/*; do
 	sed --in-place "$pattern" "$file"
 done

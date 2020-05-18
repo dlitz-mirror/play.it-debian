@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Lure of the Temptress
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180802.1
+script_version=20200221.2
 
 # Set game-specific variables
 
@@ -58,13 +58,15 @@ ARCHIVE_GOG_FR_SIZE='94000'
 ARCHIVE_GOG_FR_VERSION='1.1-gog20099'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='./*'
+ARCHIVE_DOC0_MAIN_FILES='*.txt'
 
-ARCHIVE_DOC1_MAIN_PATH='data/noarch/data/scream'
-ARCHIVE_DOC1_MAIN_FILES='./*.txt'
+ARCHIVE_DOC1_MAIN_PATH_GOG_EN='data/noarch/docs/english'
+# There is no French manual in the archive; fall back to English one instead
+ARCHIVE_DOC1_MAIN_PATH_GOG_FR='data/noarch/docs/english'
+ARCHIVE_DOC1_MAIN_FILES='*.pdf *.txt'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
-ARCHIVE_GAME_MAIN_FILES='./*.vga'
+ARCHIVE_GAME_MAIN_FILES='*.vga'
 
 APP_MAIN_TYPE='scummvm'
 APP_MAIN_SCUMMID='lure'
@@ -80,43 +82,46 @@ PKG_MAIN_DEPS='scummvm'
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Extract data from game
+# Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
+
+# Get icon
+
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

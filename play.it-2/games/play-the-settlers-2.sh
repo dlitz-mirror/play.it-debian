@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # The Settlers 2
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20180303.3
 
 # Set game-specific variables
 
@@ -61,20 +61,17 @@ ARCHIVE_GOG_DE_MD5='f87a8fded6de455af4e6a284b3c4ed5e'
 ARCHIVE_GOG_DE_VERSION='1.51-gog2.1.0.17'
 ARCHIVE_GOG_DE_SIZE='370000'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./eula ./*.txt'
+ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_FILES='eula *.txt'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='./dos4gw.exe ./s2edit.exe ./s2.exe ./setup.exe ./setup.ini video/smackply.exe ./drivers'
+ARCHIVE_GAME0_MAIN_PATH='app'
+ARCHIVE_GAME0_MAIN_FILES='*.ini *.scr s2edit.exe s2.exe data/resource.idx data/io/*.idx data/maps* data/missions/mis_0100.rtx data/online data/txt* drivers/mdi.ini gfx/pics/setup000.lbm gfx/pics/setup010.lbm gfx/pics/setup011.lbm gfx/pics/setup012.lbm gfx/pics/setup014.lbm gfx/pics/setup897.lbm gfx/pics/setup898.lbm gfx/pics/setup900.lbm gfx/pics/setup901.lbm gfx/pics/setup996.lbm gfx/pics/setup997.lbm gfx/pics/setup998.lbm save/mission.dat video/*.smk'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./settlers2.gog ./settlers2.inst ./settler2.vmc ./data/animdat ./data/bobs ./data/*.lst ./data/cbob ./data/*.dat ./data/*.idx ./data/io/*.dat ./data/io/*.fnt ./data/masks ./data/mbob ./data/missions/mis_00*.rtx ./data/missions/mis_10*.rtx ./data/sounddat ./data/textures ./gfx/palette ./gfx/pics2 ./gfx/pics/install.lbm ./gfx/pics/mission ./gfx/pics/setup013.lbm ./gfx/pics/setup015.lbm ./gfx/pics/setup666.lbm ./gfx/pics/setup667.lbm ./gfx/pics/setup801.lbm ./gfx/pics/setup802.lbm ./gfx/pics/setup803.lbm ./gfx/pics/setup804.lbm ./gfx/pics/setup805.lbm ./gfx/pics/setup806.lbm ./gfx/pics/setup810.lbm ./gfx/pics/setup811.lbm ./gfx/pics/setup895.lbm ./gfx/pics/setup896.lbm ./gfx/pics/setup899.lbm ./gfx/pics/setup990.lbm ./gfx/pics/world.lbm ./gfx/pics/worldmsk.lbm ./gfx/textures ./gfw_high.ico ./goggame-1207658786.ico'
+ARCHIVE_GAME1_MAIN_PATH='app/__support/save'
+ARCHIVE_GAME1_MAIN_FILES='save/mission.dat'
 
-ARCHIVE_GAME1_L10N_PATH='app'
-ARCHIVE_GAME1_L10N_FILES='./install.scr ./video/intro.smk ./save/mission.dat ./gfx/pics/setup000.lbm ./gfx/pics/setup010.lbm ./gfx/pics/setup011.lbm ./gfx/pics/setup012.lbm ./gfx/pics/setup014.lbm ./gfx/pics/setup897.lbm ./gfx/pics/setup898.lbm ./gfx/pics/setup900.lbm ./gfx/pics/setup901.lbm ./gfx/pics/setup996.lbm ./gfx/pics/setup997.lbm ./gfx/pics/setup998.lbm ./data/resource.idx ./data/missions/mis_0100.rtx ./data/txt* ./data/online ./data/maps* ./data/io/editio.idx ./data/io/io.idx'
-
-ARCHIVE_GAME2_L10N_PATH='app/__support/save'
-ARCHIVE_GAME2_L10N_FILES='save/mission.dat'
+ARCHIVE_GAME_COMMON_PATH='app'
+ARCHIVE_GAME_COMMON_FILES='dos4gw.exe settler2.vmc settlers2.gog settlers2.inst setup.exe data/*.dat data/editres.idx data/animdat data/bobs data/cbob data/io/*.dat data/io/*.fnt data/*.lst data/masks data/mbob data/missions/mis_00*.rtx data/missions/mis_10*.rtx data/sounddat/sng data/sounddat/sound.lst data/textures drivers/*.ad drivers/*.dig drivers/dig.ini drivers/*.exe drivers/*.lst drivers/*.mdi drivers/*.opl gfx/palette gfx/pics2 gfx/pics/install.lbm gfx/pics/mission gfx/pics/setup013.lbm gfx/pics/setup015.lbm gfx/pics/setup666.lbm gfx/pics/setup667.lbm gfx/pics/setup801.lbm gfx/pics/setup802.lbm gfx/pics/setup803.lbm gfx/pics/setup804.lbm gfx/pics/setup805.lbm gfx/pics/setup806.lbm gfx/pics/setup810.lbm gfx/pics/setup811.lbm gfx/pics/setup895.lbm gfx/pics/setup896.lbm gfx/pics/setup899.lbm gfx/pics/setup990.lbm gfx/pics/world.lbm gfx/pics/worldmsk.lbm gfx/textures video/smackply.exe'
 
 CONFIG_FILES='./setup.ini'
 DATA_DIRS='./data ./gfx ./save ./worlds'
@@ -85,109 +82,90 @@ GAME_IMAGE_TYPE='iso'
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='s2.exe'
 APP_MAIN_PRERUN='@video\smackply video\intro.smk'
-APP_MAIN_ICON_GOG_EN='gfw_high.ico'
-APP_MAIN_ICON_GOG_FR='goggame-1207658786.ico'
-APP_MAIN_ICON_GOG_DE='goggame-1207658786.ico'
-APP_MAIN_ICON_RES='16 32 48 256'
+APP_MAIN_ICON_GOG_EN='app/gfw_high.ico'
+APP_MAIN_ICON_GOG_FR='app/goggame-1207658786.ico'
+APP_MAIN_ICON_GOG_DE='app/goggame-1207658786.ico'
 
 APP_EDITOR_TYPE='dosbox'
 APP_EDITOR_ID="${GAME_ID}_edit"
 APP_EDITOR_EXE='s2edit.exe'
 APP_EDITOR_NAME="$GAME_NAME - Editor"
+APP_EDITOR_ICON_GOG_EN="$APP_MAIN_ICON_GOG_EN"
+APP_EDITOR_ICON_GOG_FR="$APP_MAIN_ICON_GOG_FR"
+APP_EDITOR_ICON_GOG_DE="$APP_MAIN_ICON_GOG_DE"
 
 APP_SETUP_TYPE='dosbox'
 APP_SETUP_ID="${GAME_ID}_setup"
 APP_SETUP_EXE='setup.exe'
 APP_SETUP_NAME="$GAME_NAME - Setup"
 APP_SETUP_CAT='Settings'
+APP_SETUP_ICON_GOG_EN="$APP_MAIN_ICON_GOG_EN"
+APP_SETUP_ICON_GOG_FR="$APP_MAIN_ICON_GOG_FR"
+APP_SETUP_ICON_GOG_DE="$APP_MAIN_ICON_GOG_DE"
 
-PACKAGES_LIST='PKG_DATA PKG_L10N PKG_BIN'
+PACKAGES_LIST='PKG_COMMON PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_COMMON_ID="${GAME_ID}-common"
+PKG_COMMON_DESCRIPTION='common data'
 
-PKG_L10N_ID="${GAME_ID}-l10n"
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
-PKG_L10N_ID_GOG_DE="${PKG_L10N_ID}-de"
-PKG_L10N_PROVIDE="$PKG_L10N_ID"
-PKG_L10N_DESCRIPTION_GOG_EN='English localization'
-PKG_L10N_DESCRIPTION_GOG_FR='French localization'
-PKG_L10N_DESCRIPTION_GOG_DE='German localization'
-
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ID_GOG_EN="${GAME_ID}-en"
-PKG_BIN_ID_GOG_FR="${GAME_ID}-fr"
-PKG_BIN_ID_GOG_DE="${GAME_ID}-de"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_DESCRIPTION_GOG_EN='English version'
-PKG_BIN_DESCRIPTION_GOG_FR='French version'
-PKG_BIN_DESCRIPTION_GOG_DE='German version'
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID $PKG_L10N_ID dosbox"
+PKG_MAIN_ID="$GAME_ID"
+PKG_MAIN_ID_GOG_EN="${GAME_ID}-en"
+PKG_MAIN_ID_GOG_FR="${GAME_ID}-fr"
+PKG_MAIN_ID_GOG_DE="${GAME_ID}-de"
+PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
+PKG_MAIN_DESCRIPTION_GOG_EN='English version'
+PKG_MAIN_DESCRIPTION_GOG_FR='French version'
+PKG_MAIN_DESCRIPTION_GOG_DE='German version'
+PKG_MAIN_DEPS="$PKG_COMMON_ID dosbox"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
+sed --in-place 's/SETTLERS2.gog/settlers2.gog/' "${PKG_COMMON_PATH}${PATH_GAME}/$GAME_IMAGE"
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"   "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}"  "$PATH_GAME"
-	organize_data "GAME1_${PKG#PKG_}" "$PATH_GAME"
-	organize_data "GAME2_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract icons
 
-sed --in-place 's/SETTLERS2.gog/settlers2.gog/' "${PKG_DATA_PATH}${PATH_GAME}/$GAME_IMAGE"
-
-PKG='PKG_DATA'
-extract_and_sort_icons_from 'APP_MAIN'
-rm "${PKG_DATA_PATH}${PATH_GAME}/$APP_MAIN_ICON"
-
+PKG='PKG_COMMON'
+icons_get_from_workdir 'APP_MAIN' 'APP_EDITOR' 'APP_SETUP'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_EDITOR' 'APP_SETUP'
+PKG='PKG_MAIN'
+launchers_write 'APP_MAIN' 'APP_EDITOR' 'APP_SETUP'
 
 # Build package
 
-cat > "$postinst" << EOF
-for res in $APP_MAIN_ICON_RES; do
-	PATH_ICON="$PATH_ICON_BASE/\${res}x\${res}/apps"
-	ln --symbolic $GAME_ID.png "\$PATH_ICON/$APP_EDITOR_ID.png"
-	ln --symbolic $GAME_ID.png "\$PATH_ICON/$APP_SETUP_ID.png"
-done
-EOF
-
-cat > "$prerm" << EOF
-for res in $APP_MAIN_ICON_RES; do
-	PATH_ICON="$PATH_ICON_BASE/\${res}x\${res}/apps"
-	rm "\$PATH_ICON/$APP_EDITOR_ID.png"
-	rm "\$PATH_ICON/$APP_SETUP_ID.png"
-done
-EOF
-
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN' 'PKG_L10N'
+write_metadata
 build_pkg
 
 # Clean up

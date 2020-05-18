@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,18 +31,16 @@ set -o errexit
 
 ###
 # The Even More Incredible Machine
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190303.5
 
 # Set game-specific variables
 
 GAME_ID='the-even-more-incredible-machine'
 GAME_NAME='The Even More Incredible Machine'
-
-ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='setup_the_even_more_incredible_machine_2.1.0.24.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_incredible_machine_mega_pack'
@@ -49,53 +48,61 @@ ARCHIVE_GOG_MD5='0486b8d5e65ea49ebf59b62a06cb9edd'
 ARCHIVE_GOG_SIZE='21000'
 ARCHIVE_GOG_VERSION='1.0-gog2.1.0.24'
 
-ARCHIVE_GAME_PATH='app'
-ARCHIVE_GAME_FILES='./*.tim ./*.drv ./*.exe ./install* ./resource* ./goggame-1207664023.ico'
+ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_FILES='*.tim *.drv *.exe install* resource*'
 
-CONFIG_FILES='./resource.cfg'
+CONFIG_FILES='./*.cfg ./*.CFG'
+DATA_FILES='./*.tim ./*.TIM'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='tim.exe'
-APP_MAIN_ICON='goggame-1207664023.ico'
-APP_MAIN_ICON_RES='16 32 48 256'
+APP_MAIN_ICON='app/goggame-1207664023.ico'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ARCH='32'
-PKG_MAIN_DEPS_DEB='dosbox'
-PKG_MAIN_DEPS_ARCH='dosbox'
+PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.0'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-organize_data 'GAME' "$PATH_GAME"
+# Extract icons
 
-extract_and_sort_icons_from 'APP_MAIN'
-
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-write_launcher 'APP_MAIN'
+launcher_write 'APP_MAIN'
 
 # Build package
 

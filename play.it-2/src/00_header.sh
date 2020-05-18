@@ -1,10 +1,12 @@
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2017-2018, Solène "Mopi" Huault
-# Copyright (c) 2017-2018, Phil Morrell
-# Copyright (c) 2017-2018, Jacek Szafarkiewicz
-# Copyright (c) 2018, VA
-# Copyright (c) 2018, Janeene "dawnmist" Beeforth
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2017-2020, Phil Morrell
+# Copyright (c) 2017-2020, Jacek Szafarkiewicz
+# Copyright (c) 2018-2020, VA
+# Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
+# Copyright (c) 2018-2020, BetaRays
+# Copyright (c)      2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +34,10 @@
 
 ###
 # common functions for ./play.it scripts
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-library_version=2.11.0
+library_version=2.11.4
 # shellcheck disable=SC2034
-library_revision=20190126.2
+library_revision=20200509.1
 

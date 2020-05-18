@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Trine 2
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180614.1
+script_version=20190704.1
 
 # Set game-specific variables
 
@@ -47,10 +47,10 @@ ARCHIVE_GOG_MD5='dd7126c1a6210e56fde20876bdb0a2ac'
 ARCHIVE_GOG_VERSION='2.01.425-gog2.0.0.5'
 ARCHIVE_GOG_SIZE='3700000'
 
-ARCHIVE_GOG_OLD='gog_trine_2_complete_story_2.0.0.4.sh'
-ARCHIVE_GOG_OLD_MD5='dae867bff938dde002eafcce0b72e5b4'
-ARCHIVE_GOG_OLD_VERSION='2.01.425-gog2.0.0.4'
-ARCHIVE_GOG_OLD_SIZE='3700000'
+ARCHIVE_GOG_OLD0='gog_trine_2_complete_story_2.0.0.4.sh'
+ARCHIVE_GOG_OLD0_MD5='dae867bff938dde002eafcce0b72e5b4'
+ARCHIVE_GOG_OLD0_VERSION='2.01.425-gog2.0.0.4'
+ARCHIVE_GOG_OLD0_SIZE='3700000'
 
 ARCHIVE_HUMBLE='trine2_complete_story_v2_01_build_425_humble_linux_full.zip'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/trine-2-complete-story'
@@ -58,31 +58,31 @@ ARCHIVE_HUMBLE_MD5='82049b65c1bce6841335935bc05139c8'
 ARCHIVE_HUMBLE_VERSION='2.01build425-humble141016'
 ARCHIVE_HUMBLE_SIZE='3700000'
 
-ARCHIVE_LIBPNG_32='libpng_1.2_32-bit.tar.gz'
-ARCHIVE_LIBPNG_32_MD5='15156525b3c6040571f320514a0caa80'
+ARCHIVE_OPTIONAL_LIBPNG32='libpng_1.2_32-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBPNG32_URL='https://downloads.dotslashplay.it/resources/libpng/'
+ARCHIVE_OPTIONAL_LIBPNG32_MD5='15156525b3c6040571f320514a0caa80'
 
 ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='./*'
+ARCHIVE_DOC0_DATA_FILES='*'
 
 ARCHIVE_DOC1_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_DOC1_DATA_PATH_HUMBLE='.'
-ARCHIVE_DOC1_DATA_FILES='./readme*'
+ARCHIVE_DOC1_DATA_FILES='readme*'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN_FILES='./bin ./lib'
+ARCHIVE_GAME_BIN_FILES='bin lib'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
-ARCHIVE_GAME_DATA_FILES='./data ./*.fbq ./trine2.png'
+ARCHIVE_GAME_DATA_FILES='data *.fbq trine2.png'
 
 DATA_DIRS='./log'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_LIBS='./lib/lib32'
+APP_MAIN_LIBS='lib/lib32'
 APP_MAIN_EXE='bin/trine2_linux_launcher_32bit'
 APP_MAIN_ICON='trine2.png'
-APP_MAIN_ICON_RES='64'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -92,42 +92,45 @@ PKG_DATA_DESCRIPTION='data'
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc glu openal gtk2 vorbis alsa"
 PKG_BIN_DEPS_ARCH='lib32-libpng12'
+PKG_BIN_DEPS_GENTOO='media-libs/libpng:1.2[abi_x86_32]'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Use libpng 1.2 32-bit archive
+# Use libpng 1.2 archive for systems no longer providing it
 
-if [ "$OPTION_PACKAGE" != 'arch' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	set_archive 'ARCHIVE_LIBPNG' 'ARCHIVE_LIBPNG_32'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
+case "$OPTION_PACKAGE" in
+	('deb')
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_LIBPNG32' 'ARCHIVE_OPTIONAL_LIBPNG32'
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+esac
 
 # Extract game data
 
@@ -135,16 +138,27 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/bin"/*
+# Set execution permissions on all binaries
 
-# Include libpng into the game directory
+if [ $DRY_RUN -eq 0 ]; then
+	find "${PKG_BIN_PATH}${PATH_GAME}/bin" -type f -exec chmod 755 '{}' +
+fi
 
-if [ "$OPTION_PACKAGE" != 'arch' ] && [ "$ARCHIVE_LIBPNG" ]; then
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Include libpng 1.2
+
+if [ "$ARCHIVE_LIBPNG32" ]; then
 	(
-		ARCHIVE='ARCHIVE_LIBPNG'
-		extract_data_from "$ARCHIVE_LIBPNG"
+		ARCHIVE='ARCHIVE_LIBPNG32'
+		extract_data_from "$ARCHIVE_LIBPNG32"
 	)
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR/gamedata/libpng12.so.0.50.0" "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	ln --symbolic './libpng12.so.0.50.0' "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS/libpng12.so.0"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
@@ -155,22 +169,7 @@ write_launcher 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-if [ "$OPTION_PACKAGE" != 'arch' ] && [ "$ARCHIVE_LIBPNG" ]; then
-	cat > "$postinst" <<- EOF
-	if [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
-	  ln --symbolic ./libpng12.so.0.50.0 "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
-	fi
-	EOF
-	cat > "$prerm" <<- EOF
-	if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0" ]; then
-	  rm "$PATH_GAME/$APP_MAIN_LIBS/libpng12.so.0"
-	fi
-	EOF
-fi
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up

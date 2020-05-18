@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
-# Copyright (c) 2018, Phil Morrell
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2017-2020, Phil Morrell
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Unreal Tournament
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180819.1
+script_version=20200221.1
 
 # Set game-specific variables
 
@@ -49,31 +49,32 @@ ARCHIVE_GOG_TYPE='innosetup_nolowercase'
 ARCHIVE_GOG_SIZE='640000'
 ARCHIVE_GOG_VERSION='451-gog2.0.0.5'
 
-ARCHIVE_LOKI_LINUX_CLIENT='ut99v451-linux.tar.gz'
-ARCHIVE_LOKI_LINUX_CLIENT_URL='https://www.dotslashplay.it/ressources/unreal-tournament/'
-ARCHIVE_LOKI_LINUX_CLIENT_MD5='d645b0ea2d093e68afc8f1b5288496e5'
+ARCHIVE_REQUIRED_ENGINE='ut99v451-linux.2019-07-21.tar.gz'
+ARCHIVE_REQUIRED_ENGINE_URL='https://downloads.dotslashplay.it/resources/unreal-tournament/'
+ARCHIVE_REQUIRED_ENGINE_MD5='6cf7b84c8ce719a74d1c7724152d5c70'
 
 ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./Help/* ./Manual/manual.pdf'
+ARCHIVE_DOC_DATA_FILES='Help/* Manual/manual.pdf'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='./System/*-bin ./System/*.so*'
+ARCHIVE_GAME_BIN_FILES='System/*-bin System/*.so*'
 
 ARCHIVE_GAME0_DATA_PATH='app'
-ARCHIVE_GAME0_DATA_FILES='./Maps ./Music ./Sounds ./Textures ./Web ./System/*.ini ./System/*.u ./System/*.int'
+ARCHIVE_GAME0_DATA_FILES='Maps Music Sounds Textures Web System/*.ini System/*.u System/*.int'
 
 ARCHIVE_GAME1_DATA_PATH='.'
-ARCHIVE_GAME1_DATA_FILES='./Web ./System/*.ini ./System/*.u ./System/*.int'
+ARCHIVE_GAME1_DATA_FILES='Web System/*.ini System/*.u System/*.int'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN_ARCH='export UT_PREFS="$HOME/.loki/ut"
-mkdir --parents "$UT_PREFS/System"
-pulseaudio --start
-export LD_PRELOAD="/usr/lib32/pulseaudio/libpulsedsp.so"'
-APP_MAIN_PRERUN_DEB='export UT_PREFS="$HOME/.loki/ut"
-mkdir --parents "$UT_PREFS/System"
-pulseaudio --start
-export LD_PRELOAD="/usr/lib/i386-linux-gnu/pulseaudio/libpulsedsp.so"'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Make sure game configuration is set to an user-owned existing directory
+export UT_PREFS="$HOME/.loki/ut"
+mkdir --parents "$UT_PREFS/System"'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Run the game binary from its parent directory
+cd "$(dirname "$APP_EXE")"
+APP_EXE="$(basename "$APP_EXE")"'
 APP_MAIN_EXE='System/ut-bin'
 APP_MAIN_ICON='app/System/UnrealTournament.exe'
 
@@ -83,44 +84,43 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl1.2 pulseaudio"
-PKG_BIN_DEPS_ARCH='lib32-libpulse'
-PKG_BIN_DEPS_DEB='libpulsedsp'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl1.2 glx"
+PKG_BIN_DEPS_ARCH='pulseaudio lib32-libpulse'
+PKG_BIN_DEPS_DEB='pulseaudio:amd64 | pulseaudio, libpulsedsp'
 
 # Load common functions
 
-target_version='2.10'
-
-[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Check presence of Linux client archive
+# Check presence of native engine archive
 
 ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'ARCHIVE_LINUX_CLIENT' 'ARCHIVE_LOKI_LINUX_CLIENT'
-[ "$ARCHIVE_LINUX_CLIENT" ] || archive_set_error_not_found 'ARCHIVE_LOKI_LINUX_CLIENT'
+archive_set 'ARCHIVE_ENGINE' 'ARCHIVE_REQUIRED_ENGINE'
+[ "$ARCHIVE_ENGINE" ] || archive_set_error_not_found 'ARCHIVE_REQUIRED_ENGINE'
 ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
@@ -134,12 +134,10 @@ PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Include Linux client
+# Include native engine
 
-(
-	ARCHIVE='ARCHIVE_LINUX_CLIENT'
-	extract_data_from "$ARCHIVE_LINUX_CLIENT"
-)
+ARCHIVE='ARCHIVE_ENGINE' \
+	extract_data_from "$ARCHIVE_ENGINE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
@@ -148,28 +146,33 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 PKG='PKG_BIN'
 case $OPTION_PACKAGE in
 	('arch')
-		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_ARCH"
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+		# Start pulseaudio
+		pulseaudio --start
+		export LD_PRELOAD="/usr/lib32/pulseaudio/libpulsedsp.so"'
 	;;
 	('deb')
-		APP_MAIN_PRERUN="$APP_MAIN_PRERUN_DEB"
+		APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+		# Start pulseaudio
+		pulseaudio --start
+		export LD_PRELOAD="/usr/lib/i386-linux-gnu/pulseaudio/libpulsedsp.so"'
+	;;
+	('gentoo')
+		# Nothing to do here, Gentoo use the basic pre-run script
 	;;
 	(*)
 		liberror 'OPTION_PACKAGE' "$0"
 	;;
 esac
-write_launcher 'APP_MAIN'
-
-# Set working directory to the directory containing the game binary before running it
-
-pattern='s|^cd "$PATH_PREFIX"$|cd "$PATH_PREFIX/${APP_EXE%/*}"|'
-pattern="$pattern"';s|^"\./$APP_EXE"|"./${APP_EXE##*/}"|'
-sed --in-place "$pattern" "${PKG_BIN_PATH}${PATH_BIN}/$GAME_ID"
+launchers_write 'APP_MAIN'
 
 # Work around a crash of the host of multiplayer games on map transitions
 
 pattern='s/\(^bWorldLog\)=.*/\1=False/'
 file="${PKG_DATA_PATH}${PATH_GAME}/System/UnrealTournament.ini"
-sed --in-place "$pattern" "$file"
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place "$pattern" "$file"
+fi
 
 # Build package
 

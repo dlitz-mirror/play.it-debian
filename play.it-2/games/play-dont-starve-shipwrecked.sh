@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, mortalius
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,36 +31,34 @@ set -o errexit
 
 ###
 # Don’t Starve: Shipwrecked
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20190724.1
 
 # Set game-specific variables
 
 GAME_ID='dont-starve'
-GAME_NAME='Don’t Starve: Shipwrecked'
-
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
+GAME_NAME='Donʼt Starve: Shipwrecked'
 
 ARCHIVE_GOG='don_t_starve_shipwrecked_dlc_en_20171215_17628.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/dont_starve_shipwrecked'
 ARCHIVE_GOG_MD5='463825173d76f294337f0ae7043d7cf6'
 ARCHIVE_GOG_SIZE='1200000'
 ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_VERSION='20171215-gog17628'
+ARCHIVE_GOG_VERSION='246924-gog17628'
 
-ARCHIVE_GOG_OLD='gog_don_t_starve_shipwrecked_dlc_2.0.0.2.sh'
-ARCHIVE_GOG_OLD_MD5='b1d4152639a272a959d36eacf8cb859e'
-ARCHIVE_GOG_OLD_SIZE='1200000'
-ARCHIVE_GOG_OLD_VERSION='gog2.0.0.2'
+ARCHIVE_GOG_OLD0='gog_don_t_starve_shipwrecked_dlc_2.0.0.2.sh'
+ARCHIVE_GOG_OLD0_MD5='b1d4152639a272a959d36eacf8cb859e'
+ARCHIVE_GOG_OLD0_SIZE='1200000'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog2.0.0.2'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC_MAIN_FILES='*'
 
-ARCHIVE_GAME_PATH='data/noarch/game/dontstarve32'
-ARCHIVE_GAME_FILES='./data ./manifest_dlc0002.json'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game/dontstarve32'
+ARCHIVE_GAME_MAIN_FILES='data manifest_dlc0002.json'
 
 PACKAGES_LIST='PKG_MAIN'
 
@@ -68,29 +67,36 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
-organize_data 'DOC'  "$PATH_DOC"
-organize_data 'GAME' "$PATH_GAME"
-
+prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Build package

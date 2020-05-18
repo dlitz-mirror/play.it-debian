@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,42 @@ set -o errexit
 ###
 
 ###
-# Renowned Explorers: The Emperor’s Challenge
+# Renowned Explorers: The Emperorʼs Challenge
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181128.1
+script_version=20190501.2
 
 # Set game-specific variables
 
 GAME_ID='renowned-explorers-international-society'
-GAME_NAME='Renowned Explorers: The Emperor’s Challenge'
+GAME_NAME='Renowned Explorers: The Emperorʼs Challenge'
 
-ARCHIVE_GOG='renowned_explorers_international_society_the_emperors_challenge_dlc_512_25169.sh'
+ARCHIVE_GOG='renowned_explorers_international_society_the_emperors_challenge_dlc_522_26056.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/renowned_explorers_the_emperors_challenge'
-ARCHIVE_GOG_MD5='b402cec7fbc05fec42be3ae4ff1a26ec'
+ARCHIVE_GOG_MD5='e87af99e5a726b06ee5b94d7f94d9f5a'
 ARCHIVE_GOG_SIZE='22000'
-ARCHIVE_GOG_VERSION='512-gog25169'
+ARCHIVE_GOG_VERSION='522-gog26056'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD6='renowned_explorers_international_society_the_emperors_challenge_dlc_520_25983.sh'
+ARCHIVE_GOG_OLD6_MD5='a2ea1ff34a78c9d3cb389373b6948604'
+ARCHIVE_GOG_OLD6_SIZE='22000'
+ARCHIVE_GOG_OLD6_VERSION='520-gog25983'
+ARCHIVE_GOG_OLD6_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD5='renowned_explorers_international_society_the_emperors_challenge_dlc_516_25864.sh'
+ARCHIVE_GOG_OLD5_MD5='cd76b4c9b334d5b859c4dff171ec4c0f'
+ARCHIVE_GOG_OLD5_SIZE='22000'
+ARCHIVE_GOG_OLD5_VERSION='516-gog25864'
+ARCHIVE_GOG_OLD5_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD4='renowned_explorers_international_society_the_emperors_challenge_dlc_512_25169.sh'
+ARCHIVE_GOG_OLD4_MD5='b402cec7fbc05fec42be3ae4ff1a26ec'
+ARCHIVE_GOG_OLD4_SIZE='22000'
+ARCHIVE_GOG_OLD4_VERSION='512-gog25169'
+ARCHIVE_GOG_OLD4_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD3='renowned_explorers_international_society_the_emperors_challenge_dlc_508_23701.sh'
 ARCHIVE_GOG_OLD3_MD5='7f0b5df5318af767bfb306bd4e3f1e13'
@@ -87,10 +105,10 @@ PKG_MAIN_PROVIDE='renowned-explorers-the-emperors-challenge'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: ${XDG_DATA_HOME:="$HOME/.local/share"}
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
 		"$PWD"\
 		"$XDG_DATA_HOME/play.it"\
@@ -110,6 +128,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data

@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2018, Antoine Le Gonidec
+# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +31,11 @@ set -o errexit
 
 ###
 # Akalabeth: World of Doom
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180401.3
+script_version=20190310.3
 
 # Set game-specific variables
 
@@ -64,65 +65,70 @@ ARCHIVE_GOG_1998_TAR_TYPE='tar'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC_MAIN_PATH_GOG_1998='akalabeth - bonus 1998/docs'
-ARCHIVE_DOC_MAIN_FILES='./*.pdf'
+ARCHIVE_DOC_MAIN_FILES='*.pdf'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
 ARCHIVE_GAME_MAIN_PATH_GOG_1998='akalabeth - bonus 1998/data'
-ARCHIVE_GAME_MAIN_FILES='./*'
+ARCHIVE_GAME_MAIN_FILES='*'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='aklabeth.exe'
 APP_MAIN_EXE_GOG_1998='ak.exe'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-APP_MAIN_ICON_RES='256'
 APP_MAIN_ICON_GOG_1998='akalabeth - bonus 1998/support/gog-akalabeth-bonus-1998.png'
-APP_MAIN_ICON_GOG_1998_RES='256'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ARCH='32'
 PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-
 if [ "$ARCHIVE" = 'ARCHIVE_GOG_1998' ]; then
 	ARCHIVE_GOG_1998_TYPE='tar'
 	extract_data_from "$PLAYIT_WORKDIR/gamedata/gog_akalabeth_bonus_1998_1.0.0.1.tar.gz"
-	rm "$PLAYIT_WORKDIR/gamedata/gog_akalabeth_bonus_1998_1.0.0.1.tar.gz"
+	rm --force "$PLAYIT_WORKDIR/gamedata/gog_akalabeth_bonus_1998_1.0.0.1.tar.gz"
 fi
-
 tolower "$PLAYIT_WORKDIR/gamedata"
-
 prepare_package_layout
 
-get_icon_from_temp_dir 'APP_MAIN'
+# Get icon
 
+icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 use_archive_specific_value 'APP_MAIN_EXE'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
