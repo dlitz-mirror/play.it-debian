@@ -8,23 +8,24 @@ License: BSD-2-Clause
 
 Files: *
 Copyright:
- 2015-2018, Antoine "vv221/vv222" Le Gonidec
- 2016-2018, Solène "Mopi" Huault
- 2017-2018, mortalius
- 2017-2018, Jacek Szafarkiewicz
- 2017-2018, HS-157
- 2017-2018, Phil Morrell
- 2017-2018, Quentin Barbe
- 2018, Janeene "dawnmist" Beeforth
- 2018, VA
- 2018, Dominique Derrier
- 2018, Sébastien “Elzen” Dufromentel
- 2018, Andrey Butirsky
- 2018, BetaRays
-License: BSD-2-Clause
-
-Files: debian/*
-Copyright: 2018 Phil Morrell <debian@emorrp1.name>
+ 2015-2020, Antoine "vv221/vv222" Le Gonidec
+ 2015-2020, mortalius
+ 2016-2020, Mopi
+ 2017-2020, Jacek Szafarkiewicz
+ 2017-2020, HS-157
+ 2017-2020, Phil Morrell
+ 2017-2020, Quentin Barbe
+ 2018-2020, Janeene "dawnmist" Beeforth
+ 2018-2020, VA
+ 2018-2020, Dominique Derrier
+ 2018-2020, Sébastien “Elzen” Dufromentel
+ 2018-2020, Andrey Butirsky
+ 2018-2020, BetaRays
+ 2019-2020, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+ 2019-2020, Erwann Duclos
+ 2019-2020, Luc Didry
+ 2020, Igor Telmenko
+ 2020, macaron
 License: BSD-2-Clause
 
 License: BSD-2-Clause
