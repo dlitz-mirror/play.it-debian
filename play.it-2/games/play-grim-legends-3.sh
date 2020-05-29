@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Grim Legends 3 : The Dark City
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190113.1
+script_version=20200529.1
 
 # Set game-specific variables
 
@@ -45,7 +45,7 @@ GAME_NAME='Grim Legends 3 : The Dark City'
 ARCHIVE_GOG='grim_legends_3_the_dark_city_gog_1_25984.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/grim_legends_3_the_dark_city'
 ARCHIVE_GOG_MD5='57cb3309f7207a6d2a1a7db811d63117'
-ARCHIVE_GOG_SIZE='1132308'
+ARCHIVE_GOG_SIZE='1200000'
 ARCHIVE_GOG_VERSION='1.0-gog25984'
 ARCHIVE_GOG_TYPE='mojosetup'
 
