@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200315.1
+script_version=20205029.1
 
 # Set game-specific variables
 
@@ -47,19 +47,19 @@ ARCHIVE_GOG='surviving_mars_stellaris_dome_set_sagan_rc3_update_24111.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars_stellaris_dome_set'
 ARCHIVE_GOG_MD5='7759d7fa7f9d99a693a828a6c5db601f'
 ARCHIVE_GOG_SIZE='4000'
-ARCHIVE_GOG_VERSION='24111'
+ARCHIVE_GOG_VERSION='1.0-gog24111'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD1='surviving_mars_stellaris_dome_set_sagan_rc1_update_23676.sh'
 ARCHIVE_GOG_OLD1_MD5='2b0f7100813779cdd847be15b6599fea'
 ARCHIVE_GOG_OLD1_SIZE='4000'
-ARCHIVE_GOG_OLD1_VERSION='23676'
+ARCHIVE_GOG_OLD1_VERSION='1.0-gog23676'
 ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD0='surviving_mars_stellaris_dome_set_pre_order_dlc_en_180619_curiosity_hotfix_3_21661.sh'
 ARCHIVE_GOG_OLD0_MD5='01ffc529b9a0cc72e5d94830385bf7b9'
 ARCHIVE_GOG_OLD0_SIZE='4000'
-ARCHIVE_GOG_OLD0_VERSION='3-gog21661'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog21661'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/docs'
