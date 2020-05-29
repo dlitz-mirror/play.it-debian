@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200420.3
+script_version=20200529.1
 
 # Set game-specific variables
 
@@ -51,7 +51,7 @@ ARCHIVE_GOG_TYPE='mojosetup'
 
 ARCHIVE_GOG_OLD0='gog_terraria_2.17.0.21.sh'
 ARCHIVE_GOG_OLD0_MD5='90ec196ec38a7f7a5002f5a8109493cc'
-ARCHIVE_GOG_OLD0_SIZE='487864'
+ARCHIVE_GOG_OLD0_SIZE='490000'
 ARCHIVE_GOG_OLD0_VERSION='1.3.5.3-gog2.17.0.21'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game'
