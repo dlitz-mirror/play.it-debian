@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200529.1
+script_version=20200529.2
 
 # Set game-specific variables
 
@@ -76,7 +76,7 @@ ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
 ARCHIVE_GOG_OLD0='surviving_mars_en_curiosity_update_21183.sh'
 ARCHIVE_GOG_OLD0_MD5='ab9a61d04a128f19bc9e003214fe39a9'
 ARCHIVE_GOG_OLD0_VERSION='1.0-gog21183'
-ARCHIVE_GOG_OLD0_SIZE='3950000'
+ARCHIVE_GOG_OLD0_SIZE='4000000'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
