@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -33,10 +33,10 @@ set -o errexit
 ###
 # Dex
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200530.1
+script_version=20200712.1
 
 # Set game-specific variables
 
@@ -55,8 +55,11 @@ ARCHIVE_GOG_OLD0_MD5='199a1acc59879124e8e1c532909fd879'
 ARCHIVE_GOG_OLD0_SIZE='6200000'
 ARCHIVE_GOG_OLD0_VERSION='5.4.0.0-gog2.3.0.4'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
+
+ARCHIVE_DOC1_DATA_PATH='data/noarch/support'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='Dex.x86 Dex_Data/Mono Dex_Data/Plugins'
