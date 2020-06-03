@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/sh -e
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2020, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,70 +29,84 @@ set -o errexit
 ###
 
 ###
-# Pink Hour
+# Sundered
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200528.1
+script_version=20200512.1
 
 # Set game-specific variables
 
-GAME_ID='pink-hour'
-GAME_NAME='Pink Hour'
+GAME_ID='sundered'
+GAME_NAME='Sundered'
 
-ARCHIVE_PLAYISM='PinkHourEn-v1430a.zip'
-ARCHIVE_PLAYISM_URL='https://playism.com/product/pink-hour'
-ARCHIVE_PLAYISM_MD5='7cd38735bf02634474eb8bf5a39439b2'
-ARCHIVE_PLAYISM_VERSION='1.43-playism1430a'
-ARCHIVE_PLAYISM_SIZE='15000'
-ARCHIVE_PLAYISM_TYPE='zip'
+ARCHIVE_GOG='sundered_20190404_29317.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/sundered'
+ARCHIVE_GOG_MD5='efd81d3e4b14d26cdef2362b888e0a56'
+ARCHIVE_GOG_SIZE='2500000'
+ARCHIVE_GOG_VERSION='20190404-gog23987'
+ARCHIVE_GOG_TYPE='mojosetup'
 
-ARCHIVE_DOC_DATA_PATH='PinkHourEn'
-ARCHIVE_DOC_DATA_FILES='ReadmeEn.txt'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-ARCHIVE_GAME_BIN_PATH='PinkHourEn'
-ARCHIVE_GAME_BIN_FILES='PinkHour.exe'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/support'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
-ARCHIVE_GAME_DATA_PATH='PinkHourEn'
-ARCHIVE_GAME_DATA_FILES='rsc_p'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='Sundered.x86 Sundered_Data/Mono/x86 Sundered_Data/Plugins/x86'
 
-APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='PinkHour.exe'
-APP_MAIN_ICON='PinkHour.exe'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='Sundered.x86_64 Sundered_Data/Mono/x86_64 Sundered_Data/Plugins/x86_64'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='Sundered_Data'
+
+DATA_DIRS='./logs'
+
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='Sundered.x86'
+APP_MAIN_EXE_BIN64='Sundered.x86_64'
+# shellcheck disable=SC2016
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+APP_MAIN_ICON='Sundered_Data/Resources/UnityPlayer.png'
+
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
-		'/usr/share/play.it'
-	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
-			break
-		fi
-	done
+  : "${XDG_DATA_HOME:="$HOME/.local/share"}"
+  for path in\
+    "$PWD"\
+    "$XDG_DATA_HOME/play.it"\
+    '/usr/local/share/games/play.it'\
+    '/usr/local/share/play.it'\
+    '/usr/share/games/play.it'\
+    '/usr/share/play.it'
+  do
+    if [ -e "$path/libplayit2.sh" ]; then
+      PLAYIT_LIB2="$path/libplayit2.sh"
+      break
+    fi
+  done
 fi
 if [ -z "$PLAYIT_LIB2" ]; then
-	printf '\n\033[1;31mError:\033[0m\n'
-	printf 'libplayit2.sh not found.\n'
-	exit 1
+  printf '\n\033[1;31mError:\033[0m\n'
+  printf 'libplayit2.sh not found.\n'
+  exit 1
 fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
@@ -104,16 +117,16 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Extract game icons
+# Extract icon
 
-PKG='PKG_BIN'
+PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
-icons_move_to 'PKG_DATA'
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+  launchers_write 'APP_MAIN'
+done
 
 # Build package
 

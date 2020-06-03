@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Pink Heaven
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181031.1
+script_version=20200528.1
 
 # Set game-specific variables
 
@@ -43,7 +43,7 @@ GAME_ID='pink-heaven'
 GAME_NAME='Pink Heaven'
 
 ARCHIVE_PLAYISM='PinkHeavenEn-v1430a.zip'
-ARCHIVE_PLAYISM_URL='http://playism-games.com/game/244/pink-heaven'
+ARCHIVE_PLAYISM_URL='https://playism.com/product/pink-heaven'
 ARCHIVE_PLAYISM_MD5='7d1b3e193a5ba9618cba1ffb0c977762'
 ARCHIVE_PLAYISM_VERSION='1.43-playism1430a'
 ARCHIVE_PLAYISM_SIZE='15000'

@@ -30,41 +30,64 @@ set -o errexit
 ###
 
 ###
-# Torin’s Passage
+# The Adventures of Shuggy
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200529.1
+script_version=20200518.2
 
 # Set game-specific variables
 
-GAME_ID='torins-passage'
-GAME_NAME='Torinʼs Passage'
+GAME_ID='the-adventures-of-shuggy'
+GAME_NAME='The Adventures of Shuggy'
 
-ARCHIVE_GOG='setup_torins_passage_2.0.0.7.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/torins_passage'
-ARCHIVE_GOG_MD5='a7398abdb6964bf6a6446248f138d05e'
-ARCHIVE_GOG_SIZE='350000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.7'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
 
-ARCHIVE_DOC_MAIN_PATH='app'
-ARCHIVE_DOC_MAIN_FILES='torin.txt *.pdf'
+ARCHIVE_GOG_0='gog_the_adventures_of_shuggy_2.0.0.2.sh'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/the_adventures_of_shuggy'
+ARCHIVE_GOG_0_MD5='7d031b4cbbbf88beb5bdaa077892215d'
+ARCHIVE_GOG_0_SIZE='120000'
+ARCHIVE_GOG_0_VERSION='1.10.10222015-gog2.0.0.2'
+ARCHIVE_GOG_0_TYPE='mojosetup'
 
-ARCHIVE_GAME_MAIN_PATH='app'
-ARCHIVE_GAME_MAIN_FILES='*.exe resource.cfg *.drv *.shp *.hlp *.scr install.txt movie patches *.000 *.aud *.sfx *.err version'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
-DATA_FILES='./version ./AUTOSAVE.* ./TORINSG.*'
-CONFIG_FILES='./resource.cfg ./TORIN.PRF'
+ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC1_DATA_FILES='info.txt Linux.README'
 
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='sierrah.exe'
-APP_MAIN_OPTIONS='resource.cfg'
-APP_MAIN_ICON='app/torinhr.ico'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='lib Shuggy.bin.x86'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='lib64 Shuggy.bin.x86_64'
 
-PKG_BIN_DEPS='dosbox'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='mono *.dll *.dll.config fx GameFont.xnb gateways gfx growingpains deadunderground maps recordings sfx Shuggy Shuggy.bmp Shuggy.exe text video'
+
+APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016                                           
+APP_MAIN_PRERUN='# Work around terminfo Mono bug, cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'                                      
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'                                   
+# Work around Mono unpredictable behaviour with non-US locales        
+export LANG=C' 
+APP_MAIN_EXE_BIN32='Shuggy.bin.x86'
+APP_MAIN_EXE_BIN64='Shuggy.bin.x86_64'
+APP_MAIN_ICON='Shuggy.bmp'
+
+PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 glx alsa"
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
@@ -98,15 +121,18 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
-# Extract icons
-
-icons_get_from_workdir 'APP_MAIN' >/dev/null 2>&1
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

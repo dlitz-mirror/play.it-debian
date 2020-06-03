@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # Copyright (c) 2017-2020, Phil Morrell
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200209.4
+script_version=20200514.1
 
 # Set game-specific variables
 
@@ -253,8 +254,8 @@ set_temp_directories $PACKAGES_LIST
 case "$ARCHIVE" in
 	('ARCHIVE_GOG_MULTI_OLD0')
 		if [ $DRY_RUN -eq 0 ]; then
-			ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
-			ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
+			ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
+			ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
 		fi
 		extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
 		tolower "$PLAYIT_WORKDIR/gamedata"

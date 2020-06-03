@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200321.1
+script_version=20200517.3
 
 # Set game-specific variables
 
@@ -47,44 +47,55 @@ ARCHIVE_GOG_MD5='2ee16fab54493e1c2a69122fd2e56635'
 ARCHIVE_GOG_SIZE='550000'
 ARCHIVE_GOG_VERSION='1.1-gog2.0.0.9'
 
+# Julius 1.4.0 release
+ARCHIVE_OPTIONAL_JULIUS_0='julius-1.4.0-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_0_URL='https://github.com/bvschaik/julius/releases/tag/v1.4.0'
+ARCHIVE_OPTIONAL_JULIUS_0_MD5='a686cddb59e3b89d22baf3b73fdce9ef'
+ARCHIVE_OPTIONAL_JULIUS_0_SIZE=2200
+
 ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='readme.txt *.pdf'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.inf *.ini'
+ARCHIVE_GAME_BIN_WINE_PATH='app'
+ARCHIVE_GAME_BIN_WINE_FILES='*.dll *.exe *.inf *.ini'
 
-ARCHIVE_GAME_MOVIES_PATH='app'
-ARCHIVE_GAME_MOVIES_FILES='smk'
-
-ARCHIVE_GAME_SOUNDS_PATH='app'
-ARCHIVE_GAME_SOUNDS_FILES='wavs'
+ARCHIVE_GAME_BIN_JULIUS_PATH='.'
+ARCHIVE_GAME_BIN_JULIUS_FILES='julius'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='555 *.555 *.emp *.eng *.map *.sg2 c3_model.txt mission1.pak'
+ARCHIVE_GAME_DATA_FILES='555 smk wavs *.555 *.emp *.eng *.map *.sg2 c3_model.txt mission1.pak'
 
-CONFIG_FILES='./caesar3.ini'
+CONFIG_FILES='./*.ini'
 DATA_FILES='./c3_model.txt ./status.txt ./*.sav'
 
 APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
-APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='c3.exe'
-APP_MAIN_ICON='c3.exe'
+APP_WINE_TYPE='wine'
+APP_WINE_EXE='c3.exe'
+APP_WINE_ICON='c3.exe'
 
-PACKAGES_LIST='PKG_MOVIES PKG_SOUNDS PKG_DATA PKG_BIN'
+APP_JULIUS_TYPE='native'
+APP_JULIUS_EXE='julius'
+APP_JULIUS_ICON='c3.exe'
 
-PKG_MOVIES_ID="${GAME_ID}-movies"
-PKG_MOVIES_DESCRIPTION='movies'
-
-PKG_SOUNDS_ID="${GAME_ID}-sounds"
-PKG_SOUNDS_DESCRIPTION='sounds'
+PACKAGES_LIST='PKG_DATA PKG_BIN_WINE'
+# This expanded packages list should be used if a Julius binary hase been provided
+PACKAGES_LIST_JULIUS="$PACKAGES_LIST PKG_BIN_JULIUS"
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
-PKG_DATA_DEPS="$PKG_MOVIES_ID $PKG_SOUNDS_ID"
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
+PKG_BIN_ID="$GAME_ID"
+
+PKG_BIN_WINE_ID="${PKG_BIN_ID}-wine"
+PKG_BIN_WINE_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_WINE_ARCH='32'
+PKG_BIN_WINE_DEPS="$PKG_DATA_ID wine winetricks xrandr"
+
+PKG_BIN_JULIUS_ID="${PKG_BIN_ID}-julius"
+PKG_BIN_JULIUS_PROVIDE="$PKG_BIN_ID"
+PKG_BIN_JULIUS_ARCH='64'
+PKG_BIN_JULIUS_DEPS="$PKG_DATA_ID glibc sdl2 sdl2_mixer"
 
 # Load common functions
 
@@ -114,24 +125,57 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Use Julius engine archive if it is available
+# cf. https://github.com/bvschaik/julius
+
+###
+# TODO
+# Maybe we should display a warning if no Julius engine archive could be found
+###
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive 'ARCHIVE_JULIUS' 'ARCHIVE_OPTIONAL_JULIUS_0'
+ARCHIVE="$ARCHIVE_MAIN"
+if [ -n "$ARCHIVE_JULIUS" ]; then
+	PACKAGES_LIST="$PACKAGES_LIST_JULIUS"
+	set_temp_directories $PACKAGES_LIST
+fi
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+if [ -n "$ARCHIVE_JULIUS" ]; then
+	ARCHIVE_MAIN="$ARCHIVE"
+	ARCHIVE='ARCHIVE_JULIUS'
+	extract_data_from "$ARCHIVE_JULIUS"
+	ARCHIVE="$ARCHIVE_MAIN"
+fi
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get game icon
 
-PKG='PKG_BIN'
-icons_get_from_package 'APP_MAIN'
+PKG='PKG_BIN_WINE'
+icons_get_from_package 'APP_WINE'
+if [ -n "$ARCHIVE_JULIUS" ]; then
+	icons_get_from_package 'APP_JULIUS'
+fi
 icons_move_to 'PKG_DATA'
 
 # Write launchers
 
-launchers_write 'APP_MAIN'
+PKG='PKG_BIN_WINE'
+launchers_write 'APP_WINE'
+if [ -n "$ARCHIVE_JULIUS" ]; then
+	PKG='PKG_BIN_JULIUS'
+	launchers_write 'APP_JULIUS'
+fi
 
 # Build package
 
+###
+# TODO
+# Julius binaries package should use the engine version number
+###
 write_metadata
 build_pkg
 
@@ -141,6 +185,10 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-print_instructions
+printf '\n'
+printf 'Julius:'
+print_instructions 'PKG_DATA' 'PKG_BIN_JULIUS'
+printf 'WINE:'
+print_instructions 'PKG_DATA' 'PKG_BIN_WINE'
 
 exit 0

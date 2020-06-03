@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,41 +29,35 @@ set -o errexit
 ###
 
 ###
-# Torin’s Passage
+# Stellaris - Federations
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200529.1
+script_version=20200516.1
 
 # Set game-specific variables
 
-GAME_ID='torins-passage'
-GAME_NAME='Torinʼs Passage'
+GAME_ID='stellaris'
+GAME_NAME='Stellaris - Federations'
 
-ARCHIVE_GOG='setup_torins_passage_2.0.0.7.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/torins_passage'
-ARCHIVE_GOG_MD5='a7398abdb6964bf6a6446248f138d05e'
-ARCHIVE_GOG_SIZE='350000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.7'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
 
-ARCHIVE_DOC_MAIN_PATH='app'
-ARCHIVE_DOC_MAIN_FILES='torin.txt *.pdf'
+ARCHIVE_GOG_0='stellaris_federations_2_7_1_38218.sh'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/stellaris_federations'
+ARCHIVE_GOG_0_MD5='371a88b8771ed4c58144a00494285c46'
+ARCHIVE_GOG_0_SIZE='15000'
+ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
+ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
 
-ARCHIVE_GAME_MAIN_PATH='app'
-ARCHIVE_GAME_MAIN_FILES='*.exe resource.cfg *.drv *.shp *.hlp *.scr install.txt movie patches *.000 *.aud *.sfx *.err version'
-
-DATA_FILES='./version ./AUTOSAVE.* ./TORINSG.*'
-CONFIG_FILES='./resource.cfg ./TORIN.PRF'
-
-APP_MAIN_TYPE='dosbox'
-APP_MAIN_EXE='sierrah.exe'
-APP_MAIN_OPTIONS='resource.cfg'
-APP_MAIN_ICON='app/torinhr.ico'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='dlc/dlc023_federations'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_BIN_DEPS='dosbox'
+PKG_MAIN_ID="${GAME_ID}-federations"
+PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
@@ -98,15 +91,7 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
-# Extract icons
-
-icons_get_from_workdir 'APP_MAIN' >/dev/null 2>&1
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Write launchers
-
-launchers_write 'APP_MAIN'
 
 # Build package
 

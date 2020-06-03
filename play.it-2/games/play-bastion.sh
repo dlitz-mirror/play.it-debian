@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2020 Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,19 +36,25 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190824.2
+script_version=20200530.1
 
 # Set game-specific variables
 
 GAME_ID='bastion'
 GAME_NAME='Bastion'
 
-ARCHIVE_GOG='bastion_1_50436_29_08_2018_23317.sh'
+ARCHIVE_GOG='bastion_1_0_1747_initial_test_33876.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/bastion'
 ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_MD5='73c6b33c23232597bec30f211a46f73d'
-ARCHIVE_GOG_SIZE='1400000'
-ARCHIVE_GOG_VERSION='1.50436.20180829-gog23317'
+ARCHIVE_GOG_MD5='b4edf5e95e952a35bfde0c12959134ab'
+ARCHIVE_GOG_SIZE='1300000'
+ARCHIVE_GOG_VERSION='1.50436-gog33876'
+
+ARCHIVE_GOG_OLD2='bastion_1_50436_29_08_2018_23317.sh'
+ARCHIVE_GOG_OLD2_TYPE='mojosetup'
+ARCHIVE_GOG_OLD2_MD5='73c6b33c23232597bec30f211a46f73d'
+ARCHIVE_GOG_OLD2_SIZE='1400000'
+ARCHIVE_GOG_OLD2_VERSION='1.50436.20180829-gog23317'
 
 ARCHIVE_GOG_OLD1='bastion_en_1_50436_23291.sh'
 ARCHIVE_GOG_OLD1_TYPE='mojosetup'
