@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2021, Mopi
+# Copyright (c) 2020-2021, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,12 +36,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210513.6
+script_version=20210513.7
 
 # Set game-specific variables
 
 GAME_ID='140-game'
 GAME_NAME='140'
+
+ARCHIVE_BASE_GOG_3='140_1010_2019_33250.sh'
+ARCHIVE_BASE_GOG_3_MD5='cbfdc455cf49c88aea3cb62d23fccb55'
+ARCHIVE_BASE_GOG_3_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_3_SIZE='130000'
+ARCHIVE_BASE_GOG_3_VERSION='1010.2019-gog33250'
+ARCHIVE_BASE_GOG_3_URL='https://www.gog.com/game/140_game'
 
 ARCHIVE_BASE_GOG_2='140_en_171409_r400_22641.sh'
 ARCHIVE_BASE_GOG_2_MD5='69a67be9632ad2b7db02b3d11486d81b'
