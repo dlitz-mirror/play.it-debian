@@ -54,7 +54,11 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX='/usr/local'
+	DEFAULT_OPTION_PREFIX_DEB='/usr/local'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_ARCH='/usr'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_GENTOO='/usr/local'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PACKAGE='deb'
 	# shellcheck disable=SC2034
@@ -158,10 +162,12 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	check_option_validity 'PACKAGE'
 
-	# Set default value for compression depending on the chosen package format
+	# Set default value for compression and prefix depending on the chosen package format
 
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX="$(get_value "DEFAULT_OPTION_PREFIX_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 
 	# Set options not already set by script arguments to default values
 
@@ -240,17 +246,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	case $OPTION_PACKAGE in
 		('arch'|'gentoo')
 			PATH_BIN="$OPTION_PREFIX/bin"
-			PATH_DESK='/usr/local/share/applications'
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
 			PATH_GAME="$OPTION_PREFIX/share/$GAME_ID"
-			PATH_ICON_BASE='/usr/local/share/icons/hicolor'
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
 		;;
 		('deb')
 			PATH_BIN="$OPTION_PREFIX/games"
-			PATH_DESK='/usr/local/share/applications'
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
 			PATH_GAME="$OPTION_PREFIX/share/games/$GAME_ID"
-			PATH_ICON_BASE='/usr/local/share/icons/hicolor'
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
 		;;
 		(*)
 			liberror 'OPTION_PACKAGE' "$0"
