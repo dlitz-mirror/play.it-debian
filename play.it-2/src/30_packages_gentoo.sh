@@ -153,11 +153,17 @@ pkg_set_deps_gentoo() {
 			('gconf')
 				pkg_dep="gnome-base/gconf$architecture_suffix"
 			;;
+			('libgdk_pixbuf-2.0.so.0')
+				pkg_dep="x11-libs/gdk-pixbuf:2$architecture_suffix"
+			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
 				if [ "$architecture" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
+			;;
+			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
+				pkg_dep="dev-libs/glib:2$architecture_suffix"
 			;;
 			('glu')
 				pkg_dep="virtual/glu$architecture_suffix"
@@ -280,6 +286,9 @@ pkg_set_deps_gentoo() {
 			;;
 			('xrandr')
 				pkg_dep='x11-apps/xrandr'
+			;;
+			('libz.so.1')
+				pkg_dep="sys-libs/zlib:0/1$architecture_suffix"
 			;;
 			(*)
 				pkg_dep="$(gentoo_get_pkg_providers "$dep" | sed -e 's/-/_/g' -e 's|^|games-playit/|')"

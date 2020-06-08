@@ -147,8 +147,14 @@ pkg_set_deps_arch32() {
 			('gconf')
 				pkg_dep='lib32-gconf'
 			;;
+			('libgdk_pixbuf-2.0.so.0')
+				pkg_dep='lib32-gdk-pixbuf2'
+			;;
 			('glibc')
 				pkg_dep='lib32-glibc'
+			;;
+			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
+				pkg_dep='lib32-glib2'
 			;;
 			('glu')
 				pkg_dep='lib32-glu'
@@ -240,6 +246,9 @@ pkg_set_deps_arch32() {
 			('xrandr')
 				pkg_dep='xorg-xrandr'
 			;;
+			('libz.so.1')
+				pkg_dep='lib32-zlib'
+			;;
 			(*)
 				pkg_dep="$dep"
 			;;
@@ -272,8 +281,14 @@ pkg_set_deps_arch64() {
 			('gconf')
 				pkg_dep='gconf'
 			;;
+			('libgdk_pixbuf-2.0.so.0')
+				pkg_dep='gdk-pixbuf2'
+			;;
 			('glibc')
 				pkg_dep='glibc'
+			;;
+			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
+				pkg_dep='glib2'
 			;;
 			('glu')
 				pkg_dep='glu'
@@ -364,6 +379,9 @@ pkg_set_deps_arch64() {
 			;;
 			('xrandr')
 				pkg_dep='xorg-xrandr'
+			;;
+			('libz.so.1')
+				pkg_dep='zlib'
 			;;
 			(*)
 				pkg_dep="$dep"
