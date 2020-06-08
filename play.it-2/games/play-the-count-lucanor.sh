@@ -3,6 +3,7 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2020, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,19 +35,24 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190220.1
+script_version=20200608.1
 
 # Set game-specific variables
 
 GAME_ID='the-count-lucanor'
 GAME_NAME='The Count Lucanor'
 
-ARCHIVE_GOG='the_count_lucanor_1_1_4_7_23841.sh'
+ARCHIVE_GOG='the_count_lucanor_1_4_23_36418.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_count_lucanor'
-ARCHIVE_GOG_MD5='5a224a28d6e1a3b894e712db056fab07'
-ARCHIVE_GOG_SIZE='720000'
-ARCHIVE_GOG_VERSION='1.1.4.7-gog23841'
+ARCHIVE_GOG_MD5='59bdd0ee4d7525be7b5ba346ffefa5b9'
+ARCHIVE_GOG_SIZE='760000'
+ARCHIVE_GOG_VERSION='1.4.23-gog36418'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='the_count_lucanor_1_1_4_7_23841.sh'
+ARCHIVE_GOG_OLD0_MD5='5a224a28d6e1a3b894e712db056fab07'
+ARCHIVE_GOG_OLD0_SIZE='720000'
+ARCHIVE_GOG_OLD0_VERSION='1.1.4.7-gog23841'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='lucanor.ico lib res'
