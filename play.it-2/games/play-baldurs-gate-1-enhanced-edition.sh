@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200610.1
+script_version=20200610.2
 
 # Set game-specific variables
 
@@ -262,8 +262,10 @@ prepare_package_layout
 
 PKG='PKG_DATA'
 if [ "$ARCHIVE_ICONS" ]; then
-	ARCHIVE='ARCHIVE_ICONS' \
-		extract_data_from "$ARCHIVE_ICONS"
+	ARCHIVE_MAIN="$ARCHIVE"
+	ARCHIVE='ARCHIVE_ICONS'
+	extract_data_from "$ARCHIVE_ICONS"
+	ARCHIVE="$ARCHIVE_MAIN"
 	organize_data 'ICONS' "$PATH_ICON_BASE"
 else
 	icons_get_from_workdir 'APP_MAIN'
