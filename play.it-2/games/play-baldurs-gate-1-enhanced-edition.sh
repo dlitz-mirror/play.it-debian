@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200220.5
+script_version=20200610.1
 
 # Set game-specific variables
 
@@ -167,19 +167,32 @@ case "$OPTION_PACKAGE" in
 	;;
 	('deb')
 		# Use archive provided by ./play.it
-		ARCHIVE_MAIN="$ARCHIVE"
 		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
 		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
 		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
+		ARCHIVE_MAIN="$ARCHIVE"
 		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
-		ARCHIVE="$ARCHIVE_MAIN"
 		if [ "$ARCHIVE_LIBSSL32" ]; then
-			ARCHIVE='ARCHIVE_LIBSSL32' \
-				extract_data_from "$ARCHIVE_LIBSSL32"
+			extract_data_from "$ARCHIVE_LIBSSL32"
 			mkdir --parents "${PKG_BIN32_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
 			mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 			rm --recursive "$PLAYIT_WORKDIR/gamedata"
+		else
+			case "${LANG%_*}" in
+				('fr')
+					message='Lʼarchive suivante nʼayant pas été fournie, libssl.so.1.0.0 ne sera pas inclus dans les paquets : %s\n'
+					message="$message"'Cette archive peut être téléchargée depuis %s\n'
+				;;
+				('en'|*)
+					message='Due to the following archive missing, the packages will not include libssl.so.1.0.0: %s\n'
+					message="$message"'This archive can be downloaded from %s\n'
+				;;
+			esac
+			print_warning
+			printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL32" "$ARCHIVE_OPTIONAL_LIBSSL32_URL"
+			printf '\n'
 		fi
+		ARCHIVE="$ARCHIVE_MAIN"
 	;;
 	('gentoo')
 		# Use package from official repositories
@@ -207,14 +220,27 @@ if [ -z "${PACKAGES_LIST##*PKG_BIN64*}" ]; then
 			ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 			ARCHIVE_MAIN="$ARCHIVE"
 			set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
-			ARCHIVE="$ARCHIVE_MAIN"
 			if [ "$ARCHIVE_LIBSSL64" ]; then
-				ARCHIVE='ARCHIVE_LIBSSL64' \
-					extract_data_from "$ARCHIVE_LIBSSL64"
+				extract_data_from "$ARCHIVE_LIBSSL64"
 				mkdir --parents "${PKG_BIN64_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
 				mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
 				rm --recursive "$PLAYIT_WORKDIR/gamedata"
+			else
+				case "${LANG%_*}" in
+					('fr')
+						message='Lʼarchive suivante nʼayant pas été fournie, libssl.so.1.0.0 ne sera pas inclus dans les paquets : %s\n'
+						message="$message"'Cette archive peut être téléchargée depuis %s\n'
+					;;
+					('en'|*)
+						message='Due to the following archive missing, the packages will not include libssl.so.1.0.0: %s\n'
+						message="$message"'This archive can be downloaded from %s\n'
+					;;
+				esac
+				print_warning
+				printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL64" "$ARCHIVE_OPTIONAL_LIBSSL64_URL"
+				printf '\n'
 			fi
+			ARCHIVE="$ARCHIVE_MAIN"
 		;;
 		('gentoo')
 			# Use package from official repositories
