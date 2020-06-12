@@ -44,10 +44,31 @@ launcher_write_script() {
 	target_file="${package_path}${PATH_BIN}/$application_id"
 
 	# Check that the launcher target exists
-	local binary_file binary_path
+	local binary_file binary_path binary_found tested_package tested_package_path
 	case "$application_type" in
 		('scummvm')
 			# ScummVM games do not rely on a provided binary
+		;;
+		('mono')
+			# Game binary for Mono games may be included in another package than the binaries one
+			use_package_specific_value "${application}_EXE"
+			binary_file=$(get_value "${application}_EXE")
+			binary_found=0
+			for tested_package in $PACKAGES_LIST; do
+				tested_package_path=$(get_value "${tested_package}_PATH")
+				binary_path="${tested_package_path}${PATH_GAME}/$binary_file"
+				if [ -f "$binary_path" ]; then
+					binary_found=1
+					break;
+				fi
+			done
+			if \
+				[ $DRY_RUN -eq 0 ] && \
+				[ $binary_found -eq 0 ]
+			then
+				binary_path="${package_path}${PATH_GAME}/$binary_file"
+				error_launcher_missing_binary "$binary_path"
+			fi
 		;;
 		('wine')
 			use_package_specific_value "${application}_EXE"
