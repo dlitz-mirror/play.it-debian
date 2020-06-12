@@ -51,7 +51,7 @@ launcher_write_script_wine_prefix_build() {
 	EOF
 
 	cat >> "$file" <<- 'EOF'
-	WINEDEBUG='-all'
+	: "${WINEDEBUG:=-all}"
 	WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
 	WINEPREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
 	# Work around WINE bug 41639
