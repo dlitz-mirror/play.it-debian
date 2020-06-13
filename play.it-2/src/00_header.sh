@@ -1,12 +1,15 @@
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2020, Mopi
 # Copyright (c) 2017-2020, Phil Morrell
 # Copyright (c) 2017-2020, Jacek Szafarkiewicz
 # Copyright (c) 2018-2020, VA
 # Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
 # Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2018-2020, Andrey
+# Copyright (c) 2019-2020, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
 # Copyright (c)      2020, macaron
+# Copyright (c)      2020, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
