@@ -1,9 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2020, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,56 +29,73 @@ set -o errexit
 ###
 
 ###
-# The Count Lucanor
+# Rayman Origins
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200608.1
+script_version=20200603.3
 
 # Set game-specific variables
 
-GAME_ID='the-count-lucanor'
-GAME_NAME='The Count Lucanor'
+GAME_ID='rayman-origins'
+GAME_NAME='Rayman Origins'
 
-ARCHIVE_GOG='the_count_lucanor_1_4_23_36418.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/the_count_lucanor'
-ARCHIVE_GOG_MD5='59bdd0ee4d7525be7b5ba346ffefa5b9'
-ARCHIVE_GOG_SIZE='760000'
-ARCHIVE_GOG_VERSION='1.4.23-gog36418'
-ARCHIVE_GOG_TYPE='mojosetup'
-
-ARCHIVE_GOG_OLD0='the_count_lucanor_1_1_4_7_23841.sh'
-ARCHIVE_GOG_OLD0_MD5='5a224a28d6e1a3b894e712db056fab07'
-ARCHIVE_GOG_OLD0_SIZE='720000'
-ARCHIVE_GOG_OLD0_VERSION='1.1.4.7-gog23841'
-
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='lucanor.ico lib res'
-
-CONFIG_DIRS='./res/settings'
-DATA_DIRS='./logs ./res/level ./res/db'
-
-APP_MAIN_TYPE='java'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='
-if [ ! -e lib/libva.so.1 ]; then
-	library_file="$(/sbin/ldconfig --print-cache | awk -F " => " '\''/libva\.so/ {print $2}'\'' | head --lines=1)"
-	ln --force --symbolic "$library_file" lib/libva.so.1
-fi
-LD_LIBRARY_PATH="lib:$LD_LIBRARY_PATH"
-export LD_LIBRARY_PATH
+ARCHIVES_LIST='
+ARCHIVE_GOG_0
 '
-APP_MAIN_JAVA_OPTIONS='-Dfile.encoding=UTF-8 -Xmx1024m -Xms512m'
-APP_MAIN_EXE='lib/build-desktop.jar'
-APP_MAIN_ICON='lucanor.ico'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GOG_0='setup_rayman_origins_1.0.32504_(18757).exe'
+ARCHIVE_GOG_0_MD5='a1021275180a433cd26ccb708c03dde4'
+ARCHIVE_GOG_0_TYPE='innosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/rayman_origins'
+ARCHIVE_GOG_0_VERSION='1.0.32504-gog18757'
+ARCHIVE_GOG_0_SIZE='2500000'
+ARCHIVE_GOG_0_PART1='setup_rayman_origins_1.0.32504_(18757)-1.bin'
+ARCHIVE_GOG_0_PART1_MD5='813c51f290371869157b62b26abad411'
+ARCHIVE_GOG_0_PART1_TYPE='innosetup'
 
-PKG_MAIN_DEPS='java'
-PKG_MAIN_DEPS_ARCH='' #TODO
-PKG_MAIN_DEPS_DEB='libva2 | libva1'
-PKG_MAIN_DEPS_GENTOO='' #TODO
+ARCHIVE_DOC_DATA_PATH='app/support'
+ARCHIVE_DOC_DATA_FILES='*'
+
+ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.ini'
+
+ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_FILES='gamedata'
+
+CONFIG_FILES='./*.ini'
+
+# d3dcompiler_47 - Work around rendering issues making the game menu unusable
+APP_WINETRICKS='d3dcompiler_47'
+
+APP_MAIN_TYPE='wine'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Store user data outside of WINE prefix
+user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/My Games/Rayman Origins"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/userdata"
+	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+APP_MAIN_EXE='rayman origins.exe'
+APP_MAIN_ICON='rayman origins.exe'
+
+APP_L10N_ID="${GAME_ID}_language-setup"
+APP_L10N_NAME="$GAME_NAME - Language setup"
+APP_L10N_CAT='Settings'
+APP_L10N_TYPE='wine'
+APP_L10N_EXE='language_setup.exe'
+APP_L10N_ICON='rayman origins.exe'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
@@ -106,7 +122,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
@@ -115,13 +131,16 @@ extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Get game icon
+# Get game icons
 
-icons_get_from_package 'APP_MAIN'
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN' 'APP_L10N'
+icons_move_to 'PKG_DATA'
 
 # Write launchers
 
-launcher_write 'APP_MAIN'
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN' 'APP_L10N'
 
 # Build package
 
