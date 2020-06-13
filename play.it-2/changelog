@@ -1,5 +1,9 @@
 2.12
 
+  * Use system-specific default installation prefix for generated packages
+
+  * Drop hardcoded paths for icons and .desktop launchers
+
   * Add ability to use system-provided Mono runtime
 
   * Drop script identification by MD5 hash from wrapper script
