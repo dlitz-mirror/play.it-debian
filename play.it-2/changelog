@@ -1,5 +1,7 @@
 2.12
 
+  * Prevent scan of unneeded directories by the wrapper
+
   * Use system-specific default installation prefix for generated packages
 
   * Drop hardcoded paths for icons and .desktop launchers
