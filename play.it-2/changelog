@@ -25,6 +25,8 @@
 
   * Add support for LHA archives extraction
 
+  * Arch Linux: Improve consistence of 32-bit packages naming
+
 2.11.4
 
   * Throw an explicit error when trying to write a launcher for a missing
