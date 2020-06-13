@@ -1,5 +1,7 @@
 2.12
 
+  * Add ability to run games with ResidualVM
+
   * Prevent scan of unneeded directories by the wrapper
 
   * Use system-specific default installation prefix for generated packages
