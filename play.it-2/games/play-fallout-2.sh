@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.1
+script_version=20200615.2
 
 # Set game-specific variables
 
@@ -43,12 +43,19 @@ GAME_ID='fallout-2'
 GAME_NAME='Fallout 2'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0
 '
 
+ARCHIVE_GOG_EN_1='setup_fallout2_2.1.0.18.exe'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/fallout_2'
+ARCHIVE_GOG_EN_1_MD5='b20e9a133c23bf308b8460272fd32d2b'
+ARCHIVE_GOG_EN_1_VERSION='1.3-gog2.1.0.18'
+ARCHIVE_GOG_EN_1_SIZE='740000'
+ARCHIVE_GOG_EN_1_TYPE='innosetup'
+
 ARCHIVE_GOG_EN_0='setup_fallout2_2.1.0.17.exe'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/fallout_2'
 ARCHIVE_GOG_EN_0_MD5='b40a8f2e1ff9216e25b8f09577c27f33'
 ARCHIVE_GOG_EN_0_VERSION='1.3-gog2.1.0.17'
 ARCHIVE_GOG_EN_0_SIZE='740000'
