@@ -32,31 +32,34 @@ set -o errexit
 ###
 # Fallout 2
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190119.4
+script_version=20200615.1
 
 # Set game-specific variables
 
 GAME_ID='fallout-2'
 GAME_NAME='Fallout 2'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVES_LIST='
+ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_0
+'
 
-ARCHIVE_GOG_EN='setup_fallout2_2.1.0.17.exe'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/fallout_2'
-ARCHIVE_GOG_EN_MD5='b40a8f2e1ff9216e25b8f09577c27f33'
-ARCHIVE_GOG_EN_VERSION='1.3-gog2.1.0.17'
-ARCHIVE_GOG_EN_SIZE='740000'
-ARCHIVE_GOG_EN_TYPE='innosetup'
+ARCHIVE_GOG_EN_0='setup_fallout2_2.1.0.17.exe'
+ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/fallout_2'
+ARCHIVE_GOG_EN_0_MD5='b40a8f2e1ff9216e25b8f09577c27f33'
+ARCHIVE_GOG_EN_0_VERSION='1.3-gog2.1.0.17'
+ARCHIVE_GOG_EN_0_SIZE='740000'
+ARCHIVE_GOG_EN_0_TYPE='innosetup'
 
-ARCHIVE_GOG_FR='setup_fallout2_french_2.1.0.17.exe'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/fallout_2'
-ARCHIVE_GOG_FR_MD5='7df6f834b480873bea2f8593254b1960'
-ARCHIVE_GOG_FR_VERSION='1.3-gog2.1.0.17'
-ARCHIVE_GOG_FR_SIZE='740000'
-ARCHIVE_GOG_FR_TYPE='innosetup'
+ARCHIVE_GOG_FR_0='setup_fallout2_french_2.1.0.17.exe'
+ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/fallout_2'
+ARCHIVE_GOG_FR_0_MD5='7df6f834b480873bea2f8593254b1960'
+ARCHIVE_GOG_FR_0_VERSION='1.3-gog2.1.0.17'
+ARCHIVE_GOG_FR_0_SIZE='740000'
+ARCHIVE_GOG_FR_0_TYPE='innosetup'
 
 ARCHIVE_DOC_L10N_PATH='app'
 ARCHIVE_DOC_L10N_FILES='manual.pdf'
@@ -83,22 +86,27 @@ APP_MAIN_EXE='fallout2.exe'
 APP_MAIN_ICON='fallout2.ico'
 
 APP_RES_ID="${GAME_ID}_resolution"
+APP_RES_NAME="$GAME_NAME - resolution"
+APP_RES_CAT='Settings'
 APP_RES_TYPE='wine'
 APP_RES_EXE='f2_res_config.exe'
 APP_RES_ICON='f2_res_config.exe'
-APP_RES_NAME="$GAME_NAME - resolution"
-APP_RES_CAT='Settings'
 
 PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
+# Localization package - common properties
 PKG_L10N_ID="${GAME_ID}-l10n"
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_PROVIDE="$PKG_L10N_ID"
+
+# Localization package - English
+PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
 PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+
+# Localization package - French
+PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
 
 PKG_BIN_ARCH='32'
@@ -106,7 +114,7 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -140,17 +148,17 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract game icons
 
-PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
-
 PKG='PKG_BIN'
 icons_get_from_package 'APP_RES'
 icons_move_to 'PKG_DATA'
 
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_RES'
+launchers_write 'APP_MAIN' 'APP_RES'
 
 # Build package
 
