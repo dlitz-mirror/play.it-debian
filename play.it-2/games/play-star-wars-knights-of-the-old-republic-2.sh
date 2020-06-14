@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200614.3
+script_version=20200614.4
 
 # Set game-specific variables
 
@@ -123,7 +123,7 @@ ARCHIVE_GAME_DATA_FILES='chitin.key override/*.mdl modules streammusic streamsou
 ARCHIVE_GAME_DATA_PATH_GOG_RAR='game'
 
 CONFIG_FILES='./*.ini'
-DATA_DIRS='./override ./saves'
+DATA_DIRS='./saves'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='swkotor2.exe'
