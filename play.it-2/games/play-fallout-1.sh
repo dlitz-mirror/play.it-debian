@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200614.1
+script_version=20200614.2
 
 # Set game-specific variables
 
@@ -43,40 +43,60 @@ GAME_ID='fallout-1'
 GAME_NAME='Fallout'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_EN_0
-ARCHIVE_GOG_FR_0
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_OLDTEMPLATE_EN_0
+ARCHIVE_GOG_OLDTEMPLATE_FR_0
 '
 
-ARCHIVE_GOG_EN_0='setup_fallout_2.1.0.18.exe'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/fallout'
-ARCHIVE_GOG_EN_0_MD5='47b7b3c059d92c0fd6db5881635277ea'
-ARCHIVE_GOG_EN_0_VERSION='1.2-gog2.1.0.18'
-ARCHIVE_GOG_EN_0_SIZE='600000'
-ARCHIVE_GOG_EN_0_TYPE='innosetup'
+ARCHIVE_GOG_EN_1='setup_fallout_1.2_(27130).exe'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/fallout'
+ARCHIVE_GOG_EN_1_MD5='2cd1bb09f241c286498ea834480852ec'
+ARCHIVE_GOG_EN_1_VERSION='1.2-gog'
+ARCHIVE_GOG_EN_1_SIZE='600000'
+ARCHIVE_GOG_EN_1_TYPE='innosetup'
+ARCHIVE_GOG_EN_1_PART1='setup_fallout_1.2_(27130)-1.bin'
+ARCHIVE_GOG_EN_1_PART1_MD5='b9a0a59bc1426df4cc9588fdd5a8d736'
+ARCHIVE_GOG_EN_1_PART1_TYPE='innosetup'
 
-ARCHIVE_GOG_FR_0='setup_fallout_french_2.1.0.18.exe'
-ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/fallout'
-ARCHIVE_GOG_FR_0_MD5='12ba5bb0489b5bafb777c8d07717b020'
-ARCHIVE_GOG_FR_0_VERSION='1.2-gog2.1.0.18'
-ARCHIVE_GOG_FR_0_SIZE='600000'
-ARCHIVE_GOG_FR_0_TYPE='innosetup'
+ARCHIVE_GOG_OLDTEMPLATE_EN_0='setup_fallout_2.1.0.18.exe'
+ARCHIVE_GOG_OLDTEMPLATE_EN_0_MD5='47b7b3c059d92c0fd6db5881635277ea'
+ARCHIVE_GOG_OLDTEMPLATE_EN_0_VERSION='1.2-gog2.1.0.18'
+ARCHIVE_GOG_OLDTEMPLATE_EN_0_SIZE='600000'
+ARCHIVE_GOG_OLDTEMPLATE_EN_0_TYPE='innosetup'
 
-ARCHIVE_DOC_L10N_PATH='app'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0='setup_fallout_french_2.1.0.18.exe'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0_URL='https://www.gog.com/game/fallout'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0_MD5='12ba5bb0489b5bafb777c8d07717b020'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0_VERSION='1.2-gog2.1.0.18'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0_SIZE='600000'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0_TYPE='innosetup'
+
+ARCHIVE_DOC_L10N_PATH='.'
 ARCHIVE_DOC_L10N_FILES='readme.txt manual.pdf'
+# Keep compatibility with old archives
+ARCHIVE_DOC_L10N_PATH_GOG_OLDTEMPLATE='app'
 
-ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='refcard.pdf readme.rtf f1_res_readme.rtf'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_OLDTEMPLATE='app'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='falloutw.exe f1_res.dll f1_res_config.exe'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLDTEMPLATE='app'
 
-ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='fallout.cfg'
+ARCHIVE_GAME_L10N_PATH='__support/app'
+ARCHIVE_GAME_L10N_FILES='fallout.cfg f1_res.ini'
+# Keep compatibility with old archives
+ARCHIVE_GAME_L10N_PATH_GOG_OLDTEMPLATE='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='critter.dat master.dat data extras fallout.ico'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_OLDTEMPLATE='app'
 
-CONFIG_FILES='./fallout.cfg'
+CONFIG_FILES='./*.cfg ./*.ini'
 DATA_DIRS='./data/savegame'
 
 APP_MAIN_TYPE='wine'
@@ -99,10 +119,16 @@ PKG_L10N_PROVIDE="$PKG_L10N_ID"
 # Localization package - English
 PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
 PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+# Keep compatibility with old archives
+PKG_L10N_ID_GOG_OLDTEMPLATE_EN="$PKG_L10N_ID_GOG_EN"
+PKG_L10N_DESCRIPTION_GOG_OLDTEMPLATE_EN="$PKG_L10N_DESCRIPTION_GOG_EN"
 
 # Localization package - French
 PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+# Keep compatibility with old archives
+PKG_L10N_ID_GOG_OLDTEMPLATE_FR="$PKG_L10N_ID_GOG_FR"
+PKG_L10N_DESCRIPTION_GOG_OLDTEMPLATE_FR="$PKG_L10N_DESCRIPTION_GOG_FR"
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
