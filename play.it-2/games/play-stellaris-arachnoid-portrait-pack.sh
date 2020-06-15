@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.2
+script_version=20200615.1
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Arachnoid Portrait Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_16
 ARCHIVE_GOG_15
 ARCHIVE_GOG_14
 ARCHIVE_GOG_13
@@ -59,8 +60,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_16='stellaris_arachnoid_portrait_pack_2_7_2_38578.sh'
+ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
+ARCHIVE_GOG_16_MD5='d22f4806ef98492c7f10540393e7b0c7'
+ARCHIVE_GOG_16_SIZE='1400'
+ARCHIVE_GOG_16_VERSION='2.7.2-gog38578'
+ARCHIVE_GOG_16_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_15='stellaris_arachnoid_portrait_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_15_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
 ARCHIVE_GOG_15_MD5='60d6611b99098184a367e774c3abf04e'
 ARCHIVE_GOG_15_SIZE='1400'
 ARCHIVE_GOG_15_VERSION='2.7.1-gog38218'
