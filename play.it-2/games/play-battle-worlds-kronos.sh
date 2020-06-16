@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.4
+script_version=20200615.5
 
 # Set game-specific variables
 
@@ -67,6 +67,8 @@ ARCHIVE_GAME_DATA_FILES='BattleWorldsKronos_Data version'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locale
+export LANG=C'
 APP_MAIN_EXE_BIN32='BattleWorldsKronos.x86'
 APP_MAIN_EXE_BIN64='BattleWorldsKronos.x86_64'
 # shellcheck disable=SC2016
