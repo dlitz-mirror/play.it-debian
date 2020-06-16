@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200616.1
+script_version=20200616.2
 
 # Set game-specific variables
 
@@ -75,7 +75,7 @@ ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='refcard.pdf readme.rtf f2_res_readme.rtf faq.txt licence.txt f2_res_change.log'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='fallout2.exe f2_res.dll f2_res_config.exe'
+ARCHIVE_GAME_BIN_FILES='fallout2.exe f2_res.dll f2_res_config.exe f2_res.ini'
 
 ARCHIVE_GAME_L10N_PATH='app'
 ARCHIVE_GAME_L10N_FILES='critter.dat master.dat translations fallout2.cfg'
@@ -83,7 +83,7 @@ ARCHIVE_GAME_L10N_FILES='critter.dat master.dat translations fallout2.cfg'
 ARCHIVE_GAME_DATA_PATH='app'
 ARCHIVE_GAME_DATA_FILES='data extras fallout2.ico sound'
 
-CONFIG_FILES='./fallout2.cfg'
+CONFIG_FILES='./*.cfg ./*.ini'
 DATA_DIRS='./data/savegame'
 
 APP_WINETRICKS='csmt=off'
