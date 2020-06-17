@@ -132,6 +132,28 @@ error_dependency_not_found() {
 	return 1
 }
 
+# display an error message if an icon dependency is missing
+# USAGE: error_icon_dependency_not_found $command_name
+# NEEDED VARS: (LANG)
+# CALLED BY: check_deps
+error_icon_dependency_not_found() {
+	local message command_name
+	command_name="$1"
+	set +o errexit
+	error_dependency_not_found "$command_name"
+	set -o errexit
+	case "${LANG%_*}" in
+		('fr')
+			message='Vous pouvez aussi utiliser --icons=no ou --icons=auto\n'
+		;;
+		('en'|*)
+			message='You can also use --icons=no or --icons=auto\n'
+		;;
+	esac
+	printf "$message"
+	return 1
+}
+
 # display an error when trying to extract an archive but no extractor is present
 # USAGE: error_archive_no_extractor_found $archive_type
 error_archive_no_extractor_found() {
@@ -508,28 +530,6 @@ error_incompatible_versions() {
 		"$VERSION_MAJOR_PROVIDED.$VERSION_MINOR_PROVIDED" \
 		"$VERSION_MAJOR_TARGET.$VERSION_MINOR_TARGET" \
 		"$((VERSION_MAJOR_TARGET + 1)).0"
-	return 1
-}
-
-# display an error message if an icon dependency is missing
-# USAGE: error_icon_dependency_not_found $dependency
-# NEEDED VARS: (LANG)
-# CALLED BY: check_deps
-error_icon_dependency_not_found() {
-	local message dependency
-	dependency="$1"
-	case "${LANG%_*}" in
-		('fr')
-			message='%s est introuvable. Installez-le avant de lancer ce script.\n'
-			message="$message"'Vous pouvez aussi utiliser --icons=no ou --icons=auto\n'
-		;;
-		('en'|*)
-			message='%s not found. Install it before running this script.\n'
-			message="$message"'You can also use --icons=no or --icons=auto\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$dependency"
 	return 1
 }
 

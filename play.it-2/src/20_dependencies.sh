@@ -174,6 +174,9 @@ dependency_provided_by() {
 		('lha')
 			provider='lhasa'
 		;;
+		('icotool'|'wrestool')
+			provider='icoutils'
+		;;
 		(*)
 			provider="$command"
 		;;
