@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.4
+script_version=20200619.5
 
 # Set game-specific variables
 
@@ -98,6 +98,9 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around terminfo Mono bug
 # cf. https://github.com/mono/mono/issues/6752
 export TERM="${TERM%-256color}"'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Work around Mono unpredictable behaviour with non-US locales
+export LANG=C'
 APP_MAIN_LIBS_BIN32='lib'
 APP_MAIN_LIBS_BIN64='lib64'
 APP_MAIN_EXE_BIN32='Reus.bin.x86'
