@@ -31,82 +31,95 @@ set -o errexit
 ###
 # Sunless Skies
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191115.1
+script_version=20200619.1
 
 # Set game-specific variables
 
 GAME_ID='sunless-skies'
 GAME_NAME='Sunless Skies'
 
-ARCHIVE_GOG='sunless_skies_1_3_2_06feaeba_33084.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/sunless_skies'
-ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_MD5='dd5e33674222031eb7f6f5c9f26d7ee2'
-ARCHIVE_GOG_VERSION='1.3.2.0-gog33084'
-ARCHIVE_GOG_SIZE='4000000'
+ARCHIVES_LIST='
+ARCHIVE_GOG_9
+ARCHIVE_GOG_8
+ARCHIVE_GOG_7
+ARCHIVE_GOG_6
+ARCHIVE_GOG_5
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
+ARCHIVE_GOG_2
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0
+'
 
-ARCHIVE_GOG_OLD8='sunless_skies_1_2_4_0_015d561cx_31380.sh'
-ARCHIVE_GOG_OLD8_TYPE='mojosetup'
-ARCHIVE_GOG_OLD8_MD5='26aff59406f1210330cfe143f6c10575'
-ARCHIVE_GOG_OLD8_VERSION='1.2.4.0-gog31380'
-ARCHIVE_GOG_OLD8_SIZE='3900000'
+ARCHIVE_GOG_9='sunless_skies_1_3_2_06feaeba_33084.sh'
+ARCHIVE_GOG_9_URL='https://www.gog.com/game/sunless_skies'
+ARCHIVE_GOG_9_TYPE='mojosetup'
+ARCHIVE_GOG_9_MD5='dd5e33674222031eb7f6f5c9f26d7ee2'
+ARCHIVE_GOG_9_VERSION='1.3.2.0-gog33084'
+ARCHIVE_GOG_9_SIZE='4000000'
 
-ARCHIVE_GOG_OLD7='sunless_skies_1_2_3_0_f3b4e1db_x_30226.sh'
-ARCHIVE_GOG_OLD7_TYPE='mojosetup'
-ARCHIVE_GOG_OLD7_MD5='edc2efd209096787f831e304da46258a'
-ARCHIVE_GOG_OLD7_VERSION='1.2.3.0-gog30226'
-ARCHIVE_GOG_OLD7_SIZE='3900000'
+ARCHIVE_GOG_8='sunless_skies_1_2_4_0_015d561cx_31380.sh'
+ARCHIVE_GOG_8_TYPE='mojosetup'
+ARCHIVE_GOG_8_MD5='26aff59406f1210330cfe143f6c10575'
+ARCHIVE_GOG_8_VERSION='1.2.4.0-gog31380'
+ARCHIVE_GOG_8_SIZE='3900000'
 
-ARCHIVE_GOG_OLD6='sunless_skies_1_2_1_3_0224b0c8_28905.sh'
-ARCHIVE_GOG_OLD6_TYPE='mojosetup'
-ARCHIVE_GOG_OLD6_MD5='fbfe10c4211b7b31cd1392d26b817c20'
-ARCHIVE_GOG_OLD6_VERSION='1.2.1.3-gog28905'
-ARCHIVE_GOG_OLD6_SIZE='3900000'
+ARCHIVE_GOG_7='sunless_skies_1_2_3_0_f3b4e1db_x_30226.sh'
+ARCHIVE_GOG_7_TYPE='mojosetup'
+ARCHIVE_GOG_7_MD5='edc2efd209096787f831e304da46258a'
+ARCHIVE_GOG_7_VERSION='1.2.3.0-gog30226'
+ARCHIVE_GOG_7_SIZE='3900000'
 
-ARCHIVE_GOG_OLD5='sunless_skies_1_2_1_2_b0df8add_28695.sh'
-ARCHIVE_GOG_OLD5_TYPE='mojosetup'
-ARCHIVE_GOG_OLD5_MD5='12a0c255956e4c563a721da55d832f9b'
-ARCHIVE_GOG_OLD5_VERSION='1.2.1.2-gog28695'
-ARCHIVE_GOG_OLD5_SIZE='3900000'
+ARCHIVE_GOG_6='sunless_skies_1_2_1_3_0224b0c8_28905.sh'
+ARCHIVE_GOG_6_TYPE='mojosetup'
+ARCHIVE_GOG_6_MD5='fbfe10c4211b7b31cd1392d26b817c20'
+ARCHIVE_GOG_6_VERSION='1.2.1.3-gog28905'
+ARCHIVE_GOG_6_SIZE='3900000'
 
-ARCHIVE_GOG_OLD4='sunless_skies_1_2_0_4_20d30549_27995.sh'
-ARCHIVE_GOG_OLD4_TYPE='mojosetup'
-ARCHIVE_GOG_OLD4_MD5='209c6e10543513120d4d7eb35c61e2f2'
-ARCHIVE_GOG_OLD4_VERSION='1.2.0.4-gog27995'
-ARCHIVE_GOG_OLD4_SIZE='3600000'
+ARCHIVE_GOG_5='sunless_skies_1_2_1_2_b0df8add_28695.sh'
+ARCHIVE_GOG_5_TYPE='mojosetup'
+ARCHIVE_GOG_5_MD5='12a0c255956e4c563a721da55d832f9b'
+ARCHIVE_GOG_5_VERSION='1.2.1.2-gog28695'
+ARCHIVE_GOG_5_SIZE='3900000'
 
-ARCHIVE_GOG_OLD3='sunless_skies_1_2_0_2_4cf00080_27469.sh'
-ARCHIVE_GOG_OLD3_TYPE='mojosetup'
-ARCHIVE_GOG_OLD3_MD5='ad52093137da318f4d7ce2c0033cb9ce'
-ARCHIVE_GOG_OLD3_VERSION='1.2.0.2-gog27469'
-ARCHIVE_GOG_OLD3_SIZE='3600000'
+ARCHIVE_GOG_4='sunless_skies_1_2_0_4_20d30549_27995.sh'
+ARCHIVE_GOG_4_TYPE='mojosetup'
+ARCHIVE_GOG_4_MD5='209c6e10543513120d4d7eb35c61e2f2'
+ARCHIVE_GOG_4_VERSION='1.2.0.4-gog27995'
+ARCHIVE_GOG_4_SIZE='3600000'
 
-ARCHIVE_GOG_OLD2='sunless_skies_1_2_0_0_157b386b_27304.sh'
-ARCHIVE_GOG_OLD2_TYPE='mojosetup'
-ARCHIVE_GOG_OLD2_MD5='f2223d46fca0d17c35ec724277f752a0'
-ARCHIVE_GOG_OLD2_VERSION='1.2.0.0-gog27304'
-ARCHIVE_GOG_OLD2_SIZE='3600000'
+ARCHIVE_GOG_3='sunless_skies_1_2_0_2_4cf00080_27469.sh'
+ARCHIVE_GOG_3_TYPE='mojosetup'
+ARCHIVE_GOG_3_MD5='ad52093137da318f4d7ce2c0033cb9ce'
+ARCHIVE_GOG_3_VERSION='1.2.0.2-gog27469'
+ARCHIVE_GOG_3_SIZE='3600000'
 
-ARCHIVE_GOG_OLD1='sunless_skies_1_1_9_6_e24eac9e_27177.sh'
-ARCHIVE_GOG_OLD1_TYPE='mojosetup'
-ARCHIVE_GOG_OLD1_MD5='dae9c1fa16c971613086c143fa45a540'
-ARCHIVE_GOG_OLD1_VERSION='1.1.9.6-gog27177'
-ARCHIVE_GOG_OLD1_SIZE='3600000'
+ARCHIVE_GOG_2='sunless_skies_1_2_0_0_157b386b_27304.sh'
+ARCHIVE_GOG_2_TYPE='mojosetup'
+ARCHIVE_GOG_2_MD5='f2223d46fca0d17c35ec724277f752a0'
+ARCHIVE_GOG_2_VERSION='1.2.0.0-gog27304'
+ARCHIVE_GOG_2_SIZE='3600000'
 
-ARCHIVE_GOG_OLD0='sunless_skies_1_1_9_5_08b4e1b8_27040.sh'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup'
-ARCHIVE_GOG_OLD0_MD5='0fc87cf745c2db5d36e412c9265d1d76'
-ARCHIVE_GOG_OLD0_VERSION='1.1.9.5-gog27040'
-ARCHIVE_GOG_OLD0_SIZE='3600000'
+ARCHIVE_GOG_1='sunless_skies_1_1_9_6_e24eac9e_27177.sh'
+ARCHIVE_GOG_1_TYPE='mojosetup'
+ARCHIVE_GOG_1_MD5='dae9c1fa16c971613086c143fa45a540'
+ARCHIVE_GOG_1_VERSION='1.1.9.6-gog27177'
+ARCHIVE_GOG_1_SIZE='3600000'
+
+ARCHIVE_GOG_0='sunless_skies_1_1_9_5_08b4e1b8_27040.sh'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_MD5='0fc87cf745c2db5d36e412c9265d1d76'
+ARCHIVE_GOG_0_VERSION='1.1.9.5-gog27040'
+ARCHIVE_GOG_0_SIZE='3600000'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='Sunless?Skies.x86 Sunless?Skies_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='Sunless?Skies.x86 Sunless?Skies_Data/Mono/x86 Sunless?Skies_Data/Plugins/x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='Sunless?Skies.x86_64 Sunless?Skies_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='Sunless?Skies.x86_64 Sunless?Skies_Data/Mono/x86_64 Sunless?Skies_Data/Plugins/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Sunless?Skies_Data'
@@ -114,9 +127,9 @@ ARCHIVE_GAME_DATA_FILES='Sunless?Skies_Data'
 DATA_DIRS='./dlc ./logs'
 
 APP_MAIN_TYPE='native'
-# Work around screen resolution detection issues
 # shellcheck disable=SC2016
-APP_MAIN_PRERUN='config_file="$HOME/.config/unity3d/Failbetter Games/Sunless Skies/prefs"
+APP_MAIN_PRERUN='# Work around screen resolution detection issues
+config_file="$HOME/.config/unity3d/Failbetter Games/Sunless Skies/prefs"
 if [ ! -e "$config_file" ]; then
 	mkdir --parents "${config_file%/*}"
 	resolution=$(xrandr | awk "/\*/ {print $1}")
@@ -186,7 +199,7 @@ icons_get_from_package 'APP_MAIN'
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launcher_write 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
