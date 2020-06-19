@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.2
+script_version=20200927.1
 
 # Set game-specific variables
 
@@ -44,6 +44,7 @@ GAME_NAME='Caravan'
 
 ARCHIVES_LIST='
 ARCHIVE_HUMBLE_0
+ARCHIVE_GOG_0
 '
 
 ARCHIVE_HUMBLE_0='caravan_linux_v1.1.17513.zip'
@@ -53,13 +54,23 @@ ARCHIVE_HUMBLE_0_SIZE='600000'
 ARCHIVE_HUMBLE_0_VERSION='1.1.17513-humble1'
 ARCHIVE_HUMBLE_0_TYPE='zip_unclean'
 
-ARCHIVE_GAME_BIN32_PATH='Caravan'
+ARCHIVE_GOG_0='caravan_en_v1_1_19786_19905.sh'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/caravan'
+ARCHIVE_GOG_0_MD5='e6806e10c86267b38a2a2a85bb278dae'
+ARCHIVE_GOG_0_SIZE='430000'
+ARCHIVE_GOG_0_VERSION='1.1.19786-gog19905'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='Caravan'
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='Caravan.x86 Caravan_Data/Mono/x86 Caravan_Data/Plugins/x86'
 
-ARCHIVE_GAME_BIN64_PATH='Caravan'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='Caravan'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='Caravan.x86_64 Caravan_Data/Mono/x86_64 Caravan_Data/Plugins/x86_64'
 
-ARCHIVE_GAME_DATA_PATH='Caravan'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='Caravan'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Caravan_Data'
 
 DATA_DIRS='./logs'
@@ -119,14 +130,18 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-(
-	ARCHIVE='ARCHIVE_INNER'
-	ARCHIVE_INNER="$PLAYIT_WORKDIR/gamedata/Caravan_1.1.17513_Full_DEB_Multi_Daedalic_ESD.tar.gz"
-	ARCHIVE_INNER_TYPE='tar.gz'
-	extract_data_from "$ARCHIVE_INNER"
-	rm "$ARCHIVE_INNER"
-)
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+case "$ARCHIVE" in
+	('ARCHIVE_HUMBLE'*)
+		(
+			ARCHIVE='ARCHIVE_INNER'
+			ARCHIVE_INNER="$PLAYIT_WORKDIR/gamedata/Caravan_1.1.17513_Full_DEB_Multi_Daedalic_ESD.tar.gz"
+			ARCHIVE_INNER_TYPE='tar.gz'
+			extract_data_from "$ARCHIVE_INNER"
+			rm "$ARCHIVE_INNER"
+		)
+		set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+	;;
+esac
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
