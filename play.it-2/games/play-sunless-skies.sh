@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.1
+script_version=20200619.2
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='sunless-skies'
 GAME_NAME='Sunless Skies'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_10
 ARCHIVE_GOG_9
 ARCHIVE_GOG_8
 ARCHIVE_GOG_7
@@ -54,8 +55,14 @@ ARCHIVE_GOG_1
 ARCHIVE_GOG_0
 '
 
+ARCHIVE_GOG_10='sunless_skies_1_3_6_3bef75f8_33955.sh'
+ARCHIVE_GOG_10_URL='https://www.gog.com/game/sunless_skies'
+ARCHIVE_GOG_10_TYPE='mojosetup'
+ARCHIVE_GOG_10_MD5='d0953b6d4f9659ccc23d48c80fdd06d1'
+ARCHIVE_GOG_10_VERSION='1.3.6.0-gog33955'
+ARCHIVE_GOG_10_SIZE='4000000'
+
 ARCHIVE_GOG_9='sunless_skies_1_3_2_06feaeba_33084.sh'
-ARCHIVE_GOG_9_URL='https://www.gog.com/game/sunless_skies'
 ARCHIVE_GOG_9_TYPE='mojosetup'
 ARCHIVE_GOG_9_MD5='dd5e33674222031eb7f6f5c9f26d7ee2'
 ARCHIVE_GOG_9_VERSION='1.3.2.0-gog33084'

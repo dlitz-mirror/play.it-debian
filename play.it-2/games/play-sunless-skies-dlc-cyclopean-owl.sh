@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.1
+script_version=20200619.4
 
 # Set game-specific variables
 
@@ -43,6 +43,7 @@ GAME_ID='sunless-skies'
 GAME_NAME='Sunless Skies — Cyclopean Owl DLC'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_10
 ARCHIVE_GOG_9
 ARCHIVE_GOG_8
 ARCHIVE_GOG_7
@@ -54,6 +55,12 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0
 '
+
+ARCHIVE_GOG_10='sunless_skies_cyclopean_owl_dlc_1_3_6_3bef75f8_33955.sh'
+ARCHIVE_GOG_10_TYPE='mojosetup'
+ARCHIVE_GOG_10_MD5='d910cd2ce8d6ecb15abe183985d7d838'
+ARCHIVE_GOG_10_VERSION='1.3.6.0-gog33955'
+ARCHIVE_GOG_10_SIZE='1100'
 
 ARCHIVE_GOG_9='sunless_skies_cyclopean_owl_dlc_1_3_2_06feaeba_33084.sh'
 ARCHIVE_GOG_9_TYPE='mojosetup'
@@ -157,12 +164,17 @@ extract_data_from "$SOURCE_ARCHIVE"
 
 # Work around misplaced file in provided archive
 
-source_file="$PLAYIT_WORKDIR/gamedata/data/noarch/game/OwlScout.dlc"
-destination_file="$PLAYIT_WORKDIR/gamedata/data/noarch/game/dlc/OwlScout"
-if [ -e "$source_file" ]; then
-	mkdir --parents "$destination_file"
-	mv "$source_file" "$destination_file"
-fi
+destination_file="$PLAYIT_WORKDIR/gamedata/data/noarch/game/dlc/OwlScout/OwlScout.dlc"
+
+for source_file in \
+	"$PLAYIT_WORKDIR/gamedata/data/noarch/game/DLC/OwlScout/OwlScout.dlc" \
+	"$PLAYIT_WORKDIR/gamedata/data/noarch/game/OwlScout.dlc"
+do
+	if [ -e "$source_file" ]; then
+		mkdir --parents "$(dirname "$destination_file")"
+		mv "$source_file" "$destination_file"
+	fi
+done
 
 # Prepare package
 
