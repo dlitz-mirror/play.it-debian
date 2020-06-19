@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.1
+script_version=20200619.2
 
 # Set game-specific variables
 
@@ -95,6 +95,9 @@ ARCHIVE_GAME_DATA_FILES='*.dll *.dll.config Audio Cursors Effects Fonts MainMenu
 ARCHIVE_GAME_DATA_PATH_HUMBLE_0='data'
 
 APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 APP_MAIN_EXE_BIN32='Reus.bin.x86'
 APP_MAIN_EXE_BIN64='Reus.bin.x86_64'
 APP_MAIN_ICON='Reus.bmp'
