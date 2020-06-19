@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.2
+script_version=20200619.4
 
 # Set game-specific variables
 
@@ -78,13 +78,13 @@ ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN32_FILES='Reus.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='Reus.bin.x86 lib/libfmodevent-4.44.00.so lib/libfmodevent.so lib/libfmodex-4.44.00.so lib/libfmodex.so lib/libFontNative.so lib/libmojoshader.so lib/libtheorafile.so'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN32_PATH_HUMBLE_0='data'
 
 ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN64_FILES='Reus.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='Reus.bin.x86_64 lib64/libfmodevent64-4.44.00.so lib64/libfmodevent.so lib64/libfmodex64-4.44.00.so lib64/libfmodex.so lib64/libFontNative.so lib64/libmojoshader.so lib64/libtheorafile.so'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN64_PATH_HUMBLE_0='data'
 
@@ -98,6 +98,8 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around terminfo Mono bug
 # cf. https://github.com/mono/mono/issues/6752
 export TERM="${TERM%-256color}"'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
 APP_MAIN_EXE_BIN32='Reus.bin.x86'
 APP_MAIN_EXE_BIN64='Reus.bin.x86_64'
 APP_MAIN_ICON='Reus.bmp'
@@ -108,7 +110,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ vorbis openal sdl2 freetype theora"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ vorbis openal sdl2 sdl2_image freetype theora"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
