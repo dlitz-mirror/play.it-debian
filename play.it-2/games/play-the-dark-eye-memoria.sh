@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200622.1
+script_version=20200622.2
 
 # Set game-specific variables
 
@@ -89,22 +89,13 @@ ARCHIVE_DOC_DATA_PATH='app/documents/licenses'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME1_BIN_PATH='app'
-ARCHIVE_GAME1_BIN_FILES='avcodec-54.dll avformat-54.dll avutil-52.dll config.ini libsndfile-1.dll memoria.exe openal32.dll sdl2.dll swresample-0.dll swscale-2.dll visionaireconfigurationtool.exe zlib1.dll'
+ARCHIVE_GAME1_BIN_FILES='*.dll *.ini *.exe'
 
 ARCHIVE_GAME2_BIN_PATH='app/__support/app'
-ARCHIVE_GAME2_BIN_FILES='config.ini'
-
-ARCHIVE_GAME_SCENES_PATH='app'
-ARCHIVE_GAME_SCENES_FILES='scenes'
-
-ARCHIVE_GAME_CHARACTERS_PATH='app'
-ARCHIVE_GAME_CHARACTERS_FILES='characters'
-
-ARCHIVE_GAME_VIDEOS_PATH='app'
-ARCHIVE_GAME_VIDEOS_FILES='videos'
+ARCHIVE_GAME2_BIN_FILES='*.ini'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='banner.jpg data.vis folder.jpg languages.xml lua'
+ARCHIVE_GAME_DATA_FILES='characters lua scenes videos *.jpg data.vis languages.xml'
 
 CONFIG_FILES='./config.ini'
 
@@ -121,22 +112,13 @@ fi'
 APP_MAIN_EXE='memoria.exe'
 APP_MAIN_ICON='memoria.exe'
 
-PACKAGES_LIST='PKG_BIN PKG_SCENES PKG_CHARACTERS PKG_VIDEOS PKG_DATA'
-
-PKG_SCENES_ID="${GAME_ID}-scenes"
-PKG_SCENES_DESCRIPTION='scenes'
-
-PKG_CHARACTERS_ID="${GAME_ID}-characters"
-PKG_CHARACTERS_DESCRIPTION='characters'
-
-PKG_VIDEOS_ID="${GAME_ID}-videos"
-PKG_VIDEOS_DESCRIPTION='videos'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_SCENES_ID $PKG_CHARACTERS_ID $PKG_VIDEOS_ID $PKG_DATA_ID wine"
+PKG_BIN_DEPS="$PKG_DATA_ID wine"
 
 # Load common functions
 
