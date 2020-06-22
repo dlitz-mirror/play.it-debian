@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200622.2
+script_version=20200622.3
 
 # Set game-specific variables
 
@@ -65,7 +65,7 @@ ARCHIVE_GOG_1_PART3_TYPE='innosetup'
 ARCHIVE_GOG_0='setup_memoria_2.0.0.3.exe'
 ARCHIVE_GOG_0_MD5='847c7b5e27a287d6e0e17e63bfb14fff'
 ARCHIVE_GOG_0_SIZE='9100000'
-ARCHIVE_GOG_0_VERSION='1.36.0053-gog2.0.0.3'
+ARCHIVE_GOG_0_VERSION='1.1.3.0336-gog2.0.0.3'
 ARCHIVE_GOG_0_PART1='setup_memoria_2.0.0.3-1.bin'
 ARCHIVE_GOG_0_PART1_MD5='e656464607e4d8599d599ed5b6b29fca'
 ARCHIVE_GOG_0_PART1_TYPE='innosetup'
