@@ -158,6 +158,12 @@ pkg_set_deps_deb() {
 			('libcurl-gnutls')
 				pkg_dep='libcurl3-gnutls'
 			;;
+			('libmbedtls.so.12')
+				pkg_dep='libmbedtls12'
+			;;
+			('libpng16.so.16')
+				pkg_dep='libpng16-16'
+			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
 			;;
@@ -173,7 +179,7 @@ pkg_set_deps_deb() {
 			('nss')
 				pkg_dep='libnss3'
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep='libopenal1'
 			;;
 			('pulseaudio')
@@ -182,7 +188,7 @@ pkg_set_deps_deb() {
 			('sdl1.2')
 				pkg_dep='libsdl1.2debian'
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep='libsdl2-2.0-0'
 			;;
 			('sdl2_image')
@@ -194,7 +200,13 @@ pkg_set_deps_deb() {
 			('theora')
 				pkg_dep='libtheora0'
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep='libturbojpeg0'
+			;;
+			('libuv.so.1')
+				pkg_dep='libuv1'
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='libvorbisfile3'
 			;;
 			('wine')

@@ -124,6 +124,7 @@ pkg_set_deps_arch() {
 
 # set list or Arch Linux 32-bit dependencies from generic names
 # USAGE: pkg_set_deps_arch32 $dep[…]
+# CALLS: warning_missing_library
 # CALLED BY: pkg_set_deps_arch
 pkg_set_deps_arch32() {
 	for dep in "$@"; do
@@ -170,6 +171,12 @@ pkg_set_deps_arch32() {
 			('libcurl-gnutls')
 				pkg_dep='lib32-libcurl-gnutls'
 			;;
+			('libmbedtls.so.12')
+				warning_missing_library 'libmbedtls.so.12' 'Arch Linux' '32bits'
+			;;
+			('libpng16.so.16')
+				pkg_dep='lib32-libpng'
+			;;
 			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
@@ -182,7 +189,7 @@ pkg_set_deps_arch32() {
 			('nss')
 				pkg_dep='lib32-nss'
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep='lib32-openal'
 			;;
 			('pulseaudio')
@@ -191,7 +198,7 @@ pkg_set_deps_arch32() {
 			('sdl1.2')
 				pkg_dep='lib32-sdl'
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep='lib32-sdl2'
 			;;
 			('sdl2_image')
@@ -203,7 +210,13 @@ pkg_set_deps_arch32() {
 			('theora')
 				pkg_dep='lib32-libtheora'
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep='lib32-libjpeg-turbo'
+			;;
+			('libuv.so.1')
+				warning_missing_library 'libuv.so.1' 'Arch Linux' '32bits'
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='lib32-libvorbis'
 			;;
 			('wine'|'wine32'|'wine64')
@@ -283,6 +296,12 @@ pkg_set_deps_arch64() {
 			('libcurl-gnutls')
 				pkg_dep='libcurl-gnutls'
 			;;
+			('libmbedtls.so.12')
+				pkg_dep='mbedtls'
+			;;
+			('libpng16.so.16')
+				pkg_dep='libpng'
+			;;
 			('libstdc++')
 				pkg_dep='gcc-libs'
 			;;
@@ -298,7 +317,7 @@ pkg_set_deps_arch64() {
 			('mono')
 				pkg_dep='mono'
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep='openal'
 			;;
 			('pulseaudio')
@@ -307,7 +326,7 @@ pkg_set_deps_arch64() {
 			('sdl1.2')
 				pkg_dep='sdl'
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep='sdl2'
 			;;
 			('sdl2_image')
@@ -319,7 +338,13 @@ pkg_set_deps_arch64() {
 			('theora')
 				pkg_dep='libtheora'
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep='libjpeg-turbo'
+			;;
+			('libuv.so.1')
+				pkg_dep='libuv'
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='libvorbis'
 			;;
 			('wine'|'wine32'|'wine64')

@@ -181,6 +181,12 @@ pkg_set_deps_gentoo() {
 				pkg_dep="net-libs/libcurl-debian$architecture_suffix"
 				pkg_overlay='steam-overlay'
 			;;
+			('libmbedtls.so.12')
+				pkg_dep="net-libs/mbedtls:0/12$architecture_suffix"
+			;;
+			('libpng16.so.16')
+				pkg_dep="media-libs/libpng:0/16$architecture_suffix"
+			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
@@ -196,7 +202,7 @@ pkg_set_deps_gentoo() {
 			('nss')
 				pkg_dep="dev-libs/nss$architecture_suffix"
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep="media-libs/openal$architecture_suffix"
 			;;
 			('pulseaudio')
@@ -205,7 +211,7 @@ pkg_set_deps_gentoo() {
 			('sdl1.2')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
 			;;
 			('sdl2_image')
@@ -218,7 +224,13 @@ pkg_set_deps_gentoo() {
 			('theora')
 				pkg_dep="media-libs/libtheora$architecture_suffix"
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep="media-libs/libjpeg-turbo$architecture_suffix"
+			;;
+			('libuv.so.1')
+				pkg_dep="dev-libs/libuv:0/1$architecture_suffix"
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
