@@ -95,3 +95,28 @@ warning_icon_dependency_not_found() {
 	return 0
 }
 
+# display a warning when using a library not available on target system in a
+# given architecture
+# USAGE: warning_missing_library $lib $target_system $architecture
+warning_missing_library() {
+	local lib
+	local target_system
+	local architecture
+	lib="$1"
+	target_system="$2"
+	architecture="$3"
+	case "${LANG%_*}" in
+		('fr')
+			message="La bibliothèque $lib n’est pas disponible pour $target_system \
+			en $architecture.\n"
+		;;
+		('en'|*)
+			message="The library $lib is not available in $architecture on \
+			$target_system.\n"
+		;;
+	esac
+	print_warning
+	printf "$message"
+	return 0
+}
+
