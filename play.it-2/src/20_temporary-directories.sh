@@ -39,10 +39,8 @@ set_temp_directories() {
 		else
 			error_variable_not_set 'set_temp_directories' '$ARCHIVE_SIZE'
 		fi
-		[ "$XDG_RUNTIME_DIR" ] || XDG_RUNTIME_DIR="/run/user/$(id -u)"
 		[ "$XDG_CACHE_HOME" ]  || XDG_CACHE_HOME="$HOME/.cache"
 		for directory in \
-			"$XDG_RUNTIME_DIR" \
 			"$tmpdir" \
 			"$XDG_CACHE_HOME" \
 			"$PWD"
