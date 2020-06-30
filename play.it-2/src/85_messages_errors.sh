@@ -533,3 +533,21 @@ error_icon_dependency_not_found() {
 	return 1
 }
 
+# display an error when no game script has been found for a given archive
+# USAGE: error_no_script_found_for_archive $archive
+error_no_script_found_for_archive() {
+	local message archive
+	archive="$1"
+	case "${LANG%_*}" in
+		('fr')
+			message='Impossible de trouver un script pour le fichier %s\n'
+		;;
+		('en'|*)
+			message='Could not find script for file %s\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$archive"
+	return 1
+}
+

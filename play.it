@@ -41,16 +41,6 @@ fi
 
 # Locate script by file name
 FILE_NAME="$(basename "$INPUT_FILE")"
-case "${LANG%_*}" in
-	('fr')
-		string='Recherche dʼun script pour le fichier %s\n'
-	;;
-	('en'|*)
-		string='Looking for a script for file %s\n'
-	;;
-esac
-# shellcheck disable=SC2059
-printf "$string" "$FILE_NAME"
 SCRIPT="$(find\
 	"$(dirname "$0")/play.it-2/games"\
 	"$XDG_DATA_HOME/play.it"\
@@ -61,19 +51,9 @@ SCRIPT="$(find\
 	-mindepth 1 -maxdepth 1 -type f -name '*.sh' -exec\
 	grep --regexp="ARCHIVE_.\\+='$FILE_NAME'" --files-with-matches '{}' + 2>/dev/null | head --lines=1)"
 
+# Exit with an error if the given archive is not supported
 if [ -z "$SCRIPT" ]; then
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			string='Impossible de trouver un script pour le fichier %s\n'
-		;;
-		('en'|*)
-			string='Could not find script for file %s\n'
-		;;
-	esac
-	# shellcheck disable=SC2059
-	printf "$string" "$FILE_NAME"
-	exit 1
+	error_no_script_found_for_archive "$FILE_NAME"
 fi
 
 export PLAYIT_LIB2
