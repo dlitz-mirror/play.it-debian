@@ -1,5 +1,7 @@
 2.12
 
+  * Massive rework of all message-related functions
+
   * Add ability to run games with ResidualVM
 
   * Prevent scan of unneeded directories by the wrapper
