@@ -107,16 +107,14 @@ warning_missing_library() {
 	architecture="$3"
 	case "${LANG%_*}" in
 		('fr')
-			message="La bibliothèque $lib n’est pas disponible pour $target_system \
-			en $architecture.\n"
+			message='La bibliothèque %s nʼest pas disponible pour %s (architecture %s).\n'
 		;;
 		('en'|*)
-			message="The library $lib is not available in $architecture on \
-			$target_system.\n"
+			message='The library %s is not available on %s (%s architecture).\n'
 		;;
 	esac
 	print_warning
-	printf "$message"
+	printf "$message" "$lib" "$target_system" "$architecture"
 	return 0
 }
 
