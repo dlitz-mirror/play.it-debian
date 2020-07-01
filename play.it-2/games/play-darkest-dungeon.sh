@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Darkest Dungeon
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190520.5
+script_version=20200426.1
 
 # Set game-specific variables
 
@@ -118,7 +118,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++6 sdl2 glx"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glx"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"

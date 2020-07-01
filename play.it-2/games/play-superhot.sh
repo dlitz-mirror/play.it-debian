@@ -35,22 +35,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200205.4
+script_version=20200227.1
 
 # Set game-specific variables
 
 GAME_ID='superhot'
 GAME_NAME='Superhot'
 
+ARCHIVE_GOG='superhot_1_0_14_33249.sh'
+ARCHIVE_GOG_URL='https://www.gog.com/game/superhot'
+ARCHIVE_GOG_MD5='0cae1298bc41354a7d34d2211d6b07f2'
+ARCHIVE_GOG_VERSION='1.0.14-gog33249'
+ARCHIVE_GOG_SIZE='4100000'
+ARCHIVE_GOG_TYPE='mojosetup'
+
 ARCHIVE_HUMBLE='SUPERHOT_LINUX.zip'
 ARCHIVE_HUMBLE_MD5='bbbbae191504b00cfb4a9509175014c2'
 ARCHIVE_HUMBLE_VERSION='1.0-humble1'
 ARCHIVE_HUMBLE_SIZE='4300000'
 
-ARCHIVE_GAME_BIN_PATH='SUPERHOT'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN_PATH_HUMBLE='SUPERHOT'
 ARCHIVE_GAME_BIN_FILES='SUPERHOT.x86_64 SUPERHOT_Data/Mono SUPERHOT_Data/Plugins'
 
-ARCHIVE_GAME_DATA_PATH='SUPERHOT'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='SUPERHOT'
 ARCHIVE_GAME_DATA_FILES='SUPERHOT_Data'
 
 DATA_DIRS='./logs'
@@ -58,6 +67,7 @@ DATA_DIRS='./logs'
 APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
 export LANG=C'
+# shellcheck disable=SC2016
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Work around issues when pulseaudio libraries are available but pulseaudio is not running
 if ! command -v pulseaudio >/dev/null 2>&1; then

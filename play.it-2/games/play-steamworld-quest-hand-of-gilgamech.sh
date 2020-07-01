@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,52 +29,49 @@ set -o errexit
 ###
 
 ###
-# Beatbuddy: Tale of the Guardians
+# SteamWorld Quest: Hand of Gilgamech
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200608.2
+script_version=20200604.1
 
 # Set game-specific variables
 
-GAME_ID='beatbuddy'
-GAME_NAME='Beatbuddy: Tale of the Guardians'
+GAME_ID='steamworld-quest-hand-of-gilgamech'
+GAME_NAME='SteamWorld Quest: Hand of Gilgamech'
 
 ARCHIVES_LIST='
-ARCHIVE_HUMBLE_0
+ARCHIVE_GOG_0
 '
 
-ARCHIVE_HUMBLE_0='BeatbuddyLinux1439603370.zip'
-ARCHIVE_HUMBLE_0_MD5='156d19b327a02ac4a277f6f6ad4e188e'
-ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/beatbuddy'
-ARCHIVE_HUMBLE_0_SIZE='1100000'
-ARCHIVE_HUMBLE_0_VERSION='1.0-humble150815'
+ARCHIVE_GOG_0='steamworld_quest_hand_of_gilgamech_2_1_31741.sh'
+ARCHIVE_GOG_0_MD5='cffa9b745ef4ca37123b5928c37effe0'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/steamworld_quest_hand_of_gilgamech'
+ARCHIVE_GOG_0_VERSION='2.1-gog31741'
+ARCHIVE_GOG_0_SIZE='1200000'
 
-ARCHIVE_GAME_BIN_PATH='Beatbuddy'
-ARCHIVE_GAME_BIN_FILES='Beatbuddy.x86 Beatbuddy_Data/Mono Beatbuddy_Data/Plugins'
+ARCHIVE_DOC_PATH='data/noarch/game'
+ARCHIVE_DOC_FILES='*.txt Licenses'
 
-ARCHIVE_GAME_DATA_PATH='Beatbuddy'
-ARCHIVE_GAME_DATA_FILES='Beatbuddy_Data'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='Quest'
 
-DATA_DIRS='./logs'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='Bundle icon.png icon.bmp'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE='Beatbuddy.x86'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='Beatbuddy_Data/Resources/UnityPlayer.png'
+APP_MAIN_EXE='Quest'
+APP_MAIN_ICON='icon.png'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTIOn='data'
+PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2 alsa"
-PKG_BIN_DEPS_ARCH='lib32-libx11'
-PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
+PKG_BIN_ARCH='64'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 glx"
 
 # Load common functions
 
@@ -108,11 +104,10 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Get game icon
+# Get icon
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'

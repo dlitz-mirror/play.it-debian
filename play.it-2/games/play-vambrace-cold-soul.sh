@@ -3,7 +3,6 @@ set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,52 +29,90 @@ set -o errexit
 ###
 
 ###
-# Beatbuddy: Tale of the Guardians
+# Vambrace: Cold Soul
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200608.2
+script_version=20200604.1
 
 # Set game-specific variables
 
-GAME_ID='beatbuddy'
-GAME_NAME='Beatbuddy: Tale of the Guardians'
+GAME_ID='vambrace-cold-soul'
+GAME_NAME='Vambrace: Cold Soul'
 
 ARCHIVES_LIST='
-ARCHIVE_HUMBLE_0
+ARCHIVE_GOG_0
 '
 
-ARCHIVE_HUMBLE_0='BeatbuddyLinux1439603370.zip'
-ARCHIVE_HUMBLE_0_MD5='156d19b327a02ac4a277f6f6ad4e188e'
-ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/beatbuddy'
-ARCHIVE_HUMBLE_0_SIZE='1100000'
-ARCHIVE_HUMBLE_0_VERSION='1.0-humble150815'
+ARCHIVE_GOG_0='vambrace_cold_soul_1_10_b_37074.sh'
+ARCHIVE_GOG_0_MD5='91f0947bb96d6d5a0479d32ccc2d2770'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/vambrace_cold_soul'
+ARCHIVE_GOG_0_SIZE='5000000'
+ARCHIVE_GOG_0_VERSION='1.10.b-gog37074'
 
-ARCHIVE_GAME_BIN_PATH='Beatbuddy'
-ARCHIVE_GAME_BIN_FILES='Beatbuddy.x86 Beatbuddy_Data/Mono Beatbuddy_Data/Plugins'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='VambraceColdSoul.x86_64 VambraceColdSoul_Data/Mono VambraceColdSoul_Data/Plugins'
 
-ARCHIVE_GAME_DATA_PATH='Beatbuddy'
-ARCHIVE_GAME_DATA_FILES='Beatbuddy_Data'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='VambraceColdSoul_Data'
 
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE='Beatbuddy.x86'
+APP_MAIN_PRERUN='# Start pulseaudio if it is available
+if command -v pulseaudio >/dev/null 2>&1; then
+	PULSEAUDIO_IS_AVAILABLE=1
+	if pulseaudio --check; then
+		KEEP_PULSEAUDIO_RUNNING=1
+	else
+		KEEP_PULSEAUDIO_RUNNING=0
+	fi
+	pulseaudio --start
+else
+	PULSEAUDIO_IS_AVAILABLE=0
+fi'
+# shellcheck disable=SC1004,SC2016
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Work around crash on launch related to libpulse
+# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+if [ $PULSEAUDIO_IS_AVAILABLE -eq 0 ]; then
+	mkdir --parents "${APP_LIBS:=libs}"
+	ln --force --symbolic /dev/null "$APP_LIBS/libpulse-simple.so.0"
+else
+	if \
+		[ -h "${APP_LIBS:=libs}/libpulse-simple.so.0" ] && \
+		[ "$(realpath "$APP_LIBS/libpulse-simple.so.0")" = "/dev/null" ]
+	then
+		rm "$APP_LIBS/libpulse-simple.so.0"
+		rmdir --ignore-fail-on-non-empty --parents "$APP_LIBS"
+	fi
+fi'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Work around Unity3D poor support for non-US locales
+export LANG=C'
+# shellcheck disable=SC1004,SC2016
+APP_MAIN_POSTRUN='# Stop pulseaudio if it has specifically been started for the game
+if \
+	[ $PULSEAUDIO_IS_AVAILABLE -eq 1 ] && \
+	[ $KEEP_PULSEAUDIO_RUNNING -eq 0 ]
+then
+	pulseaudio --kill
+fi'
+APP_MAIN_EXE='VambraceColdSoul.x86_64'
+APP_MAIN_ICON='VambraceColdSoul_Data/Resources/UnityPlayer.png'
+# Use a per-session dedicated file for logs
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='Beatbuddy_Data/Resources/UnityPlayer.png'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTIOn='data'
+PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu glx xcursor gtk2 alsa"
-PKG_BIN_DEPS_ARCH='lib32-libx11'
-PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32]'
+PKG_BIN_ARCH='64'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2"
 
 # Load common functions
 
@@ -108,11 +145,13 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+
+# Prepare package
+
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
-# Get game icon
+# Get icon
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'

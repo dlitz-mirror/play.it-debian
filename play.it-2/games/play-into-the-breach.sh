@@ -29,32 +29,48 @@ set -o errexit
 ###
 
 ###
-# Into The Breach
+# Into the Breach
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200421.2
+script_version=20200616.3
 
 # Set game-specific variables
 
 GAME_ID='into-the-breach'
-GAME_NAME='Into The Breach'
+GAME_NAME='Into the Breach'
 
-ARCHIVE_HUMBLE='Into_the_Breach_Linux.1.2.20.zip'
-ARCHIVE_HUMBLE_MD5='5a8b33e1ccbc2953c99aacf0ad38ca37'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/into-the-breach'
-ARCHIVE_HUMBLE_SIZE='320000'
-ARCHIVE_HUMBLE_VERSION='1.2.20-humble200420'
+ARCHIVES_LIST='
+ARCHIVE_HUMBLE_1
+ARCHIVE_HUMBLE_0
+'
 
-ARCHIVE_DOC_DATA_PATH='Into the Breach Linux'
+ARCHIVE_HUMBLE_1='Into_the_Breach_Linux.1.2.23.zip'
+ARCHIVE_HUMBLE_1_MD5='35cbc7ad39661ac97f41760f77f71fab'
+ARCHIVE_HUMBLE_1_URL='https://www.humblebundle.com/store/into-the-breach'
+ARCHIVE_HUMBLE_1_SIZE='320000'
+ARCHIVE_HUMBLE_1_VERSION='1.2.23-humble200515'
+
+ARCHIVE_HUMBLE_0='Into_the_Breach_Linux.1.2.20.zip'
+ARCHIVE_HUMBLE_0_MD5='5a8b33e1ccbc2953c99aacf0ad38ca37'
+ARCHIVE_HUMBLE_0_SIZE='320000'
+ARCHIVE_HUMBLE_0_VERSION='1.2.20-humble200420'
+
+ARCHIVE_DOC_DATA_PATH='Into the Breach'
 ARCHIVE_DOC_DATA_FILES='licenses'
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_HUMBLE_0='Into the Breach Linux'
 
-ARCHIVE_GAME_BIN_PATH='Into the Breach Linux'
+ARCHIVE_GAME_BIN_PATH='Into the Breach'
 ARCHIVE_GAME_BIN_FILES='Breach linux_x64/libfmod.so.10 linux_x64/libfmodstudio.so.10'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_HUMBLE_0='Into the Breach Linux'
 
-ARCHIVE_GAME_DATA_PATH='Into the Breach Linux'
+ARCHIVE_GAME_DATA_PATH='Into the Breach'
 ARCHIVE_GAME_DATA_FILES='data maps resources scripts shadersOGL'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_HUMBLE_0='Into the Breach Linux'
 
 # Optional icons pack, downloadable from ./play.it server
 
@@ -133,6 +149,7 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 

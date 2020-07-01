@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200517.3
+script_version=20200616.1
 
 # Set game-specific variables
 
@@ -46,6 +46,12 @@ ARCHIVE_GOG_URL='https://www.gog.com/game/caesar_3'
 ARCHIVE_GOG_MD5='2ee16fab54493e1c2a69122fd2e56635'
 ARCHIVE_GOG_SIZE='550000'
 ARCHIVE_GOG_VERSION='1.1-gog2.0.0.9'
+
+# Julius 1.4.1 release
+ARCHIVE_OPTIONAL_JULIUS_1='julius-1.4.1-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_1_URL='https://github.com/bvschaik/julius/releases/tag/v1.4.1'
+ARCHIVE_OPTIONAL_JULIUS_1_MD5='6f09868205f502b8c006d88702d6455d'
+ARCHIVE_OPTIONAL_JULIUS_1_SIZE=2300
 
 # Julius 1.4.0 release
 ARCHIVE_OPTIONAL_JULIUS_0='julius-1.4.0-linux-x86_64.zip'
@@ -133,7 +139,9 @@ fi
 # Maybe we should display a warning if no Julius engine archive could be found
 ###
 ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_JULIUS' 'ARCHIVE_OPTIONAL_JULIUS_0'
+set_archive 'ARCHIVE_JULIUS' \
+	'ARCHIVE_OPTIONAL_JULIUS_1' \
+	'ARCHIVE_OPTIONAL_JULIUS_0'
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_JULIUS" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_JULIUS"

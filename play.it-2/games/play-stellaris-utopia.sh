@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200515.2
+script_version=20200615.1
 
 # Set game-specific variables
 
@@ -43,6 +43,7 @@ GAME_ID_UTOPIA="${GAME_ID}-utopia"
 GAME_NAME='Stellaris - Utopia'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_11
 ARCHIVE_GOG_10
 ARCHIVE_GOG_9
 ARCHIVE_GOG_8
@@ -55,8 +56,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_11='stellaris_utopia_2_7_2_38578.sh'
+ARCHIVE_GOG_11_URL='https://www.gog.com/game/stellaris_utopia'
+ARCHIVE_GOG_11_MD5='799002017db9916021323649f75cfc30'
+ARCHIVE_GOG_11_SIZE='76000'
+ARCHIVE_GOG_11_VERSION='2.7.2-gog38578'
+ARCHIVE_GOG_11_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_10='stellaris_utopia_2_7_1_38218.sh'
-ARCHIVE_GOG_10_URL='https://www.gog.com/game/stellaris_utopia'
 ARCHIVE_GOG_10_MD5='90ee30365b6d15d7644d85f717e35162'
 ARCHIVE_GOG_10_SIZE='76000'
 ARCHIVE_GOG_10_VERSION='2.7.1-gog38218'
