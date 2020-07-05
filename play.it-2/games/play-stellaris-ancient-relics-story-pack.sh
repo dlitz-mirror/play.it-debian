@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200516.1
+script_version=20200706.1
 
 # Set game-specific variables
 
@@ -42,10 +42,17 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Ancient Relics Story Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_1='stellaris_ancient_relics_story_pack_2_7_2_38578.sh'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
+ARCHIVE_GOG_1_MD5='a4b7251cd695846f650da58e58aea6bc'
+ARCHIVE_GOG_1_SIZE='34000'
+ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
+ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_0='stellaris_ancient_relics_story_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
 ARCHIVE_GOG_0_MD5='b69fc2a812c6eb817e866ec447e461ce'
 ARCHIVE_GOG_0_SIZE='34000'
 ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
