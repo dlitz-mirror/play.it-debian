@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200707.2
+script_version=20200924.2
 
 # Set game-specific variables
 
@@ -66,7 +66,7 @@ ARCHIVE_GAME_DATA_FILES='*.dll *.exe *.exe.config mono* Content PackedContent'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Lightning.bin.x86'
 APP_MAIN_EXE_BIN64='Lightning.bin.x86_64'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+APP_MAIN_ICON='Lightning.exe'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -115,7 +115,7 @@ prepare_package_layout
 # Extract icon
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
+icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
 
