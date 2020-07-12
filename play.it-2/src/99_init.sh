@@ -98,7 +98,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			 '--package='*|\
 			 '--package'|\
 			 '--icons='*|\
-			 '--icons')
+			 '--icons'|\
 			 '--output-dir='*|\
 			 '--output-dir')
 				if [ "${1%=*}" != "${1#*=}" ]; then
