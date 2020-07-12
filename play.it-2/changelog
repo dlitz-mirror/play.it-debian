@@ -1,5 +1,7 @@
 2.12
 
+  * Add --output-dir option
+
   * Allow to use renamed installers
 
   * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
