@@ -1,5 +1,7 @@
 2.12
 
+  * Only extract needed files when using unzip
+
   * Add --output-dir option
 
   * Allow to use renamed installers
