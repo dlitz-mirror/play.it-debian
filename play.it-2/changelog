@@ -1,51 +1,53 @@
-2.12
+2.12.0
 
-  * Only extract needed files when using unzip
+  * New options:
+    * --output-dir: Set the output directory for generated packages
+    * --overwrite: Replace packages if they already exist
+    * --icons: Allow including icons only if dependencies are present
 
-  * Add --output-dir option
+  * Wrapper changes:
+    * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
+    * Prevent scan of unneeded directories
+    * Drop script identification by MD5 hash
 
-  * Allow to use renamed installers
+  * Archive-related changes:
+    * Only extract needed files when using unzip
+    * Allow to use renamed installers
+    * Add support for LHA archives extraction
 
-  * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
+  * Engines-related changes:
+    * New engine: ResidualVM
+    * New engine: System-provided Mono runtime
+    * DOSBox: Use PLAYIT_DOSBOX_BINARY in launchers if defined
 
-  * Add new generic dependency keywords
+  * Packages-related changes:
+    * Add ability to set variables for package-specific postinst and prerm
+      scripts
+    * Arch Linux: Improve consistence of 32-bit packages naming
 
-  * Massive rework of all message-related functions
+  * New helper functions:
+    * version_target_is_older_than: Check if the game script target version is
+      older than a given one
+    * toupper: Convert files name to upper case
 
-  * Add ability to run games with ResidualVM
+  * New generic dependency keywords:
+    * libgdk_pixbuf-2.0.so.0
+    * libglib-2.0.so.0 / libgobject-2.0.so.0
+    * libmbedtls.so.12
+    * libpng16.so.16
+    * libopenal.so.1 (alias for "openal")
+    * libSDL2-2.0.so.0 (alias for "sdl2")
+    * libturbojpeg.so.0
+    * libuv.so.1
+    * libvorbisfile.so.3 (alias for "vorbis")
+    * libz.so.1
 
-  * Prevent scan of unneeded directories by the wrapper
-
-  * Use system-specific default installation prefix for generated packages
-
-  * Drop hardcoded paths for icons and .desktop launchers
-
-  * Add ability to use system-provided Mono runtime
-
-  * Drop script identification by MD5 hash from wrapper script
-
-  * Forcefully set errexit setting on library initialization
-
-  * Use PLAYIT_DOSBOX_BINARY in dosbox launchers if defined
-
-  * Add --overwrite option
-
-  * Add --icons option to allow including icons only if dependencies are
-    present
-
-  * New function `version_target_is_older_than` checking if the game script
-    target version is older than a given one
-
-  * Add `toupper` function to convert files name to upper case
-
-  * Use `dirname`/`basename` instead of built-in shell patterns
-
-  * Add ability to set variables for package-specific postinst and prerm
-    scripts
-
-  * Add support for LHA archives extraction
-
-  * Arch Linux: Improve consistence of 32-bit packages naming
+  * Codebase clean-up and improvements:
+    * Massive rework of all message-related functions
+    * Drop hardcoded paths for icons and .desktop launchers
+    * Use system-specific default installation prefix for generated packages
+    * Forcefully set errexit setting on library initialization
+    * Use dirname/basename instead of built-in shell patterns
 
 2.11.4
 
