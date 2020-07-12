@@ -1,5 +1,7 @@
 2.12
 
+  * Allow to use renamed installers
+
   * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
 
   * Add new generic dependency keywords
