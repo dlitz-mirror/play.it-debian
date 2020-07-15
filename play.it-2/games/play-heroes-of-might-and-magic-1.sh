@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200715.5
+script_version=20200715.6
 
 # Set game-specific variables
 
@@ -42,32 +42,54 @@ GAME_ID='heroes-of-might-and-magic-1'
 GAME_NAME='Heroes of Might and Magic: A Strategic Quest'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0'
 
+ARCHIVE_GOG_EN_1='setup_heroes_of_might_and_magic_1.2_(1.1)_(33754).exe'
+ARCHIVE_GOG_EN_1_MD5='f3100c6547ef1bb82af6dd6fec66bcbf'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/heroes_of_might_and_magic'
+ARCHIVE_GOG_EN_1_SIZE='630000'
+ARCHIVE_GOG_EN_1_VERSION='1.2-gog33754'
+
+ARCHIVE_GOG_FR_1='setup_heroes_of_might_and_magic_1.2_(1.1)_(french)_(33754).exe'
+ARCHIVE_GOG_FR_1_MD5='ed647dbfc98cd59dba885dc4fd005a62'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/heroes_of_might_and_magic'
+ARCHIVE_GOG_FR_1_SIZE='630000'
+ARCHIVE_GOG_FR_1_VERSION='1.2-gog33754'
+
 ARCHIVE_GOG_EN_0='setup_heroes_of_might_and_magic_2.3.0.45.exe'
 ARCHIVE_GOG_EN_0_MD5='2cae1821085090e30e128cd0a76b0d21'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/heroes_of_might_and_magic'
 ARCHIVE_GOG_EN_0_SIZE='530000'
 ARCHIVE_GOG_EN_0_VERSION='1.0-gog2.3.0.45'
 
 ARCHIVE_GOG_FR_0='setup_heroes_of_might_and_magic_french_2.3.0.45.exe'
 ARCHIVE_GOG_FR_0_MD5='9ec736a2a1b97dc36257f583f42864ac'
-ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/heroes_of_might_and_magic'
 ARCHIVE_GOG_FR_0_SIZE='530000'
 ARCHIVE_GOG_FR_0_VERSION='1.0-gog2.3.0.45'
 
-ARCHIVE_DOC_COMMON_PATH='app'
+ARCHIVE_DOC_COMMON_PATH='.'
 ARCHIVE_DOC_COMMON_FILES='help *.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_DOC_COMMON_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME0_MAIN_PATH='app'
-ARCHIVE_GAME0_MAIN_FILES='*.exe *.cfg wail32.dll data/campaign.hs data/heroes.agg data/standard.hs games maps/*.map'
+ARCHIVE_GAME_MAIN_PATH='.'
+ARCHIVE_GAME_MAIN_FILES='*.exe *.cfg wail32.dll wing.32 data/campaign.hs data/heroes.agg data/standard.hs games maps/*.map'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_MAIN_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME1_MAIN_PATH='sys'
-ARCHIVE_GAME1_MAIN_FILES='wing32.dll'
+# Keep compatibility with old archives
+ARCHIVE_GAME0_MAIN_PATH='sys'
+ARCHIVE_GAME0_MAIN_FILES='wing32.dll'
 
-ARCHIVE_GAME_COMMON_PATH='app'
+ARCHIVE_GAME_COMMON_PATH='.'
 ARCHIVE_GAME_COMMON_FILES='data maps/*.cmp homm1.gog'
+# Keep compatibility with old archives
+ARCHIVE_GAME_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_COMMON_PATH_GOG_FR_0='app'
 
 GAME_IMAGE='./homm1.gog'
 GAME_IMAGE_TYPE='iso'
