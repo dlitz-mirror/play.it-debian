@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200715.4
+script_version=20200715.5
 
 # Set game-specific variables
 
@@ -57,20 +57,17 @@ ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/heroes_of_might_and_magic'
 ARCHIVE_GOG_FR_0_SIZE='530000'
 ARCHIVE_GOG_FR_0_VERSION='1.0-gog2.3.0.45'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='help *.pdf *.txt'
+ARCHIVE_DOC_COMMON_PATH='app'
+ARCHIVE_DOC_COMMON_FILES='help *.pdf *.txt'
 
-ARCHIVE_GAME0_BIN_PATH='app'
-ARCHIVE_GAME0_BIN_FILES='*.exe *.cfg wail32.dll'
+ARCHIVE_GAME0_MAIN_PATH='app'
+ARCHIVE_GAME0_MAIN_FILES='*.exe *.cfg wail32.dll data/campaign.hs data/heroes.agg data/standard.hs games maps/*.map'
 
-ARCHIVE_GAME1_BIN_PATH='sys'
-ARCHIVE_GAME1_BIN_FILES='wing32.dll'
+ARCHIVE_GAME1_MAIN_PATH='sys'
+ARCHIVE_GAME1_MAIN_FILES='wing32.dll'
 
-ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='data/campaign.hs data/heroes.agg data/standard.hs games maps'
-
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='data homm1.gog'
+ARCHIVE_GAME_COMMON_PATH='app'
+ARCHIVE_GAME_COMMON_FILES='data maps/*.cmp homm1.gog'
 
 GAME_IMAGE='./homm1.gog'
 GAME_IMAGE_TYPE='iso'
@@ -88,32 +85,20 @@ APP_EDITOR_TYPE='dosbox'
 APP_EDITOR_EXE='editor.exe'
 APP_EDITOR_ICON='app/goggame-1207658748.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
+PACKAGES_LIST='PKG_MAIN PKG_COMMON'
 
-PKG_DATA_ID="$GAME_ID-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_COMMON_ID="${GAME_ID}-commmon"
 
-# Localization package — common properties
-PKG_L10N_ID="$GAME_ID-l10n"
-PKG_L10N_PROVIDE="$PKG_L10N_ID"
-# Localization package — English version
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_DESCRIPTION_GOG_EN='English localization'
-# Localization package — French version
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
-PKG_L10N_DESCRIPTION_GOG_FR='French localization'
-
-# Binaries package — common properties
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
-# Binaries package — English version
-PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
-PKG_BIN_DEPS_GOG_EN="$PKG_L10N_EN_ID $PKG_DATA dosbox"
-PKG_BIN_DESCRIPTION_GOG_EN='English version'
-# Binaries package — French version
-PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_DEPS_GOG_FR="$PKG_L10N_FR_ID $PKG_DATA dosbox"
-PKG_BIN_DESCRIPTION_GOG_FR='French version'
+# Main package — common properties
+PKG_MAIN_ID="$GAME_ID"
+PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
+PKG_MAIN_DEPS="$PKG_COMMON_ID dosbox"
+# Main package — English version
+PKG_MAIN_ID_GOG_EN="${PKG_MAIN_ID}-en"
+PKG_MAIN_DESCRIPTION_GOG_EN='English version'
+# Main package — French version
+PKG_MAIN_ID_GOG_FR="${PKG_MAIN_ID}-fr"
+PKG_MAIN_DESCRIPTION_GOG_FR='French version'
 
 # Load common functions
 
@@ -150,7 +135,7 @@ prepare_package_layout
 
 # Extract icons
 
-PKG='PKG_DATA'
+PKG='PKG_MAIN'
 icons_get_from_workdir 'APP_MAIN' 'APP_EDITOR'
 
 # Clean up temporary files
@@ -159,7 +144,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
+PKG='PKG_MAIN'
 launchers_write 'APP_MAIN' 'APP_EDITOR'
 
 # Build packages
