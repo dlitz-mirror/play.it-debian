@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200715.2
+script_version=20200715.3
 
 # Set game-specific variables
 
@@ -42,38 +42,78 @@ GAME_ID='heroes-of-might-and-magic-2'
 GAME_NAME='Heroes of Might and Magic Ⅱ: The Price of Loyalty'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_EN_2
+ARCHIVE_GOG_FR_2
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0'
 
+ARCHIVE_GOG_EN_2='setup_heroes_of_might_and_magic_2_gold_1.01_(2.1)_(33438).exe'
+ARCHIVE_GOG_EN_2_MD5='ff7738a587f10a16116743fe26267f65'
+ARCHIVE_GOG_EN_2_URL='https://www.gog.com/game/heroes_of_might_and_magic_2_gold_edition'
+ARCHIVE_GOG_EN_2_SIZE='590000'
+ARCHIVE_GOG_EN_2_VERSION='2.1-gog33438'
+
+ARCHIVE_GOG_FR_2='setup_heroes_of_might_and_magic_2_gold_1.01_(2.1)_(french)_(33438).exe'
+ARCHIVE_GOG_FR_2_MD5='b4613fc6b238c83d37247851d5e5a27e'
+ARCHIVE_GOG_FR_2_URL='https://www.gog.com/game/heroes_of_might_and_magic_2_gold_edition'
+ARCHIVE_GOG_FR_2_SIZE='510000'
+ARCHIVE_GOG_FR_2_VERSION='2.1-gog33438'
+
+ARCHIVE_GOG_EN_1='setup_heroes_of_might_and_magic_2_gold_1.0_hotfix_(29821).exe'
+ARCHIVE_GOG_EN_1_MD5='2dc1cb74c1e8de734fa97fc3d2484212'
+ARCHIVE_GOG_EN_1_SIZE='480000'
+ARCHIVE_GOG_EN_1_VERSION='2.1-gog29821'
+
+ARCHIVE_GOG_FR_1='setup_heroes_of_might_and_magic_2_gold_1.0_hotfix_(french)_(29821).exe'
+ARCHIVE_GOG_FR_1_MD5='1b43a2ce13128d77e8f2e40e72635af1'
+ARCHIVE_GOG_FR_1_SIZE='410000'
+ARCHIVE_GOG_FR_1_VERSION='2.1-gog29821'
+
 ARCHIVE_GOG_EN_0='setup_homm2_gold_2.1.0.29.exe'
 ARCHIVE_GOG_EN_0_MD5='b6785579d75e47936517a79374b17ebc'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/heroes_of_might_and_magic_2_gold_edition'
 ARCHIVE_GOG_EN_0_SIZE='480000'
 ARCHIVE_GOG_EN_0_VERSION='2.1-gog2.1.0.29'
 
 ARCHIVE_GOG_FR_0='setup_homm2_gold_french_2.1.0.29.exe'
 ARCHIVE_GOG_FR_0_MD5='c49d8f5d0f6d56e54cf6f9c7a526750f'
-ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/heroes_of_might_and_magic_2_gold_edition'
 ARCHIVE_GOG_FR_0_SIZE='410000'
 ARCHIVE_GOG_FR_0_VERSION='2.1-gog2.1.0.29'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='readme.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_DOC_MAIN_PATH_GOG_FR_0='app'
 
-ARCHIVE_DOC_COMMON_PATH='app'
+ARCHIVE_DOC_COMMON_PATH='.'
 ARCHIVE_DOC_COMMON_FILES='eula help *.pdf h2camp.txt polcamp.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_DOC_COMMON_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME0_MAIN_PATH='app'
-ARCHIVE_GAME0_MAIN_FILES='*.exe *.cfg homm2.gog homm2.inst games maps data/*.agg'
+ARCHIVE_GAME_MAIN_PATH='.'
+ARCHIVE_GAME_MAIN_FILES='*.exe *.cfg wing.32 homm2.gog homm2.ins homm2.inst games maps data/*.agg'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_MAIN_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME1_MAIN_PATH='sys'
-ARCHIVE_GAME1_MAIN_FILES='wing32.dll'
+# Keep compatibility with old archives
+ARCHIVE_GAME0_MAIN_PATH='sys'
+ARCHIVE_GAME0_MAIN_FILES='wing32.dll'
 
-ARCHIVE_GAME_COMMON_PATH='app'
+ARCHIVE_GAME_COMMON_PATH='.'
 ARCHIVE_GAME_COMMON_FILES='journals music sound data/*.dat data/*.hs data/*.smk'
+# Keep compatibility with old archives
+ARCHIVE_GAME_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_COMMON_PATH_GOG_FR_0='app'
 
-GAME_IMAGE='./homm2.inst'
+GAME_IMAGE='homm2.ins'
 GAME_IMAGE_TYPE='cdrom'
+# Keep compatibility with old archives
+GAME_IMAGE_GOG_EN_0='homm2.inst'
+GAME_IMAGE_GOG_FR_0='homm2.inst'
 
 CONFIG_FILES='*.cfg data/standard.hs'
 DATA_DIRS='./games ./maps'
@@ -145,6 +185,10 @@ icons_get_from_workdir 'APP_MAIN' 'APP_EDITOR'
 # Clean up temporary files
 
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Use correct value for CD image
+
+use_archive_specific_value 'GAME_IMAGE'
 
 # Write launchers
 
