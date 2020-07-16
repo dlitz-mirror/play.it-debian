@@ -42,15 +42,36 @@ GAME_ID='heroes-of-might-and-magic-4'
 GAME_NAME='Heroes of Might and Magic Ⅳ'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_EN_2
+ARCHIVE_GOG_FR_2
 ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0'
 
+ARCHIVE_GOG_EN_2='setup_heroes_of_might_and_magic_4_complete_3.0_(25023).exe'
+ARCHIVE_GOG_EN_2_MD5='2694dfef6827142866fb778588966d8e'
+ARCHIVE_GOG_EN_2_TYPE='innosetup'
+ARCHIVE_GOG_EN_2_URL='https://www.gog.com/game/heroes_of_might_and_magic_4_complete'
+ARCHIVE_GOG_EN_2_VERSION='3.0-gog25023'
+ARCHIVE_GOG_EN_2_SIZE='1100000'
+ARCHIVE_GOG_EN_2_PART1='setup_heroes_of_might_and_magic_4_complete_3.0_(25023)-1.bin'
+ARCHIVE_GOG_EN_2_PART1_MD5='54bfa42a4e23236729f8b0724216ee83'
+ARCHIVE_GOG_EN_2_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_FR_2='setup_heroes_of_might_and_magic_4_complete_3.0_(french)_(25023).exe'
+ARCHIVE_GOG_FR_2_MD5='4a90a92d637bc7d1af5354565ae5cd70'
+ARCHIVE_GOG_FR_2_TYPE='innosetup'
+ARCHIVE_GOG_FR_2_URL='https://www.gog.com/game/heroes_of_might_and_magic_4_complete'
+ARCHIVE_GOG_FR_2_VERSION='3.0-gog25023'
+ARCHIVE_GOG_FR_2_SIZE='1100000'
+ARCHIVE_GOG_FR_2_PART1='setup_heroes_of_might_and_magic_4_complete_3.0_(french)_(25023)-1.bin'
+ARCHIVE_GOG_FR_2_PART1_MD5='46d1239b8491d3adec647a7526f763b2'
+ARCHIVE_GOG_FR_2_PART1_TYPE='innosetup'
+
 ARCHIVE_GOG_EN_1='setup_heroes_of_might_and_magic_4_complete_3.0_(22812).exe'
 ARCHIVE_GOG_EN_1_MD5='d5e0a55e2bba4f0ac643ec1fb2ba17cc'
 ARCHIVE_GOG_EN_1_TYPE='innosetup1.7'
-ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/heroes_of_might_and_magic_4_complete'
 ARCHIVE_GOG_EN_1_VERSION='3.0-gog22812'
 ARCHIVE_GOG_EN_1_SIZE='1100000'
 ARCHIVE_GOG_EN_1_PART1='setup_heroes_of_might_and_magic_4_complete_3.0_(22812)-1.bin'
@@ -60,7 +81,6 @@ ARCHIVE_GOG_EN_1_PART1_TYPE='innosetup1.7'
 ARCHIVE_GOG_FR_1='setup_heroes_of_might_and_magic_4_complete_3.0_(french)_(22812).exe'
 ARCHIVE_GOG_FR_1_MD5='e15ec7a308ea442bfeeb3410314b39d7'
 ARCHIVE_GOG_FR_1_TYPE='innosetup1.7'
-ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/heroes_of_might_and_magic_4_complete'
 ARCHIVE_GOG_FR_1_VERSION='3.0-gog22812'
 ARCHIVE_GOG_FR_1_SIZE='1100000'
 ARCHIVE_GOG_FR_1_PART1='setup_heroes_of_might_and_magic_4_complete_3.0_(french)_(22812)-1.bin'
