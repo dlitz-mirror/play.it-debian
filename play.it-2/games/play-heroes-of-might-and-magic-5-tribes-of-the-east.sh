@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200716.2
+script_version=20200716.3
 
 # Set game-specific variables
 
@@ -105,10 +105,20 @@ ARCHIVE_GOG_RAR_FR_0_PART1='setup_homm5_tote_french_2.1.0.24-1.bin'
 ARCHIVE_GOG_RAR_FR_0_PART1_MD5='bfb583edb64c548cf60f074e4abc2043'
 ARCHIVE_GOG_RAR_FR_0_PART1_TYPE='rar'
 
+ARCHIVE_DOC_FANDOCS_PATH='.'
+ARCHIVE_DOC_FANDOCS_FILES='fandocuments/*.pdf fandocuments/*.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_FANDOCS_PATH_GOG_RAR='game'
+
 ARCHIVE_DOC_L10N_PATH='.'
-ARCHIVE_DOC_L10N_FILES='*.pdf *.txt editor?documentation fandocuments/*.pdf fandocuments/*.txt'
+ARCHIVE_DOC_L10N_FILES='*.pdf *.txt editor?documentation'
 # Keep compatibility with old archives
 ARCHIVE_DOC_L10N_PATH_GOG_RAR='game'
+
+ARCHIVE_GAME_FANDOCS_PATH='.'
+ARCHIVE_GAME_FANDOCS_FILES='fandocuments/*.exe'
+# Keep compatibility with old archives
+ARCHIVE_GAME_FANDOCS_PATH_GOG_RAR='game'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='bin bindm'
@@ -116,7 +126,7 @@ ARCHIVE_GAME_BIN_FILES='bin bindm'
 ARCHIVE_GAME_BIN_PATH_GOG_RAR='game'
 
 ARCHIVE_GAME_L10N_PATH='.'
-ARCHIVE_GAME_L10N_FILES='fandocuments/*.exe data/a2p1-texts.pak data/sound.pak data/texts.pak'
+ARCHIVE_GAME_L10N_FILES='data/a2p1-texts.pak data/sound.pak data/texts.pak'
 # Keep compatibility with old archives
 ARCHIVE_GAME_L10N_PATH_GOG_RAR='game'
 
@@ -156,7 +166,25 @@ APP_SKILLS_ICON='fandocuments/skillwheel.exe'
 APP_SKILLS_ICON_ID='200'
 APP_SKILLS_PRERUN="$APP_MAIN_PRERUN"
 
-PACKAGES_LIST='PKG_L10N PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_FANDOCS PKG_L10N PKG_DATA PKG_BIN'
+
+# Fan documents — common properties
+PKG_FANDOCS_ARCH='32'
+PKG_FANDOCS_ID="${GAME_ID}-fan-documents"
+PKG_FANDOCS_PROVIDE="$PKG_FANDOCS_ID"
+PKG_FANDOCS_DESCRIPTION='Fan documents'
+PKG_FANDOCS_DEPS='wine'
+# Fan documents — English
+PKG_FANDOCS_ID_GOG_EN="${PKG_FANDOCS_ID}-en"
+PKG_FANDOCS_DESCRIPTION_GOG_EN="${PKG_FANDOCS_DESCRIPTION} - English version"
+# Fan documents — French
+PKG_FANDOCS_ID_GOG_FR="${PKG_FANDOCS_ID}-fr"
+PKG_FANDOCS_DESCRIPTION_GOG_FR="${PKG_FANDOCS_DESCRIPTION} - French version"
+# Keep compatibility with old archives
+PKG_FANDOCS_ID_GOG_RAR_EN="$PKG_FANDOCS_ID_GOG_EN"
+PKG_FANDOCS_ID_GOG_RAR_FR="$PKG_FANDOCS_ID_GOG_FR"
+PKG_FANDOCS_DESCRIPTION_GOG_RAR_EN="$PKG_FANDOCS_DESCRIPTION_GOG_EN"
+PKG_FANDOCS_DESCRIPTION_GOG_RAR_FR="$PKG_FANDOCS_DESCRIPTION_GOG_FR"
 
 # Localization — common properties
 PKG_L10N_ID="${GAME_ID}-l10n"
@@ -222,19 +250,12 @@ prepare_package_layout
 
 # Get icons
 
-###
-# TODO
-# icons_move_to fails if the destination is not empty
-# see https://forge.dotslashplay.it/play.it/scripts/-/issues/233
-###
-
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN' 'APP_EDIT' 'APP_DM'
-icons_move_to 'PKG_L10N'
-
-PKG='PKG_L10N'
-icons_get_from_package 'APP_SKILLS'
 icons_move_to 'PKG_DATA'
+
+PKG='PKG_FANDOCS'
+icons_get_from_package 'APP_SKILLS'
 
 # Clean up temporary files
 
@@ -243,7 +264,18 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # Write launchers
 
 PKG='PKG_BIN'
-launchers_write 'APP_MAIN' 'APP_EDIT' 'APP_DM' 'APP_SKILLS'
+launchers_write 'APP_MAIN' 'APP_EDIT' 'APP_DM'
+
+PKG='PKG_FANDOCS'
+(
+	# Do not create a winecfg launcher, to avoid a file conflict with PKG_BIN
+	launcher_write_script_wine_winecfg() { return 0 ; }
+	desktop_file="${PKG_FANDOCS_PATH}${PATH_DESK}/${GAME_ID}_winecfg.desktop"
+	mkdir --parents "$(dirname "$desktop_file")"
+	touch "$desktop_file"
+	launchers_write 'APP_SKILLS'
+	rm "$desktop_file"
+)
 
 # Build package
 
