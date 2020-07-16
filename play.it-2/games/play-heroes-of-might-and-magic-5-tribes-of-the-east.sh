@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200716.1
+script_version=20200716.2
 
 # Set game-specific variables
 
@@ -42,40 +42,88 @@ GAME_ID='heroes-of-might-and-magic-5-tribes-of-the-east'
 GAME_NAME='Heroes of Might and Magic Ⅴ - Tribes of the East'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_EN_0
-ARCHIVE_GOG_FR_0'
+ARCHIVE_GOG_FR_0
+ARCHIVE_GOG_RAR_EN_0
+ARCHIVE_GOG_RAR_FR_0'
 
-ARCHIVE_GOG_EN_0='setup_homm5_tote_2.1.0.24.exe'
-ARCHIVE_GOG_EN_0_MD5='80db7a846cb8a7052506db814cb2185e'
-ARCHIVE_GOG_EN_0_TYPE='rar'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/heroes_of_might_and_magic_5_bundle'
+ARCHIVE_GOG_EN_1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_v2_(28569).exe'
+ARCHIVE_GOG_EN_1_MD5='9593ad538a39638bacb4d7ef45368ce2'
+ARCHIVE_GOG_EN_1_TYPE='innosetup'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/heroes_of_might_and_magic_5_bundle'
+ARCHIVE_GOG_EN_1_SIZE='2300000'
+ARCHIVE_GOG_EN_1_VERSION='3.1-gog28569'
+ARCHIVE_GOG_EN_1_PART1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_v2_(28569)-1.bin'
+ARCHIVE_GOG_EN_1_PART1_MD5='8e03271dc4aff5834110664b5d6eefde'
+ARCHIVE_GOG_EN_1_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_FR_1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_v2_(french)_(28569).exe'
+ARCHIVE_GOG_FR_1_MD5='6a1a915180d1cee32e78419f6917be87'
+ARCHIVE_GOG_FR_1_TYPE='innosetup'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/heroes_of_might_and_magic_5_bundle'
+ARCHIVE_GOG_FR_1_SIZE='2300000'
+ARCHIVE_GOG_FR_1_VERSION='3.1-gog28569'
+ARCHIVE_GOG_FR_1_PART1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_v2_(french)_(28569)-1.bin'
+ARCHIVE_GOG_FR_1_PART1_MD5='f48ed6725126696bf3e67ce327db6263'
+ARCHIVE_GOG_FR_1_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_EN_0='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_(25025).exe'
+ARCHIVE_GOG_EN_0_MD5='3096f296d5d8b6cb0b4ab479fc06474b'
+ARCHIVE_GOG_EN_0_TYPE='innosetup'
 ARCHIVE_GOG_EN_0_SIZE='2300000'
-ARCHIVE_GOG_EN_0_VERSION='3.1-gog2.1.0.24'
-ARCHIVE_GOG_EN_0_PART1='setup_homm5_tote_2.1.0.24.bin'
-ARCHIVE_GOG_EN_0_PART1_MD5='48a783c1f6d3e15a0439fc58d85c5b28'
-ARCHIVE_GOG_EN_0_PART1_TYPE='rar'
+ARCHIVE_GOG_EN_0_VERSION='3.1-gog25025'
+ARCHIVE_GOG_EN_0_PART1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_(25025)-1.bin'
+ARCHIVE_GOG_EN_0_PART1_MD5='5f4840b0105bd6b4228ff9b707bc0434'
+ARCHIVE_GOG_EN_0_PART1_TYPE='innosetup'
 
-ARCHIVE_GOG_FR_0='setup_homm5_tote_french_2.1.0.24.exe'
-ARCHIVE_GOG_FR_0_MD5='67f1c9b8ddeae0707729ebfb8ec05e51'
-ARCHIVE_GOG_FR_0_TYPE='rar'
-ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/heroes_of_might_and_magic_5_bundle'
+ARCHIVE_GOG_FR_0='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_(french)_(25025).exe'
+ARCHIVE_GOG_FR_0_MD5='a2b5d18f34d3fa1a760de4fa63aa3819'
+ARCHIVE_GOG_FR_0_TYPE='innosetup'
 ARCHIVE_GOG_FR_0_SIZE='2300000'
-ARCHIVE_GOG_FR_0_VERSION='3.1-gog2.1.0.24'
-ARCHIVE_GOG_FR_0_PART1='setup_homm5_tote_french_2.1.0.24-1.bin'
-ARCHIVE_GOG_FR_0_PART1_MD5='bfb583edb64c548cf60f074e4abc2043'
-ARCHIVE_GOG_FR_0_PART1_TYPE='rar'
+ARCHIVE_GOG_FR_0_VERSION='3.1-gog25025'
+ARCHIVE_GOG_FR_0_PART1='setup_heroes_of_might_and_magic_v_-_tribes_of_the_east_3.1_(french)_(25025)-1.bin'
+ARCHIVE_GOG_FR_0_PART1_MD5='08a5ec9aaf674235db4d96072bf373fc'
+ARCHIVE_GOG_FR_0_PART1_TYPE='innosetup'
 
-ARCHIVE_DOC_L10N_PATH='game'
+ARCHIVE_GOG_RAR_EN_0='setup_homm5_tote_2.1.0.24.exe'
+ARCHIVE_GOG_RAR_EN_0_MD5='80db7a846cb8a7052506db814cb2185e'
+ARCHIVE_GOG_RAR_EN_0_TYPE='rar'
+ARCHIVE_GOG_RAR_EN_0_SIZE='2300000'
+ARCHIVE_GOG_RAR_EN_0_VERSION='3.1-gog2.1.0.24'
+ARCHIVE_GOG_RAR_EN_0_PART1='setup_homm5_tote_2.1.0.24.bin'
+ARCHIVE_GOG_RAR_EN_0_PART1_MD5='48a783c1f6d3e15a0439fc58d85c5b28'
+ARCHIVE_GOG_RAR_EN_0_PART1_TYPE='rar'
+
+ARCHIVE_GOG_RAR_FR_0='setup_homm5_tote_french_2.1.0.24.exe'
+ARCHIVE_GOG_RAR_FR_0_MD5='67f1c9b8ddeae0707729ebfb8ec05e51'
+ARCHIVE_GOG_RAR_FR_0_TYPE='rar'
+ARCHIVE_GOG_RAR_FR_0_SIZE='2300000'
+ARCHIVE_GOG_RAR_FR_0_VERSION='3.1-gog2.1.0.24'
+ARCHIVE_GOG_RAR_FR_0_PART1='setup_homm5_tote_french_2.1.0.24-1.bin'
+ARCHIVE_GOG_RAR_FR_0_PART1_MD5='bfb583edb64c548cf60f074e4abc2043'
+ARCHIVE_GOG_RAR_FR_0_PART1_TYPE='rar'
+
+ARCHIVE_DOC_L10N_PATH='.'
 ARCHIVE_DOC_L10N_FILES='*.pdf *.txt editor?documentation fandocuments/*.pdf fandocuments/*.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_L10N_PATH_GOG_RAR='game'
 
-ARCHIVE_GAME_BIN_PATH='game'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='bin bindm'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_RAR='game'
 
-ARCHIVE_GAME_L10N_PATH='game'
+ARCHIVE_GAME_L10N_PATH='.'
 ARCHIVE_GAME_L10N_FILES='fandocuments/*.exe data/a2p1-texts.pak data/sound.pak data/texts.pak'
+# Keep compatibility with old archives
+ARCHIVE_GAME_L10N_PATH_GOG_RAR='game'
 
-ARCHIVE_GAME_DATA_PATH='game'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.bmp customcontentdm editor hwcursors music profiles video data/a2p1-data.pak data/data.pak data/soundsfx.pak'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_RAR='game'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bin/h5_game.exe'
@@ -119,6 +167,11 @@ PKG_L10N_DESCRIPTION_GOG_EN='English localization'
 # Localization — French
 PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+# Keep compatibility with old archives
+PKG_L10N_ID_GOG_RAR_EN="$PKG_L10N_ID_GOG_EN"
+PKG_L10N_ID_GOG_RAR_FR="$PKG_L10N_ID_GOG_FR"
+PKG_L10N_DESCRIPTION_GOG_RAR_EN="$PKG_L10N_DESCRIPTION_GOG_EN"
+PKG_L10N_DESCRIPTION_GOG_RAR_FR="$PKG_L10N_DESCRIPTION_GOG_FR"
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
@@ -156,8 +209,15 @@ fi
 
 # Extract game data
 
-extract_data_from "$SOURCE_ARCHIVE_PART1"
-tolower "$PLAYIT_WORKDIR/gamedata"
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_RAR'*)
+		extract_data_from "$SOURCE_ARCHIVE_PART1"
+		tolower "$PLAYIT_WORKDIR/gamedata"
+	;;
+	(*)
+		extract_data_from "$SOURCE_ARCHIVE"
+	;;
+esac
 prepare_package_layout
 
 # Get icons
