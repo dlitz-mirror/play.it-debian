@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200716.3
+script_version=20200716.4
 
 # Set game-specific variables
 
@@ -135,10 +135,21 @@ ARCHIVE_GAME_DATA_FILES='*.bmp customcontentdm editor hwcursors music profiles v
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_GOG_RAR='game'
 
+DATA_DIRS='./profiles'
+
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bin/h5_game.exe'
 APP_MAIN_ICON='bin/h5_game.exe'
-APP_MAIN_PRERUN='# Run the game binary from its parent directory
+APP_MAIN_PRERUN='# Store user data in persistent directories
+user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/My Games/Heroes of Might and Magic V - Tribes of the East/Profiles"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/profiles"
+	ln --symbolic "$PATH_DATA/profiles" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Run the game binary from its parent directory
 cd "$(dirname "$APP_EXE")"
 APP_EXE=$(basename "$APP_EXE")'
 
