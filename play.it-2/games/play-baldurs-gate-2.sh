@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200801.6
+script_version=20200801.7
 
 # Set game-specific variables
 
@@ -102,6 +102,8 @@ DATA_DIRS='./characters ./mpsave ./save'
 
 # Set a WINE virtual desktop on first launch, using the current desktop resolution
 APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
+# Disable the multi-threaded command stream feature, as it has a very severe impact on performances
+APP_WINETRICKS="$APP_WINETRICKS csmt=off"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bgmain.exe'
