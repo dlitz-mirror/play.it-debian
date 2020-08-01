@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200801.5
+script_version=20200801.6
 
 # Set game-specific variables
 
@@ -83,11 +83,11 @@ ARCHIVE_DOC_L10N_PATH_GOG_FR_0='data/noarch/docs'
 
 ARCHIVE_GAME_BIN_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate 2"
 ARCHIVE_GAME_BIN_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate 2 (french)"
-ARCHIVE_GAME_BIN_FILES='baldur.exe bg*test.exe bgmain.exe charview.exe keymap.ini script?compiler/*.exe script?compiler/*.bat'
+ARCHIVE_GAME_BIN_FILES='baldur.exe bg*test.exe bgconfig.exe bgmain.exe charview.exe keymap.ini script?compiler/*.exe script?compiler/*.bat'
 
 ARCHIVE_GAME_L10N_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate 2"
 ARCHIVE_GAME_L10N_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate 2 (french)"
-ARCHIVE_GAME_L10N_FILES='*.tlk mplay* bgconfig.exe glsetup.exe autorun.ini baldur.ini lasnil32.dll chitin.key language.txt characters sounds override/*.wav override/ar0406.bcs override/baldur.bcs data/areas.bif data/chasound.bif data/cresound.bif data/desound.bif data/missound.bif data/movies/25movies.bif data/movies/movend.bif data/movies/movintro.bif data/npchd0so.bif data/*npcso* data/objanim.bif data/scripts.bif'
+ARCHIVE_GAME_L10N_FILES='*.tlk mplay* glsetup.exe autorun.ini baldur.ini lasnil32.dll chitin.key language.txt characters sounds override/*.wav override/ar0406.bcs override/baldur.bcs data/areas.bif data/chasound.bif data/cresound.bif data/desound.bif data/missound.bif data/movies/25movies.bif data/movies/movend.bif data/movies/movintro.bif data/npchd0so.bif data/*npcso* data/objanim.bif data/scripts.bif'
 
 ARCHIVE_GAME0_DATA_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate 2/data"
 ARCHIVE_GAME0_DATA_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate 2 (french)/data"
@@ -177,11 +177,7 @@ prepare_package_layout
 # Extract icons
 
 PKG='PKG_BIN'
-icons_get_from_package 'APP_MAIN'
-icons_move_to 'PKG_DATA'
-
-PKG='PKG_L10N'
-icons_get_from_package 'APP_CONFIG'
+icons_get_from_package 'APP_MAIN' 'APP_CONFIG'
 icons_move_to 'PKG_DATA'
 
 # Clean up temporary files
