@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -29,53 +29,57 @@ set -o errexit
 ###
 
 ###
-# Baldur’s Gate 2
+# Baldurʼs Gate Ⅱ
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181028.1
+script_version=20200801.5
 
 # Set game-specific variables
 
+GAME_ID='baldurs-gate-2'
+GAME_NAME='Baldurʼs Gate Ⅱ'
+
+# unix2dos is used for baldur.ini edition
 SCRIPT_DEPS='unix2dos'
 
-GAME_ID='baldurs-gate-2'
-# shellcheck disable=SC1112
-GAME_NAME='Baldur’s Gate II'
+ARCHIVES_LIST='
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
+ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_0'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_EN_OLD0 ARCHIVE_GOG_FR ARCHIVE_GOG_FR_OLD0'
+ARCHIVE_GOG_EN_1='baldur_s_gate_2_complete_gog_3_23651.sh'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
+ARCHIVE_GOG_EN_1_MD5='030a61ce961ac88cd9506f1fd42135d6'
+ARCHIVE_GOG_EN_1_VERSION='2.5.26498-gog23651'
+ARCHIVE_GOG_EN_1_SIZE='3400000'
+ARCHIVE_GOG_EN_1_TYPE='mojosetup'
 
-ARCHIVE_GOG_EN='baldur_s_gate_2_complete_gog_3_23651.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
-ARCHIVE_GOG_EN_MD5='030a61ce961ac88cd9506f1fd42135d6'
-ARCHIVE_GOG_EN_VERSION='2.5.26498-gog23651'
-ARCHIVE_GOG_EN_SIZE='3400000'
-ARCHIVE_GOG_EN_TYPE='mojosetup'
+ARCHIVE_GOG_FR_1='baldur_s_gate_2_complete_french_gog_3_23651.sh'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
+ARCHIVE_GOG_FR_1_MD5='c72eb1b9bae7109de6a7005b3dc44e2c'
+ARCHIVE_GOG_FR_1_VERSION='2.5.26498-gog23651'
+ARCHIVE_GOG_FR_1_SIZE='3400000'
+ARCHIVE_GOG_FR_1_TYPE='mojosetup'
 
-ARCHIVE_GOG_EN_OLD0='gog_baldur_s_gate_2_complete_2.1.0.7.sh'
-ARCHIVE_GOG_EN_OLD0_MD5='e92161d7fc0a2eea234b2c93760c9cdb'
-ARCHIVE_GOG_EN_OLD0_VERSION='2.5.26498-gog2.1.0.7'
-ARCHIVE_GOG_EN_OLD0_SIZE='3000000'
+ARCHIVE_GOG_EN_0='gog_baldur_s_gate_2_complete_2.1.0.7.sh'
+ARCHIVE_GOG_EN_0_MD5='e92161d7fc0a2eea234b2c93760c9cdb'
+ARCHIVE_GOG_EN_0_VERSION='2.5.26498-gog2.1.0.7'
+ARCHIVE_GOG_EN_0_SIZE='3000000'
 
-ARCHIVE_GOG_FR='baldur_s_gate_2_complete_french_gog_3_23651.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
-ARCHIVE_GOG_FR_MD5='c72eb1b9bae7109de6a7005b3dc44e2c'
-ARCHIVE_GOG_FR_VERSION='2.5.26498-gog23651'
-ARCHIVE_GOG_FR_SIZE='3400000'
-ARCHIVE_GOG_FR_TYPE='mojosetup'
-
-ARCHIVE_GOG_FR_OLD0='gog_baldur_s_gate_2_complete_french_2.1.0.7.sh'
-ARCHIVE_GOG_FR_OLD0_MD5='6551bda3d8c7330b7ad66842ac1d4ed4'
-ARCHIVE_GOG_FR_OLD0_VERSION='2.5.26498-gog2.1.0.7'
-ARCHIVE_GOG_FR_OLD0_SIZE='3000000'
+ARCHIVE_GOG_FR_0='gog_baldur_s_gate_2_complete_french_2.1.0.7.sh'
+ARCHIVE_GOG_FR_0_MD5='6551bda3d8c7330b7ad66842ac1d4ed4'
+ARCHIVE_GOG_FR_0_VERSION='2.5.26498-gog2.1.0.7'
+ARCHIVE_GOG_FR_0_SIZE='3000000'
 
 ARCHIVE_DOC_L10N_PATH_GOG_EN='data/noarch/docs/english'
 ARCHIVE_DOC_L10N_PATH_GOG_FR='data/noarch/docs/french'
 ARCHIVE_DOC_L10N_FILES='*'
 # Keep compatibility with old archives
-ARCHIVE_DOC_L10N_PATH_GOG_EN_OLD0='data/noarch/docs'
-ARCHIVE_DOC_L10N_PATH_GOG_FR_OLD0='data/noarch/docs'
+ARCHIVE_DOC_L10N_PATH_GOG_EN_0='data/noarch/docs'
+ARCHIVE_DOC_L10N_PATH_GOG_FR_0='data/noarch/docs'
 
 ARCHIVE_GAME_BIN_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate 2"
 ARCHIVE_GAME_BIN_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate 2 (french)"
@@ -93,29 +97,33 @@ ARCHIVE_GAME1_DATA_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's ga
 ARCHIVE_GAME1_DATA_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate 2 (french)"
 ARCHIVE_GAME1_DATA_FILES='*.ico *.mpi music scripts script?compiler override data'
 
-CONFIG_FILES='./*.ini'
+CONFIG_FILES='*.ini'
 DATA_DIRS='./characters ./mpsave ./save'
 
-APP_WINETRICKS="vd=\$(xrandr|grep '\\*'|awk '{print \$1}')"
+# Set a WINE virtual desktop on first launch, using the current desktop resolution
+APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bgmain.exe'
 APP_MAIN_ICON='baldur.exe'
 
 APP_CONFIG_ID="${GAME_ID}_config"
+APP_CONFIG_NAME="$GAME_NAME - configuration"
+APP_CONFIG_CAT='Settings'
 APP_CONFIG_TYPE='wine'
 APP_CONFIG_EXE='bgconfig.exe'
 APP_CONFIG_ICON='bgconfig.exe'
-APP_CONFIG_NAME="$GAME_NAME - configuration"
-APP_CONFIG_CAT='Settings'
 
 PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
 
+# Localization package — common properties
 PKG_L10N_ID="${GAME_ID}-l10n"
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_PROVIDE="$PKG_L10N_ID"
+# Localization package — English version
+PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
 PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+# Localization package — French version
+PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
 
 PKG_DATA_ID="${GAME_ID}-data"
@@ -126,7 +134,7 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -149,19 +157,22 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
+
+# Delete broken symbolic links
+
 rm --force --recursive "$PLAYIT_WORKDIR"/gamedata/data/noarch/prefix/drive_c/GOG?Games/*/mpsave
 rm --force --recursive "$PLAYIT_WORKDIR"/gamedata/data/noarch/prefix/drive_c/GOG?Games/*/temp
+
 tolower "$PLAYIT_WORKDIR/gamedata/data/noarch/docs"
 tolower "$PLAYIT_WORKDIR/gamedata/data/noarch/prefix/drive_c"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
@@ -173,21 +184,34 @@ PKG='PKG_L10N'
 icons_get_from_package 'APP_CONFIG'
 icons_move_to 'PKG_DATA'
 
+# Clean up temporary files
+
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
 # Tweak paths in baldur.ini
 
+###
+# TODO
+# A library-provided function for .ini files edition could be useful
+###
+
 file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
-pattern="s/\\(HD0:\\)=.\\+/\\1=C:\\\\$GAME_ID\\\\/"
+path_game='C:\\'"$GAME_ID"'\\'
+path_data='C:\\'"$GAME_ID"'\\data\\'
+pattern="s/HD0:=.\\+/HD0:=$path_game/"
+pattern="$pattern;s/CD1:=.\\+/CD1:=$path_data/"
+pattern="$pattern;s/CD2:=.\\+/CD2:=$path_data/"
+pattern="$pattern;s/CD3:=.\\+/CD3:=$path_data/"
+pattern="$pattern;s/CD4:=.\\+/CD4:=$path_data/"
+pattern="$pattern;s/CD5:=.\\+/CD5:=$path_data/"
+pattern="$pattern;s/CD6:=.\\+/CD6:=$path_data/"
 sed --in-place "$pattern" "$file"
-for drive in 'CD1' 'CD2' 'CD3' 'CD4' 'CD5' 'CD6'; do
-	pattern="s/\\($drive:\\)=.\\+/\\1=C:\\\\$GAME_ID\\\\data\\\\/"
-	sed --in-place "$pattern" "$file"
-done
 unix2dos "$file" > /dev/null 2>&1
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_CONFIG'
+launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Build package
 
