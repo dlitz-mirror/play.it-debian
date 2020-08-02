@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200725.1
+script_version=20200803.1
 
 # Set game-specific variables
 
@@ -42,13 +42,26 @@ GAME_ID='star-wars-battlefront-2'
 GAME_NAME='Star Wars Battlefront Ⅱ'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_2='setup_star_wars_battlefront_ii_1.1_(10935).exe'
+ARCHIVE_GOG_2_URL='https://www.gog.com/game/star_wars_battlefront_ii'
+ARCHIVE_GOG_2_MD5='0b74c1d7cced6d6bde95605661b67673'
+ARCHIVE_GOG_2_VERSION='1.1-gog10935'
+ARCHIVE_GOG_2_SIZE='10000000'
+ARCHIVE_GOG_2_TYPE='innosetup'
+ARCHIVE_GOG_2_PART1='setup_star_wars_battlefront_ii_1.1_(10935)-1.bin'
+ARCHIVE_GOG_2_PART1_MD5='c7ad88e5eb89b3701dad3a6973d9918b'
+ARCHIVE_GOG_2_PART1_TYPE='innosetup'
+ARCHIVE_GOG_2_PART2='setup_star_wars_battlefront_ii_1.1_(10935)-2.bin'
+ARCHIVE_GOG_2_PART2_MD5='3a52d98aa43cb78fd661a656e5cf96a2'
+ARCHIVE_GOG_2_PART2_TYPE='innosetup'
+
 ARCHIVE_GOG_1='setup_star_wars_battlefront_ii_1.1_multiplayer_update_2_(17606).exe'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/star_wars_battlefront_ii'
 ARCHIVE_GOG_1_MD5='f482ec251067336d3b8211774b4c44f6'
-ARCHIVE_GOG_1_VERSION='1.1.2-gog17606'
+ARCHIVE_GOG_1_VERSION='1.1-gog17606'
 ARCHIVE_GOG_1_SIZE='11000000'
 ARCHIVE_GOG_1_TYPE='innosetup1.7'
 ARCHIVE_GOG_1_PART1='setup_star_wars_battlefront_ii_1.1_multiplayer_update_2_(17606)-1.bin'
