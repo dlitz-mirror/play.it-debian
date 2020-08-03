@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200803.1
+script_version=20200803.2
 
 # Set game-specific variables
 
@@ -74,22 +74,19 @@ ARCHIVE_GOG_FR_0_VERSION='1.3.5521-gog2.1.0.10'
 ARCHIVE_GOG_FR_0_SIZE='3100000'
 
 ARCHIVE_DOC_L10N_PATH='data/noarch/docs'
-ARCHIVE_DOC_L10N_FILES='end?user?license?agreement.txt installer_readme.txt manual*.pdf readme_totsc.txt readme.txt'
-
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='map.pdf readme_patch.txt'
+ARCHIVE_DOC_L10N_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_BIN_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
-ARCHIVE_GAME_BIN_FILES='*.cfg bgmain.exe bgmain2.exe mconvert.exe keymap.ini override/*.dll'
+ARCHIVE_GAME_BIN_FILES='*.cfg *.exe *.ini'
 
 ARCHIVE_GAME_L10N_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_L10N_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
-ARCHIVE_GAME_L10N_FILES='*.tlk baldur.exe config.exe baldur.ini *save/*/*.wmp data/area000c.bif data/chasound.bif data/cresound.bif data/mpsounds.bif data/npcsound.bif movies/moviecd1.bif movies/moviecd2.bif movies/moviecd3.bif movies/moviecd4.bif override/*.wav sounds/*.wav'
+ARCHIVE_GAME_L10N_FILES='*.tlk save mpsave override sounds data/chasound.bif data/cresound.bif data/mpsounds.bif data/npcsound.bif movies/moviecd1.bif movies/moviecd2.bif movies/moviecd3.bif movies/moviecd4.bif'
 
 ARCHIVE_GAME_DATA_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_DATA_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
-ARCHIVE_GAME_DATA_FILES='*.key characters music scripts *save/*/*.bmp *save/*/*.gam *save/*/*.sav data/area000a.bif data/area000b.bif data/area000d.bif data/area000e.bif data/area000f.bif data/area000g.bif data/area000h.bif data/area01* data/area02* data/area03* data/area04* data/area05* data/area06* data/area07* data/area08* data/area09* data/area1* data/area2* data/area3* data/area4* data/area5* data/areas.bif data/armisc.bif data/chaanim.bif data/creanim.bif data/creature.bif data/default.bif data/dialog.bif data/effects.bif data/exarmaps.bif data/expareas.bif data/gui.bif data/items.bif data/mpcreanm.bif data/mpgui.bif data/objanim.bif data/rndencnt.bif data/scripts.bif data/sfxsound.bif data/spells.bif movies/moviecd5.bif movies/moviecd6.bif movies/movies.bif override/*.2da override/*.are override/*.bam override/*.bcs override/*.bmp override/*.cre override/*.dlg override/*.itm override/*.mos override/*.spl override/*.sto override/*.wed override/*.wmp sounds/*.txt'
+ARCHIVE_GAME_DATA_FILES='*.key characters music scripts data movies'
 
 CONFIG_FILES='*.ini'
 DATA_DIRS='./characters ./mpsave ./save'
@@ -169,7 +166,7 @@ prepare_package_layout
 
 # Extract icons
 
-PKG='PKG_L10N'
+PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN' 'APP_CONFIG'
 move_icons_to 'PKG_DATA'
 
@@ -184,7 +181,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 # A library-provided function for .ini files edition could be useful
 ###
 
-ini_file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
+ini_file="${PKG_BIN_PATH}${PATH_GAME}/baldur.ini"
 path_game='C:\\'"$GAME_ID"'\\'
 path_data='C:\\'"$GAME_ID"'\\data\\'
 pattern="s/HD0:=.\\+/HD0:=$path_game/"
@@ -200,7 +197,7 @@ unix2dos "$ini_file" >/dev/null 2>&1
 
 # Use more sensible default settings for modern hardware
 
-ini_file="${PKG_L10N_PATH}${PATH_GAME}/baldur.ini"
+ini_file="${PKG_BIN_PATH}${PATH_GAME}/baldur.ini"
 ini_field='Path Search Nodes'
 ini_value='400000'
 pattern="s/^$ini_field=.*/$ini_field=$ini_value/"
