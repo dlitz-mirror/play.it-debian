@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200803.3
+script_version=20200803.5
 
 # Set game-specific variables
 
@@ -46,6 +46,7 @@ GAME_NAME='Baldurʼs Gate'
 ARCHIVES_LIST='
 ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_FR_1
+ARCHIVE_GOG_PL_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0'
 
@@ -63,6 +64,13 @@ ARCHIVE_GOG_FR_1_VERSION='1.3.5521-gog23532'
 ARCHIVE_GOG_FR_1_SIZE='3400000'
 ARCHIVE_GOG_FR_1_TYPE='mojosetup'
 
+ARCHIVE_GOG_PL_1='baldur_s_gate_the_original_saga_polish_gog_3_23532.sh'
+ARCHIVE_GOG_PL_1_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
+ARCHIVE_GOG_PL_1_MD5='9db5d4dd953e4bc7b42fbb6d0680437a'
+ARCHIVE_GOG_PL_1_VERSION='1.3.5521-gog23532'
+ARCHIVE_GOG_PL_1_SIZE='3400000'
+ARCHIVE_GOG_PL_1_TYPE='mojosetup'
+
 ARCHIVE_GOG_EN_0='gog_baldur_s_gate_the_original_saga_2.1.0.10.sh'
 ARCHIVE_GOG_EN_0_MD5='6810388ef67960dded254db5750f9aa5'
 ARCHIVE_GOG_EN_0_VERSION='1.3.5521-gog2.1.0.10'
@@ -78,14 +86,17 @@ ARCHIVE_DOC_L10N_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_BIN_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
+ARCHIVE_GAME_BIN_PATH_GOG_PL="data/noarch/prefix/drive_c/gog games/baldur's gate (polish)"
 ARCHIVE_GAME_BIN_FILES='*.cfg *.exe *.ini'
 
 ARCHIVE_GAME_L10N_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_L10N_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
-ARCHIVE_GAME_L10N_FILES='*.tlk save mpsave override sounds data/chasound.bif data/cresound.bif data/mpsounds.bif data/npcsound.bif movies/moviecd1.bif movies/moviecd2.bif movies/moviecd3.bif movies/moviecd4.bif'
+ARCHIVE_GAME_L10N_PATH_GOG_PL="data/noarch/prefix/drive_c/gog games/baldur's gate (polish)"
+ARCHIVE_GAME_L10N_FILES='*.tlk save mpsave override sounds data/chasound.bif data/cresound.bif data/mpsounds.bif data/npcsound.bif data/sfxsound.bif movies/moviecd1.bif movies/moviecd2.bif movies/moviecd3.bif movies/moviecd4.bif'
 
 ARCHIVE_GAME_DATA_PATH_GOG_EN="data/noarch/prefix/drive_c/gog games/baldur's gate"
 ARCHIVE_GAME_DATA_PATH_GOG_FR="data/noarch/prefix/drive_c/gog games/baldur's gate (french)"
+ARCHIVE_GAME_DATA_PATH_GOG_PL="data/noarch/prefix/drive_c/gog games/baldur's gate (polish)"
 ARCHIVE_GAME_DATA_FILES='*.key characters music scripts data movies'
 
 CONFIG_FILES='*.ini'
@@ -116,6 +127,9 @@ PKG_L10N_DESCRIPTION_GOG_EN='English localization'
 # Localization package — French version
 PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+# Localization package — Polish version
+PKG_L10N_ID_GOG_PL="${PKG_L10N_ID}-pl"
+PKG_L10N_DESCRIPTION_GOG_PL='Polish localization'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
