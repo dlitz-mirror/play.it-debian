@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200803.2
+script_version=20200803.3
 
 # Set game-specific variables
 
@@ -91,10 +91,8 @@ ARCHIVE_GAME_DATA_FILES='*.key characters music scripts data movies'
 CONFIG_FILES='*.ini'
 DATA_DIRS='./characters ./mpsave ./save'
 
-# Set a WINE virtual desktop on first launch, using the current desktop resolution
-APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 # Disable the multi-threaded command stream feature, as it has a very severe impact on performances
-APP_WINETRICKS="$APP_WINETRICKS csmt=off"
+APP_WINETRICKS='csmt=off'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='bgmain2.exe'
@@ -204,6 +202,17 @@ pattern="s/^$ini_field=.*/$ini_field=$ini_value/"
 ini_field='CacheSize'
 ini_value='1024'
 pattern="$pattern;s/^$ini_field=.*/$ini_field=$ini_value/"
+dos2unix "$ini_file" >/dev/null 2>&1
+sed --in-place "$pattern" "$ini_file"
+unix2dos "$ini_file" >/dev/null 2>&1
+
+# Run the game in a window
+
+ini_file="${PKG_BIN_PATH}${PATH_GAME}/baldur.ini"
+ini_section='\[Program Options\]'
+ini_field='Full Screen'
+ini_value='0'
+pattern="s/^$ini_section$/&\\n$ini_field=$ini_value/"
 dos2unix "$ini_file" >/dev/null 2>&1
 sed --in-place "$pattern" "$ini_file"
 unix2dos "$ini_file" >/dev/null 2>&1
