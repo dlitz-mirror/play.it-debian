@@ -29,42 +29,65 @@ set -o errexit
 ###
 
 ###
-# Stellaris - Ancient Relics Story Pack
+# The Longing
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200706.1
+script_version=20200708.1
 
 # Set game-specific variables
 
-GAME_ID='stellaris'
-GAME_NAME='Stellaris - Ancient Relics Story Pack'
+GAME_ID='the-longing'
+GAME_NAME='The Longing'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
-ARCHIVE_GOG_1='stellaris_ancient_relics_story_pack_2_7_2_38578.sh'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
-ARCHIVE_GOG_1_MD5='a4b7251cd695846f650da58e58aea6bc'
-ARCHIVE_GOG_1_SIZE='34000'
-ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
-ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_0='the_longing_1_0_7_38629.sh'
+ARCHIVE_GOG_0_MD5='98729196edafd2a223a5425f7de70c02'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/the_longing'
+ARCHIVE_GOG_0_SIZE='5500000'
+ARCHIVE_GOG_0_VERSION='1.0.7-gog38629'
 
-ARCHIVE_GOG_0='stellaris_ancient_relics_story_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_0_MD5='b69fc2a812c6eb817e866ec447e461ce'
-ARCHIVE_GOG_0_SIZE='34000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='The?Longing.x86 The?Longing_Data/Mono/x86 The?Longing_Data/Plugins/x86'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='dlc/dlc021_ancient_relics'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='The?Longing.x86_64 The?Longing_Data/Mono/x86_64 The?Longing_Data/Plugins/x86_64'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='The?Longing_Data'
 
-PKG_MAIN_ID="${GAME_ID}-ancient-relics-story-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+DATA_DIRS='./logs'
+
+APP_MAIN_TYPE='native'
+APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
+export LANG=C'
+APP_MAIN_EXE_BIN32='The Longing.x86'
+APP_MAIN_EXE_BIN64='The Longing.x86_64'
+APP_MAIN_ICON='The Longing_Data/Resources/UnityPlayer.png'
+# Use a per-session dedicated file for logs
+# shellcheck disable=SC2016
+APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
+
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2"
+PKG_BIN32_DEPS_ARCH='lib32-libx11 lib32-gdk-pixbuf2 lib32-glib2'
+PKG_BIN32_DEPS_DEB='libx11-6, libgdk-pixbuf2.0-0, libglib2.0-0'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] dev-libs/glib[abi_x86_32] sys-libs/zlib[abi_x86_32]'
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libx11 gdk-pixbuf2 glib2'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libX11 dev-libs/glib sys-libs/zlib'
 
 # Load common functions
 
@@ -98,7 +121,21 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Get icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary directories
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Write launchers
+
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 

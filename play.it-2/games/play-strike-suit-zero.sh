@@ -29,42 +29,58 @@ set -o errexit
 ###
 
 ###
-# Stellaris - Ancient Relics Story Pack
+# Strike Suit Zero
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200706.1
+script_version=20200709.4
 
 # Set game-specific variables
 
-GAME_ID='stellaris'
-GAME_NAME='Stellaris - Ancient Relics Story Pack'
+GAME_ID='strike-suit-zero'
+GAME_NAME='Strike Suit Zero'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_1
-ARCHIVE_GOG_0'
+ARCHIVE_HUMBLE_0'
 
-ARCHIVE_GOG_1='stellaris_ancient_relics_story_pack_2_7_2_38578.sh'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
-ARCHIVE_GOG_1_MD5='a4b7251cd695846f650da58e58aea6bc'
-ARCHIVE_GOG_1_SIZE='34000'
-ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
-ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+ARCHIVE_HUMBLE_0='StrikeSuitZero_linux_1389211698.zip'
+ARCHIVE_HUMBLE_0_MD5='94b1c2907ae61deb27eb77fee3fb9c19'
+ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/strike-suit-zero'
+ARCHIVE_HUMBLE_0_SIZE='2400000'
+ARCHIVE_HUMBLE_0_VERSION='1.0-humble1'
 
-ARCHIVE_GOG_0='stellaris_ancient_relics_story_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_0_MD5='b69fc2a812c6eb817e866ec447e461ce'
-ARCHIVE_GOG_0_SIZE='34000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='linux/main/binary/StrikeSuitZero linux/main/binary/libfmodevent.so linux/main/binary/libfmodeventnet.so linux/main/binary/libfmodex-4.44.12.so linux/main/binary/libfmodex.so linux/main/binary/libsteam_api.so'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='dlc/dlc021_ancient_relics'
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='linux/main/art linux/main/audio linux/main/fonts linux/main/gui linux/main/level linux/main/levels linux/main/localisation linux/main/particles linux/main/scripts linux/main/shaders linux/main/system linux/main/textures linux/main/video linux/main/index.toc linux/main/index.toc.txt'
 
-PACKAGES_LIST='PKG_MAIN'
+# Optional icons pack
+ARCHIVE_OPTIONAL_ICONS='strike-suit-zero_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_MD5='3fe8bbad7ecca5c0e3afdbbfedb8945d'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/strike-suit-zero/'
 
-PKG_MAIN_ID="${GAME_ID}-ancient-relics-story-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_ICONS_PATH='.'
+ARCHIVE_ICONS_FILES='16x16 32x32 48x48'
+
+CONFIG_FILES='linux/main/binary/settings.sav'
+DATA_FILES='linux/main/binary/Main.sav linux/main/binary/background.sav'
+
+APP_MAIN_TYPE='native'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Run the game binary from its parent directory
+cd "$(dirname "$APP_EXE")"
+APP_EXE=$(basename "$APP_EXE")'
+APP_MAIN_EXE='linux/main/binary/StrikeSuitZero'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2"
 
 # Load common functions
 
@@ -94,11 +110,35 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Include optional icons pack
+
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
+if [ -n "$ARCHIVE_ICONS" ]; then
+	PKG='PKG_DATA'
+	(
+		ARCHIVE='ARCHIVE_ICONS'
+		extract_data_from "$ARCHIVE_ICONS"
+	)
+	organize_data 'ICONS' "$PATH_ICON_BASE"
+	rm --recursive "$PLAYIT_WORKDIR/gamedata"
+fi
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 

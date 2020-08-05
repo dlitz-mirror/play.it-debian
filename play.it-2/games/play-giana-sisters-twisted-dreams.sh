@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,42 +30,72 @@ set -o errexit
 ###
 
 ###
-# Stellaris - Ancient Relics Story Pack
+# Giana Sisters Twisted Dreams
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200706.1
+script_version=20200708.3
 
 # Set game-specific variables
 
-GAME_ID='stellaris'
-GAME_NAME='Stellaris - Ancient Relics Story Pack'
+GAME_ID='giana-sisters-twisted-dreams'
+GAME_NAME='Giana Sisters: Twisted Dreams'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_1
-ARCHIVE_GOG_0'
+ARCHIVE_GOG_0
+ARCHIVE_GOG_OLDTEMPLATE_0'
 
-ARCHIVE_GOG_1='stellaris_ancient_relics_story_pack_2_7_2_38578.sh'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
-ARCHIVE_GOG_1_MD5='a4b7251cd695846f650da58e58aea6bc'
-ARCHIVE_GOG_1_SIZE='34000'
-ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
-ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_0='setup_giana_sisters_twisted_dreams_1.2.1_(19142).exe'
+ARCHIVE_GOG_0_MD5='e5605f4890984375192bd37545e51ff8'
+ARCHIVE_GOG_0_TYPE='innosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/giana_sisters_twisted_dreams'
+ARCHIVE_GOG_0_VERSION='1.2.1-gog19142'
+ARCHIVE_GOG_0_SIZE='2800000'
 
-ARCHIVE_GOG_0='stellaris_ancient_relics_story_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_0_MD5='b69fc2a812c6eb817e866ec447e461ce'
-ARCHIVE_GOG_0_SIZE='34000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_OLDTEMPLATE_0='setup_giana_sisters_twisted_dreams_2.2.0.16.exe'
+ARCHIVE_GOG_OLDTEMPLATE_0_TYPE='innosetup'
+ARCHIVE_GOG_OLDTEMPLATE_0_MD5='31b2a0431cfd764198834faec314f0b2'
+ARCHIVE_GOG_OLDTEMPLATE_0_VERSION='1.0-gog2.2.0.16'
+ARCHIVE_GOG_OLDTEMPLATE_0_SIZE='2900000'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='dlc/dlc021_ancient_relics'
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='*.exe *.dll launcher'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_OLDTEMPLATE='app'
 
-PACKAGES_LIST='PKG_MAIN'
+ARCHIVE_GAME0_DATA_PATH='.'
+ARCHIVE_GAME0_DATA_FILES='bundles added_content data_common'
+# Keep compatibility with old archives
+ARCHIVE_GAME0_DATA_PATH_GOG_OLDTEMPLATE='app'
 
-PKG_MAIN_ID="${GAME_ID}-ancient-relics-story-pack"
-PKG_MAIN_DEPS="$GAME_ID"
+ARCHIVE_GAME1_DATA_PATH='__support/app'
+ARCHIVE_GAME1_DATA_FILES='data_common'
+
+DATA_DIRS='./userdata'
+
+APP_WINETRICKS='xact wmp9'
+
+APP_MAIN_TYPE='wine'
+# shellcheck disable=SC2016
+APP_MAIN_PRERUN='# Store persistent user data outside of the game prefix
+user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/Giana Sisters - Twisted Dreams"
+if [ ! -e "$user_data_path" ]; then
+	mkdir --parents "$(dirname "$user_data_path")"
+	mkdir --parents "$PATH_DATA/userdata"
+	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
+	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+fi'
+APP_MAIN_EXE='gsgameexe.exe'
+APP_MAIN_ICON='gsgameexe.exe'
+
+PACKAGES_LIST='PKG_BIN PKG_DATA'
+
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
+
+PKG_BIN_ARCH='32'
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
@@ -98,7 +129,21 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Extract icons
+
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
