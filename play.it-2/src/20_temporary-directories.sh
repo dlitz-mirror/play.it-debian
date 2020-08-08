@@ -13,7 +13,7 @@ get_tmp_dir() {
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
 # NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: set_temp_directories_error_no_size set_temp_directories_error_not_enough_space set_temp_directories_pkg testvar get_tmp_dir
+# CALLS: set_temp_directories_pkg testvar get_tmp_dir
 set_temp_directories() {
 	local base_directory
 	local free_space
@@ -37,12 +37,10 @@ set_temp_directories() {
 		if [ "$ARCHIVE_SIZE" ]; then
 			needed_space=$((ARCHIVE_SIZE * 2))
 		else
-			set_temp_directories_error_no_size
+			error_variable_not_set 'set_temp_directories' '$ARCHIVE_SIZE'
 		fi
-		[ "$XDG_RUNTIME_DIR" ] || XDG_RUNTIME_DIR="/run/user/$(id -u)"
 		[ "$XDG_CACHE_HOME" ]  || XDG_CACHE_HOME="$HOME/.cache"
 		for directory in \
-			"$XDG_RUNTIME_DIR" \
 			"$tmpdir" \
 			"$XDG_CACHE_HOME" \
 			"$PWD"
@@ -62,7 +60,11 @@ set_temp_directories() {
 		if [ -n "$base_directory" ]; then
 			mkdir --parents "$base_directory"
 		else
-			set_temp_directories_error_not_enough_space
+			error_not_enough_free_space \
+				"$XDG_RUNTIME_DIR" \
+				"$tmpdir" \
+				"$XDG_CACHE_HOME" \
+				"$PWD"
 		fi
 	fi
 
@@ -112,47 +114,5 @@ set_temp_directories_pkg() {
 	get_package_version
 	eval ${PKG}_PATH=\"$PLAYIT_WORKDIR/${pkg_id}_${PKG_VERSION}_${pkg_architecture}\"
 	export ${PKG?}_PATH
-}
-
-# display an error if set_temp_directories() is called before setting $ARCHIVE_SIZE
-# USAGE: set_temp_directories_error_no_size
-# NEEDED VARS: (LANG)
-# CALLS: print_error
-# CALLED BY: set_temp_directories
-set_temp_directories_error_no_size() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			string='$ARCHIVE_SIZE doit être défini avant tout appel à set_temp_directories().\n'
-		;;
-		('en'|*)
-			string='$ARCHIVE_SIZE must be set before any call to set_temp_directories().\n'
-		;;
-	esac
-	printf "$string"
-	return 1
-}
-
-# display an error if there is not enough free space to work in any of the tested directories
-# USAGE: set_temp_directories_error_not_enough_space
-# NEEDED VARS: (LANG)
-# CALLS: print_error
-# CALLED BY: set_temp_directories
-set_temp_directories_error_not_enough_space() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='Il n’y a pas assez d’espace libre dans les différents répertoires testés :\n'
-		;;
-		('en'|*)
-			string='There is not enough free space in the tested directories:\n'
-		;;
-	esac
-	printf "$string"
-	for path in "$XDG_RUNTIME_DIR" "$(get_tmp_dir)" "$XDG_CACHE_HOME" "$PWD"; do
-		printf '%s\n' "$path"
-	done
-	return 1
 }
 

@@ -1,3 +1,54 @@
+2.12.0
+
+  * New options:
+    * --output-dir: Set the output directory for generated packages
+    * --overwrite: Replace packages if they already exist
+    * --icons: Allow including icons only if dependencies are present
+
+  * Wrapper changes:
+    * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
+    * Prevent scan of unneeded directories
+    * Drop script identification by MD5 hash
+
+  * Archive-related changes:
+    * Only extract needed files when using unzip
+    * Allow to use renamed installers
+    * Add support for LHA archives extraction
+
+  * Engines-related changes:
+    * New engine: ResidualVM
+    * New engine: System-provided Mono runtime
+    * DOSBox: Use PLAYIT_DOSBOX_BINARY in launchers if defined
+
+  * Packages-related changes:
+    * Add ability to set variables for package-specific postinst and prerm
+      scripts
+    * Arch Linux: Improve consistence of 32-bit packages naming
+
+  * New helper functions:
+    * version_target_is_older_than: Check if the game script target version is
+      older than a given one
+    * toupper: Convert files name to upper case
+
+  * New generic dependency keywords:
+    * libgdk_pixbuf-2.0.so.0
+    * libglib-2.0.so.0 / libgobject-2.0.so.0
+    * libmbedtls.so.12
+    * libpng16.so.16
+    * libopenal.so.1 (alias for "openal")
+    * libSDL2-2.0.so.0 (alias for "sdl2")
+    * libturbojpeg.so.0
+    * libuv.so.1
+    * libvorbisfile.so.3 (alias for "vorbis")
+    * libz.so.1
+
+  * Codebase clean-up and improvements:
+    * Massive rework of all message-related functions
+    * Drop hardcoded paths for icons and .desktop launchers
+    * Use system-specific default installation prefix for generated packages
+    * Forcefully set errexit setting on library initialization
+    * Use dirname/basename instead of built-in shell patterns
+
 2.11.4
 
   * Throw an explicit error when trying to write a launcher for a missing

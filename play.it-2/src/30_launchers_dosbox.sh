@@ -42,7 +42,7 @@ launcher_write_script_dosbox_run() {
 	# Run the game
 
 	cd "$PATH_PREFIX"
-	dosbox -c "mount c .
+	"${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "mount c .
 	c:
 	EOF
 

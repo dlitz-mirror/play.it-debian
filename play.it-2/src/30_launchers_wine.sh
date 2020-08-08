@@ -62,16 +62,12 @@ launcher_write_script_wine_prefix_build() {
 	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
 
 	if ! [ -e "$WINEPREFIX" ]; then
-	    mkdir --parents "${WINEPREFIX%/*}"
+	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
 	    LANG=C wineboot --init 2>/dev/null
 	EOF
 
-	local version_major_target
-	local version_minor_target
-	version_major_target="${target_version%%.*}"
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	if ! { [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; }; then
+	if ! version_target_is_older_than '2.8'; then
 		cat >> "$file" <<- 'EOF'
 		    # Remove most links pointing outside of the WINE prefix
 		    rm "$WINEPREFIX/dosdevices/z:"
@@ -103,7 +99,7 @@ launcher_write_script_wine_prefix_build() {
 		    (
 		        cd "$WINEPREFIX/drive_c/"
 		        cp "$PATH_GAME/$reg_file" .
-		        reg_file_basename="${reg_file##*/}"
+		        reg_file_basename="$(basename "$reg_file")"
 		        wine regedit "$reg_file_basename"
 		        rm "$reg_file_basename"
 		    )

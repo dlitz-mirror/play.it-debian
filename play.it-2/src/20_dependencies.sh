@@ -3,7 +3,6 @@
 # NEEDED VARS: (ARCHIVE) (ARCHIVE_TYPE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
-	icons_list_dependencies
 	if [ "$ARCHIVE" ]; then
 		case "$(get_value "${ARCHIVE}_TYPE")" in
 			('cabinet')
@@ -17,6 +16,9 @@ check_deps() {
 			;;
 			('innosetup'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract"
+			;;
+			('lha')
+				SCRIPT_DEPS="$SCRIPT_DEPS lha"
 			;;
 			('nixstaller')
 				SCRIPT_DEPS="$SCRIPT_DEPS gzip tar unxz"
@@ -59,12 +61,33 @@ check_deps() {
 			('innoextract'*)
 				check_deps_innoextract "$dep"
 			;;
+			('lha')
+				check_deps_lha
+			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
 					error_dependency_not_found "$dep"
 				fi
 			;;
 		esac
+	done
+
+	# Check for the dependencies required to extract the icons
+	unset ICONS_DEPS
+	icons_list_dependencies
+	for dep in $ICONS_DEPS; do
+		if ! command -v "$dep" >/dev/null 2>&1; then
+			case "$OPTION_ICONS" in
+				('yes')
+					error_icon_dependency_not_found "$dep"
+				;;
+				('auto')
+					warning_icon_dependency_not_found "$dep"
+					export SKIP_ICONS=1
+					break
+				;;
+			esac
+		fi
 	done
 }
 
@@ -79,6 +102,19 @@ check_deps_7z() {
 		fi
 	done
 	error_dependency_not_found '7zr'
+}
+
+# check presence of a software to handle LHA (.lzh) archives
+# USAGE: check_deps_lha
+# CALLS: error_dependency_not_found
+# CALLED BY: check_deps
+check_deps_lha() {
+	for command in 'lha' 'bsdtar'; do
+		if command -v "$command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	error_dependency_not_found 'lha'
 }
 
 # check innoextract presence, optionally in a given minimum version
@@ -134,6 +170,9 @@ dependency_provided_by() {
 		;;
 		('convert'|'identify')
 			provider='imagemagick'
+		;;
+		('lha')
+			provider='lhasa'
 		;;
 		(*)
 			provider="$command"

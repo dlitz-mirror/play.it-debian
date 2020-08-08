@@ -1,6 +1,9 @@
 # update dependencies list with commands needed for icons extraction
 # USAGE: icons_list_dependencies
 icons_list_dependencies() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local script
 	script="$0"
 	if grep\
@@ -8,7 +11,7 @@ icons_list_dependencies() {
 		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'"\
 		"$script" 1>/dev/null
 	then
-		SCRIPT_DEPS="$SCRIPT_DEPS identify"
+		ICONS_DEPS="$ICONS_DEPS identify"
 		if grep\
 			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'"\
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'"\
@@ -16,17 +19,17 @@ icons_list_dependencies() {
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'"\
 			"$script" 1>/dev/null
 		then
-			SCRIPT_DEPS="$SCRIPT_DEPS convert"
+			ICONS_DEPS="$ICONS_DEPS convert"
 		fi
 		if grep\
 			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'"\
 			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'"\
 			"$script" 1>/dev/null
 		then
-			SCRIPT_DEPS="$SCRIPT_DEPS convert wrestool"
+			ICONS_DEPS="$ICONS_DEPS convert wrestool"
 		fi
 	fi
-	export SCRIPT_DEPS
+	export ICONS_DEPS
 }
 
 # get .png file(s) from various icon sources in current package
@@ -34,10 +37,15 @@ icons_list_dependencies() {
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR PKG
 # CALLS: icons_get_from_path
 icons_get_from_package() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local path
 	local path_pkg
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_get_from_package'
+	fi
 	path="${path_pkg}${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
 }
@@ -47,6 +55,9 @@ icons_get_from_package() {
 # NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
 # CALLS: icons_get_from_path
 icons_get_from_workdir() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local path
 	path="$PLAYIT_WORKDIR/gamedata"
 	icons_get_from_path "$path" "$@"
@@ -55,7 +66,7 @@ icons_get_from_workdir() {
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
-# CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar liberror
+# CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar
 icons_get_from_path() {
 	local app
 	local destination
@@ -69,17 +80,23 @@ icons_get_from_path() {
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_get_from_package' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_get_from_package'
+	fi
 	for app in "$@"; do
-		testvar "$app" 'APP' || liberror 'app' 'icons_get_from_package'
+		if ! testvar "$app" 'APP'; then
+			error_invalid_argument 'app' 'icons_get_from_package'
+		fi
 		list="$(get_value "${app}_ICONS_LIST")"
 		[ -n "$list" ] || list="${app}_ICON"
 		for icon in $list; do
 			use_archive_specific_value "$icon"
 			file="$(get_value "$icon")"
-			[ -z "$file" ] && icon_path_empty_error "$icon"
+			if [ -z "$file" ]; then
+				error_variable_not_set 'icons_get_from_path' '$'"$icon"
+			fi
 			if [ $DRY_RUN -eq 0 ] && [ ! -f "$directory/$file" ]; then
-				icon_file_not_found_error "$directory/$file"
+				error_icon_file_not_found "$directory/$file"
 			fi
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
@@ -114,7 +131,7 @@ icon_extract_png_from_file() {
 			icon_copy_png "$file" "$destination"
 		;;
 		(*)
-			liberror 'extension' 'icon_extract_png_from_file'
+			error_invalid_argument 'extension' 'icon_extract_png_from_file'
 		;;
 	esac
 }
@@ -170,7 +187,7 @@ icon_convert_to_png() {
 	local name
 	file="$1"
 	destination="$2"
-	name="${file##*/}"
+	name="$(basename "$file")"
 	convert "$file" "$destination/${name%.*}.png"
 }
 
@@ -205,7 +222,9 @@ icons_include_png_from_directory() {
 	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_include_png_from_directory' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_include_png_from_directory'
+	fi
 	for file in "$directory"/*.png; do
 		icon_get_resolution_from_file "$file"
 		path_icon="$PATH_ICON_BASE/$resolution/apps"
@@ -229,17 +248,8 @@ sort_icons() {
 # CALLED BY: icons_include_png_from_directory
 icon_get_resolution_from_file() {
 	local file
-	local version_major_target
-	local version_minor_target
 	file="$1"
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	if
-		{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
-		[ -n "${file##* *}" ]
-	then
+	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
 		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
@@ -256,6 +266,9 @@ icon_get_resolution_from_file() {
 # USAGE: icons_linking_postinst $app[…]
 # NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
 icons_linking_postinst() {
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
 	local file
@@ -265,14 +278,10 @@ icons_linking_postinst() {
 	local path
 	local path_icon
 	local path_pkg
-	local version_major_target
-	local version_minor_target
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	path_pkg="$(get_value "${PKG}_PATH")"
-	[ -n "$path_pkg" ] || missing_pkg_error 'icons_linking_postinst' "$PKG"
+	if [ -z "$path_pkg" ]; then
+		error_invalid_argument 'PKG' 'icons_linking_postinst'
+	fi
 	path="${path_pkg}${PATH_GAME}"
 	for app in "$@"; do
 		list="$(get_value "${app}_ICONS_LIST")"
@@ -281,7 +290,7 @@ icons_linking_postinst() {
 		[ "$name" ] || name="$GAME_ID"
 		for icon in $list; do
 			file="$(get_value "$icon")"
-			if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ]; then
+			if version_target_is_older_than '2.8'; then
 				# ensure compatibility with scripts targeting pre-2.8 library
 				if [ -e "$path/$file" ] || [ -e "$path"/$file ]; then
 					icon_get_resolution_from_file "$path/$file"
@@ -292,10 +301,7 @@ icons_linking_postinst() {
 				icon_get_resolution_from_file "$path/$file"
 			fi
 			path_icon="$PATH_ICON_BASE/$resolution/apps"
-			if
-				{ [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 8 ] ; } &&
-				[ -n "${file##* *}" ]
-			then
+			if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 				cat >> "$postinst" <<- EOF
 				if [ ! -e "$path_icon/$name.png" ]; then
 				  mkdir --parents "$path_icon"
@@ -330,6 +336,9 @@ icons_move_to() {
 	# Check that $PATH_ICON_BASE is set to an absolute path
 	###
 
+	# Do nothing if the calling script explicitely asked for skipping icons extraction
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
 	local source_package      source_path      source_directory
 	local destination_package destination_path destination_directory
 
@@ -339,14 +348,14 @@ icons_move_to() {
 	# Get source path, ensure it is set
 	source_path=$(get_value "${source_package}_PATH")
 	if [ -z "$source_path" ]; then
-		missing_pkg_error 'icons_move_to' "$source_package"
+		error_invalid_argument 'PKG' 'icons_move_to'
 	fi
 	source_directory="${source_path}${PATH_ICON_BASE}"
 
 	# Get destination path, ensure it is set
 	destination_path=$(get_value "${destination_package}_PATH")
 	if [ -z "$destination_path" ]; then
-		missing_pkg_error 'icons_move_to' "$destination_package"
+		error_invalid_argument 'destination_package' 'icons_move_to'
 	fi
 	destination_directory="${destination_path}${PATH_ICON_BASE}"
 
@@ -360,46 +369,3 @@ icons_move_to() {
 	rmdir --ignore-fail-on-non-empty --parents "$(dirname "$source_directory")"
 }
 
-# print an error message if an icon can not be found
-# USAGE: icon_file_not_found_error $file
-# CALLED BY: icons_get_from_path
-icon_file_not_found_error() {
-	local file
-	local string1
-	local string2
-	file="$1"
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string1='Le fichier d’icône suivant est introuvable : %s'
-			string2='Merci de signaler cette erreur sur notre outil de gestion de bugs : %s'
-		;;
-		('en'|*)
-			string1='The following icon file could not be found: %s'
-			string2='Please report this issue in our bug tracker: %s'
-		;;
-	esac
-	print_error
-	printf "$string1\\n" "$1"
-	printf "$string2\\n" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
-}
-
-# print an error message if an icon path is empty
-# USAGE: icon_path_empty_error $icon
-# CALLED BY: icons_get_from_path
-icon_path_empty_error() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='Le chemin vers l̛’icône est vide : %s'
-		;;
-		('en'|*)
-			string='The icon path is empty: %s'
-		;;
-	esac
-	print_error
-	printf "$string\\n" "$1"
-	return 1
-}
