@@ -1,40 +1,32 @@
-if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
+if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
+
+	# Exit immediately on error
+	set -o errexit
 
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
-
-	# Check library version against script target version
-
-	version_major_library="${library_version%%.*}"
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-
-	version_minor_library=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-
-	if [ $version_major_library -ne $version_major_target ] || [ $version_minor_library -lt $version_minor_target ]; then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				string1='Mauvaise version de libplayit2.sh\n'
-				string2='La version cible est : %s\n'
-			;;
-			('en'|*)
-				string1='Wrong version of libplayit2.sh\n'
-				string2='Target version is: %s\n'
-			;;
-		esac
-		printf "$string1"
-		# shellcheck disable=SC2154
-		printf "$string2" "$target_version"
-		exit 1
-	fi
 
 	# Set URLs for error messages
 
 	PLAYIT_GAMES_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/games/issues'
 	PLAYIT_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/scripts/issues'
+
+	# Check library version against script target version
+
+	if [ -z "${target_version:=}" ]; then
+		error_missing_target_version
+	fi
+	VERSION_MAJOR_PROVIDED="${library_version%%.*}"
+	VERSION_MAJOR_TARGET="${target_version%%.*}"
+	VERSION_MINOR_PROVIDED=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
+	VERSION_MINOR_TARGET=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
+	if \
+		[ $VERSION_MAJOR_PROVIDED -ne $VERSION_MAJOR_TARGET ] || \
+		[ $VERSION_MINOR_PROVIDED -lt $VERSION_MINOR_TARGET ]
+	then
+		error_incompatible_versions
+	fi
+	export VERSION_MAJOR_PROVIDED VERSION_MAJOR_TARGET VERSION_MINOR_PROVIDED VERSION_MINOR_TARGET
 
 	# Set allowed values for common options
 
@@ -46,6 +38,8 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ALLOWED_VALUES_COMPRESSION='none gzip xz bzip2'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_PACKAGE='arch deb gentoo'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_ICONS='yes no auto'
 
 	# Set default values for common options
 
@@ -60,9 +54,17 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX='/usr/local'
+	DEFAULT_OPTION_PREFIX_DEB='/usr/local'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_ARCH='/usr'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_GENTOO='/usr/local'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PACKAGE='deb'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_ICONS='yes'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_OUTPUT_DIR="$PWD"
 	unset winecfg_desktop
 	unset winecfg_launcher
 
@@ -76,6 +78,8 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	unset SOURCE_ARCHIVE
 	DRY_RUN='0'
 	NO_FREE_SPACE_CHECK='0'
+	SKIP_ICONS=0
+	OVERWRITE_PACKAGES=0
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
@@ -92,12 +96,16 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			 '--prefix='*|\
 			 '--prefix'|\
 			 '--package='*|\
-			 '--package')
+			 '--package'|\
+			 '--icons='*|\
+			 '--icons'|\
+			 '--output-dir='*|\
+			 '--output-dir')
 				if [ "${1%=*}" != "${1#*=}" ]; then
-					option="$(printf '%s' "${1%=*}" | sed 's/^--//')"
+					option="$(printf '%s' "${1%=*}" | sed 's/^--//;s/-/_/g')"
 					value="${1#*=}"
 				else
-					option="$(printf '%s' "$1" | sed 's/^--//')"
+					option="$(printf '%s' "$1" | sed 's/^--//;s/-/_/g')"
 					value="$2"
 					shift 1
 				fi
@@ -106,9 +114,9 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 					exit 0
 				else
 					# shellcheck disable=SC2046
-					eval OPTION_$(printf '%s' "$option" | tr '[:lower:]' '[:upper:]')=\"$value\"
+					eval OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')=\"$value\"
 					# shellcheck disable=SC2046
-					export OPTION_$(printf '%s' "$option" | tr '[:lower:]' '[:upper:]')
+					export OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')
 				fi
 				unset option
 				unset value
@@ -121,18 +129,12 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 				NO_FREE_SPACE_CHECK='1'
 				export NO_FREE_SPACE_CHECK
 			;;
+			('--overwrite')
+				OVERWRITE_PACKAGES=1
+				export OVERWRITE_PACKAGES
+			;;
 			('--'*)
-				print_error
-				case "${LANG%_*}" in
-					('fr')
-						string='Option inconnue : %s\n'
-					;;
-					('en'|*)
-						string='Unkown option: %s\n'
-					;;
-				esac
-				printf "$string" "$1"
-				return 1
+				error_option_unknown "$1"
 			;;
 			(*)
 				if [ -f "$1" ]; then
@@ -154,14 +156,16 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	check_option_validity 'PACKAGE'
 
-	# Set default value for compression depending on the chosen package format
+	# Set default value for compression and prefix depending on the chosen package format
 
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX="$(get_value "DEFAULT_OPTION_PREFIX_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 
 	# Set options not already set by script arguments to default values
 
-	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'PREFIX'; do
+	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'ICONS' 'OUTPUT_DIR' 'PREFIX'; do
 		if
 			[ -z "$(get_value "OPTION_$option")" ] && \
 			[ -n "$(get_value "DEFAULT_OPTION_$option")" ]
@@ -174,9 +178,25 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Check options values validity
 
-	for option in 'CHECKSUM' 'COMPRESSION'; do
+	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS'; do
 		check_option_validity "$option"
 	done
+
+	if [ "$OPTION_ICONS" = 'no' ]; then
+		SKIP_ICONS=1
+		export SKIP_ICONS
+	fi
+
+	# Make sure the output directory exists and is writable
+
+	OPTION_OUTPUT_DIR=$(printf '%s' "$OPTION_OUTPUT_DIR" | sed "s#^~#$HOME#")
+	if [ ! -d "$OPTION_OUTPUT_DIR" ]; then
+		error_not_a_directory "$OPTION_OUTPUT_DIR"
+	fi
+	if [ ! -w "$OPTION_OUTPUT_DIR" ]; then
+		error_not_writable "$OPTION_OUTPUT_DIR"
+	fi
+	export OPTION_OUTPUT_DIR
 
 	# Do not allow bzip2 compression when building Debian packages
 
@@ -184,18 +204,7 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		[ "$OPTION_PACKAGE" = 'deb' ] && \
 		[ "$OPTION_COMPRESSION" = 'bzip2' ]
 	then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				# shellcheck disable=SC1112
-				string='Le mode de compression bzip2 n’est pas compatible avec la génération de paquets deb.'
-			;;
-			('en'|*)
-				string='bzip2 compression mode is not compatible with deb packages generation.'
-			;;
-		esac
-		printf '%s\n' "$string"
-		exit 1
+		error_compression_method_not_compatible 'bzip2' 'deb'
 	fi
 
 	# Do not allow none compression when building Gentoo packages
@@ -204,18 +213,7 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		[ "$OPTION_PACKAGE" = 'gentoo' ] && \
 		[ "$OPTION_COMPRESSION" = 'none' ]
 	then
-		print_error
-		case "${LANG%_*}" in
-			('fr')
-				# shellcheck disable=SC1112
-				string='Le mode de compression none n’est pas compatible avec la génération de paquets gentoo.'
-			;;
-			('en'|*)
-				string='none compression mode is not compatible with gentoo packages generation.'
-			;;
-		esac
-		printf '%s\n' "$string"
-		exit 1
+		error_compression_method_not_compatible 'none' 'gentoo'
 	fi
 
 	# Restrict packages list to target architecture
@@ -231,20 +229,20 @@ if [ "${0##*/}" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	case $OPTION_PACKAGE in
 		('arch'|'gentoo')
 			PATH_BIN="$OPTION_PREFIX/bin"
-			PATH_DESK='/usr/local/share/applications'
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
 			PATH_GAME="$OPTION_PREFIX/share/$GAME_ID"
-			PATH_ICON_BASE='/usr/local/share/icons/hicolor'
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
 		;;
 		('deb')
 			PATH_BIN="$OPTION_PREFIX/games"
-			PATH_DESK='/usr/local/share/applications'
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
 			PATH_GAME="$OPTION_PREFIX/share/games/$GAME_ID"
-			PATH_ICON_BASE='/usr/local/share/icons/hicolor'
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' "$0"
+			error_invalid_argument 'OPTION_PACKAGE' "$0"
 		;;
 	esac
 

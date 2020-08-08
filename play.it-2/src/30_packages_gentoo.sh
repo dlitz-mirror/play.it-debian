@@ -90,20 +90,26 @@ pkg_write_gentoo() {
 	}
 	EOF
 
-	if [ -e "$postinst" ]; then
+	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		pkg_postinst() {
-		$(cat "$postinst")
+		$(get_value "${pkg}_POSTINST_RUN")
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_gentoo_postinst "$target"
 	fi
 
-	if [ -e "$prerm" ]; then
+	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat >> "$target" <<- EOF
 		pkg_prerm() {
-		$(cat "$prerm")
+		$(get_value "${pkg}_PRERM_RUN")
 		}
 		EOF
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$prerm" ]; then
+		compat_pkg_write_gentoo_prerm "$target"
 	fi
 }
 
@@ -147,11 +153,17 @@ pkg_set_deps_gentoo() {
 			('gconf')
 				pkg_dep="gnome-base/gconf$architecture_suffix"
 			;;
+			('libgdk_pixbuf-2.0.so.0')
+				pkg_dep="x11-libs/gdk-pixbuf:2$architecture_suffix"
+			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
 				if [ "$architecture" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
+			;;
+			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
+				pkg_dep="dev-libs/glib:2$architecture_suffix"
 			;;
 			('glu')
 				pkg_dep="virtual/glu$architecture_suffix"
@@ -175,6 +187,12 @@ pkg_set_deps_gentoo() {
 				pkg_dep="net-libs/libcurl-debian$architecture_suffix"
 				pkg_overlay='steam-overlay'
 			;;
+			('libmbedtls.so.12')
+				pkg_dep="net-libs/mbedtls:0/12$architecture_suffix"
+			;;
+			('libpng16.so.16')
+				pkg_dep="media-libs/libpng:0/16$architecture_suffix"
+			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
@@ -184,10 +202,13 @@ pkg_set_deps_gentoo() {
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"
 			;;
+			('mono')
+				pkg_dep="dev-lang/mono$architecture_suffix"
+			;;
 			('nss')
 				pkg_dep="dev-libs/nss$architecture_suffix"
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep="media-libs/openal$architecture_suffix"
 			;;
 			('pulseaudio')
@@ -196,7 +217,7 @@ pkg_set_deps_gentoo() {
 			('sdl1.2')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
 			;;
 			('sdl2_image')
@@ -209,7 +230,13 @@ pkg_set_deps_gentoo() {
 			('theora')
 				pkg_dep="media-libs/libtheora$architecture_suffix"
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep="media-libs/libjpeg-turbo$architecture_suffix"
+			;;
+			('libuv.so.1')
+				pkg_dep="dev-libs/libuv:0/1$architecture_suffix"
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
@@ -260,6 +287,9 @@ pkg_set_deps_gentoo() {
 			('xrandr')
 				pkg_dep='x11-apps/xrandr'
 			;;
+			('libz.so.1')
+				pkg_dep="sys-libs/zlib:0/1$architecture_suffix"
+			;;
 			(*)
 				pkg_dep="$(gentoo_get_pkg_providers "$dep" | sed -e 's/-/_/g' -e 's|^|games-playit/|')"
 				if [ -z "$pkg_dep" ]; then
@@ -282,7 +312,6 @@ pkg_set_deps_gentoo() {
 # build .tbz2 gentoo package
 # USAGE: pkg_build_gentoo $pkg_path
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
-# CALLS: pkg_print
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
 	pkg_id="$(get_value "${pkg}_ID" | sed 's/-/_/g')" # This makes sure numbers in the package name doesn't get interpreted as a version by portage
@@ -295,16 +324,17 @@ pkg_build_gentoo() {
 			pkg_filename_base="$pkg_architecture/$pkg_filename_base"
 		fi
 	done
-	local pkg_filename="$PWD/$pkg_filename_base"
+	local pkg_filename
+	pkg_filename="$OPTION_OUTPUT_DIR/$pkg_filename_base"
 
-	if [ -e "$pkg_filename" ]; then
-		pkg_build_print_already_exists "$pkg_filename_base"
+	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+		information_package_already_exists "$pkg_filename_base"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg}_PKG
 		return 0
 	fi
 
-	pkg_print "$pkg_filename_base"
+	information_package_building "$pkg_filename_base"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"
