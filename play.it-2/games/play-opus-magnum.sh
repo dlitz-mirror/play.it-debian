@@ -31,28 +31,28 @@ set -o errexit
 ###
 # Opus Magnum
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181228.1
+script_version=20200707.1
 
 # Set game-specific variables
 
 GAME_ID='opus-magnum'
 GAME_NAME='Opus Magnum'
 
-ARCHIVE_GOG='opus_magnum_en_17_08_2018_update_23270.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/opus_magnum'
-ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_MD5='dbe5137d4b7e2edd21f4117a80756872'
-ARCHIVE_GOG_SIZE='460000'
-ARCHIVE_GOG_VERSION='2018.08.17-gog23270'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
 
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
+ARCHIVE_GOG_0='opus_magnum_en_17_08_2018_update_23270.sh'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/opus_magnum'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_MD5='dbe5137d4b7e2edd21f4117a80756872'
+ARCHIVE_GOG_0_SIZE='460000'
+ARCHIVE_GOG_0_VERSION='2018.08.17-gog23270'
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC1_DATA_FILES='*.txt'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='Lightning.bin.x86 lib'
@@ -81,7 +81,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -116,12 +116,15 @@ prepare_package_layout
 
 PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package

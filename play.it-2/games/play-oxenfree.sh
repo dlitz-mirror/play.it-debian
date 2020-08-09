@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2020, Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190305.3
+script_version=20200608.1
 
 # Set game-specific variables
 
@@ -55,16 +56,26 @@ ARCHIVE_GOG_OLD_VERSION='2.6.0f30-gog15278'
 ARCHIVE_GOG_OLD_SIZE='3000000'
 ARCHIVE_GOG_OLD_TYPE='mojosetup'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_ITCH='oxenfree-release-linux.zip'
+ARCHIVE_ITCH_URL='https://night-school-studio.itch.io/oxenfree'
+ARCHIVE_ITCH_MD5='54469a9bf98bc08125e69fc4612f390b'
+ARCHIVE_ITCH_VERSION='2.7.1f8-20190208'
+ARCHIVE_ITCH_SIZE='3000000'
+ARCHIVE_ITCH_TYPE='zip'
+
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='./*.txt'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN32_PATH_ITCH='Oxenfree_2.7.1_Linux-Uni-NoSteam_20190208_008'
 ARCHIVE_GAME_BIN32_FILES='./*.x86 ./*_Data/*/x86'
 
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_ITCH='Oxenfree_2.7.1_Linux-Uni-NoSteam_20190208_008'
 ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_ITCH='Oxenfree_2.7.1_Linux-Uni-NoSteam_20190208_008'
 ARCHIVE_GAME_DATA_FILES='./*_Data'
 
 APP_MAIN_TYPE='native'

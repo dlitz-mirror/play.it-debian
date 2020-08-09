@@ -28,25 +28,9 @@ print_instructions() {
 
 	done
 	if [ "$OPTION_PACKAGE" = 'gentoo' ] && [ -n "$GENTOO_OVERLAYS" ]; then
-		case "${LANG%_*}" in
-			('fr')
-				string='\nVous pouvez avoir besoin des overlays suivants pour installer ces paquets :%s\n'
-			;;
-			('en'|*)
-				string='\nYou may need the following overlays to install these packages:%s\n'
-			;;
-		esac
-		printf "$string" "$GENTOO_OVERLAYS"
+		information_required_gentoo_overlays "$GENTOO_OVERLAYS"
 	fi
-	case "${LANG%_*}" in
-		('fr')
-			string='\nInstallez "%s" en lançant la série de commandes suivantes en root :\n'
-		;;
-		('en'|*)
-			string='\nInstall "%s" by running the following commands as root:\n'
-		;;
-	esac
-	printf "$string" "$GAME_NAME"
+	information_installation_instructions_common "$GAME_NAME"
 	if [ -n "$packages_list_32" ] && [ -n "$packages_list_64" ]; then
 		print_instructions_architecture_specific '32' $packages_list_all $packages_list_32
 		print_instructions_architecture_specific '64' $packages_list_all $packages_list_64
@@ -62,26 +46,20 @@ print_instructions() {
 				print_instructions_gentoo "$@"
 			;;
 			(*)
-				liberror 'OPTION_PACKAGE' 'print_instructions'
+				error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
 			;;
 		esac
 	fi
 	printf '\n'
 }
 
-# print installation instructions for Arch Linux - 32-bit version
+# print installation instructions, for a given architecture
 # USAGE: print_instructions_architecture_specific $pkg[…]
 # CALLS: print_instructions_arch print_instructions_deb print_instructions_gentoo
 print_instructions_architecture_specific() {
-	case "${LANG%_*}" in
-		('fr')
-			string='\nversion %s-bit :\n'
-		;;
-		('en'|*)
-			string='\n%s-bit version:\n'
-		;;
-	esac
-	printf "$string" "$1"
+	local architecture_variant
+	architecture_variant="${1}-bit"
+	information_installation_instructions_variant "$architecture_variant"
 	shift 1
 	case $OPTION_PACKAGE in
 		('arch')
@@ -94,7 +72,7 @@ print_instructions_architecture_specific() {
 			print_instructions_gentoo "$@"
 		;;
 		(*)
-			liberror 'OPTION_PACKAGE' 'print_instructions'
+			error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
 		;;
 	esac
 }

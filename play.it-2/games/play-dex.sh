@@ -1,9 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2020 Hoël Bézier
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,10 +33,10 @@ set -o errexit
 ###
 # Dex
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181007.3
+script_version=20200712.1
 
 # Set game-specific variables
 
@@ -54,8 +55,11 @@ ARCHIVE_GOG_OLD0_MD5='199a1acc59879124e8e1c532909fd879'
 ARCHIVE_GOG_OLD0_SIZE='6200000'
 ARCHIVE_GOG_OLD0_VERSION='5.4.0.0-gog2.3.0.4'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
+
+ARCHIVE_DOC1_DATA_PATH='data/noarch/support'
+ARCHIVE_DOC1_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='Dex.x86 Dex_Data/Mono Dex_Data/Plugins'
@@ -89,7 +93,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 alsa"
 
 # Load common functions
 

@@ -4,7 +4,9 @@
 # NEEDED VARS: (LANG) (PACKAGES_LIST) PLAYIT_WORKDIR (PKG_PATH)
 prepare_package_layout() {
 	if [ -z "$1" ]; then
-		[ -n "$PACKAGES_LIST" ] || prepare_package_layout_error_no_list
+		if [ -z "$PACKAGES_LIST" ]; then
+			error_variable_not_set 'prepare_package_layout' '$PACKAGES_LIST'
+		fi
 		prepare_package_layout $PACKAGES_LIST
 		return 0
 	fi
@@ -19,25 +21,6 @@ prepare_package_layout() {
 	done
 }
 
-# display an error when calling prepare_package_layout() without argument while
-# $PACKAGES_LIST is unset or empty
-# USAGE: prepare_package_layout_error_no_list
-# NEEDED VARS: (LANG)
-prepare_package_layout_error_no_list() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='prepare_package_layout ne peut pas être appelé sans argument si $PACKAGES_LIST n’est pas défini.'
-		;;
-		('en'|*)
-			string='prepare_package_layout can not be called without argument if $PACKAGES_LIST is not set.'
-		;;
-	esac
-	printf '%s\n' "$string"
-	return 1
-}
-
 # put files from archive in the right package directories
 # USAGE: organize_data $id $path
 organize_data() {
@@ -45,19 +28,19 @@ organize_data() {
 
 	# This function requires PKG to be set
 	if [ -z "$PKG" ]; then
-		organize_data_error_missing_pkg
+		error_variable_not_set 'organize_data' '$PKG'
 	fi
 
 	# Check that the current package is part of the target architectures
 	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		skipping_pkg_warning 'organize_data' "$PKG"
+		warning_skip_package 'organize_data' "$PKG"
 		return 0
 	fi
 
 	# Get current package path, check that it is set
 	pkg_path=$(get_value "${PKG}_PATH")
 	if [ -z "$pkg_path" ]; then
-		missing_pkg_error 'organize_data' "$PKG"
+		error_invalid_argument 'PKG' 'organize_data'
 	fi
 
 	use_archive_specific_value "ARCHIVE_${1}_PATH"
@@ -100,23 +83,5 @@ organize_data() {
 		done
 		set +o noglob
 	fi
-}
-
-# display an error when calling organize_data() with $PKG unset or empty
-# USAGE: organize_data_error_missing_pkg
-# NEEDED VARS: (LANG)
-organize_data_error_missing_pkg() {
-	print_error
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='organize_data ne peut pas être appelé si $PKG n’est pas défini.\n'
-		;;
-		('en'|*)
-			string='organize_data can not be called if $PKG is not set.\n'
-		;;
-	esac
-	printf "$string"
-	return 1
 }
 

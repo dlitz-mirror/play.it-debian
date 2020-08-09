@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Kero Blaster
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180923.1
+script_version=20200528.1
 
 # Set game-specific variables
 
@@ -43,7 +43,7 @@ GAME_ID='kero-blaster'
 GAME_NAME='Kero Blaster'
 
 ARCHIVE_PLAYISM='KeroBlaster_EN_v1501a.zip'
-ARCHIVE_PLAYISM_URL='http://playism-games.com/game/141/kero-blaster'
+ARCHIVE_PLAYISM_URL='https://playism.com/product/kero-blaster'
 ARCHIVE_PLAYISM_MD5='c6ba58d37b5344d08c7d9a94506266b0'
 ARCHIVE_PLAYISM_VERSION='1.501-playism1501a'
 ARCHIVE_PLAYISM_SIZE='20000'

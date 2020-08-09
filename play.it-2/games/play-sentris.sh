@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Sentris
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200529.1
 
 # Set game-specific variables
 
@@ -46,7 +46,7 @@ ARCHIVES_LIST='ARCHIVE_HUMBLE'
 ARCHIVE_HUMBLE='Sentris_1.02_Linux.zip'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/sentris'
 ARCHIVE_HUMBLE_MD5='b6ca5f3447a223efba73ae9138b16a45'
-ARCHIVE_HUMBLE_SIZE='408104'
+ARCHIVE_HUMBLE_SIZE='410000'
 ARCHIVE_HUMBLE_VERSION='1.02-humble170110'
 
 ARCHIVE_GAME_BIN32_PATH='Sentris_1.02_Linux'

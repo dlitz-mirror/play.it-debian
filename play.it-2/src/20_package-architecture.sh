@@ -1,17 +1,10 @@
 # select package architecture to build
 # USAGE: select_package_architecture
 # NEEDED_VARS: OPTION_ARCHITECTURE PACKAGES_LIST
-# CALLS: select_package_architecture_warning_unavailable select_package_architecture_error_unknown select_package_architecture_warning_unsupported
 select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
-	local version_major_target
-	local version_minor_target
-	# shellcheck disable=SC2154
-	version_major_target="${target_version%%.*}"
-	# shellcheck disable=SC2154
-	version_minor_target=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
-	if [ $version_major_target -lt 2 ] || [ $version_minor_target -lt 6 ]; then
-		select_package_architecture_warning_unsupported
+	if version_target_is_older_than '2.6'; then
+		warning_option_not_supported '--architecture'
 		OPTION_ARCHITECTURE='all'
 		export OPTION_ARCHITECTURE
 		return 0
@@ -56,7 +49,7 @@ select_package_architecture() {
 	case "$OPTION_ARCHITECTURE" in
 		('32')
 			if [ -z "$packages_list_32" ]; then
-				select_package_architecture_warning_unavailable
+				warning_architecture_not_available "$OPTION_ARCHITECTURE"
 				OPTION_ARCHITECTURE='all'
 				return 0
 			fi
@@ -64,74 +57,16 @@ select_package_architecture() {
 		;;
 		('64')
 			if [ -z "$packages_list_64" ]; then
-				select_package_architecture_warning_unavailable
+				warning_architecture_not_available "$OPTION_ARCHITECTURE"
 				OPTION_ARCHITECTURE='all'
 				return 0
 			fi
 			PACKAGES_LIST="$packages_list_64 $packages_list_all"
 		;;
 		(*)
-			select_package_architecture_error_unknown
+			error_architecture_not_supported "$OPTION_ARCHITECTURE"
 		;;
 	esac
 	export PACKAGES_LIST
-}
-
-# display an error if selected architecture is not available
-# USAGE: select_package_architecture_warning_unavailable
-# NEEDED_VARS: (LANG) OPTION_ARCHITECTURE
-# CALLED_BY: select_package_architecture
-select_package_architecture_warning_unavailable() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='L’architecture demandée n’est pas disponible : %s\n'
-		;;
-		('en'|*)
-			string='Selected architecture is not available: %s\n'
-		;;
-	esac
-	print_warning
-	printf "$string" "$OPTION_ARCHITECTURE"
-}
-
-# display an error if selected architecture is not supported
-# USAGE: select_package_architecture_error_unknown
-# NEEDED_VARS: (LANG) OPTION_ARCHITECTURE
-# CALLED_BY: select_package_architecture
-select_package_architecture_error_unknown() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='L’architecture demandée n’est pas supportée : %s\n'
-		;;
-		('en'|*)
-			string='Selected architecture is not supported: %s\n'
-		;;
-	esac
-	print_error
-	printf "$string" "$OPTION_ARCHITECTURE"
-	exit 1
-}
-
-# display a warning if using --architecture on a pre-2.6 script
-# USAGE: select_package_architecture_warning_unsupported
-# NEEDED_VARS: (LANG)
-# CALLED_BY: select_package_architecture
-select_package_architecture_warning_unsupported() {
-	local string
-	case "${LANG%_*}" in
-		('fr')
-			# shellcheck disable=SC1112
-			string='L’option --architecture n’est pas gérée par ce script.'
-		;;
-		('en'|*)
-			string='--architecture option is not supported by this script.'
-		;;
-	esac
-	print_warning
-	printf '%s\n\n' "$string"
 }
 

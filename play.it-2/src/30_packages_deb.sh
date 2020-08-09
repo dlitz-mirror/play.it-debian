@@ -80,25 +80,32 @@ pkg_write_deb() {
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
-	if [ -e "$postinst" ]; then
+	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
-		$(cat "$postinst")
+		$(get_value "${pkg}_POSTINST_RUN")
 
 		exit 0
 		EOF
 		chmod 755 "$postinst_script"
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		compat_pkg_write_deb_postinst "$postinst_script"
 	fi
-	if [ -e "$prerm" ]; then
+
+	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
-		$(cat "$prerm")
+		$(get_value "${pkg}_PRERM_RUN")
 
 		exit 0
 		EOF
 		chmod 755 "$prerm_script"
+	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
+	elif [ -e "$prerm" ]; then
+		compat_pkg_write_deb_prerm "$prerm_script"
 	fi
 }
 
@@ -127,8 +134,14 @@ pkg_set_deps_deb() {
 			('gconf')
 				pkg_dep='libgconf-2-4'
 			;;
+			('libgdk_pixbuf-2.0.so.0')
+				pkg_dep='libgdk-pixbuf2.0-0'
+			;;
 			('glibc')
 				pkg_dep='libc6'
+			;;
+			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
+				pkg_dep='libglib2.0-0'
 			;;
 			('glu')
 				pkg_dep='libglu1-mesa | libglu1'
@@ -151,6 +164,12 @@ pkg_set_deps_deb() {
 			('libcurl-gnutls')
 				pkg_dep='libcurl3-gnutls'
 			;;
+			('libmbedtls.so.12')
+				pkg_dep='libmbedtls12'
+			;;
+			('libpng16.so.16')
+				pkg_dep='libpng16-16'
+			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
 			;;
@@ -160,10 +179,13 @@ pkg_set_deps_deb() {
 			('libxrandr')
 				pkg_dep='libxrandr2'
 			;;
+			('mono')
+				pkg_dep='mono-runtime'
+			;;
 			('nss')
 				pkg_dep='libnss3'
 			;;
-			('openal')
+			('openal'|'libopenal.so.1')
 				pkg_dep='libopenal1'
 			;;
 			('pulseaudio')
@@ -172,7 +194,7 @@ pkg_set_deps_deb() {
 			('sdl1.2')
 				pkg_dep='libsdl1.2debian'
 			;;
-			('sdl2')
+			('sdl2'|'libSDL2-2.0.so.0')
 				pkg_dep='libsdl2-2.0-0'
 			;;
 			('sdl2_image')
@@ -184,7 +206,13 @@ pkg_set_deps_deb() {
 			('theora')
 				pkg_dep='libtheora0'
 			;;
-			('vorbis')
+			('libturbojpeg.so.0')
+				pkg_dep='libturbojpeg0'
+			;;
+			('libuv.so.1')
+				pkg_dep='libuv1'
+			;;
+			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='libvorbisfile3'
 			;;
 			('wine')
@@ -227,6 +255,9 @@ pkg_set_deps_deb() {
 			('xgamma'|'xrandr')
 				pkg_dep='x11-xserver-utils:amd64 | x11-xserver-utils'
 			;;
+			('libz.so.1')
+				pkg_dep='zlib1g'
+			;;
 			(*)
 				pkg_dep="$dep"
 			;;
@@ -242,13 +273,12 @@ pkg_set_deps_deb() {
 # build .deb package
 # USAGE: pkg_build_deb $pkg_path
 # NEEDED VARS: (OPTION_COMPRESSION) (LANG) PLAYIT_WORKDIR
-# CALLS: pkg_print
 # CALLED BY: build_pkg
 pkg_build_deb() {
 	local pkg_filename
-	pkg_filename="$PWD/${1##*/}.deb"
-	if [ -e "$pkg_filename" ]; then
-		pkg_build_print_already_exists "${pkg_filename##*/}"
+	pkg_filename="$OPTION_OUTPUT_DIR/$(basename "$1").deb"
+	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+		information_package_already_exists "$(basename "$pkg_filename")"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg?}_PKG
 		return 0
@@ -260,11 +290,12 @@ pkg_build_deb() {
 			dpkg_options="-Z$OPTION_COMPRESSION"
 		;;
 		(*)
-			liberror 'OPTION_COMPRESSION' 'pkg_build_deb'
+			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_deb'
 		;;
 	esac
 
-	pkg_print "${pkg_filename##*/}"
+
+	information_package_building "$(basename "$pkg_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
 		eval ${pkg}_PKG=\"$pkg_filename\"

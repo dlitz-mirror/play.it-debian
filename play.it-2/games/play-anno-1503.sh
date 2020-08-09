@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Anno 1503
 # build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200529.1
 
 # Set game-specific variables
 
@@ -47,7 +47,7 @@ ARCHIVE_GOG='setup_anno_1503_2.0.0.5.exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/anno_1503_ad'
 ARCHIVE_GOG_MD5='a7b6aeb2c5f96e2fab12d1ef12f3b4af'
 ARCHIVE_GOG_VERSION='3.0.43-gog2.0.0.5'
-ARCHIVE_GOG_SIZE='1520000'
+ARCHIVE_GOG_SIZE='1600000'
 ARCHIVE_GOG_TYPE='innosetup'
 
 ARCHIVE_DOC_DATA_PATH='app'

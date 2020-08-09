@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -33,10 +33,10 @@ set -o errexit
 ###
 # The Silver Case - Demo
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181103.3
+script_version=20200528.1
 
 # Set game-specific variables
 
@@ -50,7 +50,7 @@ ARCHIVE_GOG_SIZE='960000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.1'
 
 ARCHIVE_PLAYISM='TheSilverCase_DEMO_Playism0930.zip'
-ARCHIVE_PLAYISM_URL='http://playism-games.com/game/285/the-silver-case'
+ARCHIVE_PLAYISM_URL='https://playism.com/product/the-silver-case'
 ARCHIVE_PLAYISM_MD5='a1bbd59ead01c4e1dc50c38b3a65c5ea'
 ARCHIVE_PLAYISM_SIZE='950000'
 ARCHIVE_PLAYISM_VERSION='1.0-playism0930'

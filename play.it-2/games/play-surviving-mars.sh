@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200315.3
+script_version=20200529.2
 
 # Set game-specific variables
 
@@ -46,42 +46,38 @@ ARCHIVE_GOG='surviving_mars_cernan_update_29871.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/surviving_mars'
 ARCHIVE_GOG_MD5='0c204fb895101f8b3f844a1fa06e2feb'
 ARCHIVE_GOG_SIZE='6200000'
-ARCHIVE_GOG_VERSION='245618-gog29871'
+ARCHIVE_GOG_VERSION='1.0-gog29871'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD4='surviving_mars_sagan_rc3_update_24111.sh'
 ARCHIVE_GOG_OLD4_MD5='22e5cbc7188ff1cb8fd5dabf7cdca0bf'
 ARCHIVE_GOG_OLD4_SIZE='4700000'
-ARCHIVE_GOG_OLD4_VERSION='235.636-rc3-gog24111'
+ARCHIVE_GOG_OLD4_VERSION='1.0-gog24111'
 ARCHIVE_GOG_OLD4_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD3='surviving_mars_sagan_rc1_update_23676.sh'
 ARCHIVE_GOG_OLD3_MD5='2e5058a9f1076f894c0b074fd24e3597'
 ARCHIVE_GOG_OLD3_SIZE='4700000'
-ARCHIVE_GOG_OLD3_VERSION='234.560-rc1-gog23676'
+ARCHIVE_GOG_OLD3_VERSION='1.0-gog23676'
 ARCHIVE_GOG_OLD3_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD2='surviving_mars_en_davinci_rc1_22763.sh'
 ARCHIVE_GOG_OLD2_MD5='aa513fee4b4c10318831712d4663bfc0'
 ARCHIVE_GOG_OLD2_SIZE='4400000'
-ARCHIVE_GOG_OLD2_VERSION='233.467-rc1-gog22763'
+ARCHIVE_GOG_OLD2_VERSION='1.0-gog22763'
 ARCHIVE_GOG_OLD2_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD1='surviving_mars_en_180619_curiosity_hotfix_3_21661.sh'
 ARCHIVE_GOG_OLD1_MD5='241f1cb8305becab5d55c8d104bd2c18'
 ARCHIVE_GOG_OLD1_SIZE='4100000'
-ARCHIVE_GOG_OLD1_VERSION='231.777-3-gog21661'
+ARCHIVE_GOG_OLD1_VERSION='1.0-gog21661'
 ARCHIVE_GOG_OLD1_TYPE='mojosetup_unzip'
 
 ARCHIVE_GOG_OLD0='surviving_mars_en_curiosity_update_21183.sh'
 ARCHIVE_GOG_OLD0_MD5='ab9a61d04a128f19bc9e003214fe39a9'
-ARCHIVE_GOG_OLD0_VERSION='231.139'
-ARCHIVE_GOG_OLD0_SIZE='3950000'
+ARCHIVE_GOG_OLD0_VERSION='1.0-gog21183'
+ARCHIVE_GOG_OLD0_SIZE='4000000'
 ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
-
-ARCHIVE_OPTIONAL_LIBSSL='libssl_1.0.0_64-bit.tar.gz'
-ARCHIVE_OPTIONAL_LIBSSL_URL='https://downloads.dotslashplay.it/resources/libssl/'
-ARCHIVE_OPTIONAL_LIBSSL_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -93,7 +89,6 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='DLC Licenses Local ModTools Movies Packs ShaderPreprocessorTemp'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_LIBS='libs'
 APP_MAIN_EXE='MarsGOG'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
@@ -104,8 +99,6 @@ PACKAGES_LIST='PKG_DATA PKG_BIN'
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx"
-PKG_BIN_DEPS_ARCH='openssl-1.0'
-PKG_BIN_DEPS_GENTOO='dev-libs/openssl-compat'
 
 # Load common functions
 
@@ -135,13 +128,49 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Check for libSSL 1.0.0 archive presence
+# Ensure availability of 64-bit libssl.so.1.0.0
 
 case "$OPTION_PACKAGE" in
+	('arch')
+		# Use package from official repositories
+		PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH openssl-1.0"
+	;;
 	('deb')
+		# Use archive provided by ./play.it
+		ARCHIVE_OPTIONAL_LIBSSL64='libssl_1.0.0_64-bit.tar.gz'
+		ARCHIVE_OPTIONAL_LIBSSL64_URL='https://downloads.dotslashplay.it/resources/libssl/'
+		ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
 		ARCHIVE_MAIN="$ARCHIVE"
-		set_archive 'ARCHIVE_LIBSSL' 'ARCHIVE_OPTIONAL_LIBSSL'
+		set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
+		if [ "$ARCHIVE_LIBSSL64" ]; then
+			extract_data_from "$ARCHIVE_LIBSSL64"
+			mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+			mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+			rm --recursive "$PLAYIT_WORKDIR/gamedata"
+		else
+			case "${LANG%_*}" in
+				('fr')
+					message='Lʼarchive suivante nʼayant pas été fournie, libssl.so.1.0.0 ne sera pas inclus dans les paquets : %s\n'
+					message="$message"'Cette archive peut être téléchargée depuis %s\n'
+				;;
+				('en'|*)
+					message='Due to the following archive missing, the packages will not include libssl.so.1.0.0: %s\n'
+					message="$message"'This archive can be downloaded from %s\n'
+				;;
+			esac
+			print_warning
+			printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL64" "$ARCHIVE_OPTIONAL_LIBSSL64_URL"
+			printf '\n'
+		fi
 		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+	('gentoo')
+		# Use package from official repositories
+		PKG_BIN_DEPS_GENTOO="$PKG_BIN_DEPS_GENTOO dev-libs/openssl-compat"
+	;;
+	(*)
+		# Unsupported package type, throw an error
+		liberror 'OPTION_PACKAGE' "$0"
 	;;
 esac
 
@@ -155,16 +184,6 @@ prepare_package_layout
 PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN'
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Include libSSL 1.0.0
-
-if [ -n "$ARCHIVE_LIBSSL" ]; then
-	ARCHIVE='ARCHIVE_LIBSSL' \
-		extract_data_from "$ARCHIVE_LIBSSL"
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
 
 # Write launchers
 

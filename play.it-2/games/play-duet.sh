@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Duet
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190209.4
+script_version=20200528.1
 
 # Set game-specific variables
 
@@ -48,8 +48,11 @@ ARCHIVE_HUMBLE_VERSION='1.0-humble1006023'
 ARCHIVE_HUMBLE_SIZE='210000'
 ARCHIVE_HUMBLE_TYPE='zip'
 
+###
+# TODO
+# This icon is no longer downloadable, we should provide an icons pack
+###
 ARCHIVE_OPTIONAL_ICON='logo.png'
-ARCHIVE_OPTIONAL_ICON_URL='http://www.kumobius.com/presskits/duet/images/logo.png'
 ARCHIVE_OPTIONAL_ICON_MD5='e726e1be1b2be27394cafab9381ea82b'
 ARCHIVE_OPTIONAL_ICON_TYPE='file'
 

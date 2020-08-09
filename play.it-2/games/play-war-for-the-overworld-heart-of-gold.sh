@@ -31,22 +31,28 @@ set -o errexit
 ###
 # War for the Overworld: Heart of Gold
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20191221.1
+script_version=20200304.1
 
 # Set game-specific variables
 
 GAME_ID='war-for-the-overworld'
 GAME_NAME='War for the Overworld: Heart of Gold'
 
-ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
+ARCHIVE_GOG='war_for_the_overworld_heart_of_gold_2_0_7f1_gog_36563.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/war_for_the_overworld_heart_of_gold'
-ARCHIVE_GOG_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
+ARCHIVE_GOG_MD5='c512019fa698759ba0a96e79fadcb06e'
 ARCHIVE_GOG_SIZE='1400'
-ARCHIVE_GOG_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_VERSION='2.0.7f1-gog36563'
 ARCHIVE_GOG_TYPE='mojosetup'
+
+ARCHIVE_GOG_OLD0='war_for_the_overworld_heart_of_gold_2_0_7f1_30014.sh'
+ARCHIVE_GOG_OLD0_MD5='2d3555bfea2aafca9ff9e8eb7a970c0d'
+ARCHIVE_GOG_OLD0_SIZE='1400'
+ARCHIVE_GOG_OLD0_VERSION='2.0.6f1-gog30014'
+ARCHIVE_GOG_OLD0_TYPE='mojosetup'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='goggame-1571774750.info'
