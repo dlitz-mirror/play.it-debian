@@ -42,7 +42,6 @@ GAME_ID='startopia'
 GAME_NAME='Startopia'
 
 ARCHIVE_GOG='setup_startopia_2.0.0.17.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/startopia'
 ARCHIVE_GOG_MD5='4fe8d194afc1012e136ed3e82f1de171'
 ARCHIVE_GOG_VERSION='1.01b-gog2.0.0.17'
 ARCHIVE_GOG_SIZE='600000'
