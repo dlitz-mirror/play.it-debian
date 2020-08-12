@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200930.2
+script_version=20200930.3
 
 # Set game-specific variables
 
@@ -77,7 +77,7 @@ ARCHIVE_DOC1_DATA_PATH='data/noarch/game/'
 ARCHIVE_DOC1_DATA_FILES='license.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='NecroDancer fmod libglfw.so.2'
+ARCHIVE_GAME_BIN_FILES='NecroDancer fmod'
 
 ARCHIVE_GAME_MUSIC_PATH='data/noarch/game'
 ARCHIVE_GAME_MUSIC_FILES='data/music'
@@ -141,6 +141,19 @@ if [ -z "$PLAYIT_LIB2" ]; then
 fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
+
+# A GLFW 2.x → 3.x wrapper is provided through AUR for Arch Linux
+# cf. https://aur.archlinux.org/packages/lib32-glfw2to3-git/
+
+case "$OPTION_PACKAGE" in
+	('arch')
+		PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH lib32-glfw2to3"
+	;;
+	(*)
+		# Use shipped library for distributions not providing libglfw.so.2
+		ARCHIVE_GAME_BIN_FILES="$ARCHIVE_GAME_BIN_FILES libglfw.so.2"
+	;;
+esac
 
 # Include optional icons pack
 
