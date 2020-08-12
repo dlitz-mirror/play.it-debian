@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200812.4
+script_version=20200812.7
 
 # Set game-specific variables
 
@@ -59,17 +59,18 @@ ARCHIVE_DOC_DATA_PATH='data/noarch'
 ARCHIVE_DOC_DATA_FILES='README* Licences'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch'
-ARCHIVE_GAME_BIN32_FILES='TheSwapper.bin.x86 lib/libfmodex.so lib/libmonosgen-2.0.so.0'
+ARCHIVE_GAME_BIN32_FILES='lib/libfmodex.so lib/libmonosgen-2.0.so.0'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch'
-ARCHIVE_GAME_BIN64_FILES='TheSwapper.bin.x86_64 lib64/libfmodex.so lib64/libmonosgen-2.0.so.0'
+ARCHIVE_GAME_BIN64_FILES='lib64/libfmodex.so lib64/libmonosgen-2.0.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch'
-ARCHIVE_GAME_DATA_FILES='*.dll *.dll.config *.exe *.exe.config config.xml mainSettings.ini data mono'
+ARCHIVE_GAME_DATA_FILES='data mono config.xml mainSettings.ini AdvanceMath.dll Antlr3.Runtime.dll C5.dll FarseerPhysics331.dll HackFlipcodeDecomposer.dll ImageManipulation.dll Jint.dll Lidgren.Network.dll MiniTK.dll MiniTK.dll.config MonoGame.Framework.dll Newtonsoft.Json.dll OptimusSwitcher.dll Poly2Tri.dll SDL2#.dll SDL2#.dll.config SteamManagedWrapper.dll Steamworks.NET.dll TargaImage.dll TrueEngine.dll TrueEngine.dll.config TheSwapper.exe TheSwapper.exe.config BugReporter.exe'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='TheSwapper.bin.x86'
-APP_MAIN_EXE_BIN64='TheSwapper.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='TheSwapper.exe'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -77,10 +78,12 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 sdl2_image"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 sdl2_image"
+PKG_BIN32_DEPS_DEB='libmono-posix4.0-cil, libmono-security4.0-cil, libmono-corlib4.5-cil, libopentk1.1-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system4.0-cil, libmono-system-drawing4.0-cil, libmono-system-numerics4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 
 # Optional icons pack
 
