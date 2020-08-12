@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200930.1
+script_version=20200930.2
 
 # Set game-specific variables
 
@@ -77,7 +77,7 @@ ARCHIVE_DOC1_DATA_PATH='data/noarch/game/'
 ARCHIVE_DOC1_DATA_FILES='license.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='NecroDancer essentia* fmod libavcodec.so.53 libavformat.so.53 libavutil.so.51 libfftw3f.so.3 libglfw.so.2 libgsm.so.1 libsamplerate.so.0 libschroedinger-1.0.so.0 libtag.so.1 libyaml-0.so.2'
+ARCHIVE_GAME_BIN_FILES='NecroDancer fmod libglfw.so.2'
 
 ARCHIVE_GAME_MUSIC_PATH='data/noarch/game'
 ARCHIVE_GAME_MUSIC_FILES='data/music'
