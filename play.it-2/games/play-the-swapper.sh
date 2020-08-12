@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200812.3
+script_version=20200812.4
 
 # Set game-specific variables
 
@@ -59,10 +59,10 @@ ARCHIVE_DOC_DATA_PATH='data/noarch'
 ARCHIVE_DOC_DATA_FILES='README* Licences'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch'
-ARCHIVE_GAME_BIN32_FILES='TheSwapper.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='TheSwapper.bin.x86 lib/libfmodex.so lib/libmonosgen-2.0.so.0'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch'
-ARCHIVE_GAME_BIN64_FILES='TheSwapper.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='TheSwapper.bin.x86_64 lib64/libfmodex.so lib64/libmonosgen-2.0.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch'
 ARCHIVE_GAME_DATA_FILES='*.dll *.dll.config *.exe *.exe.config config.xml mainSettings.ini data mono'
