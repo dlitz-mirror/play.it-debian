@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200821.1
+script_version=20200821.2
 
 # Set game-specific variables
 
@@ -42,26 +42,47 @@ GAME_ID='mirrors-edge'
 GAME_NAME='Mirrorʼs Edge'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_0'
+ARCHIVE_GOG_0
+ARCHIVE_GOG_RAR_0'
 
-ARCHIVE_GOG_0='setup_mirrors_edge_2.0.0.3.exe'
+ARCHIVE_GOG_0='setup_mirrors_edge_1.01_(40566).exe'
+ARCHIVE_GOG_0_MD5='f0faffb76a2b46c3aca8342265a5f41b'
+ARCHIVE_GOG_0_TYPE='innosetup'
 ARCHIVE_GOG_0_URL='https://www.gog.com/game/mirrors_edge'
-ARCHIVE_GOG_0_MD5='89381d67169f5c6f8f300e172a64f99c'
-ARCHIVE_GOG_0_SIZE='7700000'
-ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.3'
-ARCHIVE_GOG_0_TYPE='rar'
-ARCHIVE_GOG_0_PART1='setup_mirrors_edge_2.0.0.3-1.bin'
-ARCHIVE_GOG_0_PART1_MD5='406b99108e1edd17fc60435d1f2c27f9'
-ARCHIVE_GOG_0_PART1_TYPE='rar'
-ARCHIVE_GOG_0_PART2='setup_mirrors_edge_2.0.0.3-2.bin'
-ARCHIVE_GOG_0_PART2_MD5='18f2bd62201904c8e98a4b805a90ab2d'
-ARCHIVE_GOG_0_PART2_TYPE='rar'
+ARCHIVE_GOG_0_SIZE='12000000'
+ARCHIVE_GOG_0_VERSION='1.01-gog40566'
+ARCHIVE_GOG_0_PART1='setup_mirrors_edge_1.01_(40566)-1.bin'
+ARCHIVE_GOG_0_PART1_MD5='cdfea6d6412de910eae6748eeb6af54e'
+ARCHIVE_GOG_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_0_PART2='setup_mirrors_edge_1.01_(40566)-2.bin'
+ARCHIVE_GOG_0_PART2_MD5='6b4a66c9ac31c8c2f4e647957c64370a'
+ARCHIVE_GOG_0_PART2_TYPE='innosetup'
+ARCHIVE_GOG_0_PART3='setup_mirrors_edge_1.01_(40566)-3.bin'
+ARCHIVE_GOG_0_PART3_MD5='8529e17c8faa54be07219106ffe00774'
+ARCHIVE_GOG_0_PART3_TYPE='innosetup'
 
-ARCHIVE_GAME_BIN_PATH='game'
+ARCHIVE_GOG_RAR_0='setup_mirrors_edge_2.0.0.3.exe'
+ARCHIVE_GOG_RAR_0_URL='https://www.gog.com/game/mirrors_edge'
+ARCHIVE_GOG_RAR_0_MD5='89381d67169f5c6f8f300e172a64f99c'
+ARCHIVE_GOG_RAR_0_SIZE='7700000'
+ARCHIVE_GOG_RAR_0_VERSION='1.0-gog2.0.0.3'
+ARCHIVE_GOG_RAR_0_TYPE='rar'
+ARCHIVE_GOG_RAR_0_PART1='setup_mirrors_edge_2.0.0.3-1.bin'
+ARCHIVE_GOG_RAR_0_PART1_MD5='406b99108e1edd17fc60435d1f2c27f9'
+ARCHIVE_GOG_RAR_0_PART1_TYPE='rar'
+ARCHIVE_GOG_RAR_0_PART2='setup_mirrors_edge_2.0.0.3-2.bin'
+ARCHIVE_GOG_RAR_0_PART2_MD5='18f2bd62201904c8e98a4b805a90ab2d'
+ARCHIVE_GOG_RAR_0_PART2_TYPE='rar'
+
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='binaries engine'
+# Keep compatibility with old archives
+ARCHIVE_GAME_BIN_PATH_GOG_RAR='game'
 
-ARCHIVE_GAME_DATA_PATH='game'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='me_icon.ico tdgame'
+# Keep compatibility with old archives
+ARCHIVE_GAME_DATA_PATH_GOG_RAR='game'
 
 CONFIG_DIRS='./tdgame/config'
 DATA_DIRS='./tdgame/savefiles'
@@ -110,10 +131,17 @@ fi
 
 # Extract game data
 
-ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
-ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
-extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
-tolower "$PLAYIT_WORKDIR/gamedata"
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_RAR_'*)
+		ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
+		ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
+		extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
+		tolower "$PLAYIT_WORKDIR/gamedata"
+	;;
+	(*)
+		extract_data_from "$SOURCE_ARCHIVE"
+	;;
+esac
 prepare_package_layout
 
 # Extract game icons
