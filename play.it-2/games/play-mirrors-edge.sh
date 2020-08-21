@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -30,38 +30,38 @@ set -o errexit
 
 ###
 # Mirror’s Edge
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200821.1
 
 # Set game-specific variables
 
 GAME_ID='mirrors-edge'
-# shellcheck disable=SC1112
-GAME_NAME='Mirror’s Edge'
+GAME_NAME='Mirrorʼs Edge'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
 
-ARCHIVE_GOG='setup_mirrors_edge_2.0.0.3.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/mirrors_edge'
-ARCHIVE_GOG_MD5='89381d67169f5c6f8f300e172a64f99c'
-ARCHIVE_GOG_SIZE='7700000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.3'
-ARCHIVE_GOG_TYPE='rar'
-ARCHIVE_GOG_PART1='setup_mirrors_edge_2.0.0.3-1.bin'
-ARCHIVE_GOG_PART1_MD5='406b99108e1edd17fc60435d1f2c27f9'
-ARCHIVE_GOG_PART1_TYPE='rar'
-ARCHIVE_GOG_PART2='setup_mirrors_edge_2.0.0.3-2.bin'
-ARCHIVE_GOG_PART2_MD5='18f2bd62201904c8e98a4b805a90ab2d'
-ARCHIVE_GOG_PART2_TYPE='rar'
+ARCHIVE_GOG_0='setup_mirrors_edge_2.0.0.3.exe'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/mirrors_edge'
+ARCHIVE_GOG_0_MD5='89381d67169f5c6f8f300e172a64f99c'
+ARCHIVE_GOG_0_SIZE='7700000'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.3'
+ARCHIVE_GOG_0_TYPE='rar'
+ARCHIVE_GOG_0_PART1='setup_mirrors_edge_2.0.0.3-1.bin'
+ARCHIVE_GOG_0_PART1_MD5='406b99108e1edd17fc60435d1f2c27f9'
+ARCHIVE_GOG_0_PART1_TYPE='rar'
+ARCHIVE_GOG_0_PART2='setup_mirrors_edge_2.0.0.3-2.bin'
+ARCHIVE_GOG_0_PART2_MD5='18f2bd62201904c8e98a4b805a90ab2d'
+ARCHIVE_GOG_0_PART2_TYPE='rar'
 
 ARCHIVE_GAME_BIN_PATH='game'
-ARCHIVE_GAME_BIN_FILES='./binaries ./engine'
+ARCHIVE_GAME_BIN_FILES='binaries engine'
 
 ARCHIVE_GAME_DATA_PATH='game'
-ARCHIVE_GAME_DATA_FILES='./language_setup.ini ./me_icon.ico ./tdgame'
+ARCHIVE_GAME_DATA_FILES='me_icon.ico tdgame'
 
 CONFIG_DIRS='./tdgame/config'
 DATA_DIRS='./tdgame/savefiles'
@@ -71,7 +71,6 @@ APP_WINETRICKS='physx'
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='binaries/mirrorsedge.exe'
 APP_MAIN_ICON='me_icon.ico'
-APP_MAIN_ICON_RES='16 32 48 64 256'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -83,52 +82,53 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
-
-# Check that all parts of the installer are present
-
-ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_PART1' 'ARCHIVE_GOG_PART1'
-[ "$ARCHIVE_PART1" ] || set_archive_error_not_found 'ARCHIVE_GOG_PART1'
-set_archive 'ARCHIVE_PART2' 'ARCHIVE_GOG_PART2'
-[ "$ARCHIVE_PART2" ] || set_archive_error_not_found 'ARCHIVE_GOG_PART2'
-ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
-ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
-ln --symbolic "$(readlink --canonicalize "$ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
+ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART1")" "$PLAYIT_WORKDIR/$GAME_ID.r00"
+ln --symbolic "$(readlink --canonicalize "$SOURCE_ARCHIVE_PART2")" "$PLAYIT_WORKDIR/$GAME_ID.r01"
 extract_data_from "$PLAYIT_WORKDIR/$GAME_ID.r00"
 tolower "$PLAYIT_WORKDIR/gamedata"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Extract game icons
 
 PKG='PKG_DATA'
-extract_and_sort_icons_from 'APP_MAIN'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
 
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
