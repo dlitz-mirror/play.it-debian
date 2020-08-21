@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200821.2
+script_version=20200821.4
 
 # Set game-specific variables
 
@@ -79,6 +79,16 @@ ARCHIVE_GAME_BIN_FILES='binaries engine'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_GOG_RAR='game'
 
+ARCHIVE_GAME_L10N_PATH='.'
+ARCHIVE_GAME_L10N_FILES='tdgame/localization tdgame/cookedpc/audio/??? tdgame/cookedpc/startup_???.upk tdgame/cookedpc/ts_loc_???.upk tdgame/cookedpc/ui/ui_fonts_final_???.upk tdgame/cookedpc/maps/sp??/*_loc_???.upk'
+# Keep compatibility with old archives
+ARCHIVE_GAME_L10N_PATH_GOG_RAR='game'
+
+ARCHIVE_GAME_MAPS_PATH='.'
+ARCHIVE_GAME_MAPS_FILES='tdgame/cookedpc/maps'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAPS_PATH_GOG_RAR='game'
+
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='me_icon.ico tdgame'
 # Keep compatibility with old archives
@@ -93,13 +103,19 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='binaries/mirrorsedge.exe'
 APP_MAIN_ICON='me_icon.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_L10N PKG_MAPS PKG_DATA'
+
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_DESCRIPTION='localizations'
+
+PKG_MAPS_ID="${GAME_ID}-maps"
+PKG_MAPS_DESCRIPTION='maps'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_L10N_ID $PKG_MAPS_ID $PKG_DATA_ID wine winetricks"
 
 # Load common functions
 
