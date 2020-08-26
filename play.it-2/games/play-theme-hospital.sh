@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200827.8
+script_version=20200827.11
 
 # Set game-specific variables
 
@@ -157,8 +157,7 @@ touch "$target_file"
 chmod 755 "$target_file"
 launcher_write_script_headers "$target_file"
 cat >> "$target_file" << EOF
-cd '$PATH_CORSIXTH'
-exec ./CorsixTH "\$@"
+corsix-th "\$@"
 
 exit 0
 EOF
