@@ -28,9 +28,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	if [ -z "${target_version:=}" ]; then
 		error_missing_target_version
 	fi
-	VERSION_MAJOR_PROVIDED="${library_version%%.*}"
+	VERSION_MAJOR_PROVIDED="${LIBRARY_VERSION%%.*}"
 	VERSION_MAJOR_TARGET="${target_version%%.*}"
-	VERSION_MINOR_PROVIDED=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
+	VERSION_MINOR_PROVIDED=$(printf '%s' "$LIBRARY_VERSION" | cut --delimiter='.' --fields=2)
 	VERSION_MINOR_TARGET=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	if \
 		[ $VERSION_MAJOR_PROVIDED -ne $VERSION_MAJOR_TARGET ] || \
