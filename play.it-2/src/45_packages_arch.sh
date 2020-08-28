@@ -327,7 +327,7 @@ pkg_set_deps_arch64() {
 				pkg_dep='gcc-libs'
 			;;
 			('libudev1'|'libudev.so.1')
-				pkg_dep='libsystemd'
+				pkg_dep='libudev.so=1-64'
 			;;
 			('libX11.so.6')
 				pkg_dep='libx11'
