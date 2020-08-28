@@ -177,7 +177,7 @@ pkg_set_deps_arch32() {
 			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep='lib32-systemd'
 			;;
 			('libX11.so.6')
@@ -326,7 +326,7 @@ pkg_set_deps_arch64() {
 			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='gcc-libs'
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep='libsystemd'
 			;;
 			('libX11.so.6')

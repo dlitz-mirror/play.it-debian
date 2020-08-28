@@ -178,7 +178,7 @@ pkg_set_deps_gentoo() {
 			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep="virtual/libudev$architecture_suffix"
 			;;
 			('libX11.so.6')

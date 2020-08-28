@@ -172,7 +172,7 @@ pkg_set_deps_deb() {
 			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='libstdc++6'
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep='libudev1'
 			;;
 			('libX11.so.6')
