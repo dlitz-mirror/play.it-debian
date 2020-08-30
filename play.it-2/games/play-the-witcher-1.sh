@@ -32,15 +32,18 @@ set -o errexit
 ###
 # The Witcher: Enhanced Edition
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190729.6
+script_version=20200830.13
 
 # Set game-specific variables
 
 GAME_ID='the-witcher-1'
 GAME_NAME='The Witcher'
+
+# unix2dos (provided by dos2unix) is used to generate a .reg file
+SCRIPT_DEPS='dos2unix'
 
 ARCHIVE_GOG='setup_the_witcher_enhanced_edition_1.5_(a)_(10712).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/the_witcher'
@@ -72,7 +75,6 @@ ARCHIVE_GAME_DATA_FILES='data'
 ARCHIVE_ADDONS_PATH='app/__support/add/the witcher'
 ARCHIVE_ADDONS_FILES='*'
 
-APP_REGEDIT='init.reg'
 # Fix texture issues
 # cf. https://bugs.winehq.org/show_bug.cgi?id=46553
 APP_WINETRICKS='d3dx9_35'
@@ -101,7 +103,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks glx xcursor"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -144,18 +146,15 @@ PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
 
-# Write launchers
-
-PKG='PKG_BIN'
-launchers_write 'APP_MAIN'
-
 # Set up required registry keys
 
-cat > "${PKG_BIN_PATH}${PATH_GAME}/init.reg" << 'EOF'
+registry_dump="${PKG_BIN_PATH}${PATH_GAME}/${APP_REGEDIT:=init.reg}"
+
+cat > "$registry_dump" << EOF
 Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\Software\CD Projekt Red\The Witcher]
-"InstallFolder"="C:\\the-witcher\\"
+[HKEY_LOCAL_MACHINE\\Software\\CD Projekt Red\\The Witcher]
+"InstallFolder"="C:\\\\${GAME_ID}\\\\"
 "IsDjinniInstalled"=dword:00000001
 "Language"="3"
 "RegionVersion"="WE"
@@ -164,11 +163,18 @@ EOF
 # Work around invisible models and flickering
 # cf. https://bugs.winehq.org/show_bug.cgi?id=34052
 
-cat >> "${PKG_BIN_PATH}${PATH_GAME}/init.reg" << 'EOF'
+cat >> "$registry_dump" << 'EOF'
 
 [HKEY_CURRENT_USER\Software\Wine\Direct3D]
 "CheckFloatConstants"="enabled"
 EOF
+
+unix2dos "$registry_dump" 2>/dev/null
+
+# Write launchers
+
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
