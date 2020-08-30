@@ -158,7 +158,7 @@ pkg_set_deps_arch32() {
 			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
 				pkg_dep='lib32-glib2'
 			;;
-			('glu')
+			('glu'|'libGLU.so.1')
 				pkg_dep='lib32-glu'
 			;;
 			('glx')
@@ -203,7 +203,7 @@ pkg_set_deps_arch32() {
 			('pulseaudio')
 				pkg_dep='pulseaudio'
 			;;
-			('sdl1.2')
+			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='lib32-sdl'
 			;;
 			('sdl2'|'libSDL2-2.0.so.0')
@@ -292,7 +292,7 @@ pkg_set_deps_arch64() {
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
 				pkg_dep='glib2'
 			;;
-			('glu')
+			('glu'|'libGLU.so.1')
 				pkg_dep='glu'
 			;;
 			('glx')
@@ -340,7 +340,7 @@ pkg_set_deps_arch64() {
 			('pulseaudio')
 				pkg_dep='pulseaudio'
 			;;
-			('sdl1.2')
+			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='sdl'
 			;;
 			('sdl2'|'libSDL2-2.0.so.0')

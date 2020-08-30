@@ -165,7 +165,7 @@ pkg_set_deps_gentoo() {
 			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
 				pkg_dep="dev-libs/glib:2$architecture_suffix"
 			;;
-			('glu')
+			('glu'|'libGLU.so.1')
 				pkg_dep="virtual/glu$architecture_suffix"
 			;;
 			('glx')
@@ -214,7 +214,7 @@ pkg_set_deps_gentoo() {
 			('pulseaudio')
 				pkg_dep='media-sound/pulseaudio'
 			;;
-			('sdl1.2')
+			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;
 			('sdl2'|'libSDL2-2.0.so.0')
