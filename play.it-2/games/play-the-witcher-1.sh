@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200830.14
+script_version=20200830.15
 
 # Set game-specific variables
 
@@ -122,6 +122,24 @@ do
 		regedit "$registry_dump"
 	fi
 done'
+
+# Store saved games in persistent paths
+
+DATA_DIRS="$DATA_DIRS ./saves"
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Store saved games in persistent paths
+saves_path_prefix="$WINEPREFIX/drive_c/users/$USER/My Documents/The Witcher/saves"
+saves_path_persistent="$PATH_PREFIX/saves"
+if [ ! -h "$saves_path_prefix" ]; then
+	if [ -d "$saves_path_prefix" ]; then
+		# Migrate existing saves to the persistent path
+		mv "$saves_path_prefix"/* "$saves_path_persistent"
+		rmdir "$saves_path_prefix"
+	fi
+	# Create link from prefix to persistent path
+	mkdir --parents "$(dirname "$saves_path_prefix")"
+	ln --symbolic "$saves_path_persistent" "$saves_path_prefix"
+fi'
 
 # Load common functions
 
