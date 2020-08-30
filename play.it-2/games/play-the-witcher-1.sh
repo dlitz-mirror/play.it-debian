@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200830.13
+script_version=20200830.14
 
 # Set game-specific variables
 
@@ -100,6 +100,28 @@ PKG_DATA_DEPS="$PKG_VOICES_ID"
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks glx xcursor"
+
+# Use persistent storage for game settings and key bindings
+
+CONFIG_DIRS="$CONFIG_DIRS ./registry-dumps"
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Set path for persistent dumps of game settings and key bindings
+registry_dump_settings="registry-dumps/settings.reg"
+registry_dump_bindings="registry-dumps/bindings.reg"'
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+# Dump game settings and key bindings
+regedit -E "$registry_dump_settings" "HKEY_CURRENT_USER\Software\CD Projekt RED\Witcher\Settings"
+regedit -E "$registry_dump_bindings" "HKEY_CURRENT_USER\Software\CD Projekt RED\Witcher\Bindings"'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Load dumps of game settings and key bindings
+for registry_dump in \
+	"$registry_dump_settings" \
+	"$registry_dump_bindings"
+do
+	if [ -e "$registry_dump" ]; then
+		regedit "$registry_dump"
+	fi
+done'
 
 # Load common functions
 
