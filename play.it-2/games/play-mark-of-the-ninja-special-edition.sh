@@ -45,7 +45,6 @@ GAME_NAME='Mark of the Ninja - Special Edition'
 ARCHIVES_LIST='ARCHIVE_GOG'
 
 ARCHIVE_GOG='gog_mark_of_the_ninja_special_edition_dlc_2.0.0.4.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/mark_of_the_ninja_special_edition_upgrade'
 ARCHIVE_GOG_MD5='bbce70b80932ec9c14fbedf0b6b33eb1'
 ARCHIVE_GOG_SIZE='250000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.4'
