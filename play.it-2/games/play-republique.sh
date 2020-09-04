@@ -42,7 +42,6 @@ GAME_ID='republique'
 GAME_NAME='Republique'
 
 ARCHIVE_GOG='setup_republique_remastered_33555_(18824).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/republique'
 ARCHIVE_GOG_MD5='e1c57ea3489a5ffd222990ab28a9ffe7'
 ARCHIVE_GOG_SIZE='7800000'
 ARCHIVE_GOG_VERSION='1.0-gog2.2.0.4'
