@@ -1,10 +1,13 @@
 # check script dependencies
 # USAGE: check_deps
-# NEEDED VARS: (ARCHIVE) (ARCHIVE_TYPE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
+# NEEDED VARS: (ARCHIVE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
+	local archive_type
+
 	if [ "$ARCHIVE" ]; then
-		case "$(get_value "${ARCHIVE}_TYPE")" in
+		archive_type=$(archive_get_type "$ARCHIVE")
+		case "$archive_type" in
 			('cabinet')
 				SCRIPT_DEPS="$SCRIPT_DEPS cabextract"
 			;;

@@ -253,7 +253,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set main archive
 
 	archives_get_list
-	archive_set_main $ARCHIVES_LIST
+	archive_initialize_required 'SOURCE_ARCHIVE' $ARCHIVES_LIST
+	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $ARCHIVES_LIST)
+	export ARCHIVE
 
 	# Set working directories
 
