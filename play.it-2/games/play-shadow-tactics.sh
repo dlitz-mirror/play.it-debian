@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Shadow Tactics: Blades of the Shogun
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181102.2
+script_version=20200808.2
 
 # Set game-specific variables
 
@@ -69,11 +69,14 @@ ARCHIVE_GAME_DATA_FILES='Shadow?Tactics_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='export LANG=C'
 APP_MAIN_EXE='Shadow Tactics'
+APP_MAIN_ICON='Shadow Tactics_Data/Resources/UnityPlayer.png'
+# Common Unity3D tweaks
+APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
+export LANG=C'
+# Use a per-session dedicated file for logs
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='Shadow Tactics_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN PKG_LIGHTING PKG_DATA'
 
@@ -84,11 +87,11 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_LIGHTING_ID $PKG_DATA_ID glibc libstdc++ glx libudev1 xcursor libxrandr"
+PKG_BIN_DEPS="$PKG_LIGHTING_ID $PKG_DATA_ID glibc libstdc++ glx libudev1 xcursor libxrandr alsa"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -111,13 +114,21 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -127,10 +138,7 @@ write_launcher 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_LIGHTING' 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
