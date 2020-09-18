@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200928.1
+script_version=20201016.1
 
 # Set game-specific variables
 
@@ -64,6 +64,12 @@ ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/aragami'
 ARCHIVE_HUMBLE_0_MD5='4be0b7f674eec62184df216fcaba77b5'
 ARCHIVE_HUMBLE_0_SIZE='6800000'
 ARCHIVE_HUMBLE_0_VERSION='01.08-humble170503'
+
+ARCHIVE_GOG_DLC='aragami_nightfall_dlc_en_gog_1_21278.sh'
+ARCHIVE_GOG_DLC_MD5='40920a28f030147a524e5ac89e2cf14b'
+ARCHIVE_GOG_DLC_SIZE='7400000'
+ARCHIVE_GOG_DLC_TYPE='mojosetup'
+ARCHIVE_GOG_DLC_URL='https://www.gog.com/game/aragami_nightfall'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
@@ -127,9 +133,22 @@ fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load extra archives (DLC)
+
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive "ARCHIVE_DLC" "ARCHIVE_GOG_DLC"
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+if [ "$ARCHIVE_DLC" ]; then
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE='ARCHIVE_DLC'
+		extract_data_from "$ARCHIVE_DLC"
+	)
+fi
 
 for PKG in $PACKAGES_LIST; do
 	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
