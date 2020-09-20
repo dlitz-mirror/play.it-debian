@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200706.2
+script_version=20200920.1
 
 # Set game-specific variables
 
@@ -46,7 +46,7 @@ GAME_NAME='Touhou Chireiden ~ Subterranean Animism - Demo'
 SCRIPT_DEPS='convmv iconv'
 
 ARCHIVE_ZUN='th11tr002a_setup.exe'
-ARCHIVE_ZUN_URL='http://www16.big.or.jp/~zun/html/th11top.html'
+ARCHIVE_ZUN_URL='https://www16.big.or.jp/~zun/html/th11top.html'
 ARCHIVE_ZUN_MD5='9b7c092a529fcc1f48590f0a2b3cca87'
 ARCHIVE_ZUN_VERSION='0.02a-zun1'
 ARCHIVE_ZUN_SIZE='135812'
