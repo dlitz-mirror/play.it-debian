@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20200929.1
 
 # Set game-specific variables
 
@@ -43,22 +43,22 @@ GAME_NAME='Worms Armageddon'
 
 ARCHIVES_LIST='ARCHIVE_GOG'
 
-ARCHIVE_GOG='setup_worms_armageddon_2.0.0.2.exe'
+ARCHIVE_GOG='setup_worms_armageddon_gog-2_(40354).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/worms_armageddon'
-ARCHIVE_GOG_MD5='7f0bb89729662ebe74b7c9c2cd97d1c8'
-ARCHIVE_GOG_VERSION='3.7.2.1-gog2.0.0.2'
+ARCHIVE_GOG_MD5='db2087029ee8c069c9006ebeedc76bbf'
+ARCHIVE_GOG_VERSION='3.8-gog2.40354'
 ARCHIVE_GOG_SIZE='570000'
 
-ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='./wa_manual.pdf ./worms?armageddon?update?documentation.rtf'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='./lfbmp10n.dll ./lfcmp10n.dll ./lflmb10n.dll ./lftga10n.dll ./ltfil10n.dll ./ltkrn10n.dll ./wa.exe user/bankeditor.exe ./steam_api.dll'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='./data ./fesfx ./graphics ./tweaks user/fanfare user/flags user/graves user/import user/names.wdb user/savedlevels user/schemes user/speech user/teams ./steam.dat'
 
-ARCHIVE_GAME_DATA_SAVE_PATH='app/__support'
+ARCHIVE_GAME_DATA_SAVE_PATH='./__support'
 ARCHIVE_GAME_DATA_SAVE_FILES='./save'
 
 DATA_DIRS='./save ./user'
