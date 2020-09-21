@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201031.18
+script_version=20201031.19
 
 # Set game-specific variables
 
@@ -43,26 +43,41 @@ GAME_ID='thief-3'
 GAME_NAME='Thief 3: Deadly Shadows'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_1='setup_thief_-_deadly_shadows_1.1_(21683).exe'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/thief_3'
+ARCHIVE_GOG_1_MD5='153723f2908242cf27a23ad58d0608b5'
+ARCHIVE_GOG_1_VERSION='1.1-gog2.21683'
+ARCHIVE_GOG_1_SIZE='2300000'
+ARCHIVE_GOG_1_TYPE='innosetup'
+ARCHIVE_GOG_1_PART1='setup_thief_-_deadly_shadows_1.1_(21683)-1.bin'
+ARCHIVE_GOG_1_PART1_MD5='8c549826345776df192fb1721740096f'
+ARCHIVE_GOG_1_PART1_TYPE='innosetup'
+
 ARCHIVE_GOG_0='setup_thief3_2.0.0.6.exe'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/thief_3'
 ARCHIVE_GOG_0_MD5='e5b84de58a1037f3e8aa3a1bb2a982be'
 ARCHIVE_GOG_0_VERSION='1.1-gog2.0.0.6'
 ARCHIVE_GOG_0_SIZE='2300000'
 ARCHIVE_GOG_0_TYPE='innosetup'
 
-ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf eula.txt readme.rtf'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='system'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='content'
 
 CONFIG_FILES='./*.ini'
 CONFIG_DIRS='./saves'
+
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_0='app'
+ARCHIVE_GAME_BIN_PATH_GOG_0='app'
+ARCHIVE_GAME_DATA_PATH_GOG_0='app'
 
 APP_REGEDIT='thief.reg'
 
