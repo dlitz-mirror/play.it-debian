@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200929.2
+script_version=20200929.3
 
 # Set game-specific variables
 
@@ -69,7 +69,7 @@ ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='./lfbmp10n.dll ./lfcmp10n.dll ./lflmb10n.dll ./lftga10n.dll ./ltfil10n.dll ./ltkrn10n.dll ./wa.exe user/bankeditor.exe ./steam_api.dll'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='./data ./fesfx ./graphics ./tweaks user/fanfare user/flags user/graves user/import user/names.wdb user/savedlevels user/schemes user/speech user/teams ./steam.dat'
+ARCHIVE_GAME_DATA_FILES='./data ./fesfx ./graphics ./tweaks user/fanfare user/flags user/graves user/import user/names.wdb user/savedlevels user/schemes user/speech user/teams'
 
 ARCHIVE_GAME_DATA_SAVE_PATH='./__support'
 ARCHIVE_GAME_DATA_SAVE_FILES='./save'
@@ -86,6 +86,8 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='wa.exe'
 APP_MAIN_ICON='wa.exe'
 APP_MAIN_ICON_RES='16 32 48'
+APP_MAIN_PRERUN='# Create required empty file prior to game run
+touch steam.dat'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
