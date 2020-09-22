@@ -31,23 +31,36 @@ set -o errexit
 ###
 # Worms Armageddon
 # build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200929.1
+script_version=20200929.2
 
 # Set game-specific variables
 
 GAME_ID='worms-armageddon'
 GAME_NAME='Worms Armageddon'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
+ARCHIVES_LIST='
+ARCHIVE_GOG_2
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0'
 
-ARCHIVE_GOG='setup_worms_armageddon_gog-2_(40354).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/worms_armageddon'
-ARCHIVE_GOG_MD5='db2087029ee8c069c9006ebeedc76bbf'
-ARCHIVE_GOG_VERSION='3.8-gog2.40354'
-ARCHIVE_GOG_SIZE='570000'
+ARCHIVE_GOG_2='setup_worms_armageddon_gog-2_(40354).exe'
+ARCHIVE_GOG_2_URL='https://www.gog.com/game/worms_armageddon'
+ARCHIVE_GOG_2_MD5='db2087029ee8c069c9006ebeedc76bbf'
+ARCHIVE_GOG_2_VERSION='3.8-gog40354'
+ARCHIVE_GOG_2_SIZE='650000'
+
+ARCHIVE_GOG_1='setup_worms_armageddon_gog-7_(40119).exe'
+ARCHIVE_GOG_1_MD5='8e904d462327917452a47572a38b772a'
+ARCHIVE_GOG_1_VERSION='3.8-gog40119'
+ARCHIVE_GOG_1_SIZE='660000'
+
+ARCHIVE_GOG_0='setup_worms_armageddon_2.0.0.2.exe'
+ARCHIVE_GOG_0_MD5='7f0bb89729662ebe74b7c9c2cd97d1c8'
+ARCHIVE_GOG_0_VERSION='3.7.2.1-gog2.0.0.2'
+ARCHIVE_GOG_0_SIZE='570000'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='./wa_manual.pdf ./worms?armageddon?update?documentation.rtf'
@@ -60,6 +73,12 @@ ARCHIVE_GAME_DATA_FILES='./data ./fesfx ./graphics ./tweaks user/fanfare user/fl
 
 ARCHIVE_GAME_DATA_SAVE_PATH='./__support'
 ARCHIVE_GAME_DATA_SAVE_FILES='./save'
+
+# Keep compatibility with old archives
+ARCHIVE_DOC_DATA_PATH_GOG_0='app'
+ARCHIVE_GAME_BIN_PATH_GOG_0='app'
+ARCHIVE_GAME_DATA_PATH_GOG_0='app'
+ARCHIVE_GAME_DATA_SAVE_PATH_GOG_0='app/__support'
 
 DATA_DIRS='./save ./user'
 
