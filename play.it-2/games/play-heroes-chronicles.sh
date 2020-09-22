@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200930.1
+script_version=20200930.2
 
 # Set game-specific variables
 
@@ -149,9 +149,10 @@ PKG_COMMON_DESCRIPTION='common files'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_COMMON_ID"
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_COMMON_ID $PKG_DATA_ID wine winetricks xrandr"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
 
 # Load common functions
 
@@ -194,7 +195,7 @@ APP_MAIN_ICON="$APP_MAIN_EXE"
 
 PKG_BIN_ID="$GAME_ID"
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_BIN_DEPS="$PKG_COMMON_ID $PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
 
 # Update PATH_DOC and PATH_GAME based on new GAME_ID value
 
@@ -221,17 +222,22 @@ set_temp_directories $PACKAGES_LIST
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
-prepare_package_layout
+
 PKG='PKG_COMMON'
 organize_data 'DOC_COMMON'  "$PATH_DOC_COMMON"
 organize_data 'GAME_COMMON' "$PATH_GAME_COMMON"
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+prepare_package_layout
 
 # Get game icon
 
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
+
+# Clean up temporary files
+
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Create required missing directories
 
@@ -260,8 +266,10 @@ for dir in data mp3; do
 	fi
 done"
 write_metadata 'PKG_DATA' 'PKG_BIN'
-GAME_NAME="$GAME_NAME_COMMON" \
+(
+	GAME_NAME="$GAME_NAME_COMMON"
 	write_metadata 'PKG_COMMON'
+)
 build_pkg
 
 # Clean up
