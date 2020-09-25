@@ -206,7 +206,10 @@ archive_get_files_to_extract() {
 		[ -n "$icons_list" ] || icons_list="${app}_ICON"
 		for icon in $icons_list; do
 			use_archive_specific_value "$icon"
-			printf '%s\n' "$(get_value "$icon" | sed 's/[][\\?*]/\\&/g' | tr '\n' '?')" # Print glob escaped version
+			# Escape tricky characters in archive inner paths
+			printf '%s\n' "$(get_value "$icon" | \
+				sed 's/[][\\?*]/\\&/g' | \
+				tr '\n ' '?')"
 		done
 	done
 	# shellcheck disable=2086
@@ -223,7 +226,10 @@ archive_concat_needed_files_with_path() {
 		set -o noglob
 		for file in $(get_value "ARCHIVE_${specifier}_FILES"); do
 			if [ "$(get_value "ARCHIVE_${specifier}_PATH")" != '.' ]; then
-				printf '%s\n' "$(get_value "ARCHIVE_${specifier}_PATH" | sed 's/[][\\?*]/\\&/g' | tr '\n' '?')/$file" # Print glob escaped version of the path with the file
+				# Escape tricky characters in archive inner paths
+				printf '%s\n' "$(get_value "ARCHIVE_${specifier}_PATH" | \
+					sed 's/[][\\?*]/\\&/g' | \
+					tr '\n ' '?')/$file"
 			else
 				printf '%s\n' "$file"
 			fi
