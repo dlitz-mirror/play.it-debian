@@ -36,54 +36,63 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200716.1
+script_version=20200805.1
 
 # Set game-specific variables
 
 GAME_ID='mini-metro'
 GAME_NAME='Mini Metro'
 
-ARCHIVE_HUMBLE='MiniMetro-release-41-linux.tar.gz'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/mini-metro'
-ARCHIVE_HUMBLE_MD5='01f6f15ba835e1c54e52df90ff890408'
-ARCHIVE_HUMBLE_VERSION='1.41-humble'
-ARCHIVE_HUMBLE_SIZE='310000'
+ARCHIVES_LIST='
+ARCHIVE_HUMBLE_6
+ARCHIVE_HUMBLE_5
+ARCHIVE_HUMBLE_4
+ARCHIVE_HUMBLE_3
+ARCHIVE_HUMBLE_2
+ARCHIVE_HUMBLE_1
+ARCHIVE_HUMBLE_0'
 
-ARCHIVE_HUMBLE_OLD5='MiniMetro-release-39-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD5_MD5='3e7afefbcc68b6295821394e31f5e48b'
-ARCHIVE_HUMBLE_OLD5_VERSION='1.39-humble'
-ARCHIVE_HUMBLE_OLD5_SIZE='320000'
+ARCHIVE_HUMBLE_6='MiniMetro-release-41-linux.tar.gz'
+ARCHIVE_HUMBLE_6_URL='https://www.humblebundle.com/store/mini-metro'
+ARCHIVE_HUMBLE_6_MD5='01f6f15ba835e1c54e52df90ff890408'
+ARCHIVE_HUMBLE_6_VERSION='1.41-humble'
+ARCHIVE_HUMBLE_6_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD4='MiniMetro-release-38-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD4_MD5='1535053549257fd3139a46ed91c193a4'
-ARCHIVE_HUMBLE_OLD4_VERSION='1.38-humble181120'
-ARCHIVE_HUMBLE_OLD4_SIZE='320000'
+ARCHIVE_HUMBLE_5='MiniMetro-release-39-linux.tar.gz'
+ARCHIVE_HUMBLE_5_MD5='3e7afefbcc68b6295821394e31f5e48b'
+ARCHIVE_HUMBLE_5_VERSION='1.39-humble'
+ARCHIVE_HUMBLE_5_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD3='MiniMetro-release-37a-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD3_MD5='879d12ce7255feebf7406f65519112dd'
-ARCHIVE_HUMBLE_OLD3_VERSION='1.37a-humble180913'
-ARCHIVE_HUMBLE_OLD3_SIZE='310000'
+ARCHIVE_HUMBLE_4='MiniMetro-release-38-linux.tar.gz'
+ARCHIVE_HUMBLE_4_MD5='1535053549257fd3139a46ed91c193a4'
+ARCHIVE_HUMBLE_4_VERSION='1.38-humble181120'
+ARCHIVE_HUMBLE_4_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD2='MiniMetro-release-37-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD2_MD5='0ee6efa77a16e7775253334640b6d20a'
-ARCHIVE_HUMBLE_OLD2_VERSION='1.37-humble1'
-ARCHIVE_HUMBLE_OLD2_SIZE='310000'
+ARCHIVE_HUMBLE_3='MiniMetro-release-37a-linux.tar.gz'
+ARCHIVE_HUMBLE_3_MD5='879d12ce7255feebf7406f65519112dd'
+ARCHIVE_HUMBLE_3_VERSION='1.37a-humble180913'
+ARCHIVE_HUMBLE_3_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD1='MiniMetro-release-36b-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD1_MD5='5c6b16404cd0c3fc00be295721ec7bdd'
-ARCHIVE_HUMBLE_OLD1_VERSION='1.36b-humble180605'
-ARCHIVE_HUMBLE_OLD1_SIZE='310000'
+ARCHIVE_HUMBLE_2='MiniMetro-release-37-linux.tar.gz'
+ARCHIVE_HUMBLE_2_MD5='0ee6efa77a16e7775253334640b6d20a'
+ARCHIVE_HUMBLE_2_VERSION='1.37-humble1'
+ARCHIVE_HUMBLE_2_SIZE='310000'
 
-ARCHIVE_HUMBLE_OLD0='MiniMetro-gamma35b-linux.tar.gz'
-ARCHIVE_HUMBLE_OLD0_MD5='5548397ea5eddd915aa33247a38dad74'
-ARCHIVE_HUMBLE_OLD0_VERSION='1.35b-humble1'
-ARCHIVE_HUMBLE_OLD0_SIZE='310000'
+ARCHIVE_HUMBLE_1='MiniMetro-release-36b-linux.tar.gz'
+ARCHIVE_HUMBLE_1_MD5='5c6b16404cd0c3fc00be295721ec7bdd'
+ARCHIVE_HUMBLE_1_VERSION='1.36b-humble180605'
+ARCHIVE_HUMBLE_1_SIZE='310000'
+
+ARCHIVE_HUMBLE_0='MiniMetro-gamma35b-linux.tar.gz'
+ARCHIVE_HUMBLE_0_MD5='5548397ea5eddd915aa33247a38dad74'
+ARCHIVE_HUMBLE_0_VERSION='1.35b-humble1'
+ARCHIVE_HUMBLE_0_SIZE='310000'
 
 ARCHIVE_GAME_BIN32_PATH='.'
-ARCHIVE_GAME_BIN32_FILES='Mini?Metro.x86 Mini?Metro_Data/*/x86'
+ARCHIVE_GAME_BIN32_FILES='Mini?Metro.x86 Mini?Metro_Data/Mono/x86 Mini?Metro_Data/Plugins/x86'
 
 ARCHIVE_GAME_BIN64_PATH='.'
-ARCHIVE_GAME_BIN64_FILES='Mini?Metro.x86_64 Mini?Metro_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_FILES='Mini?Metro.x86_64 Mini?Metro_Data/Mono/x86_64 Mini?Metro_Data/Plugins/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='Mini?Metro_Data'
@@ -91,12 +100,14 @@ ARCHIVE_GAME_DATA_FILES='Mini?Metro_Data'
 DATA_DIRS='./logs'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='export LANG=C'
+APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
+export LANG=C'
 APP_MAIN_EXE_BIN32='Mini Metro.x86'
 APP_MAIN_EXE_BIN64='Mini Metro.x86_64'
+APP_MAIN_ICON='Mini Metro_Data/Resources/UnityPlayer.png'
+# Use a per-session dedicated file for logs
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICON='Mini Metro_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -147,6 +158,14 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
@@ -157,10 +176,7 @@ done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up

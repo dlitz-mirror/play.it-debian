@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200619.2
+script_version=20200626.1
 
 # Set game-specific variables
 
@@ -138,12 +138,11 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around screen resolution detection issues
 config_file="$HOME/.config/unity3d/Failbetter Games/Sunless Skies/prefs"
 if [ ! -e "$config_file" ]; then
-	mkdir --parents "${config_file%/*}"
-	resolution=$(xrandr | awk "/\*/ {print $1}")
+	mkdir --parents "$(dirname "$config_file")"
 	cat > "$config_file" <<- EOF
 	<unity_prefs version_major="1" version_minor="1">
-	        <pref name="Screenmanager Resolution Height" type="int">${resolution%x*}</pref>
-	        <pref name="Screenmanager Resolution Width" type="int">${resolution#*x}</pref>
+	        <pref name="Screenmanager Resolution Height" type="int">720</pref>
+	        <pref name="Screenmanager Resolution Width" type="int">1280</pref>
 	</unity_prefs>
 	EOF
 fi'
@@ -159,7 +158,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1 xrandr"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr libudev1"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
