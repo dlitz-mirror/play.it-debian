@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200502.3
+script_version=20200502.4
 
 # Set game-specific variables
 
@@ -56,20 +56,18 @@ ARCHIVE_DOC_DATA_PATH='data'
 ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='DustAET.bin.x86 lib/libmojoshader.so lib/libtheoraplay.so'
+ARCHIVE_GAME_BIN32_FILES='lib/libmojoshader.so lib/libtheoraplay.so'
 
 ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='DustAET.bin.x86_64 lib64/libmojoshader.so lib64/libtheoraplay.so'
+ARCHIVE_GAME_BIN64_FILES='lib64/libmojoshader.so lib64/libtheoraplay.so'
 
 ARCHIVE_GAME_DATA_PATH='data'
-ARCHIVE_GAME_DATA_FILES='Content data de es fr it ja DustAET.exe Dust?An?Elysian?Tail.bmp monoconfig *.dll *.dll.config'
+ARCHIVE_GAME_DATA_FILES='Content data de es fr it ja DustAET.exe Dust?An?Elysian?Tail.bmp monoconfig FNA.dll FNA.dll.config MonoGame.Framework.Net.dll'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='# Work around terminfo Mono bug
-# cf. https://github.com/mono/mono/issues/6752
-export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='DustAET.bin.x86'
-APP_MAIN_EXE_BIN64='DustAET.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='DustAET.exe'
 APP_MAIN_ICON='Dust An Elysian Tail.bmp'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
@@ -78,14 +76,14 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 openal vorbis theora"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 openal vorbis theora"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -127,6 +125,16 @@ icons_get_from_package 'APP_MAIN'
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	launchers_write 'APP_MAIN'
 done
+
+# Disable language override
+
+pattern='export LANG=C'
+replacement='#&'
+if [ $DRY_RUN -eq 0 ]; then
+	sed --in-place "s/${pattern}/${replacement}/" \
+		"${PKG_BIN32_PATH}${PATH_BIN}/${GAME_ID}" \
+		"${PKG_BIN64_PATH}${PATH_BIN}/${GAME_ID}"
+fi
 
 # Build package
 

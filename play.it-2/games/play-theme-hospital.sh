@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200827.11
+script_version=20200912.1
 
 # Set game-specific variables
 
@@ -43,22 +43,34 @@ GAME_ID='theme-hospital'
 GAME_NAME='Theme Hospital'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_1='setup_theme_hospital_v3_(28027).exe'
+ARCHIVE_GOG_1_MD5='e4cba7cfddd5dd2d4baf4761bc86a8c8'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/theme_hospital'
+ARCHIVE_GOG_1_SIZE='200000'
+ARCHIVE_GOG_1_VERSION='1.0-gog28027'
+
 ARCHIVE_GOG_0='setup_theme_hospital_2.1.0.8.exe'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/theme_hospital'
 ARCHIVE_GOG_0_MD5='c1dc6cd19a3e22f7f7b31a72957babf7'
 ARCHIVE_GOG_0_SIZE='210000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.7'
 
-ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.txt *.pdf'
+# Keep compatibility with old archive
+ARCHIVE_DOC_DATA_PATH_GOG_0='app'
 
-ARCHIVE_GAME_DOSBOX_PATH='app'
+ARCHIVE_GAME_DOSBOX_PATH='.'
 ARCHIVE_GAME_DOSBOX_FILES='*.bat *.cfg *.exe *.ini sound/*.exe sound/*.ini sound/midi/*.bat sound/midi/*.exe'
+# Keep compatibility with old archive
+ARCHIVE_GAME_DOSBOX_PATH_GOG_0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='anims cfg data datam intro levels qdata qdatam save sound'
+# Keep compatibility with old archive
+ARCHIVE_GAME_DATA_PATH_GOG_0='app'
 
 CONFIG_FILES='./*.ini ./*.cfg'
 DATA_DIRS='./save'

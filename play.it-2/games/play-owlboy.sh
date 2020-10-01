@@ -32,10 +32,10 @@ set -o errexit
 ###
 # Owlboy
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190626.6
+script_version=20200302.1
 
 # Set game-specific variables
 
@@ -73,21 +73,20 @@ ARCHIVE_DOC_DATA_PATH='data'
 ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='Owlboy.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='lib'
 
 ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='Owlboy.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='lib64'
 
 ARCHIVE_GAME_DATA_PATH='data'
 ARCHIVE_GAME_DATA_FILES='content *.dll *.config monoconfig monomachineconfig Owlboy.bmp Owlboy.exe'
 
 CONFIG_FILES='./content/localizations/*/speechbubbleconfig.ini ./content/fonts/*.ini'
 
-APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='Owlboy.bin.x86'
-APP_MAIN_EXE_BIN64='Owlboy.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='Owlboy.exe'
 APP_MAIN_ICON='Owlboy.bmp'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
@@ -96,7 +95,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 vorbis glx libudev1"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 vorbis glx libudev1"
 PKG_BIN32_DEPS_ARCH='lib32-zlib'
 PKG_BIN32_DEPS_DEB='zlib1g'
 PKG_BIN32_DEPS_GENTOO='sys-libs/zlib[abi_x86_32]'
@@ -109,7 +108,7 @@ PKG_BIN64_DEPS_GENTOO='sys-libs/zlib'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
