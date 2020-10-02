@@ -164,7 +164,7 @@ pkg_set_deps_arch32() {
 			('glx')
 				pkg_dep='lib32-libgl'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='lib32-gtk2'
 			;;
 			('java')
@@ -304,7 +304,7 @@ pkg_set_deps_arch64() {
 			('glx')
 				pkg_dep='libgl'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='gtk2'
 			;;
 			('java')
