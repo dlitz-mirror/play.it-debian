@@ -193,6 +193,9 @@ pkg_set_deps_gentoo() {
 			('libpng16.so.16')
 				pkg_dep="media-libs/libpng:0/16$architecture_suffix"
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep="media-sound/pulseaudio${architecture_suffix}"
+			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;

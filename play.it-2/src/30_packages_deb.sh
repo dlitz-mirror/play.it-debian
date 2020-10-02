@@ -170,6 +170,9 @@ pkg_set_deps_deb() {
 			('libpng16.so.16')
 				pkg_dep='libpng16-16'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='libpulse0'
+			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
 			;;

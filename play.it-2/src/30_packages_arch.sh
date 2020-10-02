@@ -185,6 +185,9 @@ pkg_set_deps_arch32() {
 			('libpng16.so.16')
 				pkg_dep='lib32-libpng'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='lib32-libpulse'
+			;;
 			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
@@ -318,6 +321,9 @@ pkg_set_deps_arch64() {
 			;;
 			('libpng16.so.16')
 				pkg_dep='libpng'
+			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='libpulse'
 			;;
 			('libstdc++')
 				pkg_dep='gcc-libs'
