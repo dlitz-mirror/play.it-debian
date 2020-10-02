@@ -194,6 +194,9 @@ pkg_set_deps_arch32() {
 			('libudev1')
 				pkg_dep='lib32-systemd'
 			;;
+			('libX11.so.6')
+				pkg_dep='lib32-libx11'
+			;;
 			('libxrandr')
 				pkg_dep='lib32-libxrandr'
 			;;
@@ -330,6 +333,9 @@ pkg_set_deps_arch64() {
 			;;
 			('libudev1')
 				pkg_dep='libsystemd'
+			;;
+			('libX11.so.6')
+				pkg_dep='libx11'
 			;;
 			('libxrandr')
 				pkg_dep='libxrandr'

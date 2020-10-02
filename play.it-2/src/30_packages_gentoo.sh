@@ -202,6 +202,9 @@ pkg_set_deps_gentoo() {
 			('libudev1')
 				pkg_dep="virtual/libudev$architecture_suffix"
 			;;
+			('libX11.so.6')
+				pkg_dep="x11-libs/libX11${architecture_suffix}"
+			;;
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"
 			;;

@@ -179,6 +179,9 @@ pkg_set_deps_deb() {
 			('libudev1')
 				pkg_dep='libudev1'
 			;;
+			('libX11.so.6')
+				pkg_dep='libx11-6'
+			;;
 			('libxrandr')
 				pkg_dep='libxrandr2'
 			;;
