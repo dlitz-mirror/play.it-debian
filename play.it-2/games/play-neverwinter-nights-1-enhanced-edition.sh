@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200428.9
+script_version=20201002.1
 
 # Set game-specific variables
 
@@ -42,24 +42,21 @@ GAME_ID='neverwinter-nights-1-enhanced-edition'
 GAME_NAME='Neverwinter Nights: Enhanced Edition'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_2
+ARCHIVE_GOG_0
 ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_EN_0
 ARCHIVE_GOG_FR_0
 '
 
-ARCHIVE_GOG_2='neverwinter_nights_enhanced_edition_80_8193_9_37029.sh'
-ARCHIVE_GOG_2_MD5='fb98f859b5f5516fc7df8b00c7264c07'
-ARCHIVE_GOG_2_TYPE='mojosetup'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
-ARCHIVE_GOG_2_VERSION='1.80.8193.9-gog37029'
-ARCHIVE_GOG_2_SIZE='5000000'
+# Base game archive
 
-ARCHIVE_GOG_2_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_80_8193_9_37029.sh'
-ARCHIVE_GOG_2_OPTIONAL_L10N_FR_MD5='5e0564a161259b003c7dc0f8d8aa743f'
-ARCHIVE_GOG_2_OPTIONAL_L10N_FR_TYPE='mojosetup'
-ARCHIVE_GOG_2_OPTIONAL_L10N_FR_SIZE='840000'
+ARCHIVE_GOG_0='neverwinter_nights_enhanced_edition_80_8193_9_37029.sh'
+ARCHIVE_GOG_0_MD5='fb98f859b5f5516fc7df8b00c7264c07'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
+ARCHIVE_GOG_0_VERSION='1.80.8193.9-gog37029'
+ARCHIVE_GOG_0_SIZE='5000000'
 
 ARCHIVE_GOG_EN_1='neverwinter_nights_enhanced_edition_78_8186_1_32700.sh'
 ARCHIVE_GOG_EN_1_MD5='4fbd9086c0c355245e2645ecb80eac44'
@@ -84,6 +81,13 @@ ARCHIVE_GOG_FR_0_MD5='61b7d20a09288694e9930d74d335b950'
 ARCHIVE_GOG_FR_0_TYPE='mojosetup'
 ARCHIVE_GOG_FR_0_VERSION='1.78.8186-gog25455'
 ARCHIVE_GOG_FR_0_SIZE='4700000'
+
+# Extra language packs
+
+ARCHIVE_GOG_0_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_80_8193_9_37029.sh'
+ARCHIVE_GOG_0_OPTIONAL_L10N_FR_MD5='5e0564a161259b003c7dc0f8d8aa743f'
+ARCHIVE_GOG_0_OPTIONAL_L10N_FR_TYPE='mojosetup'
+ARCHIVE_GOG_0_OPTIONAL_L10N_FR_SIZE='840000'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game/lang/en/docs'
 ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
@@ -207,16 +211,15 @@ PKG_BIN_DEPS_GOG_FR="$PKG_DATA_ID $PKG_L10N_ID glibc libstdc++ glx openal"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
