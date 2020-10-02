@@ -173,6 +173,12 @@ pkg_set_deps_arch32() {
 			('json')
 				pkg_dep='lib32-json-c'
 			;;
+			('libasound.so.2')
+				pkg_dep='lib32-alsa-lib'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='lib32-alsa-plugins'
+			;;
 			('libcurl')
 				pkg_dep='lib32-curl'
 			;;
@@ -312,6 +318,12 @@ pkg_set_deps_arch64() {
 			;;
 			('json')
 				pkg_dep='json-c'
+			;;
+			('libasound.so.2')
+				pkg_dep='alsa-lib'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='alsa-plugins'
 			;;
 			('libcurl')
 				pkg_dep='curl'

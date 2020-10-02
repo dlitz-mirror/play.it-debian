@@ -158,6 +158,12 @@ pkg_set_deps_deb() {
 			('json')
 				pkg_dep='libjson-c3 | libjson-c2 | libjson0'
 			;;
+			('libasound.so.2')
+				pkg_dep='libasound2'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='libasound2-plugins'
+			;;
 			('libcurl')
 				pkg_dep='libcurl4 | libcurl3'
 			;;

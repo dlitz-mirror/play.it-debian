@@ -180,6 +180,12 @@ pkg_set_deps_gentoo() {
 			('json')
 				pkg_dep="dev-libs/json-c$architecture_suffix"
 			;;
+			('libasound.so.2')
+				pkg_dep="media-libs/alsa-lib${architecture_suffix}"
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep="media-plugins/alsa-plugins${architecture_suffix}"
+			;;
 			('libcurl')
 				pkg_dep="net-misc/curl$architecture_suffix"
 			;;
