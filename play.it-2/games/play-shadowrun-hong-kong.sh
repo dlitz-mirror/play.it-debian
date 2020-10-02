@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201002.2
+script_version=20201002.4
 
 # Set game-specific variables
 
@@ -86,9 +86,13 @@ PKG_DATA_SEATTLE_DESCRIPTION='data - Seattle'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_DATA_BERLIN $PKG_DATA_HONGKONG $PKG_DATA_SEATTLE"
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_BERLIN $PKG_DATA_HONGKONG $PKG_DATA_SEATTLE $PKG_DATA_ID glu xcursor libxrandr alsa"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor libxrandr alsa gtk2 libgdk_pixbuf-2.0.so.0 libgobject-2.0.so.0 libglib-2.0.so.0"
+PKG_BIN_DEPS_ARCH='lib32-libx11 lib32-libpulse'
+PKG_BIN_DEPS_DEB='libx11-6, libpulse0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] media-sound/pulseaudio[abi_x86_32]'
 
 # Load common functions
 
