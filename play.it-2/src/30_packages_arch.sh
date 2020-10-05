@@ -429,6 +429,7 @@ pkg_build_arch() {
 			pkg_filename="${pkg_filename}.gz"
 		;;
 		('xz')
+			export XZ_DEFAULTS="${XZ_DEFAULTS:=--threads=0}"
 			tar_options="$tar_options --xz"
 			pkg_filename="${pkg_filename}.xz"
 		;;
