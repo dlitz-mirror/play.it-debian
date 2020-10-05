@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181004.3
+script_version=20201004.1
 
 # Set game-specific variables
 
@@ -49,6 +49,12 @@ ARCHIVE_GOG_SIZE='5700000'
 ARCHIVE_GOG_VERSION='1.5-gog2.7.0.8'
 ARCHIVE_GOG_TYPE='mojosetup'
 
+ARCHIVE_GOG_DLC='gog_hard_west_scars_of_freedom_dlc_2.3.0.4.sh'
+ARCHIVE_GOG_DLC_MD5='bb4368afaf670f0d8ebc09f7bb1f3713'
+ARCHIVE_GOG_DLC_SIZE='200000'
+ARCHIVE_GOG_DLC_TYPE='mojosetup'
+ARCHIVE_GOG_DLC_URL='https://www.gog.com/game/hard_west_scars_of_freedom'
+
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
@@ -59,7 +65,7 @@ ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='HardWest.x86_64 HardWest_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='Data HardWest_Data'
+ARCHIVE_GAME_DATA_FILES='Data Data_dlc1 HardWest_Data'
 
 DATA_DIRS='./logs ./Documents'
 CONFIG_DIRS='./.config'
@@ -123,9 +129,23 @@ fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load extra archives (DLC)
+
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive "ARCHIVE_DLC" "ARCHIVE_GOG_DLC"
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+if [ "$ARCHIVE_DLC" ]; then
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE='ARCHIVE_DLC'
+		extract_data_from "$ARCHIVE_DLC"
+	)
+fi
+
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
