@@ -226,6 +226,9 @@ pkg_set_deps_gentoo() {
 			('pulseaudio')
 				pkg_dep='media-sound/pulseaudio'
 			;;
+			('renpy')
+				pkg_dep='games-engines/renpy'
+			;;
 			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;

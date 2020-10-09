@@ -215,6 +215,9 @@ pkg_set_deps_arch32() {
 			('pulseaudio')
 				pkg_dep='pulseaudio'
 			;;
+			('renpy')
+				pkg_dep='renpy'
+			;;
 			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='lib32-sdl'
 			;;
@@ -363,6 +366,9 @@ pkg_set_deps_arch64() {
 			;;
 			('pulseaudio')
 				pkg_dep='pulseaudio'
+			;;
+			('renpy')
+				pkg_dep='renpy'
 			;;
 			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='sdl'
