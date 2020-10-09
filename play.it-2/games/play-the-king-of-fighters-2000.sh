@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200725.1
+script_version=20201010.1
 
 # Set game-specific variables
 
@@ -47,7 +47,7 @@ ARCHIVE_HUMBLE_TYPE='mojosetup'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/the-king-of-fighters-2000'
 ARCHIVE_HUMBLE_MD5='98f3d87cd286c868f184fefe1c4222b9'
 ARCHIVE_HUMBLE_VERSION='1.0-humblejan2016'
-ARCHIVE_HUMBLE_SIZE='113000'
+ARCHIVE_HUMBLE_SIZE='120000'
 
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='data/x86'
 ARCHIVE_GAME_BIN32_FILES='NeogeoEmu.bin.x86 lib'
@@ -81,13 +81,12 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
