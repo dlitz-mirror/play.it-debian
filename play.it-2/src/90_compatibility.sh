@@ -1,3 +1,9 @@
+# Keep compatibility with 2.12 and older
+
+archive_set() {
+	archive_initialize_optional "$@"
+}
+
 # Keep compatibility with 2.11 and older
 
 compat_pkg_write_arch_postinst() {

@@ -1,6 +1,6 @@
 # extract data from given archive
 # USAGE: extract_data_from $archive[…]
-# NEEDED_VARS: (ARCHIVE) (ARCHIVE_PASSWD) (ARCHIVE_TYPE) (LANG) (PLAYIT_WORKDIR)
+# NEEDED_VARS: (ARCHIVE) (ARCHIVE_PASSWD) (LANG) (PLAYIT_WORKDIR)
 # CALLS: extract_7z
 extract_data_from() {
 	[ "$PLAYIT_WORKDIR" ] || return 1
@@ -17,7 +17,7 @@ extract_data_from() {
 			return 0
 		fi
 		local archive_type
-		archive_type="$(get_value "${ARCHIVE}_TYPE")"
+		archive_type=$(archive_get_type "$ARCHIVE")
 		case "$archive_type" in
 			('7z')
 				archive_extraction_7z "$file" "$destination"
