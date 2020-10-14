@@ -397,7 +397,7 @@ pkg_set_deps_arch64() {
 # CALLED BY: build_pkg
 pkg_build_arch() {
 	local pkg_filename
-	pkg_filename="$OPTION_OUTPUT_DIR/$(basename "$1").pkg.tar"
+	pkg_filename=$(realpath "$OPTION_OUTPUT_DIR/$(basename "$1").pkg.tar")
 
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		information_package_already_exists "$(basename "$pkg_filename")"
