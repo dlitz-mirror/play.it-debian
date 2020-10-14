@@ -6,6 +6,9 @@
   * Package-related improvements:
     * Arch Linux: Use multithreaded xz compression by default
 
+  * Codebase improvements:
+    * Drop the dependency on hostname
+
 2.12.0
 
   * New options:
