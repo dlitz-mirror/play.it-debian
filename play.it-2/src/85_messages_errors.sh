@@ -5,6 +5,7 @@ error_invalid_argument() {
 	var="$1"
 	value="$(get_value "$var")"
 	func="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Valeur incorrecte pour %s appelée par %s : %s\n'
@@ -23,6 +24,7 @@ error_invalid_argument() {
 error_missing_argument() {
 	local message function
 	function="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La fonction "%s" ne peut pas être appelée sans argument.\n'
@@ -41,6 +43,7 @@ error_missing_argument() {
 error_extra_arguments() {
 	local message function
 	function="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La fonction "%s" ne peut pas être appelée avec plus dʼun argument.\n'
@@ -59,6 +62,7 @@ error_extra_arguments() {
 error_not_a_file() {
 	local message param
 	param="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='"%s" nʼest pas un fichier valide.\n'
@@ -77,6 +81,7 @@ error_not_a_file() {
 error_unknown_application_type() {
 	local message application_type
 	application_type="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le type dʼapplication "%s" est inconnu.\n'
@@ -96,6 +101,7 @@ error_unknown_application_type() {
 # USAGE: error_unknown_tar_implementation
 error_unknown_tar_implementation() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La version de tar présente sur ce système nʼest pas reconnue.\n'
@@ -119,6 +125,7 @@ error_dependency_not_found() {
 	local message command_name provider
 	command_name="$1"
 	provider="$(dependency_provided_by "$command_name")"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='%s est introuvable. Installez %s avant de lancer ce script.\n'
@@ -142,6 +149,7 @@ error_icon_dependency_not_found() {
 	set +o errexit
 	error_dependency_not_found "$command_name"
 	set -o errexit
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Vous pouvez aussi utiliser --icons=no ou --icons=auto\n'
@@ -159,6 +167,7 @@ error_icon_dependency_not_found() {
 error_archive_no_extractor_found() {
 	local message archive_type
 	archive_type="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Ce script a essayé dʼextraire le contenu dʼune archive de type "%s", mais aucun outil approprié nʼa été trouvé.\n'
@@ -180,6 +189,7 @@ error_archive_no_extractor_found() {
 error_launcher_missing_binary() {
 	local binary message
 	binary="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le fichier suivant est introuvable, mais la création dʼun lanceur pour celui-ci a été demandée : %s\n'
@@ -199,6 +209,7 @@ error_launcher_missing_binary() {
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {
 	local message option_name option_value
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='%s nʼest pas une valeur valide pour --%s.\n'
@@ -219,6 +230,7 @@ error_option_invalid() {
 # USAGE: error_archive_not_found $archive[…]
 error_archive_not_found() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			if [ $# -eq 1 ]; then
@@ -246,6 +258,7 @@ error_archive_not_found() {
 error_archive_type_not_set() {
 	local message archive
 	archive="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='ARCHIVE_TYPE nʼest pas défini pour %s et nʼa pas pu être détecté automatiquement.\n'
@@ -264,6 +277,7 @@ error_archive_type_not_set() {
 error_hashsum_mismatch() {
 	local message file
 	file=$(basename "$1")
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Somme de contrôle incohérente. %s nʼest pas le fichier attendu.\n'
@@ -284,6 +298,7 @@ error_hashsum_mismatch() {
 error_architecture_not_supported() {
 	local message architecture
 	architecture="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼarchitecture demandée nʼest pas gérée : %s\n'
@@ -303,6 +318,7 @@ error_variable_not_set() {
 	local message function variable
 	function="$1"
 	variable="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La fonction "%s" ne peut pas être appelée lorsque "%s" nʼa pas de valeur définie.\n'
@@ -321,6 +337,7 @@ error_variable_not_set() {
 # USAGE: error_not_enough_free_space $directory[…]
 error_not_enough_free_space() {
 	local message directory
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Il nʼy a pas assez dʼespace libre dans les différents répertoires testés :\n'
@@ -342,6 +359,7 @@ error_not_enough_free_space() {
 error_innoextract_version_too_old() {
 	local message archive
 	archive="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de lʼarchive suivante : %s\n'
@@ -360,6 +378,7 @@ error_innoextract_version_too_old() {
 error_icon_file_not_found() {
 	local message file
 	file="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le fichier dʼicône suivant est introuvable : %s\n'
@@ -380,6 +399,7 @@ error_icon_file_not_found() {
 error_option_unknown() {
 	local message option_name
 	option_name="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Option inconnue : %s\n'
@@ -399,6 +419,7 @@ error_compression_method_not_compatible() {
 	local message compression_method package_format
 	compression_method="$1"
 	package_format="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
@@ -417,6 +438,7 @@ error_compression_method_not_compatible() {
 error_not_a_directory() {
 	local message path
 	path="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='"%s" nʼest pas un répertoire.\n'
@@ -435,6 +457,7 @@ error_not_a_directory() {
 error_not_writable() {
 	local message path
 	path="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='"%s" nʼest pas accessible en écriture.\n'
@@ -454,6 +477,7 @@ error_empty_string() {
 	local message function string
 	function="$1"
 	string="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼargument "%s" fourni à la fonction "%s" ne doit pas être vide.\n'
@@ -475,6 +499,7 @@ error_unavailable_command() {
 	local message function command
 	function="$1"
 	command="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La commande "%s" nʼest pas disponible, mais elle est requise par la fonction "%s".\n'
@@ -495,6 +520,7 @@ error_unavailable_command() {
 # CALLS: print_error
 error_missing_target_version() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Ce script ne donne aucune indication sur les versions de la bibliothèque ./play.it avec lesquelles il est compatible.\n'
@@ -515,6 +541,7 @@ error_missing_target_version() {
 # CALLS: print_error
 error_incompatible_versions() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Ce script nʼest pas compatible avec la version fournie de la bibliothèque ./play.it fournie.\n'
@@ -538,6 +565,7 @@ error_incompatible_versions() {
 error_no_script_found_for_archive() {
 	local message archive
 	archive="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Impossible de trouver un script pour le fichier %s\n'

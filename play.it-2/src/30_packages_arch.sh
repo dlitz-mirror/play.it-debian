@@ -478,7 +478,9 @@ package_archlinux_create_mtree() {
 
 	(
 		cd "$pkg_path"
+		# shellcheck disable=SC2030
 		export LANG=C
+		# shellcheck disable=SC2094
 		find . -print0 | bsdtar \
 			--create \
 			--file - \

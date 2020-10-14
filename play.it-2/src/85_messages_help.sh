@@ -5,6 +5,7 @@ help() {
 	script_name=$(basename "$0")
 
 	# print general usage instructions
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			if [ "$script_name" = 'play.it' ]; then
@@ -44,6 +45,7 @@ help() {
 	# print list of supported archives
 	printf 'ARCHIVE\n\n'
 	archives_get_list
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			if [ -n "${ARCHIVES_LIST##* *}" ]; then
@@ -70,6 +72,7 @@ help() {
 # USAGE: help_architecture
 help_architecture() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tChoix de lʼarchitecture à construire\n\n'
@@ -96,6 +99,7 @@ help_architecture() {
 # USAGE: help_checksum
 help_checksum() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tChoix de la méthode de vérification dʼintégrité de lʼarchive\n\n'
@@ -118,6 +122,7 @@ help_checksum() {
 # CALLED BY: help
 help_compression() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tChoix de la méthode de compression des paquets générés\n\n'
@@ -144,6 +149,7 @@ help_compression() {
 # USAGE: help_prefix
 help_prefix() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tChoix du chemin dʼinstallation du jeu\n\n'
@@ -164,6 +170,7 @@ help_prefix() {
 # USAGE: help_package
 help_package() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tChoix du type de paquet à construire\n\n'
@@ -188,6 +195,7 @@ help_package() {
 # USAGE: help_dryrun
 help_dryrun() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tEffectue des tests de syntaxe mais nʼextrait pas de données et ne construit pas de paquets.\n\n'
@@ -205,6 +213,7 @@ help_dryrun() {
 # USAGE: help_skipfreespacecheck
 help_skipfreespacecheck() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tNe teste pas lʼespace libre disponible. Les répertoires temporaires seront créés sous $TMPDIR, ou /tmp par défaut.\n\n'
@@ -222,6 +231,7 @@ help_skipfreespacecheck() {
 # USAGE: help_icons
 help_icons() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tInclure ou non les icônes dans les paquets\n\n'
@@ -246,6 +256,7 @@ help_icons() {
 # USAGE: help_overwrite
 help_overwrite() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tRemplace les paquets si ils existent déjà.\n\n'
@@ -263,6 +274,7 @@ help_overwrite() {
 # USAGE: help_output_dir
 help_output_dir() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tDéfinit le répertoire de destination des paquets générés.\n\n'
