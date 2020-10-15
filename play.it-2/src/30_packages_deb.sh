@@ -143,7 +143,7 @@ pkg_set_deps_deb() {
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
 				pkg_dep='libglib2.0-0'
 			;;
-			('glu')
+			('glu'|'libGLU.so.1')
 				pkg_dep='libglu1-mesa | libglu1'
 			;;
 			('glx')
@@ -191,7 +191,7 @@ pkg_set_deps_deb() {
 			('pulseaudio')
 				pkg_dep='pulseaudio:amd64 | pulseaudio'
 			;;
-			('sdl1.2')
+			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='libsdl1.2debian'
 			;;
 			('sdl2'|'libSDL2-2.0.so.0')
