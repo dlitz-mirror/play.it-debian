@@ -31,6 +31,9 @@ extract_data_from() {
 			('innosetup'*)
 				archive_extraction_innosetup "$archive_type" "$file" "$destination"
 			;;
+			('installshield')
+				unshield -L -d "$destination" x "$file" >/dev/null
+			;;
 			('lha')
 				archive_extraction_lha "$file" "$destination"
 			;;
