@@ -26,7 +26,7 @@ extract_data_from() {
 				cabextract -L -d "$destination" -q "$file"
 			;;
 			('debian')
-				dpkg-deb --extract "$file" "$destination"
+				archive_extraction_debian "$file" "$destination"
 			;;
 			('innosetup'*)
 				archive_extraction_innosetup "$archive_type" "$file" "$destination"
@@ -123,6 +123,49 @@ archive_extraction_lha() {
 		set_standard_permissions "$destination"
 	else
 		error_archive_no_extractor_found 'lha'
+	fi
+}
+
+# extract data from .deb package
+# USAGE: archive_extraction_debian $archive $destination
+# CALLS: error_archive_extraction_debian_no_extractor_found
+# CALLED BY: extract_data_from
+archive_extraction_debian() {
+	local file destination tmpdir
+	file=$(realpath --canonicalize-existing "$1")
+	destination="$2"
+	tmpdir="$PLAYIT_WORKDIR/extraction"
+	if command -v dpkg-deb >/dev/null 2>&1; then
+		dpkg-deb --extract "$file" "$destination"
+	elif command -v bsdtar >/dev/null 2>&1; then
+		bsdtar --extract --to-stdout --file "$file" 'data*' | \
+			bsdtar --directory "$destination" --extract --file /dev/stdin
+	elif command -v unar >/dev/null 2>&1; then
+		mkdir --parents "$tmpdir"
+		unar -output-directory "$tmpdir" -force-overwrite -no-directory "$file" 'data*' 1>/dev/null
+		unar -output-directory "$destination" -force-overwrite -no-directory "$tmpdir"/data* 1>/dev/null
+		rm --recursive --force "$tmpdir"
+	elif command -v tar >/dev/null 2>&1; then
+		if command -v 7z >/dev/null 2>&1; then
+			7z x -i'!data*' -so "$file" | \
+				tar --directory "$destination" --extract
+		elif command -v 7zr >/dev/null 2>&1; then
+			7zr x -so "$file" | \
+				tar --directory "$destination" --extract
+		elif command -v ar >/dev/null 2>&1; then
+			mkdir --parents "$tmpdir"
+			archive_path="$(realpath --canonicalize-existing "$file")"
+			(
+				cd "$tmpdir"
+				ar x "$archive_path" "$(ar t "$archive_path" | grep ^data)"
+			)
+			tar --directory "$destination" --extract --file "$tmpdir"/data*
+			rm --recursive --force "$tmpdir"
+		else
+			error_archive_no_extractor_found 'debian'
+		fi
+	else
+		error_archive_no_extractor_found 'debian'
 	fi
 }
 
