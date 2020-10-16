@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2020, macaron
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c)      2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200922.2
+script_version=20201016.1
 
 # Set game-specific variables
 
@@ -65,12 +65,12 @@ ARCHIVE_GOG_FR_0_PART1_MD5='c5bf233f09cca2a8e33d78d25cf58329'
 ARCHIVE_GOG_FR_0_PART1_TYPE='innosetup'
 
 ARCHIVE_RESIDUALVM_PATCH_EN='MonkeyUpdate.exe'
-ARCHIVE_RESIDUALVM_PATCH_EN_URL='https://demos.residualvm.org/patches/'
+ARCHIVE_RESIDUALVM_PATCH_EN_URL='https://www.residualvm.org/downloads/#extras'
 ARCHIVE_RESIDUALVM_PATCH_EN_MD5='7c7dbd2349d49e382a2dea40bed448e0'
 ARCHIVE_RESIDUALVM_PATCH_EN_TYPE='file'
 
 ARCHIVE_RESIDUALVM_PATCH_FR='MonkeyUpdate_FRA.exe'
-ARCHIVE_RESIDUALVM_PATCH_FR_URL='https://demos.residualvm.org/patches/'
+ARCHIVE_RESIDUALVM_PATCH_FR_URL='https://www.residualvm.org/downloads/#extras'
 ARCHIVE_RESIDUALVM_PATCH_FR_MD5='cc5ff3bb8f78a0eb4b8e0feb9cdd2e87'
 ARCHIVE_RESIDUALVM_PATCH_FR_TYPE='file'
 
@@ -150,13 +150,12 @@ PKG_BIN_RESIDUALVM_DEPS="$PKG_DATA_ID residualvm"
 target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
