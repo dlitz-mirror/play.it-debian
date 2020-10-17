@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201016.1
+script_version=20201017.1
 
 # Set game-specific variables
 
@@ -73,10 +73,10 @@ ARCHIVE_DOC_DATA_PATH='data'
 ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='lib/libFAudio.so.0 lib/libmojoshader.so lib/libXNAFileDialog.so'
+ARCHIVE_GAME_BIN32_FILES='lib/libmojoshader.so lib/libXNAFileDialog.so'
 
 ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='lib64/libFAudio.so.0 lib64/libmojoshader.so lib64/libXNAFileDialog.so'
+ARCHIVE_GAME_BIN64_FILES='lib64/libmojoshader.so lib64/libXNAFileDialog.so'
 
 ARCHIVE_GAME_DATA_PATH='data'
 ARCHIVE_GAME_DATA_FILES='content monoconfig monomachineconfig Owlboy.bmp Owlboy.exe FNA.dll FNA.dll.config GamedevUtility.dll MoonSharp.Interpreter.dll SharpFont.dll SharpFont.dll.config TimSort.dll'
@@ -96,11 +96,15 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_DATA_ID mono glx libudev1 freetype libSDL2-2.0.so.0 sdl2_image"
-PKG_BIN32_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-core4.0-cil, libmono-system-configuration4.0-cil, libmono-system-data4.0-cil, libmono-system-design4.0-cil, libmono-system-drawing4.0-cil, libmono-system-management4.0-cil, libmono-system-numerics4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-transactions4.0-cil, libmono-system-xml4.0-cil'
+PKG_BIN32_DEPS_ARCH='lib32-faudio'
+PKG_BIN32_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-core4.0-cil, libmono-system-configuration4.0-cil, libmono-system-data4.0-cil, libmono-system-design4.0-cil, libmono-system-drawing4.0-cil, libmono-system-management4.0-cil, libmono-system-numerics4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-transactions4.0-cil, libmono-system-xml4.0-cil, libfaudio0'
+PKG_BIN32_DEPS_GENTOO='app-emulation/faudio[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='faudio'
 PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='app-emulation/faudio'
 
 # Load common functions
 
