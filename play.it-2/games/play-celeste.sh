@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200824.1
+script_version=20201018.1
 
 # Set game-specific variables
 
@@ -87,13 +87,12 @@ PKG_BIN64_DEPS_GENTOO='app-emulation/faudio'
 target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -113,6 +112,7 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
