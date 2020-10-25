@@ -1,5 +1,8 @@
 2.12.1
 
+  * Wrapper fixes:
+    * Fix script detection from archive name
+
   * Archive-related fixes:
     * .zip archives: Escape tricky characters in archive inner paths
 
