@@ -8,6 +8,10 @@
     * Arch Linux: Fix packages building failure when using --output-dir with a
       relative path
 
+  * Dependencies-related improvements:
+    * Show a more explicit message if icotool or wrestool is required but
+      missing
+
   * Codebase improvements:
     * Drop the dependency on hostname
 
