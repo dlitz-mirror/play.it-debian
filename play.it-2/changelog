@@ -7,6 +7,7 @@
     * Arch Linux: Use multithreaded xz compression by default
     * Arch Linux: Fix packages building failure when using --output-dir with a
       relative path
+    * Arch Linux: Generate a .MTREE metadata file
 
   * Dependencies-related improvements:
     * Show a more explicit message if icotool or wrestool is required but
