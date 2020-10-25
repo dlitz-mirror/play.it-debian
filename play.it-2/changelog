@@ -5,6 +5,8 @@
 
   * Package-related improvements:
     * Arch Linux: Use multithreaded xz compression by default
+    * Arch Linux: Fix packages building failur when using --output-dir with a
+      relative path
 
   * Codebase improvements:
     * Drop the dependency on hostname
