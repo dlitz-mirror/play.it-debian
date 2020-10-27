@@ -17,6 +17,9 @@
     * Show a more explicit message if icotool or wrestool is required but
       missing
 
+  * Launchers-related fixes
+    * Avoid broken .desktop Exec field when using spaces in the install prefix
+
   * Codebase improvements:
     * Drop the dependency on hostname
     * Unset variables that we do not want to import from the user environment
