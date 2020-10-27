@@ -20,6 +20,9 @@
   * Launchers-related fixes
     * Avoid broken .desktop Exec field when using spaces in the install prefix
 
+  * Icons-related fixes:
+    * Fix icons_move_to failure when targeting a non-empty directory
+
   * Codebase improvements:
     * Drop the dependency on hostname
     * Unset variables that we do not want to import from the user environment
