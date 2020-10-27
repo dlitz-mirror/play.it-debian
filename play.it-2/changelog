@@ -4,7 +4,7 @@
     * Fix script detection from archive name
 
   * Archive-related fixes:
-    * .zip archives: Escape tricky characters in archive inner paths
+    * .zip archives: Drop selected files extraction using unzip
 
   * Package-related improvements:
     * Arch Linux: Use multithreaded xz compression by default
