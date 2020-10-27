@@ -19,6 +19,7 @@
 
   * Codebase improvements:
     * Drop the dependency on hostname
+    * Unset variables that we do not want to import from the user environment
 
 2.12.0
 
