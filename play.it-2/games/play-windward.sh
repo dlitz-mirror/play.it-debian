@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,72 +31,56 @@ set -o errexit
 
 ###
 # Windward
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210515.3
 
 # Set game-specific variables
 
 GAME_ID='windward'
 GAME_NAME='Windward'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD ARCHIVE_GOG_OLDER ARCHIVE_HUMBLE ARCHIVE_HUMBLE_OLD'
+ARCHIVE_BASE_GOG_2='gog_windward_2.36.0.40.sh'
+ARCHIVE_BASE_GOG_2_MD5='6afbdcfda32a6315139080822c30396a'
+ARCHIVE_BASE_GOG_2_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_2_SIZE='130000'
+ARCHIVE_BASE_GOG_2_VERSION='20170617.0-gog2.36.0.40'
 
-ARCHIVE_GOG='gog_windward_2.36.0.40.sh'
-ARCHIVE_GOG_MD5='6afbdcfda32a6315139080822c30396a'
-ARCHIVE_GOG_SIZE='130000'
-ARCHIVE_GOG_VERSION='20170617.0-gog2.36.0.40'
+ARCHIVE_BASE_GOG_1='gog_windward_2.35.0.39.sh'
+ARCHIVE_BASE_GOG_1_MD5='12fffaf6f405f36d2f3a61b4aaab89ba'
+ARCHIVE_BASE_GOG_1_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_1_SIZE='130000'
+ARCHIVE_BASE_GOG_1_VERSION='20160707.0-gog2.35.0.39'
 
-ARCHIVE_GOG_OLD='gog_windward_2.35.0.39.sh'
-ARCHIVE_GOG_OLD_MD5='12fffaf6f405f36d2f3a61b4aaab89ba'
-ARCHIVE_GOG_OLD_SIZE='130000'
-ARCHIVE_GOG_OLD_VERSION='20160707.0-gog2.35.0.39'
+ARCHIVE_BASE_GOG_0='gog_windward_2.35.0.38.sh'
+ARCHIVE_BASE_GOG_0_MD5='f5ce09719bf355e48d2eac59b84592d1'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_SIZE='120000'
+ARCHIVE_BASE_GOG_0_VERSION='20160707-gog2.35.0.38'
 
-ARCHIVE_GOG_OLDER='gog_windward_2.35.0.38.sh'
-ARCHIVE_GOG_OLDER_MD5='f5ce09719bf355e48d2eac59b84592d1'
-ARCHIVE_GOG_OLDER_SIZE='120000'
-ARCHIVE_GOG_OLDER_VERSION='20160707-gog2.35.0.38'
+ARCHIVE_BASE_HUMBLE_1='WindwardLinux_HB_1505248588.zip'
+ARCHIVE_BASE_HUMBLE_1_MD5='9ea99157d13ae53905757f2fb3ab5b54'
+ARCHIVE_BASE_HUMBLE_1_SIZE='130000'
+ARCHIVE_BASE_HUMBLE_1_VERSION='20160707.0-humble170912'
 
-ARCHIVE_HUMBLE='WindwardLinux_HB_1505248588.zip'
-ARCHIVE_HUMBLE_MD5='9ea99157d13ae53905757f2fb3ab5b54'
-ARCHIVE_HUMBLE_SIZE='130000'
-ARCHIVE_HUMBLE_VERSION='20160707.0-humble170912'
-
-ARCHIVE_HUMBLE_OLD='WindwardLinux_HB.zip'
-ARCHIVE_HUMBLE_OLD_MD5='f2d1a9a91055ecb6c5ce1bd7e3ddd803'
-ARCHIVE_HUMBLE_OLD_SIZE='130000'
-ARCHIVE_HUMBLE_OLD_VERSION='20160707-humble1'
-
-ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC_DATA_PATH_GOG_OLD='data/noarch/docs'
-ARCHIVE_DOC_DATA_PATH_GOG_OLDER='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
+ARCHIVE_BASE_HUMBLE_0='WindwardLinux_HB.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='f2d1a9a91055ecb6c5ce1bd7e3ddd803'
+ARCHIVE_BASE_HUMBLE_0_SIZE='130000'
+ARCHIVE_BASE_HUMBLE_0_VERSION='20160707-humble1'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_BIN_PATH_GOG_OLD='data/noarch/game'
-ARCHIVE_GAME_BIN_PATH_GOG_OLDER='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='Windward'
-ARCHIVE_GAME_BIN_PATH_HUMBLE_OLD='.'
-ARCHIVE_GAME_BIN_FILES='./Windward.x86 ./Windward_Data/Plugins ./Windward_Data/Mono'
+ARCHIVE_GAME_BIN_FILES='Windward.x86 Windward_Data/Plugins Windward_Data/Mono'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_DATA_PATH_GOG_OLD='data/noarch/game'
-ARCHIVE_GAME_DATA_PATH_GOG_OLDER='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='Windward'
-ARCHIVE_GAME_DATA_PATH_HUMBLE_OLD='.'
-ARCHIVE_GAME_DATA_FILES='./Windward_Data/level* ./Windward_Data/mainData /Windward_Data/PlayerConnectionConfigFile ./Windward_Data/*.assets ./Windward_Data/*.resS ./Windward_Data/Managed ./Windward_Data/Resources'
-
-DATA_DIRS='./logs'
+ARCHIVE_GAME_DATA_FILES='Windward_Data'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Windward.x86'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='*_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='Windward_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -103,25 +88,36 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libglu1-mesa | libglu1, libxcursor1"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-glibc lib32-gcc-libs lib32-glu lib32-libxcursor lsb-release"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glu xcursor"
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Keep compatibility with old archives
+
+ARCHIVE_GAME_BIN_PATH_HUMBLE_0='.'
+ARCHIVE_GAME_DATA_PATH_HUMBLE_0='.'
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -131,30 +127,31 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_GAME"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Get game icon
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
