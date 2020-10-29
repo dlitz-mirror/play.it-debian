@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200618.2
+script_version=20201029.1
 
 # Set game-specific variables
 
@@ -261,29 +261,22 @@ APP_MAIN_EXE_BIN32='CS.x86'
 APP_MAIN_EXE_BIN64='CS.x86_64'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
-PKG_BIN32_DEPS_ARCH='lib32-gdk-pixbuf2 lib32-glib2'
-PKG_BIN32_DEPS_DEB='libgdk-pixbuf2.0-0, libglib2.0-0'
-PKG_BIN32_DEPS_GENTOO='x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_ARCH='gdk-pixbuf2 glib2'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_GENTOO='x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
