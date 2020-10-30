@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.1
+script_version=20201030.1
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Arachnoid Portrait Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_17
 ARCHIVE_GOG_16
 ARCHIVE_GOG_15
 ARCHIVE_GOG_14
@@ -60,8 +61,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_17='stellaris_arachnoid_portrait_pack_2_8_0_3_42321.sh'
+ARCHIVE_GOG_17_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
+ARCHIVE_GOG_17_MD5='bc3e4830f3c0a8b01c29e43b468fd04c'
+ARCHIVE_GOG_17_SIZE='1400'
+ARCHIVE_GOG_17_VERSION='2.8.0.3-gog42321'
+ARCHIVE_GOG_17_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_16='stellaris_arachnoid_portrait_pack_2_7_2_38578.sh'
-ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
 ARCHIVE_GOG_16_MD5='d22f4806ef98492c7f10540393e7b0c7'
 ARCHIVE_GOG_16_SIZE='1400'
 ARCHIVE_GOG_16_VERSION='2.7.2-gog38578'
@@ -173,16 +180,15 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
