@@ -34,16 +34,18 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201030.1
+script_version=20201120.4
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
-GAME_ID_ANNIVERSARY="${GAME_ID}-anniversary-portraits"
-GAME_ID_VOID="${GAME_ID}-creatures-of-the-void-portrait-pack"
 GAME_NAME='Stellaris'
-GAME_NAME_ANNIVERSARY="$GAME_NAME - Anniversary Portraits"
-GAME_NAME_VOID="$GAME_NAME - Creatures of the Void Portrait Pack"
+
+EXPANSION_ID='anniversary'
+EXPANSION_NAME='Anniversary Portraits'
+
+EXPANSION_VOID_ID='creatures-of-the-void'
+EXPANSION_VOID_NAME='Creatures of the Void'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_16
@@ -188,11 +190,11 @@ ARCHIVE_GOG_UNMERGED_0_SIZE='1300'
 ARCHIVE_GOG_UNMERGED_0_VERSION='2.2.4-gog26846'
 ARCHIVE_GOG_UNMERGED_0_TYPE='mojosetup_unzip'
 
-ARCHIVE_GAME_ANNIVERSARY_PATH='data/noarch/game'
-ARCHIVE_GAME_ANNIVERSARY_FILES='dlc/dlc015_anniversary'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='dlc/dlc015_anniversary'
 # Keep compatibility with old archives
-ARCHIVE_GAME_ANNIVERSARY_PATH_GOG_UNMERGED_1='data/noarch/game/dlc/dlc015_anniversary'
-ARCHIVE_GAME_ANNIVERSARY_PATH_GOG_UNMERGED_0='data/noarch/game/dlc/dlc015_anniversary'
+ARCHIVE_GAME_MAIN_PATH_GOG_UNMERGED_1='data/noarch/game/dlc/dlc015_anniversary'
+ARCHIVE_GAME_MAIN_PATH_GOG_UNMERGED_0='data/noarch/game/dlc/dlc015_anniversary'
 
 # Keep compatibility with old archives
 ARCHIVE_GAME_VOID_PATH_GOG_UNMERGED='data/noarch/game'
@@ -200,18 +202,19 @@ ARCHIVE_GAME_VOID_PATH_GOG_UNMERGED_1='data/noarch/game/dlc/dlc010_creatures_of_
 ARCHIVE_GAME_VOID_PATH_GOG_UNMERGED_0='data/noarch/game/dlc/dlc010_creatures_of_the_void'
 ARCHIVE_GAME_VOID_FILES_GOG_UNMERGED='dlc/dlc010_creatures_of_the_void'
 
-PACKAGES_LIST='PKG_ANNIVERSARY'
-# Keep compatibility with old archives
-PACKAGES_LIST_GOG_UNMERGED='PKG_ANNIVERSARY PKG_VOID'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_ANNIVERSARY_ID="$GAME_ID_ANNIVERSARY"
-PKG_ANNIVERSARY_DEPS="$GAME_ID"
-# Keep compatibility with old archives
-PKG_ANNIVERSARY_PROVIDE="$GAME_ID_VOID"
-PKG_ANNIVERSARY_PROVIDE_GOG_UNMERGED="$GAME_ID_ANNIVERSARY"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
+PKG_MAIN_DEPS="$GAME_ID"
+
+# Ensure smooth upgrade from pre-20201031.1 packages
+PKG_MAIN_PROVIDE='stellaris-anniversary-portraits'
 
 # Keep compatibility with old archives
-PKG_VOID_ID="$GAME_ID_VOID"
+PACKAGES_LIST_GOG_UNMERGED='PKG_MAIN PKG_VOID'
+PKG_VOID_ID="${GAME_ID}-${EXPANSION_VOID_ID}"
+PKG_VOID_DESCRIPTION="$EXPANSION_VOID_NAME"
 PKG_VOID_DEPS="$GAME_ID"
 
 # Load common functions
@@ -244,7 +247,6 @@ fi
 # Use correct packages list based on source archive
 
 use_archive_specific_value 'PACKAGES_LIST'
-use_archive_specific_value 'PKG_ANNIVERSARY_PROVIDE'
 # shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
@@ -269,7 +271,14 @@ rm --recursive "$PLAYIT_WORKDIR"
 # Print instructions
 
 for PKG in $PACKAGES_LIST; do
-	use_package_specific_value 'GAME_NAME'
+	case "$PKG" in
+		('PKG_MAIN')
+			GAME_NAME="$GAME_ID - $EXPANSION_ID"
+		;;
+		('PKG_VOID')
+			GAME_NAME="$GAME_ID - $EXPANSION_VOID_ID"
+		;;
+	esac
 	print_instructions "$PKG"
 done
 
