@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201031.17
+script_version=20201031.18
 
 # Set game-specific variables
 
@@ -68,7 +68,7 @@ APP_REGEDIT='thief.reg'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='system/t3.exe'
-APP_MAIN_ICON='gfw_high.ico'
+APP_MAIN_ICON='system/t3.exe'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -113,6 +113,12 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Get game icon
+
+PKG='PKG_BIN'
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 
 # Clean up temporary files
 
