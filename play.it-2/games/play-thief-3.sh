@@ -35,11 +35,11 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201031.15
+script_version=20201031.16
 
 # Set game-specific variables
 
-GAME_ID='thief3'
+GAME_ID='thief-3'
 GAME_NAME='Thief 3: Deadly Shadows'
 
 ARCHIVES_LIST='
@@ -74,6 +74,10 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID wine"
+
+# Ensure smooth upgrade from pre-20201031.16 packages
+PKG_BIN_PROVIDE='thief3'
+PKG_DATA_PROVIDE='thief3-data'
 
 # Load common functions
 
