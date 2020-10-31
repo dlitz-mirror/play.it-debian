@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201031.16
+script_version=20201031.17
 
 # Set game-specific variables
 
@@ -56,10 +56,13 @@ ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='*.pdf eula.txt readme.rtf'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.dll *.reg system/*.exe system/*.dll'
+ARCHIVE_GAME_BIN_FILES='system'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='*.ini system content'
+ARCHIVE_GAME_DATA_FILES='content'
+
+CONFIG_FILES='./*.ini'
+CONFIG_DIRS='./saves'
 
 APP_REGEDIT='thief.reg'
 
