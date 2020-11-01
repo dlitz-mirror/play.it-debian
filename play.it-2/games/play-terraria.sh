@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201101.7
+script_version=20201101.8
 
 # Set game-specific variables
 
@@ -97,7 +97,7 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='changelog.txt'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Terraria.bin.x86_64 TerrariaServer.bin.x86_64 lib64/libmojoshader.so'
+ARCHIVE_GAME_BIN_FILES='Terraria.bin.x86_64 TerrariaServer.bin.x86_64 lib64/libmojoshader.so lib64/libFNA3D.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Content Terraria.png monoconfig monomachineconfig open-folder *.dll *.dll.config *.exe'
