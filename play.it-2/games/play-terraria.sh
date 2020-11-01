@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201101.8
+script_version=20201101.9
 
 # Set game-specific variables
 
@@ -125,6 +125,9 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 openal glx"
+PKG_BIN_DEPS_ARCH='faudio'
+PKG_BIN_DEPS_DEB='libfaudio0'
+PKG_BIN_DEPS_GENTOO='app-emulation/faudio'
 
 # Old archives provide a x86_32 binary + libraries
 
@@ -173,6 +176,16 @@ fi
 
 use_archive_specific_value 'PACKAGES_LIST'
 set_temp_directories $PACKAGES_LIST
+
+# Dependency on FAudio is only required starting with game version 1.4.1
+
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_MULTIARCH'*)
+		unset PKG_BIN_DEPS_ARCH
+		unset PKG_BIN_DEPS_DEB
+		unset PKG_BIN_DEPS_GENTOO
+	;;
+esac
 
 # Extract game data
 
