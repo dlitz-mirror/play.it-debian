@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,6 +45,8 @@ EXPANSION_ID='arachnoid'
 EXPANSION_NAME='Arachnoid Portrait Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_19
+ARCHIVE_GOG_18
 ARCHIVE_GOG_17
 ARCHIVE_GOG_16
 ARCHIVE_GOG_15
@@ -64,8 +66,20 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_19='stellaris_arachnoid_portrait_pack_2_8_1_2_42827.sh'
+ARCHIVE_GOG_19_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
+ARCHIVE_GOG_19_MD5='6232966782f11eac72d8106dbde538c9'
+ARCHIVE_GOG_19_SIZE='1400'
+ARCHIVE_GOG_19_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_19_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_18='stellaris_arachnoid_portrait_pack_2_8_0_5_42441.sh'
+ARCHIVE_GOG_18_MD5='3b50c1fa61e475e83a1a882ed5815e61'
+ARCHIVE_GOG_18_SIZE='1400'
+ARCHIVE_GOG_18_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_18_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_17='stellaris_arachnoid_portrait_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_17_URL='https://www.gog.com/game/stellaris_galaxy_edition_upgrade_pack'
 ARCHIVE_GOG_17_MD5='bc3e4830f3c0a8b01c29e43b468fd04c'
 ARCHIVE_GOG_17_SIZE='1400'
 ARCHIVE_GOG_17_VERSION='2.8.0.3-gog42321'

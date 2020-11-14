@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.4
+script_version=20201122.2
 
 # Set game-specific variables
 
@@ -48,6 +48,8 @@ EXPANSION_VOID_ID='creatures-of-the-void'
 EXPANSION_VOID_NAME='Creatures of the Void'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_18
+ARCHIVE_GOG_17
 ARCHIVE_GOG_16
 ARCHIVE_GOG_15
 ARCHIVE_GOG_14
@@ -69,8 +71,20 @@ ARCHIVE_GOG_UNMERGED_2
 ARCHIVE_GOG_UNMERGED_1
 ARCHIVE_GOG_UNMERGED_0'
 
+ARCHIVE_GOG_18='stellaris_anniversary_portraits_2_8_1_2_42827.sh'
+ARCHIVE_GOG_18_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
+ARCHIVE_GOG_18_MD5='d4304d0cb6559d0147739148fc123285'
+ARCHIVE_GOG_18_SIZE='1400'
+ARCHIVE_GOG_18_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_18_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_17='stellaris_anniversary_portraits_2_8_0_5_42441.sh'
+ARCHIVE_GOG_17_MD5='e3068f7d91814711a327f66a47e48bce'
+ARCHIVE_GOG_17_SIZE='1400'
+ARCHIVE_GOG_17_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_17_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_16='stellaris_anniversary_portraits_2_8_0_3_42321.sh'
-ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
 ARCHIVE_GOG_16_MD5='ca3ddc40e9d8dd064366eea179452c4f'
 ARCHIVE_GOG_16_SIZE='1400'
 ARCHIVE_GOG_16_VERSION='2.8.0.3-gog42321'

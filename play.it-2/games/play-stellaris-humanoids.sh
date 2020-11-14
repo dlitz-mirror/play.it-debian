@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,6 +45,8 @@ EXPANSION_ID='humanoids'
 EXPANSION_NAME='Humanoids Species Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_16
+ARCHIVE_GOG_15
 ARCHIVE_GOG_14
 ARCHIVE_GOG_13
 ARCHIVE_GOG_12
@@ -61,8 +63,20 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_16='stellaris_humanoids_species_pack_2_8_1_2_42827.sh'
+ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_humanoids_species_pack'
+ARCHIVE_GOG_16_MD5='1aa665250b1d26f5529ee22c1ba36e8d'
+ARCHIVE_GOG_16_SIZE='120000'
+ARCHIVE_GOG_16_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_16_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_15='stellaris_humanoids_species_pack_2_8_0_5_42441.sh'
+ARCHIVE_GOG_15_MD5='5ed4db9314d3679821e5f75c1687d2f7'
+ARCHIVE_GOG_15_SIZE='120000'
+ARCHIVE_GOG_15_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_15_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_14='stellaris_humanoids_species_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_14_URL='https://www.gog.com/game/stellaris_humanoids_species_pack'
 ARCHIVE_GOG_14_MD5='cb509344d223f04b9c0edaaa13c298a6'
 ARCHIVE_GOG_14_SIZE='120000'
 ARCHIVE_GOG_14_VERSION='2.8.0.3-gog42321'

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,12 +45,26 @@ EXPANSION_ID='ancient-relics'
 EXPANSION_NAME='Ancient Relics Story Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_4='stellaris_ancient_relics_2_8_1_2_42827.sh'
+ARCHIVE_GOG_4_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
+ARCHIVE_GOG_4_MD5='4d1fa824f08e2853bd7d81e5a5c57f3e'
+ARCHIVE_GOG_4_SIZE='34000'
+ARCHIVE_GOG_4_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_3='stellaris_ancient_relics_2_8_0_5_42441.sh'
+ARCHIVE_GOG_3_MD5='bf137af989998a1020f73719b9de7306'
+ARCHIVE_GOG_3_SIZE='34000'
+ARCHIVE_GOG_3_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_3_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_2='stellaris_ancient_relics_2_8_0_3_42321.sh'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/stellaris_ancient_relics_story_pack'
 ARCHIVE_GOG_2_MD5='5e3509ccddcf8759773ce8161a081f36'
 ARCHIVE_GOG_2_SIZE='34000'
 ARCHIVE_GOG_2_VERSION='2.8.0.3-gog42321'
