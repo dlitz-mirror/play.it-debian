@@ -113,7 +113,8 @@ packages_guess_format() {
 			eval $variable_name=\'deb\'
 		;;
 		('arch'|\
-		 'manjaro'|'manjarolinux')
+		 'manjaro'|'manjarolinux'|\
+		 'endeavouros')
 			eval $variable_name=\'arch\'
 		;;
 		('gentoo')
