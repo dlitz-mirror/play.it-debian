@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.1
+script_version=20201030.1
 
 # Set game-specific variables
 
@@ -46,6 +46,7 @@ GAME_NAME='Stellaris'
 # Archives using a name following the pattern "ARCHIVE_.*_[0-9]+" should be automatically listed by the library
 ###
 ARCHIVES_LIST='
+ARCHIVE_GOG_13
 ARCHIVE_GOG_12
 ARCHIVE_GOG_11
 ARCHIVE_GOG_10
@@ -66,8 +67,14 @@ ARCHIVE_GOG_32BIT_LIBATOMIC_2
 ARCHIVE_GOG_32BIT_LIBATOMIC_1
 ARCHIVE_GOG_32BIT_LIBATOMIC_0'
 
+ARCHIVE_GOG_13='stellaris_english_2_8_0_3_42321.sh'
+ARCHIVE_GOG_13_URL='https://www.gog.com/game/stellaris'
+ARCHIVE_GOG_13_MD5='44dddb3bc3729f0d2b4eb88c85728d31'
+ARCHIVE_GOG_13_SIZE='11000000'
+ARCHIVE_GOG_13_VERSION='2.8.0.3-gog42321'
+ARCHIVE_GOG_13_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_12='stellaris_2_7_2_38578.sh'
-ARCHIVE_GOG_12_URL='https://www.gog.com/game/stellaris'
 ARCHIVE_GOG_12_MD5='28804a0503755eec3a33a5b43787a5cc'
 ARCHIVE_GOG_12_SIZE='9600000'
 ARCHIVE_GOG_12_VERSION='2.7.2-gog38578'
@@ -213,16 +220,15 @@ PKG_BIN_DEPS_GENTOO_GOG_32BIT='sys-apps/util-linux[abi_x86_32] x11-libs/libX11[a
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

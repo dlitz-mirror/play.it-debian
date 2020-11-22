@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.1
+script_version=20201030.1
 
 # Set game-specific variables
 
@@ -46,6 +46,7 @@ GAME_NAME_ANNIVERSARY="$GAME_NAME - Anniversary Portraits"
 GAME_NAME_VOID="$GAME_NAME - Creatures of the Void Portrait Pack"
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_16
 ARCHIVE_GOG_15
 ARCHIVE_GOG_14
 ARCHIVE_GOG_13
@@ -66,8 +67,14 @@ ARCHIVE_GOG_UNMERGED_2
 ARCHIVE_GOG_UNMERGED_1
 ARCHIVE_GOG_UNMERGED_0'
 
+ARCHIVE_GOG_16='stellaris_anniversary_portraits_2_8_0_3_42321.sh'
+ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
+ARCHIVE_GOG_16_MD5='ca3ddc40e9d8dd064366eea179452c4f'
+ARCHIVE_GOG_16_SIZE='1400'
+ARCHIVE_GOG_16_VERSION='2.8.0.3-gog42321'
+ARCHIVE_GOG_16_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_15='stellaris_anniversary_portraits_2_7_2_38578.sh'
-ARCHIVE_GOG_15_URL='https://www.gog.com/game/stellaris_anniversary_portraits'
 ARCHIVE_GOG_15_MD5='90c744f460570fbab96176a39cb4b857'
 ARCHIVE_GOG_15_SIZE='1400'
 ARCHIVE_GOG_15_VERSION='2.7.2-gog38578'
@@ -209,16 +216,15 @@ PKG_VOID_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

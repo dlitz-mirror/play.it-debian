@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200731.4
+script_version=20201101.9
 
 # Set game-specific variables
 
@@ -43,50 +43,61 @@ GAME_ID='terraria'
 GAME_NAME='Terraria'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_4
-ARCHIVE_GOG_3
-ARCHIVE_GOG_2
 ARCHIVE_GOG_1
-ARCHIVE_GOG_0'
+ARCHIVE_GOG_0
+ARCHIVE_GOG_MULTIARCH_4
+ARCHIVE_GOG_MULTIARCH_3
+ARCHIVE_GOG_MULTIARCH_2
+ARCHIVE_GOG_MULTIARCH_1
+ARCHIVE_GOG_MULTIARCH_0'
 
-ARCHIVE_GOG_4='terraria_v1_4_0_5_38805.sh'
-ARCHIVE_GOG_4_URL='https://www.gog.com/game/terraria'
-ARCHIVE_GOG_4_MD5='88940054c5d5a5f556f0bd955559426a'
-ARCHIVE_GOG_4_SIZE='760000'
-ARCHIVE_GOG_4_VERSION='1.4.0.5-gog38805'
-ARCHIVE_GOG_4_TYPE='mojosetup'
-
-ARCHIVE_GOG_3='terraria_1_4_0_4_38513.sh'
-ARCHIVE_GOG_3_MD5='5704d188ab8374f0a36e86bad8adb5a1'
-ARCHIVE_GOG_3_SIZE='760000'
-ARCHIVE_GOG_3_VERSION='1.4.0.4-gog38513'
-ARCHIVE_GOG_3_TYPE='mojosetup'
-
-ARCHIVE_GOG_2='terraria_v1_4_0_2_38384.sh'
-ARCHIVE_GOG_2_MD5='85d3ddcbafdef8412e4f96f3adbc2ed9'
-ARCHIVE_GOG_2_SIZE='760000'
-ARCHIVE_GOG_2_VERSION='1.4.0.2-gog38384'
-ARCHIVE_GOG_2_TYPE='mojosetup'
-
-ARCHIVE_GOG_1='terraria_en_1_3_5_3_14602.sh'
-ARCHIVE_GOG_1_MD5='c99fdc0ae15dbff1e8147b550db4e31a'
-ARCHIVE_GOG_1_SIZE='490000'
-ARCHIVE_GOG_1_VERSION='1.3.5.3-gog14602'
+ARCHIVE_GOG_1='terraria_v1_4_1_1_41975.sh'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/terraria'
+ARCHIVE_GOG_1_MD5='e0158c754f9a7259d28f1cd3c1e1c747'
+ARCHIVE_GOG_1_SIZE='720000'
+ARCHIVE_GOG_1_VERSION='1.4.1.1-gog41975'
 ARCHIVE_GOG_1_TYPE='mojosetup'
 
-ARCHIVE_GOG_0='gog_terraria_2.17.0.21.sh'
-ARCHIVE_GOG_0_MD5='90ec196ec38a7f7a5002f5a8109493cc'
-ARCHIVE_GOG_0_SIZE='490000'
-ARCHIVE_GOG_0_VERSION='1.3.5.3-gog2.17.0.21'
+ARCHIVE_GOG_0='terraria_v1_4_1_0_41944.sh'
+ARCHIVE_GOG_0_MD5='6d8fd3976503695205e80ba10e8249de'
+ARCHIVE_GOG_0_SIZE='720000'
+ARCHIVE_GOG_0_VERSION='1.4.1.0-gog41944'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+
+ARCHIVE_GOG_MULTIARCH_4='terraria_v1_4_0_5_38805.sh'
+ARCHIVE_GOG_MULTIARCH_4_MD5='88940054c5d5a5f556f0bd955559426a'
+ARCHIVE_GOG_MULTIARCH_4_SIZE='760000'
+ARCHIVE_GOG_MULTIARCH_4_VERSION='1.4.0.5-gog38805'
+ARCHIVE_GOG_MULTIARCH_4_TYPE='mojosetup'
+
+ARCHIVE_GOG_MULTIARCH_3='terraria_1_4_0_4_38513.sh'
+ARCHIVE_GOG_MULTIARCH_3_MD5='5704d188ab8374f0a36e86bad8adb5a1'
+ARCHIVE_GOG_MULTIARCH_3_SIZE='760000'
+ARCHIVE_GOG_MULTIARCH_3_VERSION='1.4.0.4-gog38513'
+ARCHIVE_GOG_MULTIARCH_3_TYPE='mojosetup'
+
+ARCHIVE_GOG_MULTIARCH_2='terraria_v1_4_0_2_38384.sh'
+ARCHIVE_GOG_MULTIARCH_2_MD5='85d3ddcbafdef8412e4f96f3adbc2ed9'
+ARCHIVE_GOG_MULTIARCH_2_SIZE='760000'
+ARCHIVE_GOG_MULTIARCH_2_VERSION='1.4.0.2-gog38384'
+ARCHIVE_GOG_MULTIARCH_2_TYPE='mojosetup'
+
+ARCHIVE_GOG_MULTIARCH_1='terraria_en_1_3_5_3_14602.sh'
+ARCHIVE_GOG_MULTIARCH_1_MD5='c99fdc0ae15dbff1e8147b550db4e31a'
+ARCHIVE_GOG_MULTIARCH_1_SIZE='490000'
+ARCHIVE_GOG_MULTIARCH_1_VERSION='1.3.5.3-gog14602'
+ARCHIVE_GOG_MULTIARCH_1_TYPE='mojosetup'
+
+ARCHIVE_GOG_MULTIARCH_0='gog_terraria_2.17.0.21.sh'
+ARCHIVE_GOG_MULTIARCH_0_MD5='90ec196ec38a7f7a5002f5a8109493cc'
+ARCHIVE_GOG_MULTIARCH_0_SIZE='490000'
+ARCHIVE_GOG_MULTIARCH_0_VERSION='1.3.5.3-gog2.17.0.21'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='changelog.txt'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='Terraria.bin.x86 TerrariaServer.bin.x86 lib/libmojoshader.so'
-
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='Terraria.bin.x86_64 TerrariaServer.bin.x86_64 lib64/libmojoshader.so'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='Terraria.bin.x86_64 TerrariaServer.bin.x86_64 lib64/libmojoshader.so lib64/libFNA3D.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Content Terraria.png monoconfig monomachineconfig open-folder *.dll *.dll.config *.exe'
@@ -95,45 +106,56 @@ APP_MAIN_TYPE='native'
 APP_MAIN_PRERUN='# Work around terminfo Mono bug
 # cf. https://github.com/mono/mono/issues/6752
 export TERM="${TERM%-256color}"'
-APP_MAIN_LIBS_BIN32='lib'
-APP_MAIN_LIBS_BIN64='lib64'
-APP_MAIN_EXE_BIN32='Terraria.bin.x86'
-APP_MAIN_EXE_BIN64='Terraria.bin.x86_64'
+APP_MAIN_LIBS='lib64'
+APP_MAIN_EXE='Terraria.bin.x86_64'
 APP_MAIN_ICON='Terraria.png'
 
 APP_SERVER_ID="$GAME_ID-server"
 APP_SERVER_NAME="$GAME_NAME Server"
 APP_SERVER_TYPE='native'
 APP_SERVER_PRERUN="$APP_MAIN_PRERUN"
-APP_SERVER_LIBS_BIN32="$APP_MAIN_LIBS_BIN32"
-APP_SERVER_LIBS_BIN64="$APP_MAIN_LIBS_BIN64"
-APP_SERVER_EXE_BIN32='TerrariaServer.bin.x86'
-APP_SERVER_EXE_BIN64='TerrariaServer.bin.x86_64'
+APP_SERVER_LIBS="$APP_MAIN_LIBS"
+APP_SERVER_EXE='TerrariaServer.bin.x86_64'
 APP_SERVER_ICON='Terraria.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
+PKG_BIN_ARCH='64'
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 openal glx"
+PKG_BIN_DEPS_ARCH='faudio'
+PKG_BIN_DEPS_DEB='libfaudio0'
+PKG_BIN_DEPS_GENTOO='app-emulation/faudio'
+
+# Old archives provide a x86_32 binary + libraries
+
+PACKAGES_LIST_GOG_MULTIARCH='PKG_BIN32 PKG_BIN PKG_DATA'
+
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='Terraria.bin.x86 TerrariaServer.bin.x86 lib/libmojoshader.so'
+
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_EXE_BIN32='Terraria.bin.x86'
+
+APP_SERVER_LIBS_BIN32='lib'
+APP_SERVER_EXE_BIN32='TerrariaServer.bin.x86'
+
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 openal glx"
 
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -150,6 +172,21 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Update the list of packages to build, based on the source archive
+
+use_archive_specific_value 'PACKAGES_LIST'
+set_temp_directories $PACKAGES_LIST
+
+# Dependency on FAudio is only required starting with game version 1.4.1
+
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_MULTIARCH'*)
+		unset PKG_BIN_DEPS_ARCH
+		unset PKG_BIN_DEPS_DEB
+		unset PKG_BIN_DEPS_GENTOO
+	;;
+esac
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
@@ -163,9 +200,14 @@ icons_get_from_package 'APP_MAIN' 'APP_SERVER'
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN' 'APP_SERVER'
-done
+PKG='PKG_BIN'
+launchers_write 'APP_MAIN' 'APP_SERVER'
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_MULTIARCH'*)
+		PKG='PKG_BIN32'
+		launchers_write 'APP_MAIN' 'APP_SERVER'
+	;;
+esac
 
 # Build package
 

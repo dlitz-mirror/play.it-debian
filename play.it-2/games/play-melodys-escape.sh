@@ -35,12 +35,14 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201003.4
+script_version=20201005.1
 
 # Set game-specific variables
 
 GAME_ID='melodys-escape'
 GAME_NAME='Melodyʼs Escape'
+
+SCRIPT_DEPS='xdelta3'
 
 ARCHIVE_HUMBLE='Melodys_Escape_Linux.zip'
 ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/melodys-escape'
@@ -48,40 +50,55 @@ ARCHIVE_HUMBLE_MD5='4d463482418c2d9917c56df3bbde6eea'
 ARCHIVE_HUMBLE_SIZE='60000'
 ARCHIVE_HUMBLE_VERSION='1.0-humble160601'
 
+ARCHIVE_REQUIRED_LIB_PATCHES='melodys-escape_lib-patches.tar.gz'
+ARCHIVE_REQUIRED_LIB_PATCHES_MD5='6aee21776f44df0d927babcddfa3c386'
+ARCHIVE_REQUIRED_LIB_PATCHES_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
+
 ARCHIVE_OPTIONAL_ICONS='melodys-escape_icons.tar.gz'
 ARCHIVE_OPTIONAL_ICONS_MD5='656fce13728d399e557fd72c3a6bc244'
 ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
 
+ARCHIVE_OPTIONAL_LIB64='melodys-escape_lib64.tar.gz'
+ARCHIVE_OPTIONAL_LIB64_MD5='a77c6b3acd5910bd874a1ca4b7d0c53c'
+ARCHIVE_OPTIONAL_LIB64_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
+
 ARCHIVE_DOC_DATA_PATH="Melody's Escape"
 ARCHIVE_DOC_DATA_FILES='Licenses README.txt'
 
-ARCHIVE_GAME_BIN_PATH="Melody's Escape"
-ARCHIVE_GAME_BIN_FILES='MelodysEscape.bin.x86 libMonoPosixHelper.so lib/libbass.so lib/libbassmix.so lib/libmojoshader.so BassPlugins/libbassflac.so lib/libmono-2.0.so.1'
+ARCHIVE_GAME_BIN32_PATH="Melody's Escape"
+ARCHIVE_GAME_BIN32_FILES='lib/libbass.so lib/libbassmix.so lib/libmojoshader.so BassPlugins/libbassflac.so'
+
+ARCHIVE_GAME_BIN64_PATH='.'
+ARCHIVE_GAME_BIN64_FILES='lib64/libbass.so lib64/libbassmix.so lib64/libmojoshader.so BassPlugins/libbassflac.so'
 
 ARCHIVE_GAME_DATA_PATH="Melody's Escape"
-ARCHIVE_GAME_DATA_FILES='BundledMusic Calibration Content Mods mono MelodysEscape.exe *.dll FNA.dll.config'
+ARCHIVE_GAME_DATA_FILES='BundledMusic Calibration Content Mods mono *.dll.config MelodysEscape.exe Bass.Net.Linux.dll FNA.dll FNA.dll.config MelodyEngine.dll MelodyReactor.dll tar-cs.dll'
 
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='16x16 32x32 48x48 64x64 128x128 256x256'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_LIBS='lib'
-APP_MAIN_PRERUN='# Work around terminfo Mono bug
-# cf. https://github.com/mono/mono/issues/6752
-export TERM="${TERM%-256color}"'
-APP_MAIN_EXE='MelodysEscape.bin.x86'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='MelodysEscape.exe'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN32 PKG_DATA'
+PACKAGES_LIST_LIB64='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 sdl2_image alsa"
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_DATA_ID mono openal sdl2 sdl2_image alsa"
+PKG_BIN32_DEPS_DEB='libmono-2.0-1, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil'
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -107,10 +124,20 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load required archives
+
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive 'ARCHIVE_LIB_PATCHES' 'ARCHIVE_REQUIRED_LIB_PATCHES'
+ARCHIVE="$ARCHIVE_MAIN"
+if [ -z "$ARCHIVE_LIB_PATCHES" ]; then
+	archive_set_error_not_found 'ARCHIVE_REQUIRED_LIB_PATCHES'
+fi
+
 # Load optional archives
 
 ARCHIVE_MAIN="$ARCHIVE"
 set_archive 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
+set_archive 'ARCHIVE_LIB64' 'ARCHIVE_OPTIONAL_LIB64'
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_LIB64" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_LIB64"
@@ -129,16 +156,45 @@ if [ -n "$ARCHIVE_ICONS" ]; then
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
+# Include optional 64-bit libraries
+
+if [ -n "$ARCHIVE_LIB64" ]; then
+	(
+		ARCHIVE='ARCHIVE_LIB64'
+		extract_data_from "$ARCHIVE_LIB64"
+	)
+	prepare_package_layout
+	rm --recursive "$PLAYIT_WORKDIR/gamedata"
+fi
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
+# Patch shipped libraries, to ensure they work with system-provided Mono
+
+(
+	ARCHIVE='ARCHIVE_LIB_PATCHES'
+	extract_data_from "$ARCHIVE_LIB_PATCHES"
+)
+for file in 'MelodyReactor.dll' 'MelodysEscape.exe'; do
+	original_file="${PKG_DATA_PATH}${PATH_GAME}/${file}"
+	patched_file="$original_file"
+	patch="$PLAYIT_WORKDIR/gamedata/${file}.delta"
+	xdelta3 decode -f -s "$original_file" "$patch" "$patched_file"
+done
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
 # Write launchers
 
-PKG='PKG_BIN'
+PKG='PKG_BIN32'
 launchers_write 'APP_MAIN'
+if [ -n "$ARCHIVE_LIB64" ]; then
+	PKG='PKG_BIN64'
+	launchers_write 'APP_MAIN'
+fi
 
 # Build package
 

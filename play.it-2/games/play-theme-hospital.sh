@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200912.1
+script_version=20201002.1
 
 # Set game-specific variables
 
@@ -98,6 +98,7 @@ PKG_CORSIXTH_PROVIDE="$PKG_ENGINE_ID"
 PKG_CORSIXTH_DEPS="$PKG_DATA_ID"
 PKG_CORSIXTH_DEPS_ARCH='corsix-th'
 PKG_CORSIXTH_DEPS_DEB='corsix-th'
+PKG_CORSIXTH_DEPS_GENTOO='games-simulation/corsix-th'
 
 # Load common functions
 
@@ -135,6 +136,9 @@ case "$OPTION_PACKAGE" in
 	;;
 	('deb')
 		PATH_CORSIXTH='/usr/share/games/corsix-th'
+	;;
+	('gentoo')
+		PATH_CORSIXTH='/usr/share/corsix-th'
 	;;
 	(*)
 		liberror 'OPTION_PACKAGE' "$0"

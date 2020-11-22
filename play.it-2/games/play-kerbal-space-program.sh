@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
 #
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Kerbal Space Program
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200325.2
+script_version=20201102.1
 
 # Set game-specific variables
 
@@ -43,12 +43,19 @@ GAME_ID='kerbal-space-program'
 GAME_NAME='Kerbal Space Program'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0
 '
 
+ARCHIVE_GOG_2='kerbal_space_program_1_10_0_02917_39410.sh'
+ARCHIVE_GOG_2_URL='https://www.gog.com/game/kerbal_space_program'
+ARCHIVE_GOG_2_MD5='40d7ea6e6c112a95954b3178030599b0'
+ARCHIVE_GOG_2_VERSION='1.10.0.02917-gog39410'
+ARCHIVE_GOG_2_SIZE='4000000'
+ARCHIVE_GOG_2_TYPE='mojosetup'
+
 ARCHIVE_GOG_1='kerbal_space_program_1_9_1_02788_36309.sh'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/kerbal_space_program'
 ARCHIVE_GOG_1_MD5='6157d3ebad90960893e4aa177b8518de'
 ARCHIVE_GOG_1_VERSION='1.9.1.02788-gog36309'
 ARCHIVE_GOG_1_SIZE='3700000'
@@ -89,31 +96,29 @@ PKG_BIN_DEPS="$PKG_DATA_ID glx xcursor glibc libstdc++ libxrandr libudev1 alsa" 
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
