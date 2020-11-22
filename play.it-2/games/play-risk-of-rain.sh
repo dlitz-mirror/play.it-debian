@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201122.1
+script_version=20201122.5
 
 # Set game-specific variables
 
@@ -59,9 +59,6 @@ ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/risk-of-rain'
 
 ARCHIVE_LIBSSL_32='libssl_1.0.0_32-bit.tar.gz'
 ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
-
-ARCHIVE_LIBCURL3_32='libcurl3_7.60.0_32-bit.tar.gz'
-ARCHIVE_LIBCURL3_32_MD5='7206100f065d52de5a4c0b49644aa052'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -114,6 +111,39 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Ensure availability of CURL_OPENSSL_3 symbol
+
+ARCHIVE_OPTIONAL_LIBCURL3='libcurl3_7.60.0_32-bit.tar.gz'
+ARCHIVE_OPTIONAL_LIBCURL3_URL='https://downloads.dotslashplay.it/resources/libcurl/'
+ARCHIVE_OPTIONAL_LIBCURL3_MD5='7206100f065d52de5a4c0b49644aa052'
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive 'ARCHIVE_LIBCURL3' 'ARCHIVE_OPTIONAL_LIBCURL3'
+if [ "$ARCHIVE_LIBCURL3" ]; then
+	extract_data_from "$ARCHIVE_LIBCURL3"
+	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	rm --recursive "$PLAYIT_WORKDIR/gamedata"
+	ln --symbolic 'libcurl.so.4.5.0' "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS/libcurl.so.4"
+else
+	case "${LANG%_*}" in
+		('fr')
+			message='Archive introuvable : %s\n'
+			message="$message"'La bibliothèque cURL fournissant le symbole CURL_OPENSSL_3 ne sera pas incluse.\n'
+			message="$message"'Cette archive peut être téléchargée depuis %s\n'
+		;;
+		('en'|*)
+			message='Archive not found: %s\n'
+			message="$message"'The cURL library providing CURL_OPENSSL_3 symbol will not be included.\n'
+			message="$message"'This archive can be downloaded from %s\n'
+		;;
+	esac
+	print_warning
+	printf "$message" "$ARCHIVE_OPTIONAL_LIBCURL3" "$ARCHIVE_OPTIONAL_LIBCURL3_URL"
+	printf '\n'
+fi
+ARCHIVE="$ARCHIVE_MAIN"
+
+
 # Use libSSL 1.0.0 32-bit archive
 
 if [ "$OPTION_PACKAGE" != 'arch' ]; then
@@ -121,12 +151,6 @@ if [ "$OPTION_PACKAGE" != 'arch' ]; then
 	archive_set 'ARCHIVE_LIBSSL' 'ARCHIVE_LIBSSL_32'
 	ARCHIVE="$ARCHIVE_MAIN"
 fi
-
-# Use libcurl 3 32-bit archive
-
-ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'ARCHIVE_LIBCURL' 'ARCHIVE_LIBCURL3_32'
-ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
@@ -155,19 +179,6 @@ if [ "$ARCHIVE_LIBSSL" ]; then
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 fi
 
-# Include libcurl into the game directory
-
-if [ "$ARCHIVE_LIBCURL" ]; then
-	(
-		ARCHIVE='ARCHIVE_LIBCURL'
-		extract_data_from "$ARCHIVE_LIBCURL"
-	)
-	[ -n "$APP_MAIN_LIBS" ] || APP_MAIN_LIBS='libs'
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
-
 # Write launchers
 
 PKG='PKG_BIN'
@@ -175,28 +186,7 @@ launchers_write 'APP_MAIN'
 
 # Build package
 
-cat > "$postinst" << EOF
-if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4.5.0" ]; then
-	if [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4" ]; then
-		ln --symbolic 'libcurl.so.4.5.0' "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4"
-	fi
-	if [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.3" ]; then
-		ln --symbolic 'libcurl.so.4.5.0' "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.3"
-	fi
-fi
-EOF
-
-cat > "$prerm" << EOF
-if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4" ]; then
-	rm "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4"
-fi
-if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.3" ]; then
-	rm "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.3"
-fi
-EOF
-
-write_metadata 'PKG_BIN'
-write_metadata 'PKG_DATA'
+write_metadata
 build_pkg
 
 # Clean up
