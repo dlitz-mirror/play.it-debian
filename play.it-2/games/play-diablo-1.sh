@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200316.1
+script_version=20201011.2
 
 # Set game-specific variables
 
@@ -43,47 +43,55 @@ SCRIPT_DEPS='7z'
 GAME_ID='diablo-1'
 GAME_NAME='Diablo'
 
-ARCHIVE_GOG='setup_diablo_1.09_hellfire_v2_(30038).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/diablo'
-ARCHIVE_GOG_TYPE='innosetup'
-ARCHIVE_GOG_MD5='e70187d92fa120771db99dfa81679cfc'
-ARCHIVE_GOG_VERSION='1.09-gog30038'
-ARCHIVE_GOG_SIZE='850000'
+ARCHIVES_LIST='
+ARCHIVE_GOG_5
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
+ARCHIVE_GOG_2
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0'
 
-ARCHIVE_GOG_OLD4='setup_diablo_1.09_v6_(28378).exe'
-ARCHIVE_GOG_OLD4_TYPE='innosetup'
-ARCHIVE_GOG_OLD4_MD5='588ab50c1ef25abb682b86ea4306ea50'
-ARCHIVE_GOG_OLD4_VERSION='1.09-gog28378'
-ARCHIVE_GOG_OLD4_SIZE='670000'
+ARCHIVE_GOG_5='setup_diablo_1.09_hellfire_v2_(30038).exe'
+ARCHIVE_GOG_5_URL='https://www.gog.com/game/diablo'
+ARCHIVE_GOG_5_TYPE='innosetup'
+ARCHIVE_GOG_5_MD5='e70187d92fa120771db99dfa81679cfc'
+ARCHIVE_GOG_5_VERSION='1.09-gog30038'
+ARCHIVE_GOG_5_SIZE='850000'
 
-ARCHIVE_GOG_OLD3='setup_diablo_1.09_v4_(27989).exe'
-ARCHIVE_GOG_OLD3_TYPE='innosetup'
-ARCHIVE_GOG_OLD3_MD5='8dac74a616646fa41d5d73f4765cef40'
-ARCHIVE_GOG_OLD3_VERSION='1.09-gog27989'
-ARCHIVE_GOG_OLD3_SIZE='670000'
+ARCHIVE_GOG_4='setup_diablo_1.09_v6_(28378).exe'
+ARCHIVE_GOG_4_TYPE='innosetup'
+ARCHIVE_GOG_4_MD5='588ab50c1ef25abb682b86ea4306ea50'
+ARCHIVE_GOG_4_VERSION='1.09-gog28378'
+ARCHIVE_GOG_4_SIZE='670000'
 
-ARCHIVE_GOG_OLD2='setup_diablo_1.09_v3_(27965).exe'
-ARCHIVE_GOG_OLD2_TYPE='innosetup'
-ARCHIVE_GOG_OLD2_MD5='38d654af858d7a2591711f0e6324fcd0'
-ARCHIVE_GOG_OLD2_VERSION='1.09-gog27695'
-ARCHIVE_GOG_OLD2_SIZE='670000'
+ARCHIVE_GOG_3='setup_diablo_1.09_v4_(27989).exe'
+ARCHIVE_GOG_3_TYPE='innosetup'
+ARCHIVE_GOG_3_MD5='8dac74a616646fa41d5d73f4765cef40'
+ARCHIVE_GOG_3_VERSION='1.09-gog27989'
+ARCHIVE_GOG_3_SIZE='670000'
 
-ARCHIVE_GOG_OLD1='setup_diablo_1.09_v2_(27882).exe'
-ARCHIVE_GOG_OLD1_TYPE='innosetup'
-ARCHIVE_GOG_OLD1_MD5='83b2d6b8551a9825a426dac7b9302654'
-ARCHIVE_GOG_OLD1_VERSION='1.09-gog27882'
-ARCHIVE_GOG_OLD1_SIZE='670000'
+ARCHIVE_GOG_2='setup_diablo_1.09_v3_(27965).exe'
+ARCHIVE_GOG_2_TYPE='innosetup'
+ARCHIVE_GOG_2_MD5='38d654af858d7a2591711f0e6324fcd0'
+ARCHIVE_GOG_2_VERSION='1.09-gog27695'
+ARCHIVE_GOG_2_SIZE='670000'
 
-ARCHIVE_GOG_OLD0='setup_diablo_1.09_(27873).exe'
-ARCHIVE_GOG_OLD0_TYPE='innosetup'
-ARCHIVE_GOG_OLD0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
-ARCHIVE_GOG_OLD0_VERSION='1.09-gog27873'
-ARCHIVE_GOG_OLD0_SIZE='680000'
+ARCHIVE_GOG_1='setup_diablo_1.09_v2_(27882).exe'
+ARCHIVE_GOG_1_TYPE='innosetup'
+ARCHIVE_GOG_1_MD5='83b2d6b8551a9825a426dac7b9302654'
+ARCHIVE_GOG_1_VERSION='1.09-gog27882'
+ARCHIVE_GOG_1_SIZE='670000'
 
-# devilutionX 1.0.1 release
+ARCHIVE_GOG_0='setup_diablo_1.09_(27873).exe'
+ARCHIVE_GOG_0_TYPE='innosetup'
+ARCHIVE_GOG_0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
+ARCHIVE_GOG_0_VERSION='1.09-gog27873'
+ARCHIVE_GOG_0_SIZE='680000'
+
+# devilutionX 1.1.0 release
 ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.7z'
-ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.0.1'
-ARCHIVE_REQUIRED_DEVILUTIONX_MD5='f20edf9e2f53efb634890c54f0a79b6a'
+ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.1.0'
+ARCHIVE_REQUIRED_DEVILUTIONX_MD5='ff0cb792e11e58862e908e6493cef2e4'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf license.txt patch.txt readme.txt update.txt README.txt'
@@ -117,16 +125,15 @@ PKG_BIN_DEPS_GENTOO='media-libs/sdl2-ttf'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
