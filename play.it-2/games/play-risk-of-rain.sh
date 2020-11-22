@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201122.5
+script_version=20201122.6
 
 # Set game-specific variables
 
@@ -56,9 +56,6 @@ ARCHIVE_HUMBLE_0_MD5='21eb80a7b517d302478c4f86dd5ea9a2'
 ARCHIVE_HUMBLE_0_SIZE='100000'
 ARCHIVE_HUMBLE_0_VERSION='1.3.0-humble160519'
 ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/risk-of-rain'
-
-ARCHIVE_LIBSSL_32='libssl_1.0.0_32-bit.tar.gz'
-ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -82,7 +79,6 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu openal libxrandr libcurl"
-PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 
 # Load common functions
 
@@ -143,14 +139,46 @@ else
 fi
 ARCHIVE="$ARCHIVE_MAIN"
 
+# Ensure availability of libSSL 1.0.0
 
-# Use libSSL 1.0.0 32-bit archive
-
-if [ "$OPTION_PACKAGE" != 'arch' ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	archive_set 'ARCHIVE_LIBSSL' 'ARCHIVE_LIBSSL_32'
-	ARCHIVE="$ARCHIVE_MAIN"
-fi
+case "$OPTION_PACKAGE" in
+	('arch'|'gentoo')
+		# Use package from official repositories
+		PKG_BIN_DEPS_ARCH="$PKG_BIN_DEPS_ARCH lib32-openssl-1.0"
+		PKG_BIN_DEPS_GENTOO="$PKG_BIN_DEPS_GENTOO dev-libs/openssl-compat[abi_x86_32]"
+	;;
+	('deb')
+		# Use archive provided by ./play.it
+		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
+		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
+		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
+		ARCHIVE_MAIN="$ARCHIVE"
+		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
+		if [ "$ARCHIVE_LIBSSL32" ]; then
+			extract_data_from "$ARCHIVE_LIBSSL32"
+			mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+			mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+			rm --recursive "$PLAYIT_WORKDIR/gamedata"
+		else
+			case "${LANG%_*}" in
+				('fr')
+					message='Archive introuvable : %s\n'
+					message="$message"'La bibliothèque libSSL 1.0.0 ne sera pas incluse.\n'
+					message="$message"'Cette archive peut être téléchargée depuis %s\n'
+				;;
+				('en'|*)
+					message='Archive not found: %s\n'
+					message="$message"'The libSSL 1.0.0 library will not be included.\n'
+					message="$message"'This archive can be downloaded from %s\n'
+				;;
+			esac
+			print_warning
+			printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL32" "$ARCHIVE_OPTIONAL_LIBSSL32_URL"
+			printf '\n'
+		fi
+		ARCHIVE="$ARCHIVE_MAIN"
+	;;
+esac
 
 # Extract game data
 
@@ -165,19 +193,6 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Include libSSL into the game directory
-
-if [ "$ARCHIVE_LIBSSL" ]; then
-	(
-		ARCHIVE='ARCHIVE_LIBSSL'
-		extract_data_from "$ARCHIVE_LIBSSL"
-	)
-	[ -n "$APP_MAIN_LIBS" ] || APP_MAIN_LIBS='libs'
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	mv "$PLAYIT_WORKDIR/gamedata"/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-	rm --recursive "$PLAYIT_WORKDIR/gamedata"
-fi
 
 # Write launchers
 
