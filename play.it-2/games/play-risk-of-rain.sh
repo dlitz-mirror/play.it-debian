@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,28 +30,32 @@ set -o errexit
 
 ###
 # Risk of Rain
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180610.1
+script_version=20201122.1
 
 # Set game-specific variables
 
 GAME_ID='risk-of-rain'
 GAME_NAME='Risk of Rain'
 
-ARCHIVE_GOG='gog_risk_of_rain_2.1.0.5.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/risk_of_rain'
-ARCHIVE_GOG_MD5='34f8e1e2dddc6726a18c50b27c717468'
-ARCHIVE_GOG_SIZE='180000'
-ARCHIVE_GOG_VERSION='1.2.8-gog2.1.0.5'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0
+ARCHIVE_HUMBLE_0'
 
-ARCHIVE_HUMBLE='Risk_of_Rain_v1.3.0_DRM-Free_Linux_.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/risk-of-rain'
-ARCHIVE_HUMBLE_MD5='21eb80a7b517d302478c4f86dd5ea9a2'
-ARCHIVE_HUMBLE_SIZE='100000'
-ARCHIVE_HUMBLE_VERSION='1.3.0-humble160519'
+ARCHIVE_GOG_0='gog_risk_of_rain_2.1.0.5.sh'
+ARCHIVE_GOG_0_MD5='34f8e1e2dddc6726a18c50b27c717468'
+ARCHIVE_GOG_0_SIZE='180000'
+ARCHIVE_GOG_0_VERSION='1.2.8-gog2.1.0.5'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/risk_of_rain'
+
+ARCHIVE_HUMBLE_0='Risk_of_Rain_v1.3.0_DRM-Free_Linux_.zip'
+ARCHIVE_HUMBLE_0_MD5='21eb80a7b517d302478c4f86dd5ea9a2'
+ARCHIVE_HUMBLE_0_SIZE='100000'
+ARCHIVE_HUMBLE_0_VERSION='1.3.0-humble160519'
+ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/risk-of-rain'
 
 ARCHIVE_LIBSSL_32='libssl_1.0.0_32-bit.tar.gz'
 ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
@@ -59,16 +63,16 @@ ARCHIVE_LIBSSL_32_MD5='9443cad4a640b2512920495eaf7582c4'
 ARCHIVE_LIBCURL3_32='libcurl3_7.60.0_32-bit.tar.gz'
 ARCHIVE_LIBCURL3_32_MD5='7206100f065d52de5a4c0b49644aa052'
 
-ARCHIVE_DOC_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN_FILES='./Risk_of_Rain'
+ARCHIVE_GAME_BIN_FILES='Risk_of_Rain'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
-ARCHIVE_GAME_DATA_FILES='./assets'
+ARCHIVE_GAME_DATA_FILES='assets'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='Risk_of_Rain'
@@ -85,31 +89,29 @@ PKG_BIN_DEPS_ARCH='lib32-openssl-1.0'
 
 # Load common functions
 
-target_version='2.9'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Use libSSL 1.0.0 32-bit archive
@@ -130,6 +132,14 @@ ARCHIVE="$ARCHIVE_MAIN"
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Include libSSL into the game directory
@@ -161,13 +171,9 @@ fi
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
-
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
 
 cat > "$postinst" << EOF
 if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libcurl.so.4.5.0" ]; then
@@ -190,6 +196,7 @@ fi
 EOF
 
 write_metadata 'PKG_BIN'
+write_metadata 'PKG_DATA'
 build_pkg
 
 # Clean up
