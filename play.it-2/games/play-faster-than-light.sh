@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2020, Mopi
 # Copyright (c) 2018-2020, BetaRays
 # All rights reserved.
@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200617.2
+script_version=20201123.1
 
 # Set game-specific variables
 
@@ -62,13 +62,13 @@ ARCHIVE_GOG_6='ftl_advanced_edition_1_6_12_2_35269.sh'
 ARCHIVE_GOG_6_URL='https://www.gog.com/game/faster_than_light'
 ARCHIVE_GOG_6_MD5='fc012e9ac7515f0b7b119a73ccfd7190'
 ARCHIVE_GOG_6_SIZE='410000'
-ARCHIVE_GOG_6_VERSION='1.12.2-gog35269'
+ARCHIVE_GOG_6_VERSION='1.6.12.2-gog35269'
 ARCHIVE_GOG_6_TYPE='mojosetup'
 
 ARCHIVE_GOG_5='ftl_advanced_edition_1_6_12_2_34795.sh'
 ARCHIVE_GOG_5_MD5='d62355fc9339cd901242fc1828e8c248'
 ARCHIVE_GOG_5_SIZE='410000'
-ARCHIVE_GOG_5_VERSION='1.12.2-gog34795'
+ARCHIVE_GOG_5_VERSION='1.6.12.2-gog34795'
 ARCHIVE_GOG_5_TYPE='mojosetup'
 
 ARCHIVE_GOG_4='ftl_advanced_edition_1_6_9_25330.sh'
@@ -105,7 +105,7 @@ ARCHIVE_HUMBLE_2='FTL.1.6.12.Linux.zip'
 ARCHIVE_HUMBLE_2_URL='https://www.humblebundle.com/store/ftl-faster-than-light'
 ARCHIVE_HUMBLE_2_MD5='4ee7ea561d7753c8a003570364e15311'
 ARCHIVE_HUMBLE_2_SIZE='410000'
-ARCHIVE_HUMBLE_2_VERSION='1.12.2-humble191220'
+ARCHIVE_HUMBLE_2_VERSION='1.6.12-humble191220'
 
 ARCHIVE_HUMBLE_1='FTL.1.6.9.tar.gz'
 ARCHIVE_HUMBLE_1_MD5='c70d9cbc55217a5f83e0d51189240ec2'
@@ -206,16 +206,15 @@ PKG_BIN64_DEPS_SDL1="$PKG_BIN32_DEPS_SDL1"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
