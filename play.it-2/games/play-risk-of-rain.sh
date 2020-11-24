@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210226.1
+script_version=20210326.1
 
 # Set game-specific variables
 
@@ -42,14 +42,20 @@ GAME_ID='risk-of-rain'
 GAME_NAME='Risk of Rain'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0
 ARCHIVE_HUMBLE_0'
+
+ARCHIVE_GOG_1='gog_risk_of_rain_2.1.0.6.sh'
+ARCHIVE_GOG_1_MD5='423ea26f877eb8f0d72e04dffffbf81a'
+ARCHIVE_GOG_1_SIZE='180000'
+ARCHIVE_GOG_1_VERSION='1.2.8-gog2.1.0.6'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/risk_of_rain'
 
 ARCHIVE_GOG_0='gog_risk_of_rain_2.1.0.5.sh'
 ARCHIVE_GOG_0_MD5='34f8e1e2dddc6726a18c50b27c717468'
 ARCHIVE_GOG_0_SIZE='180000'
 ARCHIVE_GOG_0_VERSION='1.2.8-gog2.1.0.5'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/risk_of_rain'
 
 ARCHIVE_HUMBLE_0='Risk_of_Rain_v1.3.0_DRM-Free_Linux_.zip'
 ARCHIVE_HUMBLE_0_MD5='21eb80a7b517d302478c4f86dd5ea9a2'
