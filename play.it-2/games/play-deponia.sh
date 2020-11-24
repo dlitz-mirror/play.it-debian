@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201124.1
+script_version=20201124.2
 
 # Set game-specific variables
 
@@ -56,7 +56,7 @@ ARCHIVE_HUMBLE_0_MD5='8ff4e21bbb4abcdc4059845acf7c7f04'
 ARCHIVE_HUMBLE_0_VERSION='3.3.1358-humble160511'
 ARCHIVE_HUMBLE_0_SIZE='1700000'
 
-ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/docs'
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_DOC_DATA_PATH_HUMBLE='Deponia'
 ARCHIVE_DOC_DATA_FILES='documents version.txt readme.txt'
 
