@@ -34,11 +34,11 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201124.6
+script_version=20201124.7
 
 # Set game-specific variables
 
-GAME_ID='deponia'
+GAME_ID='deponia-1'
 GAME_NAME='Deponia'
 
 ARCHIVES_LIST='
@@ -88,6 +88,12 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_VIDEO_ID $PKG_DATA_ID glibc libstdc++ glx openal"
+
+# Ensure easy upgrades from packages generated with pre-20201124.7 scripts
+
+PKG_BIN_PROVIDE='deponia'
+PKG_DATA_PROVIDE='deponia-data'
+PKG_VIDEOS_PROVIDE='deponia-videos'
 
 # Load common functions
 
