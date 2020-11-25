@@ -364,8 +364,10 @@ icons_move_to() {
 		return 0
 	fi
 
-	mkdir --parents "$(dirname "$destination_directory")"
-	mv --no-target-directory "$source_directory" "$destination_directory"
-	rmdir --ignore-fail-on-non-empty --parents "$(dirname "$source_directory")"
+	# a basic `mv` call here would fail if the destination is not empty
+	mkdir --parents "$destination_directory"
+	cp --link --recursive "$source_directory"/* "$destination_directory"
+	rm --recursive "${source_directory:?}"/*
+	rmdir --ignore-fail-on-non-empty --parents "$source_directory"
 }
 

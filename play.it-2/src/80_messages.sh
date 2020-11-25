@@ -8,6 +8,7 @@ print_ok() {
 # USAGE: print_error
 print_error() {
 	local string
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			string='Erreur :'
@@ -24,6 +25,7 @@ print_error() {
 # USAGE: print_warning
 print_warning() {
 	local string
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			string='Avertissement :'

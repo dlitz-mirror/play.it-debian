@@ -53,6 +53,10 @@ check_deps() {
 		# fakeroot doesn't work for me, only fakeroot-ng does
 		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot-ng ebuild"
 	fi
+	if [ "$OPTION_PACKAGE" = 'arch' ]; then
+		# bsdtar and gzip are required for .MTREE
+		SCRIPT_DEPS="$SCRIPT_DEPS bsdtar gzip"
+	fi
 	for dep in $SCRIPT_DEPS; do
 		case $dep in
 			('7z')
@@ -173,6 +177,9 @@ dependency_provided_by() {
 		;;
 		('lha')
 			provider='lhasa'
+		;;
+		('icotool'|'wrestool')
+			provider='icoutils'
 		;;
 		(*)
 			provider="$command"
