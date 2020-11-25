@@ -1,3 +1,32 @@
+2.12.1
+
+  * Wrapper fixes:
+    * Fix script detection from archive name
+
+  * Archive-related fixes:
+    * .zip archives: Drop selected files extraction using unzip
+
+  * Package-related improvements:
+    * Arch Linux: Use multithreaded xz compression by default
+    * Arch Linux: Fix packages building failure when using --output-dir with a
+      relative path
+    * Arch Linux: Generate a .MTREE metadata file
+    * Debian: Improve APT version detection
+
+  * Dependencies-related improvements:
+    * Show a more explicit message if icotool or wrestool is required but
+      missing
+
+  * Launchers-related fixes
+    * Avoid broken .desktop Exec field when using spaces in the install prefix
+
+  * Icons-related fixes:
+    * Fix icons_move_to failure when targeting a non-empty directory
+
+  * Codebase improvements:
+    * Drop the dependency on hostname
+    * Unset variables that we do not want to import from the user environment
+
 2.12.0
 
   * New options:

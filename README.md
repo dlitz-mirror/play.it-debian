@@ -45,7 +45,7 @@ install it from this git repository.
 #### Latest stable version
 
 ```
-git clone --branch 2.12.0 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+git clone --branch 2.12.1 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
 cd play.it.git
 make
 make install

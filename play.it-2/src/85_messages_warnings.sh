@@ -4,6 +4,7 @@ warning_skip_package() {
 	local message function package
 	function="$1"
 	package="$2"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La valeur de PKG fournie à %s ne fait pas partie de la liste de paquets à construire : %s\n'
@@ -22,6 +23,7 @@ warning_skip_package() {
 warning_architecture_not_available() {
 	local message architecture
 	architecture="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼarchitecture demandée nʼest pas disponible : %s\n'
@@ -40,6 +42,7 @@ warning_architecture_not_available() {
 warning_option_not_supported() {
 	local message option
 	option="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼoption %s nʼest pas gérée par ce script.\n'
@@ -58,6 +61,7 @@ warning_option_not_supported() {
 warning_package_format_guessing_failed() {
 	local message fallback_value
 	fallback_value="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼauto-détection du format de paquet le plus adapté a échoué.\n'
@@ -80,6 +84,7 @@ warning_package_format_guessing_failed() {
 warning_icon_dependency_not_found() {
 	local message dependency
 	dependency="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='%s est introuvable. Installez-le pour inclure les icônes.\n'
@@ -105,6 +110,7 @@ warning_missing_library() {
 	lib="$1"
 	target_system="$2"
 	architecture="$3"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La bibliothèque %s nʼest pas disponible pour %s (architecture %s).\n'
