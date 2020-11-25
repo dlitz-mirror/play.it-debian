@@ -40,7 +40,7 @@
 # send your bug reports to contact@dotslashplay.it
 ###
 
-library_version=2.12.1~dev
+library_version=2.12.1
 # shellcheck disable=SC2034
-library_revision=20201027.1
+library_revision=20201125.1
 
