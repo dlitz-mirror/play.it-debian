@@ -10,6 +10,7 @@ Standards-Version: 4.5.0
 Homepage: https://www.dotslashplay.it/
 Vcs-Git: https://salsa.debian.org/games-team/play.it.git
 Vcs-Browser: https://salsa.debian.org/games-team/play.it
+Rules-Requires-Root: no
 
 Package: play.it
 Architecture: all

@@ -6,4 +6,4 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 	dh $@
 
 override_dh_auto_install:
-	dh_auto_install -- prefix=/usr
+	dh_auto_install -- prefix=/usr bindir=/usr/games datadir=/usr/share/games mandir=/usr/share/man
