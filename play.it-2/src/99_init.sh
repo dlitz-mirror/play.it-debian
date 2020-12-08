@@ -6,6 +6,18 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
+	# Unset variables that we do not want to import from the user environment
+
+	unset OPTION_ARCHITECTURE
+	unset OPTION_CHECKSUM
+	unset OPTION_COMPRESSION
+	unset OPTION_PREFIX
+	unset OPTION_PACKAGE
+	unset SOURCE_ARCHIVE
+	unset PLAYIT_WORKDIR
+	unset winecfg_desktop
+	unset winecfg_launcher
+
 	# Set URLs for error messages
 
 	PLAYIT_GAMES_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/games/issues'
@@ -65,17 +77,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	DEFAULT_OPTION_ICONS='yes'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_OUTPUT_DIR="$PWD"
-	unset winecfg_desktop
-	unset winecfg_launcher
 
 	# Parse arguments given to the script
 
-	unset OPTION_ARCHITECTURE
-	unset OPTION_CHECKSUM
-	unset OPTION_COMPRESSION
-	unset OPTION_PREFIX
-	unset OPTION_PACKAGE
-	unset SOURCE_ARCHIVE
 	DRY_RUN='0'
 	NO_FREE_SPACE_CHECK='0'
 	SKIP_ICONS=0

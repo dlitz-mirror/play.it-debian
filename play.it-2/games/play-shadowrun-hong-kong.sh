@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -30,42 +30,40 @@ set -o errexit
 
 ###
 # Shadowrun: Hong Kong
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180227.1
+script_version=20201002.4
 
 # Set game-specific variables
 
 GAME_ID='shadowrun-hong-kong'
 GAME_NAME='Shadowrun: Hong Kong'
 
-ARCHIVES_LIST='ARCHIVE_GOG'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
 
-ARCHIVE_GOG='gog_shadowrun_hong_kong_extended_edition_2.8.0.11.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/shadowrun_hong_kong_extended_edition'
-ARCHIVE_GOG_MD5='643ba68e47c309d391a6482f838e46af'
-ARCHIVE_GOG_SIZE='12000000'
-ARCHIVE_GOG_VERSION='3.1.2-gog2.8.0.11'
-
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='./*'
+ARCHIVE_GOG_0='gog_shadowrun_hong_kong_extended_edition_2.8.0.11.sh'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/shadowrun_hong_kong_extended_edition'
+ARCHIVE_GOG_0_MD5='643ba68e47c309d391a6482f838e46af'
+ARCHIVE_GOG_0_SIZE='12000000'
+ARCHIVE_GOG_0_VERSION='3.1.2-gog2.8.0.11'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./ShadowrunEditor ./SRHK ./SRHK_Data/Mono ./SRHK_Data/Plugins'
+ARCHIVE_GAME_BIN_FILES='ShadowrunEditor SRHK SRHK_Data/Mono SRHK_Data/Plugins'
 
 ARCHIVE_GAME_DATA_BERLIN_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_BERLIN_FILES='./SRHK_Data/StreamingAssets/standalone/berlin'
+ARCHIVE_GAME_DATA_BERLIN_FILES='SRHK_Data/StreamingAssets/standalone/berlin'
 
 ARCHIVE_GAME_DATA_HONGKONG_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_HONGKONG_FILES='./SRHK_Data/StreamingAssets/standalone/hongkong'
+ARCHIVE_GAME_DATA_HONGKONG_FILES='SRHK_Data/StreamingAssets/standalone/hongkong'
 
 ARCHIVE_GAME_DATA_SEATTLE_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_SEATTLE_FILES='./SRHK_Data/StreamingAssets/standalone/seattle'
+ARCHIVE_GAME_DATA_SEATTLE_FILES='SRHK_Data/StreamingAssets/standalone/seattle'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./dictionary ./SRHK_Data'
+ARCHIVE_GAME_DATA_FILES='dictionary SRHK_Data'
 
 DATA_DIRS='./DumpBox ./logs'
 
@@ -73,9 +71,7 @@ APP_MAIN_TYPE='native'
 APP_MAIN_EXE='SRHK'
 # shellcheck disable=SC2016
 APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='./SRHK_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='SRHK_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_DATA_BERLIN PKG_DATA_HONGKONG PKG_DATA_SEATTLE PKG_DATA PKG_BIN'
 
@@ -90,25 +86,37 @@ PKG_DATA_SEATTLE_DESCRIPTION='data - Seattle'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_DATA_BERLIN $PKG_DATA_HONGKONG $PKG_DATA_SEATTLE"
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_BERLIN $PKG_DATA_HONGKONG $PKG_DATA_SEATTLE $PKG_DATA_ID glu xcursor libxrandr alsa"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor libxrandr alsa gtk2 libgdk_pixbuf-2.0.so.0 libgobject-2.0.so.0 libglib-2.0.so.0"
+PKG_BIN_DEPS_ARCH='lib32-libx11 lib32-libpulse'
+PKG_BIN_DEPS_DEB='libx11-6, libpulse0'
+PKG_BIN_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] media-sound/pulseaudio[abi_x86_32]'
 
 # Load common functions
 
-target_version='2.5'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
@@ -116,36 +124,29 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Add missing execution permissions to the editor binary
+
 chmod +x "${PKG_BIN_PATH}${PATH_GAME}/ShadowrunEditor"
 
-PKG='PKG_DATA_BERLIN'
-organize_data 'GAME_DATA_BERLIN' "$PATH_GAME"
-
-PKG='PKG_DATA_HONGKONG'
-organize_data 'GAME_DATA_HONGKONG' "$PATH_GAME"
-
-PKG='PKG_DATA_SEATTLE'
-organize_data 'GAME_DATA_SEATTLE' "$PATH_GAME"
+# Get game icon
 
 PKG='PKG_DATA'
-organize_data 'DOC'       "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
 
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_DATA_BERLIN' 'PKG_DATA_SEATTLE' 'PKG_DATA_HONGKONG' 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up

@@ -34,26 +34,42 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20201016.1
 
 # Set game-specific variables
 
 GAME_ID='aragami'
 GAME_NAME='Aragami'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_HUMBLE'
+ARCHIVES_LIST='
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0
+ARCHIVE_HUMBLE_0'
 
-ARCHIVE_GOG='gog_aragami_2.9.0.12.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/aragami'
-ARCHIVE_GOG_MD5='42d0952de9b0373786f2902aa596b4ff'
-ARCHIVE_GOG_SIZE='6800000'
-ARCHIVE_GOG_VERSION='01.08-gog2.9.0.12'
+ARCHIVE_GOG_1='aragami_en_01_09_20943.sh'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/aragami'
+ARCHIVE_GOG_1_MD5='46c8315350a4036dcc09b6c3946ddc02'
+ARCHIVE_GOG_1_SIZE='6800000'
+ARCHIVE_GOG_1_VERSION='01.09-gog20943'
+ARCHIVE_GOG_1_TYPE='mojosetup'
 
-ARCHIVE_HUMBLE='aragami_01_08_Linux.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/aragami'
-ARCHIVE_HUMBLE_MD5='4be0b7f674eec62184df216fcaba77b5'
-ARCHIVE_HUMBLE_SIZE='6800000'
-ARCHIVE_HUMBLE_VERSION='01.08-humble170503'
+ARCHIVE_GOG_0='gog_aragami_2.9.0.12.sh'
+ARCHIVE_GOG_0_MD5='42d0952de9b0373786f2902aa596b4ff'
+ARCHIVE_GOG_0_SIZE='6800000'
+ARCHIVE_GOG_0_VERSION='01.08-gog2.9.0.12'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+
+ARCHIVE_HUMBLE_0='aragami_01_08_Linux.zip'
+ARCHIVE_HUMBLE_0_URL='https://www.humblebundle.com/store/aragami'
+ARCHIVE_HUMBLE_0_MD5='4be0b7f674eec62184df216fcaba77b5'
+ARCHIVE_HUMBLE_0_SIZE='6800000'
+ARCHIVE_HUMBLE_0_VERSION='01.08-humble170503'
+
+ARCHIVE_GOG_DLC='aragami_nightfall_dlc_en_gog_1_21278.sh'
+ARCHIVE_GOG_DLC_MD5='40920a28f030147a524e5ac89e2cf14b'
+ARCHIVE_GOG_DLC_SIZE='7400000'
+ARCHIVE_GOG_DLC_TYPE='mojosetup'
+ARCHIVE_GOG_DLC_URL='https://www.gog.com/game/aragami_nightfall'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
@@ -94,23 +110,45 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 target_version='2.3'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load extra archives (DLC)
+
+ARCHIVE_MAIN="$ARCHIVE"
+set_archive "ARCHIVE_DLC" "ARCHIVE_GOG_DLC"
+ARCHIVE="$ARCHIVE_MAIN"
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+if [ "$ARCHIVE_DLC" ]; then
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE='ARCHIVE_DLC'
+		extract_data_from "$ARCHIVE_DLC"
+	)
+fi
 
 for PKG in $PACKAGES_LIST; do
 	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"

@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200602.3
+script_version=20200919.1
 
 # Set game-specific variables
 
@@ -60,6 +60,8 @@ ARCHIVE_GAME_BIN_SHIPPED_PATH='packr/linux/GatheringSky'
 ARCHIVE_GAME_BIN_SHIPPED_FILES='config.json GatheringSky jre'
 
 # Common to both launchers
+APP_MAIN_PRERUN='# Ensure settings can be stored
+mkdir --parents "$HOME/.prefs"'
 APP_MAIN_ICONS_LIST='APP_MAIN_ICON_16 APP_MAIN_ICON_32 APP_MAIN_ICON_128'
 APP_MAIN_ICON_16='images/Icon_16.png'
 APP_MAIN_ICON_32='images/Icon_32.png'

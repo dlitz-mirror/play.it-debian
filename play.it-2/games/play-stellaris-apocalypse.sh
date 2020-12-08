@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200516.1
+script_version=20201030.1
 
 # Set game-specific variables
 
@@ -42,10 +42,24 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Apocalypse'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_2
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_2='stellaris_apocalypse_2_8_0_3_42321.sh'
+ARCHIVE_GOG_2_URL='https://www.gog.com/game/stellaris_apocalypse'
+ARCHIVE_GOG_2_MD5='6ab9d43f5cf3d48e84907703b5d3a72f'
+ARCHIVE_GOG_2_SIZE='39000'
+ARCHIVE_GOG_2_VERSION='2.8.0.3-gog42321'
+ARCHIVE_GOG_2_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_1='stellaris_apocalypse_2_7_2_38578.sh'
+ARCHIVE_GOG_1_MD5='0a86936e22a9f6be045e9e28de6745c3'
+ARCHIVE_GOG_1_SIZE='39000'
+ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
+ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_0='stellaris_apocalypse_2_7_1_38218.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/stellaris_apocalypse'
 ARCHIVE_GOG_0_MD5='93e2c7d56779348f2c842f91004d35c4'
 ARCHIVE_GOG_0_SIZE='39000'
 ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
@@ -61,16 +75,15 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

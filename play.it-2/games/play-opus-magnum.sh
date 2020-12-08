@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200707.1
+script_version=20200924.2
 
 # Set game-specific variables
 
@@ -55,10 +55,10 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='Lightning.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='Lightning.bin.x86 lib/libCSteamworks.so lib/libsteam_api.so'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='Lightning.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='Lightning.bin.x86_64 lib64/libCSteamworks.so lib64/libsteam_api.so'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='*.dll *.exe *.exe.config mono* Content PackedContent'
@@ -66,7 +66,7 @@ ARCHIVE_GAME_DATA_FILES='*.dll *.exe *.exe.config mono* Content PackedContent'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Lightning.bin.x86'
 APP_MAIN_EXE_BIN64='Lightning.bin.x86_64'
-APP_MAIN_ICON='data/noarch/support/icon.png'
+APP_MAIN_ICON='Lightning.exe'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -74,7 +74,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 sdl2_image sdl2_mixer vorbis"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
@@ -115,7 +115,7 @@ prepare_package_layout
 # Extract icon
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
+icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
 

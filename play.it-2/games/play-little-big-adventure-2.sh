@@ -1,10 +1,11 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
 # Copyright (c) 2016-2020, Mopi
 # Copyright (c) 2018-2020, Andrey Butirsky
+# Copyright (c)      2020, macaron
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -33,51 +34,64 @@ set -o errexit
 ###
 # Little Big Adventure 2
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181103.3
+script_version=20200924.1
 
 # Set game-specific variables
 
 GAME_ID='little-big-adventure-2'
 GAME_NAME='Little Big Adventure 2'
 
-ARCHIVE_GOG='setup_lba2_2.1.0.8.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/little_big_adventure_2'
-ARCHIVE_GOG_MD5='9909163b7285bd37417f6d3c1ccfa3ee'
-ARCHIVE_GOG_SIZE='750000'
-ARCHIVE_GOG_VERSION='1.0-gog2.1.0.8'
+ARCHIVES_LIST='
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
+ARCHIVE_GOG_1='setup_little_big_adventure_2_1.0_(28192).exe'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/little_big_adventure_2'
+ARCHIVE_GOG_1_MD5='80b95bb8faa2353284b321748021da16'
+ARCHIVE_GOG_1_SIZE='750000'
+ARCHIVE_GOG_1_VERSION='1.0-gog28192'
 
-ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.bat *.cfg *.dos *.exe *.ini drivers'
+ARCHIVE_GOG_0='setup_lba2_2.1.0.8.exe'
+ARCHIVE_GOG_0_MD5='9909163b7285bd37417f6d3c1ccfa3ee'
+ARCHIVE_GOG_0_SIZE='750000'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.1.0.8'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='*.hqr *.ile *.obl lba2.dat lba2.gog lba2.ogg'
+ARCHIVE_DOC_MAIN_PATH='.'
+ARCHIVE_DOC_MAIN_FILES='*.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_MAIN_PATH_GOG_0='app'
+
+ARCHIVE_GAME_MAIN_PATH='.'
+ARCHIVE_GAME_MAIN_FILES='*.bat *.cfg *.dos *.exe *.ini drivers *.hqr *.ile *.obl lba2.dat lba2.gog lba2.ogg'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAIN_PATH_GOG_0='app'
 
 GAME_IMAGE='lba2.dat'
 
-CONFIG_FILES='./*.cfg'
-DATA_DIRS='./save ./vox'
+CONFIG_FILES='*.cfg'
+DATA_DIRS='save vox'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='lba2.exe'
-APP_MAIN_ICON='lba2.exe'
+APP_MAIN_ICON='app/goggame-1207658974.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+APP_SETUP_TYPE='dosbox'
+APP_SETUP_EXE='setup.exe'
+APP_SETUP_ID="${GAME_ID}_setup"
+APP_SETUP_NAME="$GAME_NAME - Setup"
+APP_SETUP_CAT='Settings'
+APP_SETUP_ICON="$APP_MAIN_ICON"
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID dosbox"
+PKG_MAIN_DEPS='dosbox'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -100,31 +114,28 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
-PKG='PKG_BIN'
-icons_get_from_package 'APP_MAIN'
-icons_move_to 'PKG_DATA'
+icons_get_from_workdir 'APP_MAIN' 'APP_SETUP'
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Keep Voices on HD
 
-file="${PKG_BIN_PATH}${PATH_GAME}/lba2.cfg"
+file="${PKG_MAIN_PATH}${PATH_GAME}/lba2.cfg"
 pattern='s/\(FlagKeepVoice:\) OFF/\1 ON/'
 sed --in-place "$pattern" "$file"
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN' 'APP_SETUP'
 
 # Build package
 

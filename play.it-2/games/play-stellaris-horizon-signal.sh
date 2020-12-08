@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200615.1
+script_version=20201030.1
 
 # Set game-specific variables
 
@@ -42,6 +42,7 @@ GAME_ID='stellaris'
 GAME_NAME='Stellaris - Horizon Signal'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_19
 ARCHIVE_GOG_18
 ARCHIVE_GOG_17
 ARCHIVE_GOG_16
@@ -62,8 +63,14 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_19='stellaris_horizon_signal_2_8_0_3_42321.sh'
+ARCHIVE_GOG_19_URL='https://www.gog.com/game/stellaris_horizon_signal'
+ARCHIVE_GOG_19_MD5='96a89b87808b32097f9f9446819cafc9'
+ARCHIVE_GOG_19_SIZE='1400'
+ARCHIVE_GOG_19_VERSION='2.8.0.3-gog42321'
+ARCHIVE_GOG_19_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_18='stellaris_horizon_signal_2_7_2_38578.sh'
-ARCHIVE_GOG_18_URL='https://www.gog.com/game/stellaris_horizon_signal'
 ARCHIVE_GOG_18_MD5='8afefafaddba2dc3e83e4b9a8321a6d3'
 ARCHIVE_GOG_18_SIZE='1400'
 ARCHIVE_GOG_18_VERSION='2.7.2-gog38578'
@@ -190,16 +197,15 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

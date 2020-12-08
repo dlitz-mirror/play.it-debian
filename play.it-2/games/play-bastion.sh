@@ -33,10 +33,10 @@ set -o errexit
 ###
 # Bastion
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200530.1
+script_version=20200920.1
 
 # Set game-specific variables
 
@@ -73,30 +73,26 @@ ARCHIVE_HUMBLE_SIZE='1300000'
 ARCHIVE_HUMBLE_VERSION='1.2.20161020-humble161019'
 ARCHIVE_HUMBLE_TYPE='mojosetup'
 
-ARCHIVE_DOC0_DATA_PATH_GOG='data/noarch/game'
-ARCHIVE_DOC0_DATA_PATH_HUMBLE='data'
-ARCHIVE_DOC0_DATA_FILES='Linux.README'
-
-ARCHIVE_DOC1_DATA_PATH_GOG='data/noarch/docs'
-ARCHIVE_DOC1_DATA_FILES='*'
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_DOC_DATA_PATH_HUMBLE='data'
+ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='data'
-ARCHIVE_GAME_BIN32_FILES='Bastion.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='lib/libfmodex.so lib/libmojoshader.so lib/libsteam_api.so lib/libSteamWrapper.so'
 
 ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='data'
-ARCHIVE_GAME_BIN64_FILES='Bastion.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='lib64/libfmodex.so lib64/libmojoshader.so lib64/libsteam_api.so lib64/libSteamWrapper.so'
 
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='data'
-ARCHIVE_GAME_DATA_FILES='*.config *.dll *.txt Bastion.exe Bastion.bmp Content mono*'
+ARCHIVE_GAME_DATA_FILES='*.config *.txt Bastion.exe Bastion.bmp Content mono* FMOD.dll FNA.dll Lidgren.Network.dll MojoShader.dll MonoGame.Framework.Net.dll'
 
-APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='Bastion.bin.x86'
-APP_MAIN_EXE_BIN64='Bastion.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='Bastion.exe'
 APP_MAIN_ICON='Bastion.bmp'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
@@ -105,14 +101,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glx libudev1"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 glx libudev1"
+PKG_BIN32_DEPS_DEB='libmono-posix4.0-cil'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"

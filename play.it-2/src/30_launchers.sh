@@ -517,6 +517,10 @@ launcher_write_desktop() {
 		('/usr'|'/usr/local')
 			exec_field="$application_id"
 		;;
+		(*' '*)
+			# enclose the path in single quotes if it includes spaces
+			exec_field="'$PATH_BIN/$application_id'"
+		;;
 		(*)
 			exec_field="$PATH_BIN/$application_id"
 		;;

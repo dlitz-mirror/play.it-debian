@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
 # Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2016-2020, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,82 +31,114 @@ set -o errexit
 
 ###
 # Theme Hospital
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180331.3
+script_version=20201002.1
 
 # Set game-specific variables
 
 GAME_ID='theme-hospital'
 GAME_NAME='Theme Hospital'
 
-ARCHIVE_GOG='setup_theme_hospital_2.1.0.8.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/theme_hospital'
-ARCHIVE_GOG_MD5='c1dc6cd19a3e22f7f7b31a72957babf7'
-ARCHIVE_GOG_SIZE='210000'
-ARCHIVE_GOG_VERSION='1.0-gog2.0.0.7'
+ARCHIVES_LIST='
+ARCHIVE_GOG_1
+ARCHIVE_GOG_0'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./*.txt ./*.pdf'
+ARCHIVE_GOG_1='setup_theme_hospital_v3_(28027).exe'
+ARCHIVE_GOG_1_MD5='e4cba7cfddd5dd2d4baf4761bc86a8c8'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/theme_hospital'
+ARCHIVE_GOG_1_SIZE='200000'
+ARCHIVE_GOG_1_VERSION='1.0-gog28027'
 
-ARCHIVE_GAME_BIN_DOSBOX_PATH='app'
-ARCHIVE_GAME_BIN_DOSBOX_FILES='./*.bat ./*.cfg ./*.exe ./*.ini ./sound/*.exe ./sound/*.ini ./sound/midi/*.bat ./sound/midi/*.exe'
+ARCHIVE_GOG_0='setup_theme_hospital_2.1.0.8.exe'
+ARCHIVE_GOG_0_MD5='c1dc6cd19a3e22f7f7b31a72957babf7'
+ARCHIVE_GOG_0_SIZE='210000'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.7'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./anims ./cfg ./data ./datam ./goggame-1207659026.ico ./intro ./levels ./qdata ./qdatam ./save ./sound'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.txt *.pdf'
+# Keep compatibility with old archive
+ARCHIVE_DOC_DATA_PATH_GOG_0='app'
+
+ARCHIVE_GAME_DOSBOX_PATH='.'
+ARCHIVE_GAME_DOSBOX_FILES='*.bat *.cfg *.exe *.ini sound/*.exe sound/*.ini sound/midi/*.bat sound/midi/*.exe'
+# Keep compatibility with old archive
+ARCHIVE_GAME_DOSBOX_PATH_GOG_0='app'
+
+ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_FILES='anims cfg data datam intro levels qdata qdatam save sound'
+# Keep compatibility with old archive
+ARCHIVE_GAME_DATA_PATH_GOG_0='app'
 
 CONFIG_FILES='./*.ini ./*.cfg'
 DATA_DIRS='./save'
 
+# Game launchers — common properties
+APP_MAIN_ICON='app/goggame-1207659026.ico'
+# Game launcher — DOSBox
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='hospital.exe'
-APP_MAIN_ICON='goggame-1207659026.ico'
-APP_MAIN_ICON_RES='16 32 48 256'
 
-PACKAGES_LIST='PKG_BIN_DOSBOX PKG_BIN_CORSIXTH PKG_DATA'
+PACKAGES_LIST='PKG_DOSBOX PKG_CORSIXTH PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ID="$GAME_ID"
-
-PKG_BIN_DOSBOX_ID="${PKG_BIN_ID}-dosbox"
-PKG_BIN_DOSBOX_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_DOSBOX_ARCH='32'
-PKG_BIN_DOSBOX_DEPS="$PKG_DATA_ID dosbox"
-
-PKG_BIN_CORSIXTH_ID="${PKG_BIN_ID}-corsixth"
-PKG_BIN_CORSIXTH_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_CORSIXTH_DEPS="$PKG_DATA_ID corsix-th"
+# Engine packages — common properties
+PKG_ENGINE_ID="$GAME_ID"
+# Engine package — DOSBox
+PKG_DOSBOX_ID="${PKG_ENGINE_ID}-dosbox"
+PKG_DOSBOX_PROVIDE="$PKG_ENGINE_ID"
+PKG_DOSBOX_DEPS="$PKG_DATA_ID dosbox"
+# Engine package — CorsixTH
+PKG_CORSIXTH_ID="${PKG_ENGINE_ID}-corsixth"
+PKG_CORSIXTH_PROVIDE="$PKG_ENGINE_ID"
+PKG_CORSIXTH_DEPS="$PKG_DATA_ID"
+PKG_CORSIXTH_DEPS_ARCH='corsix-th'
+PKG_CORSIXTH_DEPS_DEB='corsix-th'
+PKG_CORSIXTH_DEPS_GENTOO='games-simulation/corsix-th'
 
 # Load common functions
 
-target_version='2.7'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Set path to CorsixTH depending on target system
+
 case "$OPTION_PACKAGE" in
 	('arch')
 		PATH_CORSIXTH='/usr/share/CorsixTH'
 	;;
 	('deb')
 		PATH_CORSIXTH='/usr/share/games/corsix-th'
+	;;
+	('gentoo')
+		PATH_CORSIXTH='/usr/share/corsix-th'
 	;;
 	(*)
 		liberror 'OPTION_PACKAGE' "$0"
@@ -116,46 +149,49 @@ esac
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icon
 
 PKG='PKG_DATA'
-extract_and_sort_icons_from 'APP_MAIN'
-rm "${PKG_DATA_PATH}${PATH_GAME}/$APP_MAIN_ICON"
+icons_get_from_workdir 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launcher for DOSBox version
 
-PKG='PKG_BIN_DOSBOX'
-write_launcher 'APP_MAIN'
+PKG='PKG_DOSBOX'
+launchers_write 'APP_MAIN'
 
 # Write launcher for CorsixTH version
 
-PKG='PKG_BIN_CORSIXTH'
-file="${PKG_BIN_CORSIXTH_PATH}${PATH_BIN}/$GAME_ID"
-mkdir --parents "${file%/*}"
-cat > "$file" << EOF
-#!/bin/sh
-set -o errexit
-
-cd '$PATH_CORSIXTH'
-exec ./CorsixTH "\$@"
+PKG='PKG_CORSIXTH'
+target_file="${PKG_CORSIXTH_PATH}${PATH_BIN}/$GAME_ID"
+mkdir --parents "$(dirname "$target_file")"
+touch "$target_file"
+chmod 755 "$target_file"
+launcher_write_script_headers "$target_file"
+cat >> "$target_file" << EOF
+corsix-th "\$@"
 
 exit 0
 EOF
-
-chmod 755 "$file"
-write_desktop 'APP_MAIN'
+launcher_write_desktop 'APP_MAIN'
 
 # Build package
 
-file="$PATH_CORSIXTH/Lua/config_finder.lua"
-pattern="s#\\(^  theme_hospital_install\\) = .\\+#\\1 = [[$PATH_GAME]],#"
-cat > "$postinst" << EOF
-sed --in-place '$pattern' '$file'
-EOF
-write_metadata 'PKG_BIN_CORSIXTH'
-write_metadata 'PKG_BIN_DOSBOX' 'PKG_DATA'
+###
+# TODO
+# Maybe this path can be passed through a runtime option instead
+###
+PKG_CORSIXTH_POSTINST_RUN="# Tweak default path to game data
+file='$PATH_CORSIXTH/Lua/config_finder.lua'
+pattern='^  theme_hospital_install = .*$'
+replacement='  theme_hospital_install = [[$PATH_GAME]],'
+sed --in-place \"s#\${pattern}#\${replacement}#\" \"\$file\""
+
+write_metadata
 build_pkg
 
 # Clean up
@@ -166,8 +202,8 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 printf '\n'
 printf 'CorsixTH:'
-print_instructions 'PKG_DATA' 'PKG_BIN_CORSIXTH'
+print_instructions 'PKG_DATA' 'PKG_CORSIXTH'
 printf 'DOSBox:'
-print_instructions 'PKG_DATA' 'PKG_BIN_DOSBOX'
+print_instructions 'PKG_DATA' 'PKG_DOSBOX'
 
 exit 0

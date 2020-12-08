@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20180224.1
+script_version=20200918.1
 
 # Set game-specific variables
 
@@ -44,7 +44,6 @@ GAME_NAME='Evoland'
 ARCHIVES_LIST='ARCHIVE_HUMBLE'
 
 ARCHIVE_HUMBLE='Evoland.exe'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/evoland'
 ARCHIVE_HUMBLE_MD5='9585142f38d769d4ac9125f587d0c891'
 ARCHIVE_HUMBLE_SIZE='110000'
 ARCHIVE_HUMBLE_VERSION='1.1.2490-humble1'
@@ -83,16 +82,25 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine-staging winetricks"
 target_version='2.5'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	if [ -e "$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh" ]; then
-		PLAYIT_LIB2="$XDG_DATA_HOME/play.it/play.it-2/lib/libplayit2.sh"
-	elif [ -e './libplayit2.sh' ]; then
-		PLAYIT_LIB2='./libplayit2.sh'
-	else
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"

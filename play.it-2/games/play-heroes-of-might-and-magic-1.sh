@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -29,145 +29,145 @@ set -o errexit
 ###
 
 ###
-# Heroes of Might and Magic
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# Heroes of Might and Magic: A Strategic Quest
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180802.1
+script_version=20200715.6
 
 # Set game-specific variables
 
 GAME_ID='heroes-of-might-and-magic-1'
 GAME_NAME='Heroes of Might and Magic: A Strategic Quest'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVES_LIST='
+ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
+ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_0'
 
-ARCHIVE_GOG_EN='setup_heroes_of_might_and_magic_2.3.0.45.exe'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/heroes_of_might_and_magic'
-ARCHIVE_GOG_EN_MD5='2cae1821085090e30e128cd0a76b0d21'
-ARCHIVE_GOG_EN_SIZE='530000'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.3.0.45'
+ARCHIVE_GOG_EN_1='setup_heroes_of_might_and_magic_1.2_(1.1)_(33754).exe'
+ARCHIVE_GOG_EN_1_MD5='f3100c6547ef1bb82af6dd6fec66bcbf'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/heroes_of_might_and_magic'
+ARCHIVE_GOG_EN_1_SIZE='630000'
+ARCHIVE_GOG_EN_1_VERSION='1.2-gog33754'
 
-ARCHIVE_GOG_FR='setup_heroes_of_might_and_magic_french_2.3.0.45.exe'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/heroes_of_might_and_magic'
-ARCHIVE_GOG_FR_MD5='9ec736a2a1b97dc36257f583f42864ac'
-ARCHIVE_GOG_FR_SIZE='530000'
-ARCHIVE_GOG_FR_VERSION='1.0-gog2.3.0.45'
+ARCHIVE_GOG_FR_1='setup_heroes_of_might_and_magic_1.2_(1.1)_(french)_(33754).exe'
+ARCHIVE_GOG_FR_1_MD5='ed647dbfc98cd59dba885dc4fd005a62'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/heroes_of_might_and_magic'
+ARCHIVE_GOG_FR_1_SIZE='630000'
+ARCHIVE_GOG_FR_1_VERSION='1.2-gog33754'
 
-ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./help ./*.pdf ./*.txt'
+ARCHIVE_GOG_EN_0='setup_heroes_of_might_and_magic_2.3.0.45.exe'
+ARCHIVE_GOG_EN_0_MD5='2cae1821085090e30e128cd0a76b0d21'
+ARCHIVE_GOG_EN_0_SIZE='530000'
+ARCHIVE_GOG_EN_0_VERSION='1.0-gog2.3.0.45'
 
-ARCHIVE_GAME0_BIN_PATH='app'
-ARCHIVE_GAME0_BIN_FILES='./*.exe ./*.cfg ./wail32.dll'
+ARCHIVE_GOG_FR_0='setup_heroes_of_might_and_magic_french_2.3.0.45.exe'
+ARCHIVE_GOG_FR_0_MD5='9ec736a2a1b97dc36257f583f42864ac'
+ARCHIVE_GOG_FR_0_SIZE='530000'
+ARCHIVE_GOG_FR_0_VERSION='1.0-gog2.3.0.45'
 
-ARCHIVE_GAME1_BIN_PATH='sys'
-ARCHIVE_GAME1_BIN_FILES='./wing32.dll'
+ARCHIVE_DOC_COMMON_PATH='.'
+ARCHIVE_DOC_COMMON_FILES='help *.pdf *.txt'
+# Keep compatibility with old archives
+ARCHIVE_DOC_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_DOC_COMMON_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='./data/campaign.hs ./data/heroes.agg ./data/standard.hs ./games ./maps'
+ARCHIVE_GAME_MAIN_PATH='.'
+ARCHIVE_GAME_MAIN_FILES='*.exe *.cfg wail32.dll wing.32 data/campaign.hs data/heroes.agg data/standard.hs games maps/*.map'
+# Keep compatibility with old archives
+ARCHIVE_GAME_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_MAIN_PATH_GOG_FR_0='app'
 
-ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='./data ./goggame-1207658748.ico ./homm1.gog'
+# Keep compatibility with old archives
+ARCHIVE_GAME0_MAIN_PATH='sys'
+ARCHIVE_GAME0_MAIN_FILES='wing32.dll'
+
+ARCHIVE_GAME_COMMON_PATH='.'
+ARCHIVE_GAME_COMMON_FILES='data maps/*.cmp homm1.gog'
+# Keep compatibility with old archives
+ARCHIVE_GAME_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_COMMON_PATH_GOG_FR_0='app'
 
 GAME_IMAGE='./homm1.gog'
 GAME_IMAGE_TYPE='iso'
 
-CONFIG_FILES='./*.cfg'
+CONFIG_FILES='*.cfg'
 DATA_DIRS='./games ./maps'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='heroes.exe'
-APP_MAIN_ICON='goggame-1207658748.ico'
+APP_MAIN_ICON='app/goggame-1207658748.ico'
 
 APP_EDITOR_ID="${GAME_ID}-editor"
 APP_EDITOR_NAME="$GAME_NAME - editor"
 APP_EDITOR_TYPE='dosbox'
 APP_EDITOR_EXE='editor.exe'
+APP_EDITOR_ICON='app/goggame-1207658748.ico'
 
-PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
+PACKAGES_LIST='PKG_MAIN PKG_COMMON'
 
-PKG_DATA_ID="$GAME_ID-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_COMMON_ID="${GAME_ID}-commmon"
 
-PKG_L10N_ID="$GAME_ID-l10n"
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
-PKG_L10N_PROVIDE="$PKG_L10N_ID"
-PKG_L10N_DESCRIPTION_GOG_FR='French localization'
-PKG_L10N_DESCRIPTION_GOG_EN='English localization'
-
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
-PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_DEPS_GOG_FR="$PKG_L10N_FR_ID $PKG_DATA dosbox"
-PKG_BIN_DEPS_GOG_EN="$PKG_L10N_EN_ID $PKG_DATA dosbox"
-PKG_BIN_DESCRIPTION_GOG_FR='French version'
-PKG_BIN_DESCRIPTION_GOG_EN='English version'
+# Main package — common properties
+PKG_MAIN_ID="$GAME_ID"
+PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
+PKG_MAIN_DEPS="$PKG_COMMON_ID dosbox"
+# Main package — English version
+PKG_MAIN_ID_GOG_EN="${PKG_MAIN_ID}-en"
+PKG_MAIN_DESCRIPTION_GOG_EN='English version'
+# Main package — French version
+PKG_MAIN_ID_GOG_FR="${PKG_MAIN_ID}-fr"
+PKG_MAIN_DESCRIPTION_GOG_FR='French version'
 
 # Load common functions
 
-target_version='2.8'
+target_version='2.11'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
 	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
+		if [ -e "$path/libplayit2.sh" ]; then
 			PLAYIT_LIB2="$path/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
-
-# Set archive specific variables
-
-case "$ARCHIVE" in
-	('ARCHIVE_GOG_EN')
-		PKG_BIN_DEPS="$PKG_BIN_DEPS_GOG_EN"
-	;;
-	('ARCHIVE_GOG_FR')
-		PKG_BIN_DEPS="$PKG_BIN_DEPS_GOG_FR"
-	;;
-esac
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
-PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
-rm "${PKG_DATA_PATH}${PATH_GAME}/$APP_MAIN_ICON"
+PKG='PKG_MAIN'
+icons_get_from_workdir 'APP_MAIN' 'APP_EDITOR'
+
+# Clean up temporary files
+
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
-write_launcher 'APP_MAIN' 'APP_EDITOR'
-
-# Use base game icon for editor launcher
-
-file="${PKG_BIN_PATH}${PATH_DESK}/$APP_EDITOR_ID.desktop"
-pattern="s/\\(Icon\\)=.*/\\1=$GAME_ID/"
-sed --in-place "$pattern" "$file"
+PKG='PKG_MAIN'
+launchers_write 'APP_MAIN' 'APP_EDITOR'
 
 # Build packages
 

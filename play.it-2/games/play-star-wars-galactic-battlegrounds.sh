@@ -31,10 +31,10 @@ set -o errexit
 ###
 # Star Wars: Galactic Battlegrounds
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190224.1
+script_version=20200803.1
 
 # Set game-specific variables
 
@@ -150,6 +150,15 @@ Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\Software\LucasArts Entertainment Company LLC\Star Wars Galactic Battlegrounds\1.0]
 "CDPath"="C:"
+EOF
+
+# Work around crash on resolution change
+# cf. https://forge.dotslashplay.it/play.it/games/-/issues/464
+
+cat >> "${PKG_BIN_PATH}${PATH_GAME}/swgb.reg" << 'EOF'
+
+[HKEY_CURRENT_USER\Software\Wine\Direct3D]
+"renderer"="gdi"
 EOF
 
 # Build package

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200614.2
+script_version=20200614.4
 
 # Set game-specific variables
 
@@ -42,11 +42,22 @@ GAME_ID='star-wars-knights-of-the-old-republic-2'
 GAME_NAME='Star Wars: Knights of the Old Republic Ⅱ - The Sith Lords'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_DE_1
 ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_RAR_EN_0
 ARCHIVE_GOG_RAR_FR_0
 '
+
+ARCHIVE_GOG_DE_1='setup_star_wars_-_knights_of_the_old_republic_ii_1.0b_(german)_(29869).exe'
+ARCHIVE_GOG_DE_1_URL='https://www.gog.com/game/star_wars_knights_of_the_old_republic_ii_the_sith_lords'
+ARCHIVE_GOG_DE_1_MD5='fa7e9e961dfe14d730c4ec571ebe6f0e'
+ARCHIVE_GOG_DE_1_TYPE='innosetup'
+ARCHIVE_GOG_DE_1_VERSION='1.0b-gog29869'
+ARCHIVE_GOG_DE_1_SIZE='4600000'
+ARCHIVE_GOG_DE_1_PART1='setup_star_wars_-_knights_of_the_old_republic_ii_1.0b_(german)_(29869)-1.bin'
+ARCHIVE_GOG_DE_1_PART1_MD5='26ebb49d133a564538be2d3a5b35c3d2'
+ARCHIVE_GOG_DE_1_PART1_TYPE='innosetup'
 
 ARCHIVE_GOG_EN_1='setup_star_wars_-_knights_of_the_old_republic_ii_1.0b_(29869).exe'
 ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/star_wars_knights_of_the_old_republic_ii_the_sith_lords'
@@ -112,7 +123,7 @@ ARCHIVE_GAME_DATA_FILES='chitin.key override/*.mdl modules streammusic streamsou
 ARCHIVE_GAME_DATA_PATH_GOG_RAR='game'
 
 CONFIG_FILES='./*.ini'
-DATA_DIRS='./override ./saves'
+DATA_DIRS='./saves'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='swkotor2.exe'
@@ -130,6 +141,10 @@ PACKAGES_LIST='PKG_L10N PKG_DATA PKG_BIN'
 # Localization package - common properties
 PKG_L10N_ID="${GAME_ID}-l10n"
 PKG_L10N_PROVIDE="$PKG_L10N_ID"
+
+# Localization package - German
+PKG_L10N_ID_GOG_DE="${PKG_L10N_ID}-de"
+PKG_L10N_DESCRIPTION_GOG_DE='German localization'
 
 # Localization package - English
 PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"

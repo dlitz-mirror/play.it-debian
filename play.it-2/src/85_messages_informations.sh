@@ -19,6 +19,7 @@ information_archives_list() {
 information_file_in_use() {
 	local message file
 	file="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Utilisation de %s\n'
@@ -36,6 +37,7 @@ information_file_in_use() {
 information_package_already_exists() {
 	local message file
 	file="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='%s existe déjà.\n'
@@ -53,6 +55,7 @@ information_package_already_exists() {
 information_file_integrity_check() {
 	local message file
 	file=$(basename "$1")
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Contrôle de lʼintégrité de %s'
@@ -70,6 +73,7 @@ information_file_integrity_check() {
 information_archive_data_extraction() {
 	local message file
 	file="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Extraction des données de %s'
@@ -87,6 +91,7 @@ information_archive_data_extraction() {
 information_package_building() {
 	local message file
 	file="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Construction de %s'
@@ -104,6 +109,7 @@ information_package_building() {
 information_required_gentoo_overlays() {
 	local message overlays
 	overlays="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\nVous pouvez avoir besoin des overlays suivants pour installer ces paquets : %s\n'
@@ -121,6 +127,7 @@ information_required_gentoo_overlays() {
 information_installation_instructions_common() {
 	local message game_name
 	game_name="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\nInstallez "%s" en lançant la série de commandes suivantes en root :\n'
@@ -137,6 +144,7 @@ information_installation_instructions_common() {
 information_installation_instructions_variant() {
 	local message variant
 	variant="$1"
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\nversion %s :\n'
@@ -153,6 +161,7 @@ information_installation_instructions_variant() {
 # USAGE: information_installation_instructions_gentoo_comment
 information_installation_instructions_gentoo_comment() {
 	local message
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='ou mettez les paquets dans un PKGDIR (dans un dossier nommé games-playit) et emergez-les'
@@ -170,6 +179,7 @@ information_installation_instructions_gentoo_comment() {
 info_archive_integrity_check() {
 	local file message
 	file=$(basename "$1")
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Contrôle de lʼintégrité de %s'
@@ -187,6 +197,7 @@ info_archive_integrity_check() {
 info_archive_hash_computation() {
 	local file message
 	file=$(basename "$1")
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Calcul de la somme de contrôle de %s'
