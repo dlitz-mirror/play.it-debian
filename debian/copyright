@@ -8,7 +8,7 @@ License: BSD-2-Clause
 
 Files: *
 Copyright:
- 2015-2020, Antoine "vv221/vv222" Le Gonidec
+ 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
  2015-2020, mortalius
  2016-2020, Mopi
  2017-2020, Jacek Szafarkiewicz
@@ -26,6 +26,7 @@ Copyright:
  2019-2020, Luc Didry
  2020, Igor Telmenko
  2020, macaron
+ 2020, Hoël Bézier
 License: BSD-2-Clause
 
 License: BSD-2-Clause
