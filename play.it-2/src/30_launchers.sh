@@ -12,8 +12,12 @@ launcher_write_script() {
 	local package
 	package=$(package_get_current)
 
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
 		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
@@ -60,7 +64,7 @@ launcher_write_script() {
 			fi
 
 			binary_found=0
-			for tested_package in $PACKAGES_LIST; do
+			for tested_package in $packages_list; do
 				tested_package_path=$(get_value "${tested_package}_PATH")
 				binary_path="${tested_package_path}${PATH_GAME}/$binary_file"
 				if [ -f "$binary_path" ]; then
@@ -476,7 +480,7 @@ launcher_write_script_postrun() {
 
 # write menu entry
 # USAGE: launcher_write_desktop $app
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST GAME_ID GAME_NAME PATH_DESK PATH_BIN
+# NEEDED VARS: OPTION_ARCHITECTURE GAME_ID GAME_NAME PATH_DESK PATH_BIN
 # CALLS: error_missing_argument error_extra_arguments
 launcher_write_desktop() {
 	# check that this has been called with exactly one argument
@@ -490,8 +494,12 @@ launcher_write_desktop() {
 	local package
 	package=$(package_get_current)
 
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
 		warning_skip_package 'launcher_write_desktop' "$package"
 		return 0
 	fi
@@ -583,7 +591,7 @@ launcher_write_desktop() {
 
 # write both launcher script and menu entry for a single application
 # USAGE: launcher_write $application
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST
+# NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write_script launcher_write_desktop
 # CALLED BY: launchers_write
 launcher_write() {
@@ -591,8 +599,12 @@ launcher_write() {
 	local package
 	package=$(package_get_current)
 
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
 		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
@@ -606,15 +618,19 @@ launcher_write() {
 
 # write both launcher script and menu entry for a list of applications
 # USAGE: launchers_write $application[…]
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST
+# NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write
 launchers_write() {
 	# get the current package
 	local package
 	package=$(package_get_current)
 
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
 		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi

@@ -1,10 +1,15 @@
 # Get packages that provides the given package
 # USAGE: gentoo_get_pkg_providers $provided_package
-# NEEDED VARS: PACKAGES_LIST pkg
+# NEEDED VARS: pkg
 # CALLED BY: pkg_write_gentoo pkg_set_deps_gentoo
 gentoo_get_pkg_providers() {
 	local provided="$1"
-	for package in $PACKAGES_LIST; do
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
+	for package in $packages_list; do
 		if [ "$package" != "$pkg" ]; then
 			use_archive_specific_value "${package}_ID"
 			if [ "$(get_value "${package}_PROVIDE")" = "$provided" ]; then
@@ -331,7 +336,12 @@ pkg_build_gentoo() {
 	pkg_id="$(get_value "${pkg}_ID" | sed 's/-/_/g')" # This makes sure numbers in the package name doesn't get interpreted as a version by portage
 
 	local pkg_filename_base="$pkg_id-$PKG_VERSION.tbz2"
-	for package in $PACKAGES_LIST; do
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
+	for package in $packages_list; do
 		if [ "$package" != "$pkg" ] && [ "$(get_value "${package}_ID" | sed 's/-/_/g')" = "$pkg_id" ]; then
 			set_architecture "$pkg"
 			[ -d "$PWD/$pkg_architecture" ] || mkdir "$PWD/$pkg_architecture"

@@ -1,10 +1,10 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
-# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) PACKAGES_LIST (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
+# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
 # CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
-		write_metadata $PACKAGES_LIST
+		write_metadata $(packages_get_list)
 		return 0
 	fi
 	local pkg_architecture
@@ -13,11 +13,16 @@ write_metadata() {
 	local pkg_maint
 	local pkg_path
 	local pkg_provide
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'write_metadata'
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'write_metadata' "$pkg"
 			continue
 		fi
@@ -56,19 +61,24 @@ write_metadata() {
 
 # build .pkg.tar or .deb package
 # USAGE: build_pkg [$pkg…]
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) PACKAGES_LIST (PKG_PATH) PLAYIT_WORKDIR
+# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) (PKG_PATH) PLAYIT_WORKDIR
 # CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
-		build_pkg $PACKAGES_LIST
+		build_pkg $(packages_get_list)
 		return 0
 	fi
 	local pkg_path
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'build_pkg'
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'build_pkg' "$pkg"
 			return 0
 		fi

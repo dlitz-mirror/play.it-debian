@@ -259,6 +259,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set working directories
 
-	set_temp_directories $PACKAGES_LIST
+	set_temp_directories $(packages_get_list)
 
 fi

@@ -50,8 +50,13 @@ print_instructions_deb_dpkg() {
 print_instructions_deb_common() {
 	local pkg_path
 	local str_format
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'print_instructions_deb_common' "$pkg"
 			return 0
 		fi

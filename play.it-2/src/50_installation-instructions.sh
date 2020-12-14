@@ -1,10 +1,10 @@
 # print installation instructions
 # USAGE: print_instructions $pkg[…]
-# NEEDED VARS: (GAME_NAME) (OPTION_PACKAGE) (PACKAGES_LIST)
+# NEEDED VARS: (GAME_NAME) (OPTION_PACKAGE)
 print_instructions() {
 	[ "$GAME_NAME" ] || return 1
 	if [ $# -eq 0 ]; then
-		print_instructions $PACKAGES_LIST
+		print_instructions $(packages_get_list)
 		return 0
 	fi
 	local package_arch

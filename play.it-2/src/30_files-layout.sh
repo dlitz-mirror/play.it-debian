@@ -1,13 +1,10 @@
 # prepare package layout by putting files from archive in the right packages
 # directories
 # USAGE: prepare_package_layout [$pkg…]
-# NEEDED VARS: (LANG) (PACKAGES_LIST) PLAYIT_WORKDIR (PKG_PATH)
+# NEEDED VARS: (LANG) PLAYIT_WORKDIR (PKG_PATH)
 prepare_package_layout() {
 	if [ -z "$1" ]; then
-		if [ -z "$PACKAGES_LIST" ]; then
-			error_variable_not_set 'prepare_package_layout' '$PACKAGES_LIST'
-		fi
-		prepare_package_layout $PACKAGES_LIST
+		prepare_package_layout $(packages_get_list)
 		return 0
 	fi
 	local package
@@ -33,8 +30,12 @@ organize_data() {
 	local package
 	package=$(package_get_current)
 
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# Check that the current package is part of the target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
 		warning_skip_package 'organize_data' "$package"
 		return 0
 	fi
