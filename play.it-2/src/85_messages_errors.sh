@@ -209,6 +209,8 @@ error_launcher_missing_binary() {
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {
 	local message option_name option_value
+	option_name="$1"
+	option_value="$2"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
