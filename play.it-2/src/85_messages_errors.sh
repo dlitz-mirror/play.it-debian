@@ -581,3 +581,24 @@ error_no_script_found_for_archive() {
 	return 1
 }
 
+# display an error when a variable is empty
+# USAGE: error_empty_variable $variable
+error_empty_variable() {
+	local message variable
+	variable="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La variable "%s" nʼest pas définie, mais elle requise.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			message='Variable "%s" is not set, but it is required.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$variable" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
+}
+
