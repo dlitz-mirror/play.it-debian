@@ -164,3 +164,19 @@ package_get_current() {
 	return 0
 }
 
+# get the full list of packages to generate
+# USAGE: packages_get_list
+packages_get_list() {
+	local packages_list
+	packages_list="$PACKAGES_LIST"
+
+	# Fall back on a default list if $PACKAGES_LIST is not set
+	if [ -z "$packages_list" ]; then
+		packages_list='PKG_MAIN'
+	fi
+
+	printf '%s' "$packages_list"
+
+	return 0
+}
+
