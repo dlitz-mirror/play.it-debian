@@ -148,3 +148,19 @@ get_package_version() {
 	export PKG_VERSION
 }
 
+# get the current package
+# USAGE: package_get_current
+package_get_current() {
+	local package
+	package="$PKG"
+
+	# Fall back on a default value if $PKG is not set
+	if [ -z "$package" ]; then
+		package='PKG_MAIN'
+	fi
+
+	printf '%s' "$package"
+
+	return 0
+}
+
