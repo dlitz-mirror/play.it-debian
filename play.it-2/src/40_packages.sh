@@ -4,6 +4,7 @@
 # CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
+		# shellcheck disable=SC2046
 		write_metadata $(packages_get_list)
 		return 0
 	fi
@@ -65,6 +66,7 @@ write_metadata() {
 # CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
+		# shellcheck disable=SC2046
 		build_pkg $(packages_get_list)
 		return 0
 	fi

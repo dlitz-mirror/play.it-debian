@@ -4,6 +4,7 @@
 print_instructions() {
 	[ "$GAME_NAME" ] || return 1
 	if [ $# -eq 0 ]; then
+		# shellcheck disable=SC2046
 		print_instructions $(packages_get_list)
 		return 0
 	fi

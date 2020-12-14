@@ -4,6 +4,7 @@
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR (PKG_PATH)
 prepare_package_layout() {
 	if [ -z "$1" ]; then
+		# shellcheck disable=SC2046
 		prepare_package_layout $(packages_get_list)
 		return 0
 	fi
