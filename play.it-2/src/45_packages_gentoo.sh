@@ -40,7 +40,6 @@ pkg_write_gentoo() {
 		done
 	fi
 
-	PKG="$pkg"
 	get_package_version
 
 	mkdir --parents \
@@ -58,7 +57,7 @@ pkg_write_gentoo() {
 	RESTRICT="fetch strip binchecks"
 	EOF
 	local pkg_architectures
-	set_supported_architectures "$PKG"
+	set_supported_architectures "$pkg"
 	cat >> "$target" <<- EOF
 	KEYWORDS="$pkg_architectures"
 	EOF

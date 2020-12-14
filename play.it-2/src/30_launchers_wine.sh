@@ -29,17 +29,21 @@ launcher_write_script_wine_application_variables() {
 
 # WINE - write launcher script prefix initialization
 # USAGE: launcher_write_script_wine_prefix_build $file
-# NEEDED VARS: PKG APP_WINETRICKS APP_REGEDIT
+# NEEDED VARS: APP_WINETRICKS APP_REGEDIT
 # CALLED BY: launcher_write_build
 launcher_write_script_wine_prefix_build() {
 	local file
 	file="$1"
 
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	# compute WINE prefix architecture
 	local architecture
 	local winearch
-	use_archive_specific_value "${PKG}_ARCH"
-	architecture="$(get_value "${PKG}_ARCH")"
+	use_archive_specific_value "${package}_ARCH"
+	architecture="$(get_value "${package}_ARCH")"
 	case "$architecture" in
 		('32') winearch='win32' ;;
 		('64') winearch='win64' ;;

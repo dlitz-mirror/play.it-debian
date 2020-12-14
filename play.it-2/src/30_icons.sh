@@ -37,15 +37,19 @@ icons_list_dependencies() {
 
 # get .png file(s) from various icon sources in current package
 # USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icons_get_from_path
 icons_get_from_package() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	[ $SKIP_ICONS -eq 1 ] && return 0
 
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	local path
 	local path_pkg
-	path_pkg="$(get_value "${PKG}_PATH")"
+	path_pkg="$(get_value "${package}_PATH")"
 	if [ -z "$path_pkg" ]; then
 		error_invalid_argument 'PKG' 'icons_get_from_package'
 	fi
@@ -55,7 +59,7 @@ icons_get_from_package() {
 
 # get .png file(s) from various icon sources in temporary work directory
 # USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icons_get_from_path
 icons_get_from_workdir() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
@@ -68,7 +72,7 @@ icons_get_from_workdir() {
 
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar
 icons_get_from_path() {
 	local app
@@ -79,10 +83,15 @@ icons_get_from_path() {
 	local list
 	local path_pkg
 	local wrestool_id
+
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	directory="$1"
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
-	path_pkg="$(get_value "${PKG}_PATH")"
+	path_pkg="$(get_value "${package}_PATH")"
 	if [ -z "$path_pkg" ]; then
 		error_invalid_argument 'PKG' 'icons_get_from_package'
 	fi
@@ -236,7 +245,7 @@ icon_copy_png() {
 
 # get .png file(s) from target directory and put them in current package
 # USAGE: icons_include_png_from_directory $app $directory
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE
 # CALLS: icon_get_resolution_from_file
 # CALLED BY: icons_get_from_path
 icons_include_png_from_directory() {
@@ -248,11 +257,16 @@ icons_include_png_from_directory() {
 	local path_icon
 	local path_pkg
 	local resolution
+
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	app="$1"
 	directory="$2"
 	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
-	path_pkg="$(get_value "${PKG}_PATH")"
+	path_pkg="$(get_value "${package}_PATH")"
 	if [ -z "$path_pkg" ]; then
 		error_invalid_argument 'PKG' 'icons_include_png_from_directory'
 	fi
@@ -310,7 +324,6 @@ icon_get_resolution_from_file() {
 icons_move_to() {
 	###
 	# TODO
-	# Check that $PKG is set to a valid package
 	# Check that $destination_package is set to a valid package
 	# Check that $PATH_ICON_BASE is set to an absolute path
 	###
@@ -321,7 +334,7 @@ icons_move_to() {
 	local source_package      source_path      source_directory
 	local destination_package destination_path destination_directory
 
-	source_package="$PKG"
+	source_package=$(package_get_current)
 	destination_package="$1"
 
 	# Get source path, ensure it is set

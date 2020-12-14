@@ -35,8 +35,7 @@ pkg_write_deb() {
 	pkg_size=$(du --total --block-size=1K --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
 
 	# Get package version
-	PKG="$pkg" \
-		get_package_version
+	get_package_version
 
 	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"

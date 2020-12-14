@@ -10,13 +10,16 @@ prepare_package_layout() {
 		prepare_package_layout $PACKAGES_LIST
 		return 0
 	fi
+	local package
 	for package in "$@"; do
 		PKG="$package"
-		organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-		organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
+		export PKG
+
+		organize_data "GAME_${package#PKG_}" "$PATH_GAME"
+		organize_data "DOC_${package#PKG_}"  "$PATH_DOC"
 		for i in $(seq 0 9); do
-			organize_data "GAME${i}_${PKG#PKG_}" "$PATH_GAME"
-			organize_data "DOC${i}_${PKG#PKG_}"  "$PATH_DOC"
+			organize_data "GAME${i}_${package#PKG_}" "$PATH_GAME"
+			organize_data "DOC${i}_${package#PKG_}"  "$PATH_DOC"
 		done
 	done
 }
@@ -26,19 +29,18 @@ prepare_package_layout() {
 organize_data() {
 	local pkg_path archive_path archive_files source_path destination_path source_files_pattern source_file destination_file
 
-	# This function requires PKG to be set
-	if [ -z "$PKG" ]; then
-		error_variable_not_set 'organize_data' '$PKG'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
 
 	# Check that the current package is part of the target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'organize_data' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$package*}" ]; then
+		warning_skip_package 'organize_data' "$package"
 		return 0
 	fi
 
 	# Get current package path, check that it is set
-	pkg_path=$(get_value "${PKG}_PATH")
+	pkg_path=$(get_value "${package}_PATH")
 	if [ -z "$pkg_path" ]; then
 		error_invalid_argument 'PKG' 'organize_data'
 	fi
