@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201219.10
+script_version=20201219.12
 
 # Set game-specific variables
 
@@ -42,7 +42,15 @@ GAME_ID='evoland-1'
 GAME_NAME='Evoland'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_0
 ARCHIVE_HUMBLE_0'
+
+ARCHIVE_GOG_0='setup_evoland_1.1.2490_(20677).exe'
+ARCHIVE_GOG_0_MD5='97978ef959d097876142ae2c6ce765c2'
+ARCHIVE_GOG_0_SIZE='120000'
+ARCHIVE_GOG_0_VERSION='1.1.2490-gog20677'
+ARCHIVE_GOG_0_TYPE='innosetup'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/evoland'
 
 ARCHIVE_HUMBLE_0='Evoland.exe'
 ARCHIVE_HUMBLE_0_MD5='9585142f38d769d4ac9125f587d0c891'
@@ -51,15 +59,15 @@ ARCHIVE_HUMBLE_0_VERSION='1.1.2490-humble1'
 ARCHIVE_HUMBLE_0_TYPE='nullsoft-installer'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='Adobe?AIR dinput8.dll Evoland.exe pad.exe'
+ARCHIVE_GAME_BIN_FILES='adobe?air dinput8.dll evoland.exe pad.exe'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='game.dat icons META-INF mimetype'
+ARCHIVE_GAME_DATA_FILES='game.dat icons meta-inf mimetype'
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='Evoland.exe'
+APP_MAIN_EXE='evoland.exe'
 for res in 16 32 48 128; do
-	export "APP_MAIN_ICON_${res}=icons/evoIcon${res}.png"
+	export "APP_MAIN_ICON_${res}=icons/evoicon${res}.png"
 	APP_MAIN_ICONS_LIST="$APP_MAIN_ICONS_LIST APP_MAIN_ICON_${res}"
 done
 
@@ -122,6 +130,11 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+case "$ARCHIVE" in
+	('ARCHIVE_HUMBLE'*)
+		tolower "${PLAYIT_WORKDIR}/gamedata"
+	;;
+esac
 prepare_package_layout
 
 # Get game icon
