@@ -259,20 +259,20 @@ icon_get_resolution_from_file() {
 		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
 	fi
 
-	###
-	# TODO
-	# The following does not work with GraphicsMagick compatibility wrapper for ImageMagick
-	###
-
 	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
-		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
+		while
+			[ -z "$resolution" ] || \
+			[ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]
+		do
 			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
+			resolution="${resolution%+0+0}"
 			field=$((field + 1))
 		done
 	else
 		resolution="$(identify "$file" | sed "s;^$file ;;" | cut --delimiter=' ' --fields=2)"
+		resolution="${resolution%+0+0}"
 	fi
 	export resolution
 }
