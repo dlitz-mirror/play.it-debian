@@ -252,6 +252,13 @@ icon_get_resolution_from_file() {
 	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
+
+		###
+		# TODO
+		# This will go into an infinite loop if `identify` is not available.
+		# We should check for its presence and exit with an error if it can not be found.
+		###
+
 		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
 			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
 			field=$((field + 1))
