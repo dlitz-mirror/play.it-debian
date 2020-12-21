@@ -249,16 +249,16 @@ sort_icons() {
 icon_get_resolution_from_file() {
 	local file
 	file="$1"
+
+	# `identify` should be available when this function is called.
+	# Exits with an explicit error if it is missing
+	if ! command -v 'identify' >/dev/null 2>&1; then
+		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
+	fi
+
 	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
-
-		###
-		# TODO
-		# This will go into an infinite loop if `identify` is not available.
-		# We should check for its presence and exit with an error if it can not be found.
-		###
-
 		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
 			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
 			field=$((field + 1))
