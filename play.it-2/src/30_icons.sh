@@ -259,6 +259,11 @@ icon_get_resolution_from_file() {
 		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
 	fi
 
+	###
+	# TODO
+	# The following does not work with GraphicsMagick compatibility wrapper for ImageMagick
+	###
+
 	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
