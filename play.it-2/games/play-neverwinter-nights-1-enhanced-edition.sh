@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210516.1
+script_version=20210516.2
 
 # Set game-specific variables
 
@@ -43,12 +43,18 @@ GAME_NAME='Neverwinter Nights: Enhanced Edition'
 
 # Base game archive
 
+ARCHIVE_BASE_2='neverwinter_nights_enhanced_edition_82_8193_20_1_43497.sh'
+ARCHIVE_BASE_2_MD5='c80e73f0305ad99355cc089c632b8b0c'
+ARCHIVE_BASE_2_TYPE='mojosetup'
+ARCHIVE_BASE_2_VERSION='1.82.8193.20.1-gog43497'
+ARCHIVE_BASE_2_SIZE='6200000'
+ARCHIVE_BASE_2_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
+
 ARCHIVE_BASE_1='neverwinter_nights_enhanced_edition_81_8193_16_41300.sh'
 ARCHIVE_BASE_1_MD5='a52646002ab14c452731b0636fdc8278'
 ARCHIVE_BASE_1_TYPE='mojosetup'
 ARCHIVE_BASE_1_VERSION='1.81.8193.16-gog41300'
 ARCHIVE_BASE_1_SIZE='6200000'
-ARCHIVE_BASE_1_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
 
 ARCHIVE_BASE_0='neverwinter_nights_enhanced_edition_80_8193_9_37029.sh'
 ARCHIVE_BASE_0_MD5='fb98f859b5f5516fc7df8b00c7264c07'
