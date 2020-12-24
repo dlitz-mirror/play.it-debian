@@ -6,25 +6,28 @@ icons_list_dependencies() {
 
 	local script
 	script="$0"
-	if grep\
-		--regexp="^APP_[^_]\\+_ICON='.\\+'"\
-		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'"\
-		"$script" 1>/dev/null
+	if grep \
+		--quiet \
+		--regexp="^APP_[^_]\\+_ICON='.\\+'" \
+		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'" \
+		"$script"
 	then
 		ICONS_DEPS="$ICONS_DEPS identify"
-		if grep\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'"\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.ico'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'"\
-			"$script" 1>/dev/null
+		if grep \
+			--quiet \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'" \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.ico'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'" \
+			"$script"
 		then
 			ICONS_DEPS="$ICONS_DEPS convert"
 		fi
-		if grep\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'"\
-			"$script" 1>/dev/null
+		if grep \
+			--quiet \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'" \
+			"$script"
 		then
 			ICONS_DEPS="$ICONS_DEPS convert wrestool"
 		fi
