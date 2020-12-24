@@ -365,13 +365,21 @@ error_innoextract_version_too_old() {
 	case "${LANG%_*}" in
 		('fr')
 			message='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de lʼarchive suivante : %s\n'
+			message="$message"'Des instructions de mise-à-jour sont proposées :\n'
+			message="$message"'- pour Debian : %s\n'
+			message="$message"'- pour Ubuntu : %s\n'
 		;;
 		('en'|*)
 			message='Available innoextract version is too old to extract data from the following archive: %s\n'
+			message="$message"'Update instructions are proposed:\n'
+			message="$message"'- for Debian: %s\n'
+			message="$message"'- for Ubuntu: %s\n'
 		;;
 	esac
 	print_error
-	printf "$message" "$archive"
+	printf "$message" "$archive" \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/debian#available-innoextract-version-is-too-old' \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/ubuntu#innoextract-version-is-too-old'
 	return 1
 }
 
