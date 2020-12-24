@@ -154,14 +154,14 @@ archive_extraction_innosetup_is_supported() {
 	# Use innoextract internal check
 	if innoextract --list --silent "$archive" 2>&1 1>/dev/null | \
 		head --lines=1 | \
-		grep --ignore-case 'unexpected setup data version' 1>/dev/null
+		grep --ignore-case --quiet 'unexpected setup data version'
 	then
 		return 1
 	fi
 
 	# Check for GOG archives based on Galaxy file fragments, unsupported by innoextract < 1.7
 	if innoextract --list "$archive" | \
-		grep ' - "tmp/[0-9a-f]\{2\}/[0-9a-f]\{2\}/[0-9a-f]\{32\}" (.*)' 1>/dev/null
+		grep --quiet ' - "tmp/[0-9a-f]\{2\}/[0-9a-f]\{2\}/[0-9a-f]\{32\}" (.*)'
 	then
 		return 1
 	fi
