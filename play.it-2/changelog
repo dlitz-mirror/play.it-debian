@@ -1,3 +1,9 @@
+2.12.2
+
+  * Errors handling:
+    * Fix error message displayed when passing an invalid value to a supported
+      option
+
 2.12.1
 
   * Wrapper fixes:
