@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210111.2
+script_version=20210111.3
 
 # Set game-specific variables
 
@@ -43,20 +43,31 @@ GAME_ID='wing-commander-2'
 GAME_NAME='Wing Commander Ⅱ'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
+
+ARCHIVE_GOG_1='setup_wing_commander_ii_1.0_(28045).exe'
+ARCHIVE_GOG_1_MD5='f5288f26451f7c1c860a269a8198f554'
+ARCHIVE_GOG_1_TYPE='innosetup'
+ARCHIVE_GOG_1_VERSION='1.0-gog28045'
+ARCHIVE_GOG_1_SIZE='46000'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/wing_commander_1_2'
 
 ARCHIVE_GOG_0='setup_wing_commander2_2.1.0.18.exe'
 ARCHIVE_GOG_0_MD5='f94a7eb75e4ed454108d13189d003e9f'
 ARCHIVE_GOG_0_TYPE='innosetup'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.1.0.18'
 ARCHIVE_GOG_0_SIZE='49000'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/wing_commander_1_2'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='*.pdf'
 
-ARCHIVE_GAME_MAIN_PATH='app'
+ARCHIVE_GAME_MAIN_PATH='.'
 ARCHIVE_GAME_MAIN_FILES='wc2.exe so1.exe so2.exe gamedat *.cfg'
+
+# Keep compatibility with old archives
+ARCHIVE_DOC_MAIN_PATH_GOG_0='app'
+ARCHIVE_GAME_MAIN_PATH_GOG_0='app'
 
 CONFIG_FILES='./*.cfg'
 DATA_DIRS='./gamedat'
