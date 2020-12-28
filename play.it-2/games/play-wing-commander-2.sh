@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2018-2021, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,24 +30,27 @@ set -o errexit
 ###
 
 ###
-# Wing Commander II
+# Wing Commander 2
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190726.1
+script_version=20210111.1
 
 # Set game-specific variables
 
 GAME_ID='wing-commander-2'
-GAME_NAME='Wing Commander II'
+GAME_NAME='Wing Commander Ⅱ'
 
-ARCHIVE_GOG='setup_wing_commander2_2.1.0.18.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/wing_commander_1_2'
-ARCHIVE_GOG_MD5='f94a7eb75e4ed454108d13189d003e9f'
-ARCHIVE_GOG_VERSION='1.0-gog21018'
-ARCHIVE_GOG_SIZE='49000'
-ARCHIVE_GOG_TYPE='innosetup'
+ARCHIVES_LIST='
+ARCHIVE_GOG_0'
+
+ARCHIVE_GOG_0='setup_wing_commander2_2.1.0.18.exe'
+ARCHIVE_GOG_0_MD5='f94a7eb75e4ed454108d13189d003e9f'
+ARCHIVE_GOG_0_TYPE='innosetup'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.1.0.18'
+ARCHIVE_GOG_0_SIZE='49000'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/wing_commander_1_2'
 
 ARCHIVE_DOC_MAIN_PATH='app'
 ARCHIVE_DOC_MAIN_FILES='*.pdf'
@@ -59,21 +62,17 @@ CONFIG_FILES='./*.cfg'
 DATA_DIRS='./gamedat'
 
 APP_MAIN_TYPE='dosbox'
-APP_MAIN_PRERUN='config -set cpu cycles=fixed 8000
-loadfix -32'
 APP_MAIN_EXE='wc2.exe'
 APP_MAIN_ICON='app/goggame-1207662653.ico'
 
 APP_SO1_ID="${GAME_ID}_so1"
 APP_SO1_TYPE='dosbox'
-APP_SO1_PRERUN="$APP_MAIN_PRERUN"
 APP_SO1_EXE='so1.exe'
 APP_SO1_ICON='app/goggame-1207662653.ico'
 APP_SO1_NAME="$GAME_NAME - Special Operations 1"
 
 APP_SO2_ID="${GAME_ID}_so2"
 APP_SO2_TYPE='dosbox'
-APP_SO2_PRERUN="$APP_MAIN_PRERUN"
 APP_SO2_EXE='so2.exe'
 APP_SO2_ICON='app/goggame-1207662653.ico'
 APP_SO2_NAME="$GAME_NAME - Special Operations 2"
@@ -82,18 +81,25 @@ PACKAGES_LIST='PKG_MAIN'
 
 PKG_MAIN_DEPS='dosbox'
 
+# Work around performance issues
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+config -set cpu cycles=fixed 8000
+loadfix -32'
+APP_SO1_PRERUN="$APP_MAIN_PRERUN"
+APP_SO2_PRERUN="$APP_MAIN_PRERUN"
+
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -118,6 +124,9 @@ prepare_package_layout
 # Extract icons
 
 icons_get_from_workdir 'APP_MAIN' 'APP_SO1' 'APP_SO2'
+
+# Clean up temporary files
+
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
