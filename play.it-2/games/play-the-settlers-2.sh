@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200103.5
+script_version=20200103.6
 
 # Set game-specific variables
 
@@ -42,41 +42,71 @@ GAME_ID='the-settlers-2'
 GAME_NAME='The Settlers Ⅱ'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_DE_1
 ARCHIVE_GOG_DE_0
+ARCHIVE_GOG_EN_1
 ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_FR_0'
+
+# gog.com German installer
+
+ARCHIVE_GOG_DE_1='setup_the_settlers_2_gold_1.5.1_(german)_(30319).exe'
+ARCHIVE_GOG_DE_1_MD5='c360aaabd05e99b0f0752e52dd105107'
+ARCHIVE_GOG_DE_1_TYPE='innosetup'
+ARCHIVE_GOG_DE_1_VERSION='1.5.1-gog30319'
+ARCHIVE_GOG_DE_1_SIZE='360000'
+ARCHIVE_GOG_DE_1_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
 
 ARCHIVE_GOG_DE_0='setup_settlers2_gold_german_2.1.0.17.exe'
 ARCHIVE_GOG_DE_0_MD5='f87a8fded6de455af4e6a284b3c4ed5e'
 ARCHIVE_GOG_DE_0_TYPE='innosetup'
-ARCHIVE_GOG_DE_0_VERSION='1.51-gog2.1.0.17'
+ARCHIVE_GOG_DE_0_VERSION='1.5.1-gog2.1.0.17'
 ARCHIVE_GOG_DE_0_SIZE='370000'
-ARCHIVE_GOG_DE_0_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
+
+
+# gog.com English installer
+
+ARCHIVE_GOG_EN_1='setup_the_settlers_2_gold_1.5.1_(30319).exe'
+ARCHIVE_GOG_EN_1_MD5='8381240ee580a298798b6afe863bac52'
+ARCHIVE_GOG_EN_1_TYPE='innosetup'
+ARCHIVE_GOG_EN_1_VERSION='1.5.1-gog30319'
+ARCHIVE_GOG_EN_1_SIZE='370000'
+ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
 
 ARCHIVE_GOG_EN_0='setup_settlers2_gold_2.0.0.14.exe'
 ARCHIVE_GOG_EN_0_MD5='6f64b47b15f6ba5d43670504dd0bb229'
 ARCHIVE_GOG_EN_0_TYPE='innosetup'
-ARCHIVE_GOG_EN_0_VERSION='1.51-gog2.0.0.14'
+ARCHIVE_GOG_EN_0_VERSION='1.5.1-gog2.0.0.14'
 ARCHIVE_GOG_EN_0_SIZE='370000'
-ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
+
+
+# gog.com French installer
+
+ARCHIVE_GOG_FR_1='setup_the_settlers_2_gold_1.5.1_(french)_(30319).exe'
+ARCHIVE_GOG_FR_1_MD5='55a9d15f1260de5e711ea649120ece50'
+ARCHIVE_GOG_FR_1_TYPE='innosetup'
+ARCHIVE_GOG_FR_1_VERSION='1.5.1-gog30319'
+ARCHIVE_GOG_FR_1_SIZE='400000'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
 
 ARCHIVE_GOG_FR_0='setup_settlers2_gold_french_2.1.0.16.exe'
 ARCHIVE_GOG_FR_0_MD5='1eca72ca45d63e4390590d495657d213'
 ARCHIVE_GOG_FR_0_TYPE='innosetup'
-ARCHIVE_GOG_FR_0_VERSION='1.51-gog2.1.0.16'
+ARCHIVE_GOG_FR_0_VERSION='1.5.1-gog2.1.0.16'
 ARCHIVE_GOG_FR_0_SIZE='410000'
-ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/the_settlers_2_gold_edition'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='eula *.txt'
 
-ARCHIVE_GAME0_MAIN_PATH='app'
+ARCHIVE_GAME0_MAIN_PATH='.'
 ARCHIVE_GAME0_MAIN_FILES='*.exe *.ini *.scr s2edit.exe s2.exe setup.exe data/resource.idx data/io/*.idx data/maps* data/missions/mis_0100.rtx data/online data/txt* drivers/mdi.ini gfx/pics/setup000.lbm gfx/pics/setup010.lbm gfx/pics/setup011.lbm gfx/pics/setup012.lbm gfx/pics/setup014.lbm gfx/pics/setup897.lbm gfx/pics/setup898.lbm gfx/pics/setup900.lbm gfx/pics/setup901.lbm gfx/pics/setup996.lbm gfx/pics/setup997.lbm gfx/pics/setup998.lbm save/mission.dat video/*.smk'
 
-ARCHIVE_GAME1_MAIN_PATH='app/__support/save'
+ARCHIVE_GAME1_MAIN_PATH='__support/save'
 ARCHIVE_GAME1_MAIN_FILES='save/mission.dat'
 
-ARCHIVE_GAME_COMMON_PATH='app'
+ARCHIVE_GAME_COMMON_PATH='.'
 ARCHIVE_GAME_COMMON_FILES='dos4gw.exe settler2.vmc settlers2.gog settlers2.inst data/*.dat data/editres.idx data/animdat data/bobs data/cbob data/io/*.dat data/io/*.fnt data/*.lst data/masks data/mbob data/missions/mis_00*.rtx data/missions/mis_10*.rtx data/sounddat/sng data/sounddat/sound.lst data/textures drivers/*.ad drivers/*.dig drivers/dig.ini drivers/*.exe drivers/*.lst drivers/*.mdi drivers/*.opl gfx/palette gfx/pics2 gfx/pics/install.lbm gfx/pics/mission gfx/pics/setup013.lbm gfx/pics/setup015.lbm gfx/pics/setup666.lbm gfx/pics/setup667.lbm gfx/pics/setup801.lbm gfx/pics/setup802.lbm gfx/pics/setup803.lbm gfx/pics/setup804.lbm gfx/pics/setup805.lbm gfx/pics/setup806.lbm gfx/pics/setup810.lbm gfx/pics/setup811.lbm gfx/pics/setup895.lbm gfx/pics/setup896.lbm gfx/pics/setup899.lbm gfx/pics/setup990.lbm gfx/pics/world.lbm gfx/pics/worldmsk.lbm gfx/textures video/smackply.exe'
 
 CONFIG_FILES='./SETUP.INI'
@@ -87,26 +117,20 @@ GAME_IMAGE_TYPE='iso'
 
 APP_MAIN_TYPE='dosbox'
 APP_MAIN_EXE='S2.EXE'
-APP_MAIN_ICON_GOG_DE='app/goggame-1207658786.ico'
-APP_MAIN_ICON_GOG_EN='app/gfw_high.ico'
-APP_MAIN_ICON_GOG_FR='app/goggame-1207658786.ico'
+APP_MAIN_ICON='app/goggame-1207658786.ico'
 
 APP_EDITOR_TYPE='dosbox'
 APP_EDITOR_ID="${GAME_ID}_edit"
 APP_EDITOR_EXE='S2EDIT.EXE'
 APP_EDITOR_NAME="$GAME_NAME - Editor"
-APP_EDITOR_ICON_GOG_DE="$APP_MAIN_ICON_GOG_DE"
-APP_EDITOR_ICON_GOG_EN="$APP_MAIN_ICON_GOG_EN"
-APP_EDITOR_ICON_GOG_FR="$APP_MAIN_ICON_GOG_FR"
+APP_EDITOR_ICON="$APP_MAIN_ICON"
 
 APP_SETUP_TYPE='dosbox'
 APP_SETUP_ID="${GAME_ID}_setup"
 APP_SETUP_EXE='SETUP.EXE'
 APP_SETUP_NAME="$GAME_NAME - Setup"
 APP_SETUP_CAT='Settings'
-APP_SETUP_ICON_GOG_DE="$APP_MAIN_ICON_GOG_DE"
-APP_SETUP_ICON_GOG_EN="$APP_MAIN_ICON_GOG_EN"
-APP_SETUP_ICON_GOG_FR="$APP_MAIN_ICON_GOG_FR"
+APP_SETUP_ICON="$APP_MAIN_ICON"
 
 PACKAGES_LIST='PKG_COMMON PKG_MAIN'
 
@@ -136,6 +160,25 @@ PKG_MAIN_DESCRIPTION_GOG_FR='French version'
 
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 @VIDEO\SMACKPLY VIDEO\INTRO.SMK'
+
+# Keep ocmpatibility with old archives
+
+ARCHIVE_DOC_MAIN_PATH_GOG_DE_0='app'
+ARCHIVE_DOC_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_DOC_MAIN_PATH_GOG_FR_0='app'
+ARCHIVE_GAME0_MAIN_PATH_GOG_DE_0='app'
+ARCHIVE_GAME0_MAIN_PATH_GOG_EN_0='app'
+ARCHIVE_GAME0_MAIN_PATH_GOG_FR_0='app'
+ARCHIVE_GAME1_MAIN_PATH_GOG_DE_0='app/__support/save'
+ARCHIVE_GAME1_MAIN_PATH_GOG_EN_0='app/__support/save'
+ARCHIVE_GAME1_MAIN_PATH_GOG_FR_0='app/__support/save'
+ARCHIVE_GAME_COMMON_PATH_GOG_DE_0='app'
+ARCHIVE_GAME_COMMON_PATH_GOG_EN_0='app'
+ARCHIVE_GAME_COMMON_PATH_GOG_FR_0='app'
+
+APP_MAIN_ICON_GOG_EN_0='app/gfw_high.ico'
+APP_EDITOR_ICON_GOG_EN_0="$APP_MAIN_ICON_GOG_EN_0"
+APP_SETUP_ICON_GOG_EN_0="$APP_MAIN_ICON_GOG_EN_0"
 
 # Load common functions
 
