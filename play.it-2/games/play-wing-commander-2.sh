@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210111.1
+script_version=20210111.2
 
 # Set game-specific variables
 
@@ -135,10 +135,15 @@ launchers_write 'APP_MAIN' 'APP_SO1' 'APP_SO2'
 
 # Work around sound issues that can stuck the game during the first intro speech
 
-pattern='s/^dosbox -c/export DOSBOX_SBLASTER_IRQ=5\n&/'
-if [ $DRY_RUN -eq 0 ]; then
-	sed --in-place "$pattern" "${PKG_MAIN_PATH}${PATH_BIN}"/*
-fi
+pattern='# Run the game'
+replacement='# Work around sound issues that can stuck the game during the first intro speech\n'
+replacement="$replacement"'export DOSBOX_SBLASTER_IRQ=5\n'
+replacement="$replacement"'\n&'
+expression="s/${pattern}/$replacement/"
+sed \
+	--in-place \
+	--expression="$expression" \
+	"${PKG_MAIN_PATH}${PATH_BIN}"/*
 
 # Build package
 
