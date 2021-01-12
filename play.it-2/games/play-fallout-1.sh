@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200705.1
+script_version=20211201.1
 
 # Set game-specific variables
 
@@ -49,14 +49,14 @@ ARCHIVE_GOG_OLDTEMPLATE_EN_0
 ARCHIVE_GOG_OLDTEMPLATE_FR_0
 '
 
-ARCHIVE_GOG_EN_1='setup_fallout_1.2_(27130).exe'
+ARCHIVE_GOG_EN_1='setup_fallout_1.2_(french)_(27130).exe'
 ARCHIVE_GOG_EN_1_URL='https://www.gog.com/game/fallout'
-ARCHIVE_GOG_EN_1_MD5='2cd1bb09f241c286498ea834480852ec'
+ARCHIVE_GOG_EN_1_MD5='2c0d7a347a903bb52ed1d70305038e9c'
 ARCHIVE_GOG_EN_1_VERSION='1.2-gog27130'
 ARCHIVE_GOG_EN_1_SIZE='600000'
 ARCHIVE_GOG_EN_1_TYPE='innosetup'
-ARCHIVE_GOG_EN_1_PART1='setup_fallout_1.2_(27130)-1.bin'
-ARCHIVE_GOG_EN_1_PART1_MD5='b9a0a59bc1426df4cc9588fdd5a8d736'
+ARCHIVE_GOG_EN_1_PART1='setup_fallout_1.2_(french)_(27130)-1.bin'
+ARCHIVE_GOG_EN_1_PART1_MD5='7db5f755168b89cc38b6e090130b0e1a'
 ARCHIVE_GOG_EN_1_PART1_TYPE='innosetup'
 
 ARCHIVE_GOG_OLDTEMPLATE_EN_0='setup_fallout_2.1.0.18.exe'
