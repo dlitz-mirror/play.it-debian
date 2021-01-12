@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210112.1
+script_version=20210112.2
 
 # Set game-specific variables
 
@@ -49,7 +49,8 @@ ARCHIVE_GOG_OLDTEMPLATE_EN_1
 ARCHIVE_GOG_OLDTEMPLATE_EN_0
 ARCHIVE_GOG_FR_0
 ARCHIVE_GOG_OLDTEMPLATE_FR_1
-ARCHIVE_GOG_OLDTEMPLATE_FR_0'
+ARCHIVE_GOG_OLDTEMPLATE_FR_0
+ARCHIVE_GOG_RU_0'
 
 # gog.com installer, English
 
@@ -102,6 +103,18 @@ ARCHIVE_GOG_OLDTEMPLATE_FR_0_TYPE='innosetup'
 ARCHIVE_GOG_OLDTEMPLATE_FR_0_VERSION='3.0-gog2.1.0.20'
 ARCHIVE_GOG_OLDTEMPLATE_FR_0_SIZE='1100000'
 
+# gog.com installer, Russian
+
+ARCHIVE_GOG_RU_0='setup_heroes_of_might_and_magic_3_complete_4.0_(russian)_(28740).exe'
+ARCHIVE_GOG_RU_0_MD5='33018e8355f59b9e532d7429e1aaeeae'
+ARCHIVE_GOG_RU_0_TYPE='innosetup'
+ARCHIVE_GOG_RU_0_PART1='setup_heroes_of_might_and_magic_3_complete_4.0_(russian)_(28740)-1.bin'
+ARCHIVE_GOG_RU_0_PART1_MD5='5d409ee2e2b3ec32fa9838ca1d601e02'
+ARCHIVE_GOG_RU_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_RU_0_VERSION='4.0-gog28740'
+ARCHIVE_GOG_RU_0_SIZE='1100000'
+ARCHIVE_GOG_RU_0_URL='https://www.gog.com/game/heroes_of_might_and_magic_3_complete_edition'
+
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='eula *.cnt *.hlp *.pdf *.txt'
 
@@ -147,6 +160,7 @@ PACKAGES_LIST='PKG_BIN_VCMI PKG_BIN_WINE PKG_DATA'
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
 PKG_DATA_ID_GOG_FR="${PKG_DATA_ID}-fr"
+PKG_DATA_ID_GOG_RU="${PKG_DATA_ID}-ru"
 PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
 
@@ -162,6 +176,7 @@ PKG_BIN_VCMI_DEPS_GENTOO='games-strategy/vcmi' # overlay required: https://githu
 PKG_BIN_WINE_ID="${PKG_BIN_ID}-wine"
 PKG_BIN_WINE_ID_GOG_EN="${PKG_BIN_WINE_ID}-en"
 PKG_BIN_WINE_ID_GOG_FR="${PKG_BIN_WINE_ID}-fr"
+PKG_BIN_WINE_ID_GOG_RU="${PKG_BIN_WINE_ID}-ru"
 PKG_BIN_WINE_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_WINE_ARCH='32'
 PKG_BIN_WINE_DEPS="$PKG_DATA_ID wine winetricks xrandr glx"
