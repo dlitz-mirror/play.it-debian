@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.3
+script_version=20210515.4
 
 # Set game-specific variables
 
@@ -94,6 +94,10 @@ APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Work around Unity3D poor support for non-US locales
 export LANG=C'
 
+# sed and unix2dos are required for the application of a workaround for the quest-breaking Anechoic Lazaret bugs
+
+SCRIPT_DEPS="${SCRIPT_DEPS} sed unix2dos"
+
 # Load common functions
 
 target_version='2.13'
@@ -134,6 +138,28 @@ icons_get_from_package 'APP_MAIN'
 # Delete temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Include a workaround for the quest-breaking Anechoic Lazaret bugs
+# cf. https://steamcommunity.com/app/272270/discussions/1/1473096694453357831/?ctp=15#c1708438376918556245
+
+file="${PKG_DATA_PATH}${PATH_GAME}/TidesOfNumenera_Data/StreamingAssets/data/conversations/a_sagus/a2623_damaged_peerless_drone.conversation"
+pattern='      <OnEnterScripts />'
+replacement='      <OnEnterScripts>\n'
+replacement="$replacement"'        <ScriptCall>\n'
+replacement="$replacement"'          <Data>\n'
+replacement="$replacement"'            <HasDifficultTaskAttribute>false</HasDifficultTaskAttribute>\n'
+replacement="$replacement"'            <FullName>Void SetGlobalValue(String, Int32)</FullName>\n'
+replacement="$replacement"'            <Parameters>\n'
+replacement="$replacement"'              <string>Quest_AnechoicLazaret_DefeatedDrones</string>\n'
+replacement="$replacement"'              <string>1</string>\n'
+replacement="$replacement"'            </Parameters>\n'
+replacement="$replacement"'          </Data>\n'
+replacement="$replacement"'        </ScriptCall>\n'
+replacement="$replacement"'      </OnEnterScripts>'
+expression="1010s#${pattern}#${replacement}#"
+
+sed --in-place --expression="$expression" "$file"
+unix2dos --quiet "$file"
 
 # Write launchers
 
