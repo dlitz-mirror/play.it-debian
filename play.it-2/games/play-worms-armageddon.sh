@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2021, Mopi
+# Copyright (c) 2020-2021, Hubert Ray
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210404.1
+script_version=20210404.4
 
 # Set game-specific variables
 
@@ -43,12 +44,18 @@ GAME_ID='worms-armageddon'
 GAME_NAME='Worms Armageddon'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_3='setup_worms_armageddon_gog-3.8.1_(43454).exe'
+ARCHIVE_GOG_3_URL='https://www.gog.com/game/worms_armageddon'
+ARCHIVE_GOG_3_MD5='f84e60ba11363219c582a4ff65301692'
+ARCHIVE_GOG_3_VERSION='3.8.1-gog43454'
+ARCHIVE_GOG_3_SIZE='650000'
+
 ARCHIVE_GOG_2='setup_worms_armageddon_gog-2_(40354).exe'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/worms_armageddon'
 ARCHIVE_GOG_2_MD5='db2087029ee8c069c9006ebeedc76bbf'
 ARCHIVE_GOG_2_VERSION='3.8-gog40354'
 ARCHIVE_GOG_2_SIZE='650000'
