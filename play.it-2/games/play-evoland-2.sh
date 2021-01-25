@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200206.2
+script_version=20201219.1
 
 # Set game-specific variables
 
@@ -43,7 +43,6 @@ GAME_ID='evoland-2'
 GAME_NAME='Evoland 2, A Slight Case of Spacetime Continuum Disorder'
 
 ARCHIVE_HUMBLE='Evoland2.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/evoland-2'
 ARCHIVE_HUMBLE_MD5='0e34269cb7db3a6c065311eea90e651a'
 ARCHIVE_HUMBLE_SIZE='790000'
 ARCHIVE_HUMBLE_VERSION='1.0.9137-humble170116'
