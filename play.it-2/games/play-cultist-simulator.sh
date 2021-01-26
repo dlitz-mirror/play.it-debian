@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200618.2
+script_version=20201129.1
 
 # Set game-specific variables
 
@@ -42,6 +42,11 @@ GAME_ID='cultist-simulator'
 GAME_NAME='Cultist Simulator'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_7
+ARCHIVE_GOG_6
+ARCHIVE_GOG_5
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0
@@ -69,8 +74,38 @@ ARCHIVE_GOG_MULTIARCH_1
 ARCHIVE_GOG_MULTIARCH_0
 '
 
+ARCHIVE_GOG_7='cultist_simulator_2020_10_e_2_42258.sh'
+ARCHIVE_GOG_7_URL='https://www.gog.com/game/cultist_simulator'
+ARCHIVE_GOG_7_MD5='a2a2de8222b9993fc0ae5ef0eaed2b66'
+ARCHIVE_GOG_7_SIZE='540000'
+ARCHIVE_GOG_7_VERSION='2020.10.e.2-gog42258'
+ARCHIVE_GOG_7_TYPE='mojosetup'
+
+ARCHIVE_GOG_6='cultist_simulator_2020_10_e_1_42177.sh'
+ARCHIVE_GOG_6_MD5='1a16264b6ce868c0f741b6614d84d684'
+ARCHIVE_GOG_6_SIZE='540000'
+ARCHIVE_GOG_6_VERSION='2020.10.e.1-gog42177'
+ARCHIVE_GOG_6_TYPE='mojosetup'
+
+ARCHIVE_GOG_5='cultist_simulator_2020_10_b_1_42011.sh'
+ARCHIVE_GOG_5_MD5='672409328bd154b4430826c09b58dd74'
+ARCHIVE_GOG_5_SIZE='530000'
+ARCHIVE_GOG_5_VERSION='2020.10.b.1-gog42011'
+ARCHIVE_GOG_5_TYPE='mojosetup'
+
+ARCHIVE_GOG_4='cultist_simulator_2020_9_p_1_bis_41797.sh'
+ARCHIVE_GOG_4_MD5='9683f0726cba2b116db4134aec863382'
+ARCHIVE_GOG_4_SIZE='520000'
+ARCHIVE_GOG_4_VERSION='2020.9.p.1-gog41797'
+ARCHIVE_GOG_4_TYPE='mojosetup'
+
+ARCHIVE_GOG_3='cultist_simulator_2020_9_n_5_41650.sh'
+ARCHIVE_GOG_3_MD5='251b5e2d58faaea7132b57ad97495057'
+ARCHIVE_GOG_3_SIZE='510000'
+ARCHIVE_GOG_3_VERSION='2020.9.n.5-gog41650'
+ARCHIVE_GOG_3_TYPE='mojosetup'
+
 ARCHIVE_GOG_2='cultist_simulator_2020_6_b_1_38747.sh'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/cultist_simulator'
 ARCHIVE_GOG_2_MD5='22980acaa3f825d0712621624277d4ed'
 ARCHIVE_GOG_2_SIZE='500000'
 ARCHIVE_GOG_2_VERSION='2020.6.b.1-gog38747'
@@ -261,29 +296,22 @@ APP_MAIN_EXE_BIN32='CS.x86'
 APP_MAIN_EXE_BIN64='CS.x86_64'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx"
-PKG_BIN32_DEPS_ARCH='lib32-gdk-pixbuf2 lib32-glib2'
-PKG_BIN32_DEPS_DEB='libgdk-pixbuf2.0-0, libglib2.0-0'
-PKG_BIN32_DEPS_GENTOO='x11-libs/gdk-pixbuf[abi_x86_32] dev-libs/glib[abi_x86_32]'
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ gtk2 glx libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_ARCH='gdk-pixbuf2 glib2'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_GENTOO='x11-libs/gdk-pixbuf dev-libs/glib'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
