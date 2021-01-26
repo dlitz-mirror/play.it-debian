@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20190624.2
+script_version=20200920.1
 
 # Set game-specific variables
 
@@ -46,7 +46,7 @@ GAME_NAME='Touhou Chireiden ~ Subterranean Animism - Demo'
 SCRIPT_DEPS='convmv iconv'
 
 ARCHIVE_ZUN='th11tr002a_setup.exe'
-ARCHIVE_ZUN_URL='http://www16.big.or.jp/~zun/html/th11top.html'
+ARCHIVE_ZUN_URL='https://www16.big.or.jp/~zun/html/th11top.html'
 ARCHIVE_ZUN_MD5='9b7c092a529fcc1f48590f0a2b3cca87'
 ARCHIVE_ZUN_VERSION='0.02a-zun1'
 ARCHIVE_ZUN_SIZE='135812'
@@ -116,6 +116,26 @@ if [ -z "$PLAYIT_LIB2" ]; then
 fi
 #shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
+
+# Check for broken version of innoextract
+
+if [ "$(innoextract --version | head -n1)" = 'innoextract 1.8' ]
+then
+	case "${LANG%_*}" in
+		('fr')
+			message='Votre version d’innoextract peut rencontrer des problèmes de compatibilité avec cette archive.\n'
+			message="$message"'Voir %s\n\n'
+			url='https://forge.dotslashplay.it/play.it/doc/-/wikis/tools/fr/innoextract#innoextract-18-sur-les-archives-japonaises'
+		;;
+		('en'|*)
+			message='This version of innoextract can break when processing this archive.\n'
+			message="$message"'Please see %s\n\n'
+			url='https://forge.dotslashplay.it/play.it/doc/-/wikis/tools/innoextract#innoextract-18-on-japanese-archives'
+		;;
+	esac
+	print_warning
+	printf "$message" "$url"
+fi
 
 # Extract game data
 

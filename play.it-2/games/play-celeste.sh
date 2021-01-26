@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201018.1
+script_version=20201027.1
 
 # Set game-specific variables
 
@@ -72,15 +72,11 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 glx sdl2_image libxrandr"
-PKG_BIN32_DEPS_DEB='libmono-2.0-1, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libfaudio0'
-PKG_BIN32_DEPS_ARCH='lib32-faudio'
-PKG_BIN32_DEPS_GENTOO='app-emulation/faudio[abi_x86_32]'
+PKG_BIN32_DEPS_DEB='libmono-2.0-1, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_ARCH='faudio'
-PKG_BIN64_DEPS_GENTOO='app-emulation/faudio'
 
 # Load common functions
 
