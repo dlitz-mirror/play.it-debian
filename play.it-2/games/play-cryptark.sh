@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
@@ -31,11 +31,11 @@ set -o errexit
 
 ###
 # Cryptark
-# build native Linux packages from the original installers
-# send your bug reports to dev+playit@indigo.re
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180810.1
+script_version=20200302.3
 
 # Set game-specific variables
 
@@ -50,23 +50,22 @@ ARCHIVE_GOG_VERSION='1.2-gog15203'
 ARCHIVE_GOG_TYPE='mojosetup'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='./*'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='./*.bin.x86 ./lib/libmojoshader.so ./lib/libogg.so.0 ./lib/libopenal.so.1 ./lib/libpng15.so.15 ./lib/libSDL2-2.0.so.0 ./lib/libSDL2_image-2.0.so.0 ./lib/libtheoradec.so.1 ./lib/libtheorafile.so ./lib/libvorbis.so.0'
+ARCHIVE_GAME_BIN32_FILES='lib/libmojoshader.so lib/libogg.so.0 lib/libopenal.so.1 lib/libpng15.so.15 lib/libSDL2-2.0.so.0 lib/libSDL2_image-2.0.so.0 lib/libtheoradec.so.1 lib/libtheorafile.so lib/libvorbis.so.0'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='./*.bin.x86_64 ./lib64/libmojoshader.so ./lib64/libogg.so.0 ./lib64/libopenal.so.1 ./lib64/libpng15.so.15 ./lib64/libSDL2-2.0.so.0 ./lib64/libSDL2_image-2.0.so.0 ./lib64/libtheoradec.so.1 ./lib64/libtheorafile.so ./lib64/libvorbis.so.0'
+ARCHIVE_GAME_BIN64_FILES='lib64/libmojoshader.so lib64/libogg.so.0 lib64/libopenal.so.1 lib64/libpng15.so.15 lib64/libSDL2-2.0.so.0 lib64/libSDL2_image-2.0.so.0 lib64/libtheoradec.so.1 lib64/libtheorafile.so lib64/libvorbis.so.0'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./Cryptark.exe ./*.dll ./Content ./Cryptark.png ./FNA.dll.config ./gamecontrollerdb.txt ./monoconfig ./monomachineconfig'
+ARCHIVE_GAME_DATA_FILES='Cryptark.exe *.dll Content Cryptark.png FNA.dll.config gamecontrollerdb.txt monoconfig monomachineconfig'
 
-APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='./Cryptark.bin.x86'
-APP_MAIN_EXE_BIN64='./Cryptark.bin.x86_64'
-APP_MAIN_ICON='data/noarch/support/icon.png'
-# workaround for mono bug https://github.com/mono/mono/issues/6752
-APP_MAIN_PRERUN='export TERM="xterm"'
+APP_MAIN_TYPE='mono'
+APP_MAIN_LIBS_BIN32='lib'
+APP_MAIN_LIBS_BIN64='lib64'
+APP_MAIN_EXE='Cryptark.exe'
+APP_MAIN_ICON='Cryptark.png'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
 
@@ -74,55 +73,54 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ openal sdl2 sdl2_image vorbis theora"
+PKG_BIN32_DEPS="$PKG_DATA_ID mono openal sdl2 sdl2_image vorbis theora"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-        [ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-        for path in\
-                './'\
-                "$XDG_DATA_HOME/play.it/"\
-                "$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-                '/usr/local/share/games/play.it/'\
-                '/usr/local/share/play.it/'\
-                '/usr/share/games/play.it/'\
-                '/usr/share/play.it/'
-        do
-                if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
-                        PLAYIT_LIB2="$path/libplayit2.sh"
-                        break
-                fi
-        done
-        if [ -z "$PLAYIT_LIB2" ]; then
-                printf '\n\033[1;31mError:\033[0m\n'
-                printf 'libplayit2.sh not found.\n'
-                exit 1
-        fi
+	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+	for path in\
+		"$PWD"\
+		"$XDG_DATA_HOME/play.it"\
+		'/usr/local/share/games/play.it'\
+		'/usr/local/share/play.it'\
+		'/usr/share/games/play.it'\
+		'/usr/share/play.it'
+	do
+		if [ -e "$path/libplayit2.sh" ]; then
+			PLAYIT_LIB2="$path/libplayit2.sh"
+			break
+		fi
+	done
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
+fi
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
+rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icon
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+icons_get_from_package 'APP_MAIN'
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
@@ -132,7 +130,7 @@ build_pkg
 
 # Clean up
 
-rm --recursive "${PLAYIT_WORKDIR}"
+rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
