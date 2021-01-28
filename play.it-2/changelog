@@ -3,6 +3,7 @@
   * Errors handling:
     * Fix error message displayed when passing an invalid value to a supported
       option
+    * Improve handling of error cases related to empty variables
 
 2.12.1
 
