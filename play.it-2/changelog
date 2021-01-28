@@ -1,5 +1,8 @@
 2.12.2
 
+  * Archives-related improvements:
+    * Improve compatibility check for InnoSetup archives
+
   * Icons-related fixes:
     * Avoid a potential infinite loop in the icons resolution guessing
       function
