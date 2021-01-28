@@ -1,5 +1,9 @@
 2.12.2
 
+  * Icons-related fixes:
+    * Avoid a potential infinite loop in the icons resolution guessing
+      function
+
   * Errors handling:
     * Fix error message displayed when passing an invalid value to a supported
       option
