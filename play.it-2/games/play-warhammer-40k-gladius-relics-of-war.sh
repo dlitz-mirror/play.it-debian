@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210226.1
+script_version=20210226.2
 
 # Set game-specific variables
 
@@ -248,7 +248,7 @@ ARCHIVE_GOG_0_SIZE='1900000'
 ARCHIVE_GOG_0_VERSION='1.2.0-gog26649'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Binaries/Linux-x86_64/Gladius.bin Binaries/Linux-x86_64/libjpeg.so.8 Binaries/Linux-x86_64/libsteam_api.so Binaries/Linux-x86_64/libboost* Binaries/Linux-x86_64/libicu*'
+ARCHIVE_GAME_BIN_FILES='Binaries/Linux-x86_64/Gladius.bin Binaries/Linux-x86_64/libjpeg.so.8 Binaries/Linux-x86_64/libsteam_api.so Binaries/Linux-x86_64/libboost* Binaries/Linux-x86_64/libicu* Binaries/Linux-x86_64/libEOSSDK-Linux-Shipping.so'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_FILES_GOG_0='Binaries/Gladius.bin Binaries/libjpeg.so.8 Binaries/libsteam_api.so Binaries/libboost* Binaries/libicu*'
 
