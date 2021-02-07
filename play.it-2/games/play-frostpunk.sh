@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210405.1
+script_version=20210405.2
 
 # Set game-specific variables
 
@@ -172,6 +172,9 @@ ARCHIVE_DOC_DATA_FILES='*.txt'
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='*.exe *.dll *.ini'
 
+ARCHIVE_GAME_TEXTURES_PATH='.'
+ARCHIVE_GAME_TEXTURES_FILES='textures-s3.dat textures-s3.idx'
+
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.dat *.idx *.str'
 
@@ -181,10 +184,14 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='frostpunk.exe'
 APP_MAIN_ICON='frostpunk.exe'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_TEXTURES PKG_DATA'
+
+PKG_TEXTURES_ID="${GAME_ID}-textures"
+PKG_TEXTURES_DESCRIPTION='textures'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+PKG_DATA_DEPS="$PKG_TEXTURES_ID"
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID wine"
