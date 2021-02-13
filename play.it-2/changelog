@@ -6,6 +6,8 @@
   * Icons-related fixes:
     * Avoid a potential infinite loop in the icons resolution guessing
       function
+    * Fix compatibility with GraphicksMagic compatibility wrapper for
+      ImageMagick
 
   * Errors handling:
     * Fix error message displayed when passing an invalid value to a supported
