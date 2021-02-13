@@ -30,6 +30,7 @@
     * Arch Linux: Fix packages building failure when using --output-dir with a
       relative path
     * Arch Linux: Generate a .MTREE metadata file
+    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
     * Debian: Improve APT version detection
 
   * Dependencies-related improvements:
