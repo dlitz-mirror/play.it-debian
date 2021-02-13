@@ -9,6 +9,9 @@
     * Fix compatibility with GraphicksMagic compatibility wrapper for
       ImageMagick
 
+  * Package-related improvements:
+    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
+
   * Errors handling:
     * Fix error message displayed when passing an invalid value to a supported
       option
@@ -30,7 +33,6 @@
     * Arch Linux: Fix packages building failure when using --output-dir with a
       relative path
     * Arch Linux: Generate a .MTREE metadata file
-    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
     * Debian: Improve APT version detection
 
   * Dependencies-related improvements:
