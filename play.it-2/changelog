@@ -12,6 +12,9 @@
       option
     * Improve handling of error cases related to empty variables
 
+  * Codebase improvements:
+    * Use grep --quiet instead of output redirection
+
 2.12.1
 
   * Wrapper fixes:
