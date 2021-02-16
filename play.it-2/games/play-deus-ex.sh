@@ -35,12 +35,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210216.1
+script_version=20210216.2
 
 # Set game-specific variables
 
 GAME_ID='deus-ex'
 GAME_NAME='Deus Ex'
+
+# sed and unix2dos are required for the edition of a configuration file
+SCRIPT_DEPS='sed unix2dos'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_4
@@ -199,6 +202,15 @@ icons_move_to 'PKG_DATA'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Set OpenGL as default rendering engine
+
+config_file="${PKG_BIN_PATH}${PATH_GAME}/system/deusex.ini"
+pattern='^GameRenderDevice=.*$'
+replacement='GameRenderDevice=OpenGLDrv.OpenGLRenderDevice'
+expression="s/${pattern}/${replacement}/"
+sed --in-place --expression="$expression" "$config_file"
+unix2dos --quiet "$config_file"
 
 # Write launchers
 
