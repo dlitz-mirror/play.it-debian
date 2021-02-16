@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210216.2
+script_version=20210216.4
 
 # Set game-specific variables
 
@@ -209,8 +209,42 @@ config_file="${PKG_BIN_PATH}${PATH_GAME}/system/deusex.ini"
 pattern='^GameRenderDevice=.*$'
 replacement='GameRenderDevice=OpenGLDrv.OpenGLRenderDevice'
 expression="s/${pattern}/${replacement}/"
+pattern='^FirstRun=.*$'
+replacement='FirstRun=1100'
+expression="${expression};s/${pattern}/${replacement}/"
 sed --in-place --expression="$expression" "$config_file"
 unix2dos --quiet "$config_file"
+
+# Work around a random crash on launch
+# cf. https://www.gamingonlinux.com/2020/02/the-sad-case-of-unreal-engine-1-on-mesa-and-linux-in-2020/page=2#r174041
+
+PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks"
+APP_WINETRICKS="${APP_WINETRICKS} csmt=off"
+launcher_write_script_wine_run() {
+	# parse arguments
+	local application
+	local file
+	application="$1"
+	file="$2"
+
+	cat >> "$file" <<- 'EOF'
+	# Run the game
+
+	cd "$PATH_PREFIX"
+
+	EOF
+
+	launcher_write_script_prerun "$application" "$file"
+
+	cat >> "$file" <<- 'EOF'
+	taskset --cpu-list 0 wine "$APP_EXE" $APP_OPTIONS $@
+
+	EOF
+
+	launcher_write_script_postrun "$application" "$file"
+
+	return 0
+}
 
 # Write launchers
 
