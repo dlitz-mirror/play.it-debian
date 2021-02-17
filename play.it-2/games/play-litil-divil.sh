@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210217.1
+script_version=20210217.3
 
 # Set game-specific variables
 
@@ -52,17 +52,14 @@ ARCHIVE_GOG_0_SIZE='44000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.21'
 ARCHIVE_GOG_0_URL='https://www.gog.com/game/litil_divil'
 
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*.txt *.pdf'
+ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
+ARCHIVE_DOC0_MAIN_FILES='*.txt *.pdf'
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/data'
-ARCHIVE_DOC1_DATA_FILES='config.doc'
+ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
+ARCHIVE_DOC1_MAIN_FILES='config.doc'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/data'
-ARCHIVE_GAME_BIN_FILES='config.exe data/divil.exe divils.cfg'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/data'
-ARCHIVE_GAME_DATA_FILES='gfx data/*.map data/gfx data/level*'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
+ARCHIVE_GAME_MAIN_FILES='*.cfg *.exe data gfx'
 
 CONFIG_FILES='./divils.cfg'
 
@@ -82,13 +79,13 @@ APP_CONFIG_TYPE='dosbox'
 APP_CONFIG_EXE='config.exe'
 APP_CONFIG_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_MAIN_DEPS='dosbox'
 
-PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="${PKG_DATA_ID} dosbox"
+# Ensure smooth updates from pre-20210217.2 scripts
+
+PKG_MAIN_PROVIDE='litil-divil-data'
 
 # Load common functions
 
@@ -125,7 +122,6 @@ prepare_package_layout
 
 # Get game icon
 
-PKG='PKG_DATA'
 icons_get_from_workdir 'APP_MAIN' 'APP_CONFIG'
 
 # Clean up temporary files
@@ -134,7 +130,6 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN'
 launchers_write 'APP_MAIN' 'APP_CONFIG'
 
 # Build package
