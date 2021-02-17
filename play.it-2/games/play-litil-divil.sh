@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210217.3
+script_version=20210226.1
 
 # Set game-specific variables
 
@@ -67,8 +67,7 @@ GAME_IMAGE='data'
 GAME_IMAGE_TYPE='cdrom'
 
 APP_MAIN_TYPE='dosbox'
-APP_MAIN_PRERUN='d:'
-APP_MAIN_EXE='divil.exe'
+APP_MAIN_EXE='data/divil.exe'
 APP_MAIN_OPTIONS='c:'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
@@ -130,7 +129,34 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-launchers_write 'APP_MAIN' 'APP_CONFIG'
+launchers_write 'APP_CONFIG'
+
+# Run the game binary from the CD-ROM directory
+
+###
+# TODO
+# This function override could be avoided by fixing the special behaviour of APP_xxx_PRERUN with DOSBox games
+###
+launcher_write_script_dosbox_run() {
+	local application file
+	application="$1"
+	file="$2"
+	cat >> "$file" <<- EOF
+	# Run the game
+
+	cd "\$PATH_PREFIX"
+	APP_EXE=\$(basename "\$APP_EXE")
+	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "mount c .
+	c:
+	mount d $GAME_IMAGE -t cdrom
+	d:
+	\$APP_EXE \$APP_OPTIONS \$@
+	exit"
+	EOF
+	return 0
+}
+
+launchers_write 'APP_MAIN'
 
 # Build package
 
