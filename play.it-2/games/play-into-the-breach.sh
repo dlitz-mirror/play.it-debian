@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200616.3
+script_version=20210111.1
 
 # Set game-specific variables
 
@@ -44,6 +44,7 @@ GAME_NAME='Into the Breach'
 ARCHIVES_LIST='
 ARCHIVE_HUMBLE_1
 ARCHIVE_HUMBLE_0
+ARCHIVE_GOG_1
 '
 
 ARCHIVE_HUMBLE_1='Into_the_Breach_Linux.1.2.23.zip'
@@ -57,20 +58,30 @@ ARCHIVE_HUMBLE_0_MD5='5a8b33e1ccbc2953c99aacf0ad38ca37'
 ARCHIVE_HUMBLE_0_SIZE='320000'
 ARCHIVE_HUMBLE_0_VERSION='1.2.20-humble200420'
 
+ARCHIVE_GOG_1='into_the_breach_1_2_24_38624.sh'
+ARCHIVE_GOG_1_MD5='dbc8142ec1da82284b7959a48b50d512'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/into_the_breach'
+ARCHIVE_GOG_1_SIZE='320000'
+ARCHIVE_GOG_1_VERSION='1.2.24-gog38624'
+ARCHIVE_GOG_1_TYPE='mojosetup'
+
 ARCHIVE_DOC_DATA_PATH='Into the Breach'
 ARCHIVE_DOC_DATA_FILES='licenses'
 # Keep compatibility with old archives
 ARCHIVE_DOC_DATA_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/game'
 
 ARCHIVE_GAME_BIN_PATH='Into the Breach'
 ARCHIVE_GAME_BIN_FILES='Breach linux_x64/libfmod.so.10 linux_x64/libfmodstudio.so.10'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 
 ARCHIVE_GAME_DATA_PATH='Into the Breach'
 ARCHIVE_GAME_DATA_FILES='data maps resources scripts shadersOGL'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 
 # Optional icons pack, downloadable from ./play.it server
 
