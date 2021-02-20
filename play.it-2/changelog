@@ -16,6 +16,8 @@
     * Fix error message displayed when passing an invalid value to a supported
       option
     * Improve handling of error cases related to empty variables
+    * Fix error message shown when there was not enough disk space in tested
+      temporary directory candidates
 
   * Codebase improvements:
     * Use grep --quiet instead of output redirection
