@@ -15,7 +15,6 @@ get_tmp_dir() {
 # NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
 # CALLS: set_temp_directories_pkg testvar get_tmp_dir
 set_temp_directories() {
-	local base_directory
 	local free_space
 	local needed_space
 	local tmpdir
@@ -24,8 +23,10 @@ set_temp_directories() {
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
 	# Look for a directory with enough free space to work in
-	tmpdir="$(get_tmp_dir)"
+	# shellcheck disable=SC2039
+	local base_directory
 	unset base_directory
+	tmpdir="$(get_tmp_dir)"
 	if [ "$NO_FREE_SPACE_CHECK" -eq 1 ]; then
 		base_directory="$tmpdir/play.it"
 		mkdir --parents "$base_directory"
@@ -62,6 +63,18 @@ set_temp_directories() {
 				"$XDG_CACHE_HOME" \
 				"$PWD"
 		fi
+	fi
+
+	# Check that the candidate temporary directory is on a case-sensitive filesystem
+	if ! check_directory_is_case_sensitive "$base_directory"; then
+		error_case_insensitive_filesystem_is_not_supported "$base_directory"
+		return 1
+	fi
+
+	# Check that the candidate temporary directory is on a filesystem with support for UNIX permissions
+	if ! check_directory_supports_unix_permissions "$base_directory"; then
+		error_unix_permissions_support_is_required "$base_directory"
+		return 1
 	fi
 
 	# Generate a directory with a unique name for the current instance
