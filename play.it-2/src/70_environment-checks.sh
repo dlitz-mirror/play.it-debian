@@ -71,7 +71,9 @@ check_directory_supports_unix_permissions() {
 	# shellcheck disable=SC2039
 	local file_permissions
 	for file_permissions in '600' '700'; do
-		chmod "$file_permissions" "$tested_temp_file"
+		set +o errexit
+		chmod "$file_permissions" "$tested_temp_file" 2>/dev/null
+		set -o errexit
 		if [ "$(stat --printf='%a' "$tested_temp_file")" != "$file_permissions" ]; then
 			return 1
 		fi
