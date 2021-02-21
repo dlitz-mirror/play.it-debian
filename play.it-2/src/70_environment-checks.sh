@@ -44,3 +44,39 @@ check_directory_is_case_sensitive() {
 	esac
 }
 
+# check that the target directory is on a filesystem supporting UNIX permissions
+# USAGE: check_directory_supports_unix_permissions $tested_directory
+# RETURNS: 0 if has support for UNIX permissions, 1 if has no support for UNIX permissions
+check_directory_supports_unix_permissions() {
+	# the first argument should be a writable directory
+	# shellcheck disable=SC2039
+	local tested_directory
+	tested_directory="$1"
+	if [ ! -d "$tested_directory" ]; then
+		error_not_a_directory "$tested_directory"
+		return 1
+	fi
+	if [ ! -w "$tested_directory" ]; then
+		error_not_writable "$tested_directory"
+		return 1
+	fi
+
+	# change permissions on a file, and check it has an actual effect
+	# tests are done in an inner temporary directory to avoid messing up with existing files
+	# shellcheck disable=SC2039
+	local inner_temp_directory tested_temp_file
+	inner_temp_directory=$(mktemp --directory --tmpdir="$tested_directory")
+	tested_temp_file="${inner_temp_directory}/a"
+	touch "$tested_temp_file"
+	# shellcheck disable=SC2039
+	local file_permissions
+	for file_permissions in '600' '700'; do
+		chmod "$file_permissions" "$tested_temp_file"
+		if [ "$(stat --printf='%a' "$tested_temp_file")" != "$file_permissions" ]; then
+			return 1
+		fi
+	done
+	rm --recursive "$inner_temp_directory"
+	return 0
+}
+
