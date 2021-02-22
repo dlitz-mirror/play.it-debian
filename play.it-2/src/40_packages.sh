@@ -239,3 +239,32 @@ package_get_id() {
 	return 0
 }
 
+# get architecture of given package
+# USAGE: package_get_architecture $package
+# RETURNS: package architecture, as a non-empty string
+package_get_architecture() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_architecture' '$package'
+		return 1
+	fi
+
+	# get package architecture from its name
+	# shellcheck disable=SC2039
+	local package_architecture
+	use_archive_specific_value "${package}_ARCH"
+	package_architecture=$(get_value "${package}_ARCH")
+
+	# if no package-specific architecture is set, fall back to "all"
+	if [ -z "$package_architecture" ]; then
+		package_architecture='all'
+	fi
+
+	printf '%s' "$package_architecture"
+	return 0
+}
+
