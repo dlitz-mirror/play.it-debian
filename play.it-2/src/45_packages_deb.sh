@@ -34,28 +34,25 @@ pkg_write_deb() {
 	# Get package size
 	pkg_size=$(du --total --block-size=1K --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
 
-	# Get package version
-	get_package_version
-
 	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
 	cat > "$control_file" <<- EOF
-	Package: $pkg_id
-	Version: $PKG_VERSION
-	Architecture: $pkg_architecture
+	Package: $(package_get_id "$pkg")
+	Version: $(packages_get_version "$ARCHIVE")
+	Architecture: $(package_get_architecture_string "$pkg")
 	Multi-Arch: foreign
-	Maintainer: $pkg_maint
+	Maintainer: $(packages_get_maintainer)
 	Installed-Size: $pkg_size
 	Section: non-free/games
 	EOF
-	if [ -n "$pkg_provide" ]; then
+	if [ -n "$(package_get_provide "$pkg")" ]; then
 		cat >> "$control_file" <<- EOF
-		Conflicts: $pkg_provide
-		Provides: $pkg_provide
-		Replaces: $pkg_provide
+		Conflicts: $(package_get_provide "$pkg")
+		Provides: $(package_get_provide "$pkg")
+		Replaces: $(package_get_provide "$pkg")
 		EOF
 	fi
 	if [ -n "$pkg_deps" ]; then
@@ -63,19 +60,9 @@ pkg_write_deb() {
 		Depends: $pkg_deps
 		EOF
 	fi
-	if [ -n "$pkg_description" ]; then
-		# shellcheck disable=SC2154
-		cat >> "$control_file" <<- EOF
-		Description: $GAME_NAME - $pkg_description
-		 ./play.it script version $script_version
-		EOF
-	else
-		# shellcheck disable=SC2154
-		cat >> "$control_file" <<- EOF
-		Description: $GAME_NAME
-		 ./play.it script version $script_version
-		EOF
-	fi
+	cat >> "$control_file" <<- EOF
+	$(package_get_description "$pkg")
+	EOF
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
@@ -112,7 +99,6 @@ pkg_write_deb() {
 # USAGE: pkg_set_deps_deb $dep[…]
 # CALLED BY: pkg_write_deb
 pkg_set_deps_deb() {
-	local architecture
 	for dep in "$@"; do
 		case $dep in
 			('alsa')
@@ -230,9 +216,7 @@ pkg_set_deps_deb() {
 				pkg_dep='libvorbisfile3'
 			;;
 			('wine')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_deb 'wine32' ;;
 					('64') pkg_set_deps_deb 'wine64' ;;
 				esac
@@ -244,9 +228,7 @@ pkg_set_deps_deb() {
 				pkg_dep='wine64 | wine64-development | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
 			;;
 			('wine-staging')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_deb 'wine32-staging' ;;
 					('64') pkg_set_deps_deb 'wine64-staging' ;;
 				esac

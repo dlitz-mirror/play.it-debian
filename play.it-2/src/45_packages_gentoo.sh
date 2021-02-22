@@ -1,32 +1,8 @@
-# Get packages that provides the given package
-# USAGE: gentoo_get_pkg_providers $provided_package
-# NEEDED VARS: pkg
-# CALLED BY: pkg_write_gentoo pkg_set_deps_gentoo
-gentoo_get_pkg_providers() {
-	local provided="$1"
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	for package in $packages_list; do
-		if [ "$package" != "$pkg" ]; then
-			use_archive_specific_value "${package}_ID"
-			if [ "$(get_value "${package}_PROVIDE")" = "$provided" ]; then
-				printf '%s\n' "$(get_value "${package}_ID")"
-			fi
-		fi
-	done
-}
-
 # write .ebuild package meta-data
 # USAGE: pkg_write_gentoo
 # NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
-# CALLS: gentoo_get_pkg_providers
 # CALLED BY: write_metadata
 pkg_write_gentoo() {
-	pkg_id="$(printf '%s' "$pkg_id" | sed 's/-/_/g')" # This makes sure numbers in the package name doesn't get interpreted as a version by portage
-
 	local pkg_deps
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
@@ -39,23 +15,19 @@ pkg_write_gentoo() {
 		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_GENTOO")"
 	fi
 
-	if [ -n "$pkg_provide" ]; then
-		for package_provide in $pkg_provide; do
-			pkg_deps="$pkg_deps $(gentoo_get_pkg_providers "$package_provide" | sed -e 's/-/_/g' -e 's|^|!!games-playit/|')"
-		done
+	if [ -n "$(package_get_provide "$pkg")" ]; then
+		pkg_deps="${pkg_deps} $(package_get_provide "$pkg")"
 	fi
-
-	get_package_version
 
 	mkdir --parents \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata" \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles" \
-		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$pkg_id/files"
+		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files"
 	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
 	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
-	ln --symbolic --force --no-target-directory "$pkg_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$pkg_id/files/install"
+	ln --symbolic --force --no-target-directory "$pkg_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files/install"
 	local target
-	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$pkg_id/$pkg_id-$PKG_VERSION.ebuild"
+	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 
 	cat > "$target" <<- EOF
 	EAPI=7
@@ -65,19 +37,7 @@ pkg_write_gentoo() {
 	set_supported_architectures "$pkg"
 	cat >> "$target" <<- EOF
 	KEYWORDS="$pkg_architectures"
-	EOF
-
-	if [ -n "$pkg_description" ]; then
-		cat >> "$target" <<- EOF
-		DESCRIPTION="$GAME_NAME - $pkg_description - ./play.it script version $script_version"
-		EOF
-	else
-		cat >> "$target" <<- EOF
-		DESCRIPTION="$GAME_NAME - ./play.it script version $script_version"
-		EOF
-	fi
-
-	cat >> "$target" <<- EOF
+	DESCRIPTION="$(package_get_description "$pkg")"
 	SLOT="0"
 	EOF
 
@@ -119,15 +79,11 @@ pkg_write_gentoo() {
 
 # set list or Gentoo Linux dependencies from generic names
 # USAGE: pkg_set_deps_gentoo $dep[…]
-# CALLS: gentoo_get_pkg_providers
 # CALLED BY: pkg_write_gentoo
 pkg_set_deps_gentoo() {
-	use_archive_specific_value "${pkg}_ARCH"
-	local architecture
-	architecture="$(get_value "${pkg}_ARCH")"
 	local architecture_suffix
 	local architecture_suffix_use
-	case $architecture in
+	case "$(package_get_architecture "$pkg")" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
 			architecture_suffix_use=',abi_x86_32'
@@ -162,7 +118,7 @@ pkg_set_deps_gentoo() {
 			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
-				if [ "$architecture" = '32' ]; then
+				if [ "$(package_get_architecture "$pkg")" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
 			;;
@@ -259,9 +215,7 @@ pkg_set_deps_gentoo() {
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_gentoo 'wine32' ;;
 					('64') pkg_set_deps_gentoo 'wine64' ;;
 				esac
@@ -273,9 +227,7 @@ pkg_set_deps_gentoo() {
 				pkg_dep='virtual/wine[abi_x86_64]'
 			;;
 			('wine-staging')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_gentoo 'wine32-staging' ;;
 					('64') pkg_set_deps_gentoo 'wine64-staging' ;;
 				esac
@@ -310,12 +262,16 @@ pkg_set_deps_gentoo() {
 				pkg_dep="sys-libs/zlib:0/1$architecture_suffix"
 			;;
 			(*)
-				pkg_dep="$(gentoo_get_pkg_providers "$dep" | sed -e 's/-/_/g' -e 's|^|games-playit/|')"
-				if [ -z "$pkg_dep" ]; then
-					pkg_dep='games-playit/'"$(printf '%s' "$dep" | sed 's/-/_/g')"
-				else
-					pkg_dep="|| ( $pkg_dep )"
-				fi
+				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
+				# shellcheck disable=SC2039
+				local package
+				for package in $PACKAGES_LIST; do
+					if [ "$package" != "$pkg" ]; then
+						if [ "$(package_get_provide "$package")" = $(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g') ]; then
+							pkg_dep="|| ( ${pkg_dep} )"
+						fi
+					fi
+				done
 			;;
 		esac
 		pkg_deps="$pkg_deps $pkg_dep"
@@ -333,19 +289,16 @@ pkg_set_deps_gentoo() {
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
-	pkg_id="$(get_value "${pkg}_ID" | sed 's/-/_/g')" # This makes sure numbers in the package name doesn't get interpreted as a version by portage
-
-	local pkg_filename_base="$pkg_id-$PKG_VERSION.tbz2"
+	local pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2"
 
 	# Get packages list for the current game
 	local packages_list
 	packages_list=$(packages_get_list)
 
 	for package in $packages_list; do
-		if [ "$package" != "$pkg" ] && [ "$(get_value "${package}_ID" | sed 's/-/_/g')" = "$pkg_id" ]; then
-			set_architecture "$pkg"
-			[ -d "$PWD/$pkg_architecture" ] || mkdir "$PWD/$pkg_architecture"
-			pkg_filename_base="$pkg_architecture/$pkg_filename_base"
+		if [ "$package" != "$pkg" ] && [ "$(package_get_id "$package")" = "$(package_get_id "$pkg")" ]; then
+			pkg_filename_base="$(package_get_architecture_string "$pkg")/$pkg_filename_base"
+			mkdir --parents "$(dirname "$pkg_filename_base")"
 		fi
 	done
 	local pkg_filename
@@ -367,10 +320,10 @@ pkg_build_gentoo() {
 	fi
 
 	mkdir --parents "$PLAYIT_WORKDIR/portage-tmpdir"
-	local ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$pkg_id/$pkg_id-$PKG_VERSION.ebuild"
+	local ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 	ebuild "$ebuild_path" manifest 1>/dev/null
 	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot-ng -- ebuild "$ebuild_path" package 1>/dev/null
-	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/$pkg_id-$PKG_VERSION.tbz2" "$pkg_filename"
+	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2" "$pkg_filename"
 	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 
 	eval ${pkg}_PKG=\"$pkg_filename\"

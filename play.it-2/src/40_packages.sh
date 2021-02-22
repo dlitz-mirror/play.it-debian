@@ -1,19 +1,14 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
 # NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
-# CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
+# CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
 		# shellcheck disable=SC2046
 		write_metadata $(packages_get_list)
 		return 0
 	fi
-	local pkg_architecture
-	local pkg_description
-	local pkg_id
-	local pkg_maint
 	local pkg_path
-	local pkg_provide
 
 	# Get packages list for the current game
 	local packages_list
@@ -29,18 +24,11 @@ write_metadata() {
 		fi
 
 		# Set package-specific variables
-		set_architecture "$pkg"
-		pkg_id="$(get_value "${pkg}_ID")"
-		pkg_maint="$(whoami)@$(hostname 2>/dev/null || cat /etc/hostname)"
 		pkg_path="$(get_value "${pkg}_PATH")"
 		if [ -z "$pkg_path" ]; then
 			error_invalid_argument 'pkg' 'write_metadata'
 		fi
 		[ "$DRY_RUN" -eq 1 ] && continue
-		pkg_provide="$(get_value "${pkg}_PROVIDE")"
-
-		use_archive_specific_value "${pkg}_DESCRIPTION"
-		pkg_description="$(get_value "${pkg}_DESCRIPTION")"
 
 		case $OPTION_PACKAGE in
 			('arch')

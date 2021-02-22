@@ -31,7 +31,9 @@ set_architecture() {
 set_supported_architectures() {
 	case $OPTION_PACKAGE in
 		('arch'|'deb')
-			set_architecture "$1"
+			# Get package architecture
+			pkg_architecture=$(package_get_architecture_string "$1")
+			export pkg_architecture
 		;;
 		('gentoo')
 			use_archive_specific_value "${1}_ARCH"
