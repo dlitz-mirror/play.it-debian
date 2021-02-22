@@ -392,3 +392,41 @@ package_get_description() {
 	return 0
 }
 
+# get "provide" field of given package
+# USAGE: package_get_provide $package
+# RETURNS: provided package ID as a non-empty string, or an empty string is none is provided
+package_get_provide() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_provide' '$package'
+		return 1
+	fi
+
+	# get provided package ID from its name
+	# shellcheck disable=SC2039
+	local package_provide
+	use_archive_specific_value "${package}_PROVIDE"
+	package_provide=$(get_value "${package}_PROVIDE")
+
+	# if no package is provided, return early
+	if [ -z "$package_provide" ]; then
+		return 0
+	fi
+
+	# on Gentoo, avoid mixups between numbers in package ID and version number
+	# and add the required "!!games-playit/" prefix to the package ID
+	case "$OPTION_PACKAGE" in
+		('gentoo')
+			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
+			package_provide="!!games-playit/${package_provide}"
+		;;
+	esac
+
+	printf '%s' "$package_provide"
+	return 0
+}
+
