@@ -192,3 +192,50 @@ packages_get_list() {
 	return 0
 }
 
+# get ID of given package
+# USAGE: package_get_id $package
+# RETURNS: package ID, as a non-empty string
+package_get_id() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_id' '$package'
+		return 1
+	fi
+
+	# get package ID from its name
+	# shellcheck disable=SC2039
+	local package_id
+	use_archive_specific_value "${package}_ID"
+	package_id=$(get_value "${package}_ID")
+
+	# if no package-specific ID is set, fall back to game ID
+	if [ -z "$package_id" ]; then
+		package_id="$GAME_ID"
+	fi
+
+	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
+	case "$OPTION_PACKAGE" in
+		('arch')
+			case "$(package_get_architecture)" in
+				('32')
+					package_id="lib32-${package_id}"
+				;;
+			esac
+		;;
+	esac
+
+	# on Gentoo, avoid mixups between numbers in package ID and version number
+	case "$OPTION_PACKAGE" in
+		('gentoo')
+			package_id=$(printf '%s' "$package_id" | sed 's/-/_/g')
+		;;
+	esac
+
+	printf '%s' "$package_id"
+	return 0
+}
+
