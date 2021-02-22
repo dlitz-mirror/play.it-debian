@@ -268,3 +268,71 @@ package_get_architecture() {
 	return 0
 }
 
+# get architecture string for given package
+# USAGE: package_get_architecture_string $package
+# RETURNS: package architecture, as a non-empty string, ready to include in package meta-data
+package_get_architecture_string() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_architecture_string' '$package'
+		return 1
+	fi
+
+	# get package architecture
+	# shellcheck disable=SC2039
+	local package_architecture
+	package_architecture=$(package_get_architecture "$package")
+
+	# set package architecture string, based on its architecture and target package format
+	# shellcheck disable=SC2039
+	local package_architecture_string
+	case "$OPTION_PACKAGE" in
+		('arch')
+			case "$package_architecture" in
+				('32'|'64')
+					package_architecture_string='x86_64'
+				;;
+				(*)
+					package_architecture_string='any'
+				;;
+			esac
+		;;
+		('deb')
+			case "$package_architecture" in
+				('32')
+					package_architecture_string='i386'
+				;;
+				('64')
+					package_architecture_string='amd64'
+				;;
+				(*)
+					package_architecture_string='all'
+				;;
+			esac
+		;;
+		('gentoo')
+			case "$package_architecture" in
+				('32')
+					package_architecture_string='x86'
+				;;
+				('64')
+					package_architecture_string='amd64'
+				;;
+				(*)
+					package_architecture_string='data' # We could put anything here, it shouldn't be used for package metadata
+				;;
+			esac
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_get_architecture_string'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
+	return 0
+}
+
