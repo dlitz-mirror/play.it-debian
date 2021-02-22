@@ -34,7 +34,17 @@ pkg_write_gentoo() {
 	RESTRICT="fetch strip binchecks"
 	EOF
 	local pkg_architectures
-	set_supported_architectures "$pkg"
+	case "$(package_get_architecture "$pkg")" in
+		('32')
+			pkg_architectures='-* x86 amd64'
+		;;
+		('64')
+			pkg_architectures='-* amd64'
+		;;
+		(*)
+			pkg_architectures='x86 amd64' #data packages
+		;;
+	esac
 	cat >> "$target" <<- EOF
 	KEYWORDS="$pkg_architectures"
 	DESCRIPTION="$(package_get_description "$pkg")"
