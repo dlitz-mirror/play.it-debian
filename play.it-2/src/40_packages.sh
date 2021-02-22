@@ -486,3 +486,49 @@ packages_get_maintainer() {
 	return 0
 }
 
+# get the packages version string for a given archive
+# USAGE: packages_get_version $archive
+# RETURNS: packages version, as a non-empty string
+packages_get_version() {
+	# single argument should be the archive name
+	# shellcheck disable=SC2039
+	local archive
+	archive="$1"
+	if [ -z "$archive" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'packages_get_version' '$archive'
+		return 1
+	fi
+
+	###
+	# TODO
+	# Check that $script_version is a non-empty string
+	# Display an explicit error message if it is unset or empty
+	###
+
+	# get the version string for the current archive
+	# falls back on "1.0-1"
+	# shellcheck disable=SC2039
+	local packages_version
+	packages_version=$(get_value "${archive}_VERSION")
+	if [ -z "$packages_version" ]; then
+		packages_version='1.0-1'
+	fi
+	packages_version="${packages_version}+${script_version}"
+
+	# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
+	case "$OPTION_PACKAGE" in
+		('gentoo')
+			set +o errexit
+			packages_version=$(printf '%s' "$packages_version" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?')
+			set -o errexit
+			if [ -z "$packages_version" ]; then
+				packages_version='1.0'
+			fi
+		;;
+	esac
+
+	printf '%s' "$packages_version"
+	return 0
+}
+
