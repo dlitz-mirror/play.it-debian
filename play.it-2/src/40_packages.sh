@@ -430,3 +430,59 @@ package_get_provide() {
 	return 0
 }
 
+# get the maintainer string
+# USAGE: packages_get_maintainer
+# RETURNS: packages maintainer, as a non-empty string
+packages_get_maintainer() {
+	# get maintainer string from /etc/makepkg.conf
+	# shellcheck disable=SC2039
+	local maintainer
+	if \
+		[ -r '/etc/makepkg.conf' ] && \
+		grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
+	then
+		if grep --quiet '^PACKAGER=".*"' '/etc/makepkg.conf'; then
+			maintainer=$(sed 's/^PACKAGER="\(.*\)"/\1/' '/etc/makepkg.conf')
+		elif grep --quiet "^PACKAGER='.*'" '/etc/makepkg.conf'; then
+			maintainer=$(sed "s/^PACKAGER='\\(.*\\)'/\\1/" '/etc/makepkg.conf')
+		else
+			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
+		fi
+	fi
+
+	# return early if we already have a maintainer string
+	if [ -n "$maintainer" ]; then
+		printf '%s' "$maintainer"
+		return 0
+	fi
+
+	# get current machine hostname
+	# falls back on using "localhost"
+	# shellcheck disable=SC2039
+	local hostname
+	if command -v 'hostname' >/dev/null 2>&1; then
+		hostname=$(hostname)
+	elif [ -r '/etc/hostname' ]; then
+		hostname=$(cat '/etc/hostname')
+	else
+		hostname='localhost'
+	fi
+
+	# get current user name
+	# falls back on "user"
+	# shellcheck disable=SC2039
+	local username
+	if [ -n "$USER" ]; then
+		username="$USER"
+	elif command -v 'whoami' >/dev/null 2>&1; then
+		username=$(whoami)
+	elif command -v 'id' >/dev/null 2>&1; then
+		username=$(id --name --user)
+	else
+		username='user'
+	fi
+
+	printf '%s@%s' "$username" "$hostname"
+	return 0
+}
+
