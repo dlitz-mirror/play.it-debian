@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210216.4
+script_version=20210313.1
 
 # Set game-specific variables
 
@@ -60,7 +60,7 @@ ARCHIVE_GOG_4='setup_deus_ex_goty_1.112fm(revision_1.5.0.0)_(35268).exe'
 ARCHIVE_GOG_4_MD5='3c5693ff82d754d4fe0d6be14e5337dd'
 ARCHIVE_GOG_4_TYPE='innosetup'
 ARCHIVE_GOG_4_VERSION='1.112fm-gog35268'
-ARCHIVE_GOG_4_SIZE='750000'
+ARCHIVE_GOG_4_SIZE='880000'
 ARCHIVE_GOG_4_URL='https://www.gog.com/game/deus_ex'
 
 ARCHIVE_GOG_3='setup_deus_ex_goty_1.112fm_(revision_1.4.0.2)_nglide_fix_(34088).exe'
