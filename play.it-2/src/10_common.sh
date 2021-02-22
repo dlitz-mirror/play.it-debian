@@ -1,28 +1,3 @@
-# set package distribution-specific architecture
-# USAGE: set_architecture $pkg
-# CALLS: set_architecture_arch set_architecture_deb set_architecture_gentoo
-# NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) (PKG_ARCH)
-# CALLED BY: set_temp_directories write_metadata
-set_architecture() {
-	use_archive_specific_value "${1}_ARCH"
-	local architecture
-	architecture="$(get_value "${1}_ARCH")"
-	case $OPTION_PACKAGE in
-		('arch')
-			set_architecture_arch "$architecture"
-		;;
-		('deb')
-			set_architecture_deb "$architecture"
-		;;
-		('gentoo')
-			set_architecture_gentoo "$architecture"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'set_architecture'
-		;;
-	esac
-}
-
 # set package distribution-specific architectures
 # USAGE: set_supported_architectures $pkg
 # CALLS: set_architecture set_architecture_gentoo
