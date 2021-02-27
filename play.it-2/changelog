@@ -9,8 +9,9 @@
     * Fix compatibility with GraphicksMagic compatibility wrapper for
       ImageMagick
 
-  * Package-related improvements:
+  * Package-related fixes and improvements:
     * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
+    * Fix getting hostname on systems without /etc/hostname
 
   * Errors handling:
     * Fix error message displayed when passing an invalid value to a supported
