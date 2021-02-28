@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210228.1
+script_version=20210228.2
 
 # Set game-specific variables
 
@@ -177,6 +177,13 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Work around a crash with fullscreen mode
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around a crash with fullscreen mode
+export SDL_VIDEO_ALLOW_SCREENSAVER=1'
 
 # Write launchers
 
