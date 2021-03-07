@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200709.3
+script_version=20210226.2
 
 # Set game-specific variables
 
@@ -42,6 +42,13 @@ GAME_ID='warhammer-40k-gladius-relics-of-war'
 GAME_NAME='Warhammer 40,000: Gladius - Relics of War'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_28
+ARCHIVE_GOG_27
+ARCHIVE_GOG_26
+ARCHIVE_GOG_25
+ARCHIVE_GOG_24
+ARCHIVE_GOG_23
+ARCHIVE_GOG_22
 ARCHIVE_GOG_21
 ARCHIVE_GOG_20
 ARCHIVE_GOG_19
@@ -65,10 +72,52 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_28='warhammer_40_000_gladius_relics_of_war_1_07_04_44200.sh'
+ARCHIVE_GOG_28_MD5='b8534d0956159736ee49f207da516ba6'
+ARCHIVE_GOG_28_TYPE='mojosetup'
+ARCHIVE_GOG_28_SIZE='2600000'
+ARCHIVE_GOG_28_VERSION='1.7.4-gog44200'
+ARCHIVE_GOG_28_URL='https://www.gog.com/game/warhammer_40000_gladius_relics_of_war'
+
+ARCHIVE_GOG_27='warhammer_40_000_gladius_relics_of_war_1_07_03_43452.sh'
+ARCHIVE_GOG_27_MD5='8350b6521fb0b66b31892d67f849cbcd'
+ARCHIVE_GOG_27_TYPE='mojosetup'
+ARCHIVE_GOG_27_SIZE='2600000'
+ARCHIVE_GOG_27_VERSION='1.7.3-gog43452'
+
+ARCHIVE_GOG_26='warhammer_40_000_gladius_relics_of_war_1_07_01_42686.sh'
+ARCHIVE_GOG_26_MD5='e6c3cedfa4c9e5b51daa2e9b6b89c86b'
+ARCHIVE_GOG_26_TYPE='mojosetup'
+ARCHIVE_GOG_26_SIZE='2600000'
+ARCHIVE_GOG_26_VERSION='1.7.1-gog42686'
+
+ARCHIVE_GOG_25='warhammer_40_000_gladius_relics_of_war_1_07_00_42663.sh'
+ARCHIVE_GOG_25_MD5='7b79c17dc30f78fafdc19759aa97f012'
+ARCHIVE_GOG_25_TYPE='mojosetup'
+ARCHIVE_GOG_25_SIZE='2600000'
+ARCHIVE_GOG_25_VERSION='1.7.0-gog42663'
+
+ARCHIVE_GOG_24='warhammer_40_000_gladius_relics_of_war_1_06_4b_41966.sh'
+ARCHIVE_GOG_24_MD5='dbdcdd7450f009ffd2c5feae2fbc9fd2'
+ARCHIVE_GOG_24_TYPE='mojosetup'
+ARCHIVE_GOG_24_SIZE='2300000'
+ARCHIVE_GOG_24_VERSION='1.6.4b-gog41966'
+
+ARCHIVE_GOG_23='warhammer_40_000_gladius_relics_of_war_1_06_4a_40621.sh'
+ARCHIVE_GOG_23_MD5='59a4a1ba453420a970edb886a0f179f0'
+ARCHIVE_GOG_23_TYPE='mojosetup'
+ARCHIVE_GOG_23_SIZE='2300000'
+ARCHIVE_GOG_23_VERSION='1.6.4a-gog40621'
+
+ARCHIVE_GOG_22='warhammer_40_000_gladius_relics_of_war_1_06_03_01_39396.sh'
+ARCHIVE_GOG_22_MD5='a307b99b6d5b55ec19cd9d6747a5929b'
+ARCHIVE_GOG_22_TYPE='mojosetup'
+ARCHIVE_GOG_22_SIZE='2300000'
+ARCHIVE_GOG_22_VERSION='1.6.3.1-gog39396'
+
 ARCHIVE_GOG_21='warhammer_40_000_gladius_relics_of_war_1_06_02_38991.sh'
 ARCHIVE_GOG_21_MD5='6d4455466f5f14bcfa49fb8730982837'
 ARCHIVE_GOG_21_TYPE='mojosetup'
-ARCHIVE_GOG_21_URL='https://www.gog.com/game/warhammer_40000_gladius_relics_of_war'
 ARCHIVE_GOG_21_SIZE='2300000'
 ARCHIVE_GOG_21_VERSION='1.6.2-gog38991'
 
@@ -199,7 +248,7 @@ ARCHIVE_GOG_0_SIZE='1900000'
 ARCHIVE_GOG_0_VERSION='1.2.0-gog26649'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Binaries/Linux-x86_64/Gladius.bin Binaries/Linux-x86_64/libjpeg.so.8 Binaries/Linux-x86_64/libsteam_api.so Binaries/Linux-x86_64/libboost* Binaries/Linux-x86_64/libicu*'
+ARCHIVE_GAME_BIN_FILES='Binaries/Linux-x86_64/Gladius.bin Binaries/Linux-x86_64/libjpeg.so.8 Binaries/Linux-x86_64/libsteam_api.so Binaries/Linux-x86_64/libboost* Binaries/Linux-x86_64/libicu* Binaries/Linux-x86_64/libEOSSDK-Linux-Shipping.so'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_FILES_GOG_0='Binaries/Gladius.bin Binaries/libjpeg.so.8 Binaries/libsteam_api.so Binaries/libboost* Binaries/libicu*'
 
@@ -230,16 +279,15 @@ PKG_BIN_DEPS_GENTOO='media-libs/glfw media-libs/vulkan-loader media-libs/libpng 
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
