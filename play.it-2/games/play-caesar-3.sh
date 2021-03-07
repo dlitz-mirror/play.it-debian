@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,12 @@ set -o errexit
 ###
 
 ###
-# Cæsar Ⅲ
+# Caesar 3
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201019.1
+script_version=20210213.1
 
 # Set game-specific variables
 
@@ -46,6 +46,24 @@ ARCHIVE_GOG_URL='https://www.gog.com/game/caesar_3'
 ARCHIVE_GOG_MD5='2ee16fab54493e1c2a69122fd2e56635'
 ARCHIVE_GOG_SIZE='550000'
 ARCHIVE_GOG_VERSION='1.1-gog2.0.0.9'
+
+# Julius 1.6.0 release
+ARCHIVE_OPTIONAL_JULIUS_4='julius-1.6.0-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_4_URL='https://github.com/bvschaik/julius/releases/tag/v1.6.0'
+ARCHIVE_OPTIONAL_JULIUS_4_MD5='2ea82121f9752c0c7624b3a70bbf5bac'
+ARCHIVE_OPTIONAL_JULIUS_4_SIZE=2400
+
+# Julius 1.5.1 release
+ARCHIVE_OPTIONAL_JULIUS_3='julius-1.5.1-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_3_URL='https://github.com/bvschaik/julius/releases/tag/v1.5.1'
+ARCHIVE_OPTIONAL_JULIUS_3_MD5='ff01fea442f0d68de5f705411be84ae7'
+ARCHIVE_OPTIONAL_JULIUS_3_SIZE=2300
+
+# Julius 1.5.0 release
+ARCHIVE_OPTIONAL_JULIUS_2='julius-1.5.0-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_2_URL='https://github.com/bvschaik/julius/releases/tag/v1.5.0'
+ARCHIVE_OPTIONAL_JULIUS_2_MD5='57392aab52e820149a0416c31f02cd17'
+ARCHIVE_OPTIONAL_JULIUS_2_SIZE=2300
 
 # Julius 1.4.1 release
 ARCHIVE_OPTIONAL_JULIUS_1='julius-1.4.1-linux-x86_64.zip'
@@ -139,6 +157,9 @@ fi
 ###
 ARCHIVE_MAIN="$ARCHIVE"
 set_archive 'ARCHIVE_JULIUS' \
+	'ARCHIVE_OPTIONAL_JULIUS_4' \
+	'ARCHIVE_OPTIONAL_JULIUS_3' \
+	'ARCHIVE_OPTIONAL_JULIUS_2' \
 	'ARCHIVE_OPTIONAL_JULIUS_1' \
 	'ARCHIVE_OPTIONAL_JULIUS_0'
 ARCHIVE="$ARCHIVE_MAIN"

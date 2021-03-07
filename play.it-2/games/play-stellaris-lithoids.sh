@@ -34,12 +34,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201030.1
+script_version=20201120.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
-GAME_NAME='Stellaris - Lithoids Species Pack'
+GAME_NAME='Stellaris'
+
+EXPANSION_ID='lithoids'
+EXPANSION_NAME='Lithoids Species Pack'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_2
@@ -70,8 +73,12 @@ ARCHIVE_GAME_MAIN_FILES='dlc/dlc022_lithoids'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-lithoids-species-pack"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
+
+# Ensure smooth upgrade from pre-20201031.1 packages
+PKG_MAIN_PROVIDE='stellaris-lithoids-species-pack'
 
 # Load common functions
 
@@ -117,6 +124,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0

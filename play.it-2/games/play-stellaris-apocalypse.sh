@@ -34,12 +34,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201030.1
+script_version=20201120.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
-GAME_NAME='Stellaris - Apocalypse'
+GAME_NAME='Stellaris'
+
+EXPANSION_ID='apocalypse'
+EXPANSION_NAME='Apocalypse'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_2
@@ -70,7 +73,8 @@ ARCHIVE_GAME_MAIN_FILES='dlc/dlc017_apocalypse'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-apocalypse"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
@@ -117,6 +121,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0

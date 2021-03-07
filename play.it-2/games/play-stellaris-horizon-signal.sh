@@ -34,12 +34,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201030.1
+script_version=20201120.1
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
-GAME_NAME='Stellaris - Horizon Signal'
+GAME_NAME='Stellaris'
+
+EXPANSION_ID='horizon-signal'
+EXPANSION_NAME='Horizon Signal'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_19
@@ -192,7 +195,8 @@ ARCHIVE_GAME_MAIN_PATH_GOG_0='data/noarch/game/dlc/dlc013_horizon_signal'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-horizon-signal"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
@@ -239,6 +243,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0
