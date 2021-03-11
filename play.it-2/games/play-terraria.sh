@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210504.2
+script_version=20210504.3
 
 # Set game-specific variables
 
@@ -209,6 +209,21 @@ case "$ARCHIVE" in
 	('ARCHIVE_BASE_MULTIARCH'*)
 		PKG='PKG_BIN32'
 		launchers_write 'APP_MAIN' 'APP_SERVER'
+	;;
+esac
+
+# Always run the server in a terminal
+
+desktop_file="${PKG_BIN_PATH}${PATH_DESK}/${APP_SERVER_ID}.desktop"
+cat >> "$desktop_file" << EOF
+Terminal=true
+EOF
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_MULTIARCH'*)
+		desktop_file="${PKG_BIN32_PATH}${PATH_DESK}/${APP_SERVER_ID}.desktop"
+		cat >> "$desktop_file" <<- EOF
+		Terminal=true
+		EOF
 	;;
 esac
 
