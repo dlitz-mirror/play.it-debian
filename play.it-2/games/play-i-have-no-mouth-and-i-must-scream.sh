@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210314.1
+script_version=20210314.2
 
 # Set game-specific variables
 
@@ -85,7 +85,7 @@ ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
 ARCHIVE_GAME_MAIN_FILES='*.res *.re_'
 
 APP_MAIN_TYPE='scummvm'
-APP_MAIN_SCUMMID='saga'
+APP_MAIN_SCUMMID='ihnm'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MAIN'
