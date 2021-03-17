@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,24 +30,24 @@ set -o errexit
 ###
 
 ###
-# Blackwell 1: The Blackwell Legacy
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# Blackwell 2: Blackwell Unbound
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210317.1
 
 # Set game-specific variables
 
-GAME_ID='blackwell-1-the-blackwell-legacy'
-GAME_NAME='Blackwell 1: The Blackwell Legacy'
+GAME_ID='blackwell-2'
+GAME_NAME='Blackwell 2: Blackwell Unbound'
 
 ARCHIVES_LIST='ARCHIVE_GOG'
 
-ARCHIVE_GOG='gog_blackwell_legacy_2.0.0.2.sh'
+ARCHIVE_GOG='gog_blackwell_unbound_2.0.0.2.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/blackwell_bundle'
-ARCHIVE_GOG_MD5='f16c09c0ca29b579a0d87c9be7361375'
-ARCHIVE_GOG_SIZE='270000'
+ARCHIVE_GOG_MD5='e694b6638f49535224ed474d3c8ce128'
+ARCHIVE_GOG_SIZE='220000'
 ARCHIVE_GOG_VERSION='1.0-gog2.0.0.2'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
@@ -59,14 +60,15 @@ ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./lib64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./ac2game.dat ./acsetup.cfg ./audio.vox ./Legacy.png ./speech.vox'
+ARCHIVE_GAME_DATA_FILES='./ac2game.dat ./acsetup.cfg ./audio.vox ./Unbound.png ./speech.vox'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='Legacy.bin.x86'
-APP_MAIN_EXE_BIN64='Legacy.bin.x86_64'
+APP_MAIN_EXE_BIN32='Unbound.bin.x86'
+APP_MAIN_EXE_BIN64='Unbound.bin.x86_64'
 APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='./Legacy.png'
+APP_MAIN_ICON='Unbound.png'
 APP_MAIN_ICON_RES='256'
+
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -78,6 +80,11 @@ PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+
+# Ensure easy upgrade from packages generated with pre-20210317.1 game script
+PKG_BIN32_PROVIDE='blackwell-2-blackwell-unbound'
+PKG_BIN64_PROVIDE='blackwell-2-blackwell-unbound'
+PKG_DATA_PROVIDE='blackwell-2-blackwell-unbound-data'
 
 # Load common functions
 
@@ -112,7 +119,7 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 
 for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
+	organize_data "DOC_${PKG#PKG_}" "$PATH_DOC"
 	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
 done
 
