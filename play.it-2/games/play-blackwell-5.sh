@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.9
+script_version=20210317.10
 
 # Set game-specific variables
 
@@ -53,9 +53,9 @@ ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.2'
 ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_epiphany_the'
 
 # Optional ./play.it-provided icons pack
-ARCHIVE_OPTIONAL_ICONS='the-blackwell-epiphany_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_MD5='e0067ab5130b89148344c3dffaaab3e0'
-ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/the-blackwell-epiphany/'
+ARCHIVE_OPTIONAL_ICONS='blackwell-5_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_MD5='acebebd8d3a73fff9f69d3b3e0e0ea89'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/games/blackwell-5/'
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='16x16 24x24 32x32 48x48 256x256'
 
