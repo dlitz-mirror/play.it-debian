@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.5
+script_version=20210317.6
 
 # Set game-specific variables
 
@@ -46,10 +46,11 @@ ARCHIVES_LIST='
 ARCHIVE_GOG_0'
 
 ARCHIVE_GOG_0='gog_blackwell_deception_2.0.0.3.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_bundle'
 ARCHIVE_GOG_0_MD5='1c2684697a98eee4d64c7e34311fac6c'
+ARCHIVE_GOG_0_TYPE='mojosetup'
 ARCHIVE_GOG_0_SIZE='610000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.3'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_bundle'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -61,13 +62,12 @@ ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='*.x86_64 lib64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='agsgame.dat acsetup.cfg audio.vox prog.bwd'
+ARCHIVE_GAME_DATA_FILES='*.cfg *.dat *.vox'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Deception.bin.x86'
 APP_MAIN_EXE_BIN64='Deception.bin.x86_64'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -87,16 +87,15 @@ PKG_DATA_PROVIDE='blackwell-4-blackwell-deception-data'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -125,7 +124,7 @@ icons_get_from_workdir 'APP_MAIN'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
