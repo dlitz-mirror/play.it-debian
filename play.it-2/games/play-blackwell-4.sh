@@ -30,17 +30,17 @@ set -o errexit
 ###
 
 ###
-# Blackwell 4: Blackwell Deception
+# Blackwell 4: The Blackwell Deception
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.1
+script_version=20210317.5
 
 # Set game-specific variables
 
 GAME_ID='blackwell-4'
-GAME_NAME='Blackwell 4: Blackwell Deception'
+GAME_NAME='Blackwell 4: The Blackwell Deception'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_0'

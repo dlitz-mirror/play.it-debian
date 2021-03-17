@@ -30,17 +30,17 @@ set -o errexit
 ###
 
 ###
-# Blackwell 3: Blackwell Convergence
+# Blackwell 3: The Blackwell Convergence
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.1
+script_version=20210317.6
 
 # Set game-specific variables
 
 GAME_ID='blackwell-3'
-GAME_NAME='Blackwell 3: Blackwell Convergence'
+GAME_NAME='Blackwell 3: The Blackwell Convergence'
 
 ARCHIVES_LIST='ARCHIVE_GOG'
 
