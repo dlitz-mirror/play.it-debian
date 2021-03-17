@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.3
+script_version=20210317.4
 
 # Set game-specific variables
 
@@ -56,10 +56,10 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='*.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='Unbound.bin.x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='*.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='Unbound.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Unbound.png *.cfg *.dat *.vox'
@@ -75,10 +75,15 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ theora glx freetype libSDL2-2.0.so.0 libvorbisfile.so.3"
+PKG_BIN32_DEPS_DEB='libogg0, libvorbis0a'
+PKG_BIN32_DEPS_ARCH='lib32-libogg lib32-libvorbis'
+PKG_BIN32_DEPS_GENTOO='media-libs/libogg[abi_x86_32] media-libs/libvorbis[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_ARCH='libogg libvorbis'
+PKG_BIN64_DEPS_GENTOO='media-libs/libogg media-libs/libvorbis'
 
 # Ensure easy upgrade from packages generated with pre-20210317.1 game script
 PKG_BIN32_PROVIDE='blackwell-2-blackwell-unbound'

@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.8
+script_version=20210317.9
 
 # Set game-specific variables
 
@@ -63,10 +63,10 @@ ARCHIVE_DOC_PATH='data/noarch/docs'
 ARCHIVE_DOC_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='lib Epiphany.bin.x86'
+ARCHIVE_GAME_BIN32_FILES='Epiphany.bin.x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='lib64 Epiphany.bin.x86_64'
+ARCHIVE_GAME_BIN64_FILES='Epiphany.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='*.cfg *.dat *.vox'
