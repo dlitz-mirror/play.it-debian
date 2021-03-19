@@ -137,13 +137,35 @@ archive_extraction_innosetup() {
 	if [ -n "${archive_type%%*_nolowercase}" ]; then
 		options="$options --lowercase"
 	fi
-	if ( innoextract --list --silent "$archive" 2>&1 1>/dev/null |\
-		head --lines=1 |\
-		grep --ignore-case 'unexpected setup data version' 1>/dev/null )
-	then
+	if ! archive_extraction_innosetup_is_supported "$archive"; then
 		error_innoextract_version_too_old "$archive"
 	fi
 	printf '\n'
 	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null
+}
+
+# check that the InnoSetup archive can be processed by the available innoextract version
+# USAGE: archive_extraction_innosetup_is_supported $archive
+# RETURNS: 0 if supported, 1 if unsupported
+archive_extraction_innosetup_is_supported() {
+	local archive
+	archive="$1"
+
+	# Use innoextract internal check
+	if innoextract --list --silent "$archive" 2>&1 1>/dev/null | \
+		head --lines=1 | \
+		grep --ignore-case --quiet 'unexpected setup data version'
+	then
+		return 1
+	fi
+
+	# Check for GOG archives based on Galaxy file fragments, unsupported by innoextract < 1.7
+	if innoextract --list "$archive" | \
+		grep --quiet ' - "tmp/[0-9a-f]\{2\}/[0-9a-f]\{2\}/[0-9a-f]\{32\}" (.*)'
+	then
+		return 1
+	fi
+
+	return 0
 }
 

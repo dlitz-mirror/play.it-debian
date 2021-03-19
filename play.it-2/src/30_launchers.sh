@@ -54,6 +54,12 @@ launcher_write_script() {
 			# Game binary for Mono games may be included in another package than the binaries one
 			use_package_specific_value "${application}_EXE"
 			binary_file=$(get_value "${application}_EXE")
+
+			# Check that the name of the binary file is not empty
+			if [ -z "$binary_file" ]; then
+				error_empty_variable "${application}_EXE"
+			fi
+
 			binary_found=0
 			for tested_package in $PACKAGES_LIST; do
 				tested_package_path=$(get_value "${tested_package}_PATH")
@@ -74,6 +80,12 @@ launcher_write_script() {
 		('wine')
 			use_package_specific_value "${application}_EXE"
 			binary_file=$(get_value "${application}_EXE")
+
+			# Check that the name of the binary file is not empty
+			if [ -z "$binary_file" ]; then
+				error_empty_variable "${application}_EXE"
+			fi
+
 			if [ "$binary_file" != 'winecfg' ]; then
 				binary_path="${package_path}${PATH_GAME}/$binary_file"
 				if \
@@ -87,6 +99,12 @@ launcher_write_script() {
 		(*)
 			use_package_specific_value "${application}_EXE"
 			binary_file=$(get_value "${application}_EXE")
+
+			# Check that the name of the binary file is not empty
+			if [ -z "$binary_file" ]; then
+				error_empty_variable "${application}_EXE"
+			fi
+
 			binary_path="${package_path}${PATH_GAME}/$binary_file"
 			if \
 				[ $DRY_RUN -eq 0 ] && \

@@ -6,25 +6,28 @@ icons_list_dependencies() {
 
 	local script
 	script="$0"
-	if grep\
-		--regexp="^APP_[^_]\\+_ICON='.\\+'"\
-		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'"\
-		"$script" 1>/dev/null
+	if grep \
+		--quiet \
+		--regexp="^APP_[^_]\\+_ICON='.\\+'" \
+		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'" \
+		"$script"
 	then
 		ICONS_DEPS="$ICONS_DEPS identify"
-		if grep\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'"\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.ico'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'"\
-			"$script" 1>/dev/null
+		if grep \
+			--quiet \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'" \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.ico'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'" \
+			"$script"
 		then
 			ICONS_DEPS="$ICONS_DEPS convert"
 		fi
-		if grep\
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'"\
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'"\
-			"$script" 1>/dev/null
+		if grep \
+			--quiet \
+			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'" \
+			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'" \
+			"$script"
 		then
 			ICONS_DEPS="$ICONS_DEPS convert wrestool"
 		fi
@@ -249,15 +252,27 @@ sort_icons() {
 icon_get_resolution_from_file() {
 	local file
 	file="$1"
+
+	# `identify` should be available when this function is called.
+	# Exits with an explicit error if it is missing
+	if ! command -v 'identify' >/dev/null 2>&1; then
+		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
+	fi
+
 	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
-		while [ -z "$resolution" ] || [ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]; do
+		while
+			[ -z "$resolution" ] || \
+			[ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]
+		do
 			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
+			resolution="${resolution%+0+0}"
 			field=$((field + 1))
 		done
 	else
 		resolution="$(identify "$file" | sed "s;^$file ;;" | cut --delimiter=' ' --fields=2)"
+		resolution="${resolution%+0+0}"
 	fi
 	export resolution
 }
