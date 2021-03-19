@@ -1,3 +1,28 @@
+2.12.2
+
+  * Archives-related improvements:
+    * Improve compatibility check for InnoSetup archives
+
+  * Icons-related fixes:
+    * Avoid a potential infinite loop in the icons resolution guessing
+      function
+    * Fix compatibility with GraphicksMagic compatibility wrapper for
+      ImageMagick
+
+  * Package-related fixes and improvements:
+    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
+    * Fix getting hostname on systems without /etc/hostname
+
+  * Errors handling:
+    * Fix error message displayed when passing an invalid value to a supported
+      option
+    * Improve handling of error cases related to empty variables
+    * Fix error message shown when there was not enough disk space in tested
+      temporary directory candidates
+
+  * Codebase improvements:
+    * Use grep --quiet instead of output redirection
+
 2.12.1
 
   * Wrapper fixes:

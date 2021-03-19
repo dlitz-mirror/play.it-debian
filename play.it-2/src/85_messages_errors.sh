@@ -209,6 +209,8 @@ error_launcher_missing_binary() {
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {
 	local message option_name option_value
+	option_name="$1"
+	option_value="$2"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
@@ -363,13 +365,21 @@ error_innoextract_version_too_old() {
 	case "${LANG%_*}" in
 		('fr')
 			message='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de lʼarchive suivante : %s\n'
+			message="$message"'Des instructions de mise-à-jour sont proposées :\n'
+			message="$message"'- pour Debian : %s\n'
+			message="$message"'- pour Ubuntu : %s\n'
 		;;
 		('en'|*)
 			message='Available innoextract version is too old to extract data from the following archive: %s\n'
+			message="$message"'Update instructions are proposed:\n'
+			message="$message"'- for Debian: %s\n'
+			message="$message"'- for Ubuntu: %s\n'
 		;;
 	esac
 	print_error
-	printf "$message" "$archive"
+	printf "$message" "$archive" \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/debian#available-innoextract-version-is-too-old' \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/ubuntu#innoextract-version-is-too-old'
 	return 1
 }
 
@@ -576,6 +586,27 @@ error_no_script_found_for_archive() {
 	esac
 	print_error
 	printf "$message" "$archive"
+	return 1
+}
+
+# display an error when a variable is empty
+# USAGE: error_empty_variable $variable
+error_empty_variable() {
+	local message variable
+	variable="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La variable "%s" nʼest pas définie, mais elle requise.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			message='Variable "%s" is not set, but it is required.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$variable" "$PLAYIT_GAMES_BUG_TRACKER_URL"
 	return 1
 }
 

@@ -61,7 +61,6 @@ set_temp_directories() {
 			mkdir --parents "$base_directory"
 		else
 			error_not_enough_free_space \
-				"$XDG_RUNTIME_DIR" \
 				"$tmpdir" \
 				"$XDG_CACHE_HOME" \
 				"$PWD"

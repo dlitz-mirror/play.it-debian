@@ -25,7 +25,7 @@ write_metadata() {
 		# Set package-specific variables
 		set_architecture "$pkg"
 		pkg_id="$(get_value "${pkg}_ID")"
-		pkg_maint="$(whoami)@$(cat /etc/hostname)"
+		pkg_maint="$(whoami)@$(hostname 2>/dev/null || cat /etc/hostname)"
 		pkg_path="$(get_value "${pkg}_PATH")"
 		if [ -z "$pkg_path" ]; then
 			error_invalid_argument 'pkg' 'write_metadata'
@@ -113,7 +113,8 @@ packages_guess_format() {
 			eval $variable_name=\'deb\'
 		;;
 		('arch'|\
-		 'manjaro'|'manjarolinux')
+		 'manjaro'|'manjarolinux'|\
+		 'endeavouros')
 			eval $variable_name=\'arch\'
 		;;
 		('gentoo')
