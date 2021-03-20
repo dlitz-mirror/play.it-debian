@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210320.2
+script_version=20210320.3
 
 # Set game-specific variables
 
@@ -50,7 +50,7 @@ ARCHIVE_OFFICIAL_0'
 ARCHIVE_OFFICIAL_2='factorio_alpha_x64_1.1.27.tar.xz'
 ARCHIVE_OFFICIAL_2_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
 ARCHIVE_OFFICIAL_2_TYPE='tar'
-ARCHIVE_OFFICIAL_2_SIZE='1700000'
+ARCHIVE_OFFICIAL_2_SIZE='1800000'
 ARCHIVE_OFFICIAL_2_VERSION='1.1.27-official1'
 ARCHIVE_OFFICIAL_2_URL='https://www.factorio.com/'
 
