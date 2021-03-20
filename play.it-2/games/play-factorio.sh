@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210320.1
+script_version=20210320.2
 
 # Set game-specific variables
 
@@ -43,15 +43,22 @@ GAME_ID='factorio'
 GAME_NAME='Factorio'
 
 ARCHIVES_LIST='
+ARCHIVE_OFFICIAL_2
 ARCHIVE_OFFICIAL_1
 ARCHIVE_OFFICIAL_0'
 
-ARCHIVE_OFFICIAL_1='factorio_alpha_x64_1.1.27.tar.xz'
-ARCHIVE_OFFICIAL_1_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
+ARCHIVE_OFFICIAL_2='factorio_alpha_x64_1.1.27.tar.xz'
+ARCHIVE_OFFICIAL_2_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
+ARCHIVE_OFFICIAL_2_TYPE='tar'
+ARCHIVE_OFFICIAL_2_SIZE='1700000'
+ARCHIVE_OFFICIAL_2_VERSION='1.1.27-official1'
+ARCHIVE_OFFICIAL_2_URL='https://www.factorio.com/'
+
+ARCHIVE_OFFICIAL_1='factorio_alpha_x64_1.1.19.tar.xz'
+ARCHIVE_OFFICIAL_1_MD5='ffe7310259e6176d20fc4add10d8a3d3'
 ARCHIVE_OFFICIAL_1_TYPE='tar'
-ARCHIVE_OFFICIAL_1_SIZE='1700000'
-ARCHIVE_OFFICIAL_1_VERSION='1.1.27-official1'
-ARCHIVE_OFFICIAL_1_URL='https://www.factorio.com/'
+ARCHIVE_OFFICIAL_1_SIZE='1800000'
+ARCHIVE_OFFICIAL_1_VERSION='1.1.19-official1'
 
 ARCHIVE_OFFICIAL_0='factorio_alpha_x64_1.0.0.tar.xz'
 ARCHIVE_OFFICIAL_0_MD5='001910cafbfa8f4ac61b2897f91fe77e'
