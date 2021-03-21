@@ -159,14 +159,14 @@ use_archive_specific_value() {
 # get package-specific value for a given variable name, or use default value
 # USAGE: use_package_specific_value $var_name
 use_package_specific_value() {
-	[ -n "$PKG" ] || return 0
-	if ! testvar "$PKG" 'PKG'; then
-		error_invalid_argument 'PKG' 'use_package_specific_value'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	local name_real
 	name_real="$1"
 	local name
-	name="${name_real}_${PKG#PKG_}"
+	name="${name_real}_${package#PKG_}"
 	local value
 	while [ "$name" != "$name_real" ]; do
 		value="$(get_value "$name")"

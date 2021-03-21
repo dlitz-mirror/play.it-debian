@@ -23,9 +23,6 @@ set_temp_directories() {
 	# If $PLAYIT_WORKDIR is already set, delete it before setting a new one
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
-	# If there is only a single package, make it the default one for the current instance
-	[ $# -eq 1 ] && PKG="$1"
-
 	# Look for a directory with enough free space to work in
 	tmpdir="$(get_tmp_dir)"
 	unset base_directory
@@ -90,28 +87,29 @@ set_temp_directories() {
 # NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) PLAYIT_WORKDIR (PKG_ARCH) PKG_ID|GAME_ID
 # CALLED BY: set_temp_directories
 set_temp_directories_pkg() {
-	PKG="$1"
+	local package
+	package="$1"
 
 	# Get package ID
-	use_archive_specific_value "${PKG}_ID"
+	use_archive_specific_value "${package}_ID"
 	local pkg_id
-	pkg_id="$(get_value "${PKG}_ID")"
+	pkg_id="$(get_value "${package}_ID")"
 	if [ -z "$pkg_id" ]; then
-		eval ${PKG}_ID=\"$GAME_ID\"
-		export ${PKG?}_ID
+		eval ${package}_ID=\"$GAME_ID\"
+		export ${package?}_ID
 		pkg_id="$GAME_ID"
 	fi
 
 	# Get package architecture
 	local pkg_architecture
-	set_architecture "$PKG"
+	set_architecture "$package"
 
 	# Set $PKG_PATH
-	if [ "$OPTION_PACKAGE" = 'arch' ] && [ "$(get_value "${PKG}_ARCH")" = '32' ]; then
+	if [ "$OPTION_PACKAGE" = 'arch' ] && [ "$(get_value "${package}_ARCH")" = '32' ]; then
 		pkg_id="lib32-$pkg_id"
 	fi
 	get_package_version
-	eval ${PKG}_PATH=\"$PLAYIT_WORKDIR/${pkg_id}_${PKG_VERSION}_${pkg_architecture}\"
-	export ${PKG?}_PATH
+	eval ${package}_PATH=\"$PLAYIT_WORKDIR/${pkg_id}_${PKG_VERSION}_${pkg_architecture}\"
+	export ${package?}_PATH
 }
 

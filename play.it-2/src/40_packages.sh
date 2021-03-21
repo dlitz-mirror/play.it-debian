@@ -1,10 +1,11 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
-# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) PACKAGES_LIST (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
+# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
 # CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo set_architecture testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
-		write_metadata $PACKAGES_LIST
+		# shellcheck disable=SC2046
+		write_metadata $(packages_get_list)
 		return 0
 	fi
 	local pkg_architecture
@@ -13,11 +14,16 @@ write_metadata() {
 	local pkg_maint
 	local pkg_path
 	local pkg_provide
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'write_metadata'
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'write_metadata' "$pkg"
 			continue
 		fi
@@ -56,19 +62,25 @@ write_metadata() {
 
 # build .pkg.tar or .deb package
 # USAGE: build_pkg [$pkg…]
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) PACKAGES_LIST (PKG_PATH) PLAYIT_WORKDIR
+# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) (PKG_PATH) PLAYIT_WORKDIR
 # CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
-		build_pkg $PACKAGES_LIST
+		# shellcheck disable=SC2046
+		build_pkg $(packages_get_list)
 		return 0
 	fi
 	local pkg_path
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'build_pkg'
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'build_pkg' "$pkg"
 			return 0
 		fi
@@ -126,5 +138,57 @@ packages_guess_format() {
 		;;
 	esac
 	export ${variable_name?}
+}
+
+# get version of current package, exported as PKG_VERSION
+# USAGE: get_package_version
+# NEEDED_VARS: PKG
+get_package_version() {
+	use_package_specific_value "${ARCHIVE}_VERSION"
+	PKG_VERSION="$(get_value "${ARCHIVE}_VERSION")"
+	if [ -z "$PKG_VERSION" ]; then
+		PKG_VERSION='1.0-1'
+	fi
+	# shellcheck disable=SC2154
+	PKG_VERSION="${PKG_VERSION}+$script_version"
+
+	if [ "$OPTION_PACKAGE" = 'gentoo' ]; then
+		# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
+		PKG_VERSION="$(printf '%s' "$PKG_VERSION" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?' || printf '%s' 1)"
+	fi
+
+	export PKG_VERSION
+}
+
+# get the current package
+# USAGE: package_get_current
+package_get_current() {
+	local package
+	package="$PKG"
+
+	# Fall back on a default value if $PKG is not set
+	if [ -z "$package" ]; then
+		package='PKG_MAIN'
+	fi
+
+	printf '%s' "$package"
+
+	return 0
+}
+
+# get the full list of packages to generate
+# USAGE: packages_get_list
+packages_get_list() {
+	local packages_list
+	packages_list="$PACKAGES_LIST"
+
+	# Fall back on a default list if $PACKAGES_LIST is not set
+	if [ -z "$packages_list" ]; then
+		packages_list='PKG_MAIN'
+	fi
+
+	printf '%s' "$packages_list"
+
+	return 0
 }
 

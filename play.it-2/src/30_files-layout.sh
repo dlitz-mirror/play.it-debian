@@ -1,22 +1,23 @@
 # prepare package layout by putting files from archive in the right packages
 # directories
 # USAGE: prepare_package_layout [$pkg…]
-# NEEDED VARS: (LANG) (PACKAGES_LIST) PLAYIT_WORKDIR (PKG_PATH)
+# NEEDED VARS: (LANG) PLAYIT_WORKDIR (PKG_PATH)
 prepare_package_layout() {
 	if [ -z "$1" ]; then
-		if [ -z "$PACKAGES_LIST" ]; then
-			error_variable_not_set 'prepare_package_layout' '$PACKAGES_LIST'
-		fi
-		prepare_package_layout $PACKAGES_LIST
+		# shellcheck disable=SC2046
+		prepare_package_layout $(packages_get_list)
 		return 0
 	fi
+	local package
 	for package in "$@"; do
 		PKG="$package"
-		organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-		organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
+		export PKG
+
+		organize_data "GAME_${package#PKG_}" "$PATH_GAME"
+		organize_data "DOC_${package#PKG_}"  "$PATH_DOC"
 		for i in $(seq 0 9); do
-			organize_data "GAME${i}_${PKG#PKG_}" "$PATH_GAME"
-			organize_data "DOC${i}_${PKG#PKG_}"  "$PATH_DOC"
+			organize_data "GAME${i}_${package#PKG_}" "$PATH_GAME"
+			organize_data "DOC${i}_${package#PKG_}"  "$PATH_DOC"
 		done
 	done
 }
@@ -26,19 +27,22 @@ prepare_package_layout() {
 organize_data() {
 	local pkg_path archive_path archive_files source_path destination_path source_files_pattern source_file destination_file
 
-	# This function requires PKG to be set
-	if [ -z "$PKG" ]; then
-		error_variable_not_set 'organize_data' '$PKG'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
 
 	# Check that the current package is part of the target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'organize_data' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+		warning_skip_package 'organize_data' "$package"
 		return 0
 	fi
 
 	# Get current package path, check that it is set
-	pkg_path=$(get_value "${PKG}_PATH")
+	pkg_path=$(get_value "${package}_PATH")
 	if [ -z "$pkg_path" ]; then
 		error_invalid_argument 'PKG' 'organize_data'
 	fi

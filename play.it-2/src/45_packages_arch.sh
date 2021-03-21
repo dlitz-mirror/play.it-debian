@@ -26,7 +26,6 @@ pkg_write_arch() {
 	local target
 	target="$pkg_path/.PKGINFO"
 
-	PKG="$pkg"
 	get_package_version
 
 	mkdir --parents "$(dirname "$target")"

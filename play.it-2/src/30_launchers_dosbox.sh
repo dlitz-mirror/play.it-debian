@@ -28,7 +28,7 @@ launcher_write_script_dosbox_application_variables() {
 
 # DOSBox - run the game
 # USAGE: launcher_write_script_dosbox_run $application $file
-# NEEDED_VARS: GAME_IMAGE GAME_IMAGE_TYPE PACKAGES_LIST PATH_GAME
+# NEEDED_VARS: GAME_IMAGE GAME_IMAGE_TYPE PATH_GAME
 # CALLS: launcher_write_script_prerun launcher_write_script_postrun
 # CALLED BY: launcher_write_script
 launcher_write_script_dosbox_run() {
@@ -53,7 +53,12 @@ launcher_write_script_dosbox_run() {
 				local image
 				local package
 				local package_path
-				for package in $PACKAGES_LIST; do
+
+				# Get packages list for the current game
+				local packages_list
+				packages_list=$(packages_get_list)
+
+				for package in $packages_list; do
 					package_path="$(get_value "${package}_PATH")"
 					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
 						image="${package_path}$PATH_GAME/$GAME_IMAGE"
