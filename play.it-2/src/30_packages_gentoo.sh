@@ -171,7 +171,7 @@ pkg_set_deps_gentoo() {
 			('glx')
 				pkg_dep="virtual/opengl$architecture_suffix"
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep="x11-libs/gtk+:2$architecture_suffix"
 			;;
 			('java')
@@ -179,6 +179,12 @@ pkg_set_deps_gentoo() {
 			;;
 			('json')
 				pkg_dep="dev-libs/json-c$architecture_suffix"
+			;;
+			('libasound.so.2')
+				pkg_dep="media-libs/alsa-lib${architecture_suffix}"
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep="media-plugins/alsa-plugins${architecture_suffix}"
 			;;
 			('libcurl')
 				pkg_dep="net-misc/curl$architecture_suffix"
@@ -193,11 +199,17 @@ pkg_set_deps_gentoo() {
 			('libpng16.so.16')
 				pkg_dep="media-libs/libpng:0/16$architecture_suffix"
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep="media-sound/pulseaudio${architecture_suffix}"
+			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
 			('libudev1')
 				pkg_dep="virtual/libudev$architecture_suffix"
+			;;
+			('libX11.so.6')
+				pkg_dep="x11-libs/libX11${architecture_suffix}"
 			;;
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"

@@ -164,7 +164,7 @@ pkg_set_deps_arch32() {
 			('glx')
 				pkg_dep='lib32-libgl'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='lib32-gtk2'
 			;;
 			('java')
@@ -172,6 +172,12 @@ pkg_set_deps_arch32() {
 			;;
 			('json')
 				pkg_dep='lib32-json-c'
+			;;
+			('libasound.so.2')
+				pkg_dep='lib32-alsa-lib'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='lib32-alsa-plugins'
 			;;
 			('libcurl')
 				pkg_dep='lib32-curl'
@@ -185,11 +191,17 @@ pkg_set_deps_arch32() {
 			('libpng16.so.16')
 				pkg_dep='lib32-libpng'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='lib32-libpulse'
+			;;
 			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
 			('libudev1')
 				pkg_dep='lib32-systemd'
+			;;
+			('libX11.so.6')
+				pkg_dep='lib32-libx11'
 			;;
 			('libxrandr')
 				pkg_dep='lib32-libxrandr'
@@ -298,7 +310,7 @@ pkg_set_deps_arch64() {
 			('glx')
 				pkg_dep='libgl'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='gtk2'
 			;;
 			('java')
@@ -306,6 +318,12 @@ pkg_set_deps_arch64() {
 			;;
 			('json')
 				pkg_dep='json-c'
+			;;
+			('libasound.so.2')
+				pkg_dep='alsa-lib'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='alsa-plugins'
 			;;
 			('libcurl')
 				pkg_dep='curl'
@@ -319,11 +337,17 @@ pkg_set_deps_arch64() {
 			('libpng16.so.16')
 				pkg_dep='libpng'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='libpulse'
+			;;
 			('libstdc++')
 				pkg_dep='gcc-libs'
 			;;
 			('libudev1')
 				pkg_dep='libsystemd'
+			;;
+			('libX11.so.6')
+				pkg_dep='libx11'
 			;;
 			('libxrandr')
 				pkg_dep='libxrandr'

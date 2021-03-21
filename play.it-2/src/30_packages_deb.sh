@@ -149,7 +149,7 @@ pkg_set_deps_deb() {
 			('glx')
 				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libgl1-mesa-glx'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='libgtk2.0-0'
 			;;
 			('java')
@@ -157,6 +157,12 @@ pkg_set_deps_deb() {
 			;;
 			('json')
 				pkg_dep='libjson-c3 | libjson-c2 | libjson0'
+			;;
+			('libasound.so.2')
+				pkg_dep='libasound2'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='libasound2-plugins'
 			;;
 			('libcurl')
 				pkg_dep='libcurl4 | libcurl3'
@@ -170,11 +176,17 @@ pkg_set_deps_deb() {
 			('libpng16.so.16')
 				pkg_dep='libpng16-16'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='libpulse0'
+			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
 			;;
 			('libudev1')
 				pkg_dep='libudev1'
+			;;
+			('libX11.so.6')
+				pkg_dep='libx11-6'
 			;;
 			('libxrandr')
 				pkg_dep='libxrandr2'
