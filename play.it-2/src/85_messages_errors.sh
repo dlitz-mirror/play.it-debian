@@ -610,3 +610,60 @@ error_empty_variable() {
 	return 1
 }
 
+# display an error when trying to use a case-insensitive filesystem
+# USAGE: error_case_insensitive_filesystem_is_not_supported $directory
+error_case_insensitive_filesystem_is_not_supported() {
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Ce répertoire se trouve sur un système de fichiers insensible à la casse : %s\n'
+			message="$message"'Ce type de système de fichiers nʼest pas géré pour lʼopération demandée.\n'
+		;;
+		('en'|*)
+			message='The following directory is on a case-insensitive filesystem: %s\n'
+			message="$message"'Such filesystems are not supported for the current operation.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$directory"
+
+	return 1
+}
+
+
+# display an error when trying to use a filesystem without support for UNIX permissions
+# USAGE: error_unix_permissions_support_is_required $directory
+error_unix_permissions_support_is_required() {
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Ce répertoire se trouve sur un système de fichiers ne gérant pas les permissions UNIX : %s\n'
+			message="$message"'Ce type de système de fichiers nʼest pas géré pour lʼopération demandée.\n'
+		;;
+		('en'|*)
+			message='The following directory is on filesystem with no support for UNIX permissions: %s\n'
+			message="$message"'Such filesystems are not supported for the current operation.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$directory"
+
+	return 1
+}
+
