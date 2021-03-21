@@ -1,5 +1,19 @@
 # Keep compatibility with 2.12 and older
 
+icons_linking_postinst() {
+	if \
+		version_target_is_older_than '2.8' && \
+		[ -z "${PACKAGES_LIST##*PKG_DATA*}" ]
+	then
+		(
+			PKG='PKG_DATA'
+			icons_get_from_package "$@"
+		)
+	else
+		icons_get_from_package "$@"
+	fi
+}
+
 archive_set() {
 	archive_initialize_optional "$@"
 }
@@ -190,6 +204,31 @@ write_desktop_winecfg() {
 
 write_launcher() {
 	launchers_write "$@"
+}
+
+# Keep compatibility with 2.8 and older
+
+icon_check_file_existence_pre_2_8() {
+	local directory file
+	directory="$1"
+	file="$2"
+
+	if [ ! -f "$directory/$file" ]; then
+		if \
+			[ -z "${file##* *}" ] || \
+			[ ! -f "$directory"/$file ]
+		then
+			error_icon_file_not_found "$directory/$file"
+		else
+			# get the real file name from its globbed one
+			local file_path
+			file_path=$(eval printf '%s' "$directory"/$file)
+			file="${file_path#${directory}/}"
+		fi
+	fi
+
+	printf '%s' "$file"
+	return 0
 }
 
 # Keep compatibility with 2.7 and older

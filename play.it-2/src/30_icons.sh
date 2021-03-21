@@ -98,14 +98,42 @@ icons_get_from_path() {
 			if [ -z "$file" ]; then
 				error_variable_not_set 'icons_get_from_path' '$'"$icon"
 			fi
-			if [ $DRY_RUN -eq 0 ] && [ ! -f "$directory/$file" ]; then
-				error_icon_file_not_found "$directory/$file"
-			fi
+
+			# Check icon file existence
+			file=$(icon_check_file_existence "$directory" "$file")
+
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
 			icons_include_png_from_directory "$app" "$destination"
 		done
 	done
+}
+
+# check icon file existence
+# USAGE: icon_check_file_existence $directory $file
+# RETURNS: $file or throws an error
+icon_check_file_existence() {
+	local directory file
+	directory="$1"
+	file="$2"
+
+	# Return early in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		printf '%s' "$file"
+		return 0
+	fi
+
+	if [ ! -f "$directory/$file" ]; then
+		# pre-2.8 scripts could use globbing in file path
+		if version_target_is_older_than '2.8'; then
+			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
+		else
+			error_icon_file_not_found "$directory/$file"
+		fi
+	fi
+
+	printf '%s' "$file"
+	return 0
 }
 
 # extract .png file(s) from target file
@@ -275,70 +303,6 @@ icon_get_resolution_from_file() {
 		resolution="${resolution%+0+0}"
 	fi
 	export resolution
-}
-
-# link icons in place post-installation from game directory
-# USAGE: icons_linking_postinst $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
-icons_linking_postinst() {
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local app
-	local file
-	local icon
-	local list
-	local name
-	local path
-	local path_icon
-	local path_pkg
-	path_pkg="$(get_value "${PKG}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_linking_postinst'
-	fi
-	path="${path_pkg}${PATH_GAME}"
-	for app in "$@"; do
-		list="$(get_value "${app}_ICONS_LIST")"
-		[ "$list" ] || list="${app}_ICON"
-		name="$(get_value "${app}_ID")"
-		[ "$name" ] || name="$GAME_ID"
-		for icon in $list; do
-			file="$(get_value "$icon")"
-			if version_target_is_older_than '2.8'; then
-				# ensure compatibility with scripts targeting pre-2.8 library
-				if [ -e "$path/$file" ] || [ -e "$path"/$file ]; then
-					icon_get_resolution_from_file "$path/$file"
-				else
-					icon_get_resolution_from_file "${PKG_DATA_PATH}${PATH_GAME}/$file"
-				fi
-			else
-				icon_get_resolution_from_file "$path/$file"
-			fi
-			path_icon="$PATH_ICON_BASE/$resolution/apps"
-			if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
-				cat >> "$postinst" <<- EOF
-				if [ ! -e "$path_icon/$name.png" ]; then
-				  mkdir --parents "$path_icon"
-				  ln --symbolic "$PATH_GAME"/$file "$path_icon/$name.png"
-				fi
-				EOF
-			else
-				cat >> "$postinst" <<- EOF
-				if [ ! -e "$path_icon/$name.png" ]; then
-				  mkdir --parents "$path_icon"
-				  ln --symbolic "$PATH_GAME/$file" "$path_icon/$name.png"
-				fi
-				EOF
-			fi
-			cat >> "$prerm" <<- EOF
-			if [ -e "$path_icon/$name.png" ]; then
-			  rm "$path_icon/$name.png"
-			  rmdir --parents --ignore-fail-on-non-empty "$path_icon"
-			fi
-			EOF
-		done
-	done
 }
 
 # move icons to the target package
