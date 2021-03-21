@@ -47,8 +47,8 @@ launcher_write_script() {
 	# Check that the launcher target exists
 	local binary_file binary_path binary_found tested_package tested_package_path
 	case "$application_type" in
-		('residualvm'|'scummvm')
-			# ResidualVM and ScummVM games do not rely on a provided binary
+		('residualvm'|'scummvm'|'renpy')
+			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
@@ -162,6 +162,14 @@ launcher_write_script() {
 			launcher_write_script_scummvm_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
 			launcher_write_script_scummvm_run "$application" "$target_file"
+		;;
+		('renpy')
+			launcher_write_script_game_variables "$target_file"
+			launcher_write_script_user_files "$target_file"
+			launcher_write_script_prefix_variables "$target_file"
+			launcher_write_script_prefix_functions "$target_file"
+			launcher_write_script_prefix_build "$target_file"
+			launcher_write_script_renpy_run "$application" "$target_file"
 		;;
 		('residualvm')
 			launcher_write_script_residualvm_application_variables "$application" "$target_file"

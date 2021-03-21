@@ -203,6 +203,9 @@ pkg_set_deps_deb() {
 			('pulseaudio')
 				pkg_dep='pulseaudio:amd64 | pulseaudio'
 			;;
+			('renpy')
+				pkg_dep='renpy'
+			;;
 			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='libsdl1.2debian'
 			;;
