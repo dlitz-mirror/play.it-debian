@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210328.1
+script_version=20210328.2
 
 # Set game-specific variables
 
@@ -63,6 +63,8 @@ ARCHIVE_GAME_MOVIES_FILES='MoviesHD'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game/bin'
 ARCHIVE_GAME_DATA_FILES='*.lab *.LAB controllerdef.txt en_gagl088.lip FontsHD *.tab icon.png patch_v2_or_v3_to_v4.bin patch_v4_to_v5.bin'
+
+DATA_DIRS='./Saves'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='GrimFandango'
