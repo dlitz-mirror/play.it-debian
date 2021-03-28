@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210328.2
+script_version=20210328.4
 
 # Set game-specific variables
 
@@ -146,6 +146,13 @@ APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Use system-provided SDL2 library
 SYSTEM_SDL2_PATH='"'$SYSTEM_SDL2_PATH'"'
 ln --force --symbolic "$SYSTEM_SDL2_PATH" ./libSDL2-2.0.so.1'
+
+# Work around a game crash on launch if it exited without cleaning up its temporary files
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around a game crash on launch if it exited without cleaning up its temporary files
+rm --force '\''c:\\temp\sector.txt'\'
 
 # Write launchers
 
