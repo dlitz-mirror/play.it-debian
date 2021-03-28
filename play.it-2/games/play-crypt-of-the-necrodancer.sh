@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,23 +30,37 @@ set -o errexit
 ###
 
 ###
-# Crypt of the Necrodancer
+# Crypt of the Necrodancer + Amplified
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200930.3
+script_version=20210328.1
 
 # Set game-specific variables
 
 GAME_ID='crypt-of-the-necrodancer'
 GAME_NAME='Crypt of the NecroDancer'
+# Amplified standalone expansion
+GAME_ID_AMPLIFIED="${GAME_ID}-amplified"
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_AMPLIFIED_0
 ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
+
+# Amplified standalone expansion installer
+
+ARCHIVE_GOG_AMPLIFIED_0='crypt_of_the_necrodancer_amplified_dlc_en_2_59_21255.sh'
+ARCHIVE_GOG_AMPLIFIED_0_MD5='52f7cdc2538d4ec22bc407bff6422a07'
+ARCHIVE_GOG_AMPLIFIED_0_TYPE='mojosetup'
+ARCHIVE_GOG_AMPLIFIED_0_SIZE='2100000'
+ARCHIVE_GOG_AMPLIFIED_0_VERSION='2.59-gog21255'
+ARCHIVE_GOG_AMPLIFIED_0_URL='https://www.gog.com/game/crypt_of_the_necrodancer_amplified'
+
+# Crypt of the NecroDancer base game installer
 
 ARCHIVE_GOG_3='crypt_of_the_necrodancer_en_1_29_14917.sh'
 ARCHIVE_GOG_3_URL='https://www.gog.com/game/crypt_of_the_necrodancer'
@@ -95,15 +109,30 @@ APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MUSIC PKG_DATA PKG_BIN'
 
+# Music package - common properties
 PKG_MUSIC_ID="${GAME_ID}-music"
+PKG_MUSIC_PROVIDE="$PKG_MUSIC_ID"
 PKG_MUSIC_DESCRIPTION='music'
+# Music package - Amplified standalone expansion
+PKG_MUSIC_ID_GOG_AMPLIFIED="${GAME_ID_AMPLIFIED}-music"
+PKG_MUSIC_DESCRIPTION_GOG_AMPLIFIED="${PKG_MUSIC_DESCRIPTION} (including Amplified expansion)"
 
+# Data package - common properties
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_PROVIDE="${GAME_ID}-video"
+PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
+# Data package - Amplified standalone expansion
+PKG_DATA_ID_GOG_AMPLIFIED="${GAME_ID_AMPLIFIED}-data"
+PKG_DATA_DESCRIPTION_GOG_AMPLIFIED="${PKG_DATA_DESCRIPTION} (including Amplified expansion)"
 
+# Binaries package - common properties
+PKG_BIN_ID="$GAME_ID"
+PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_MUSIC_ID $PKG_DATA_ID glibc libstdc++ glx libxrandr openal vorbis"
+# Binaries package - Amplified standalone expansion
+PKG_BIN_ID_GOG_AMPLIFIED="$GAME_ID_AMPLIFIED"
+PKG_BIN_DESCRIPTION_GOG_AMPLIFIED='including Amplified expansion'
 
 # Optional icons pack
 
@@ -119,13 +148,12 @@ ARCHIVE_ICONS_FILES='16x16 32x32 128x128 256x256'
 target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
