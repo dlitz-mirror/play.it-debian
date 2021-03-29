@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2017-2021, HS-157
 # All rights reserved.
 #
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210320.3
+script_version=20210329.1
 
 # Set game-specific variables
 
@@ -43,16 +43,23 @@ GAME_ID='factorio'
 GAME_NAME='Factorio'
 
 ARCHIVES_LIST='
+ARCHIVE_OFFICIAL_3
 ARCHIVE_OFFICIAL_2
 ARCHIVE_OFFICIAL_1
 ARCHIVE_OFFICIAL_0'
+
+ARCHIVE_OFFICIAL_3='factorio_alpha_x64_1.1.30.tar.xz'
+ARCHIVE_OFFICIAL_3_MD5='b039e25fef976f2ebe77bf5d9bca3c90'
+ARCHIVE_OFFICIAL_3_TYPE='tar'
+ARCHIVE_OFFICIAL_3_SIZE='1800000'
+ARCHIVE_OFFICIAL_3_VERSION='1.1.30-official1'
+ARCHIVE_OFFICIAL_3_URL='https://www.factorio.com/'
 
 ARCHIVE_OFFICIAL_2='factorio_alpha_x64_1.1.27.tar.xz'
 ARCHIVE_OFFICIAL_2_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
 ARCHIVE_OFFICIAL_2_TYPE='tar'
 ARCHIVE_OFFICIAL_2_SIZE='1800000'
 ARCHIVE_OFFICIAL_2_VERSION='1.1.27-official1'
-ARCHIVE_OFFICIAL_2_URL='https://www.factorio.com/'
 
 ARCHIVE_OFFICIAL_1='factorio_alpha_x64_1.1.19.tar.xz'
 ARCHIVE_OFFICIAL_1_MD5='ffe7310259e6176d20fc4add10d8a3d3'
@@ -128,7 +135,7 @@ icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
