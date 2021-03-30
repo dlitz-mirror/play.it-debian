@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210406.1
+script_version=20210406.2
 
 # Set game-specific variables
 
@@ -72,11 +72,15 @@ ARCHIVE_GOG_FR_0_SIZE='7200000'
 ARCHIVE_GOG_FR_0_VERSION='1.02-gog28524'
 ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/assassins_creed_directors_cut'
 
-ARCHIVE_DOC_DATA_PATH='.'
-ARCHIVE_DOC_DATA_FILES='eula manual readme'
+ARCHIVE_DOC_L10N_PATH='.'
+ARCHIVE_DOC_L10N_FILES_GOG_EN='manual eula/english* readme/english*'
+ARCHIVE_DOC_L10N_FILES_GOG_FR='manual eula/french* readme/french*'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='assassinscreed_dx10.exe assassinscreed_dx9.exe assassinscreed_game.exe binkw32.dll eax.dll'
+
+ARCHIVE_GAME_L10N_PATH='.'
+ARCHIVE_GAME_L10N_FILES='datapc_streamedsounds???.forge'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.forge defaultbindings.map resources videos'
@@ -85,30 +89,20 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='assassinscreed_dx9.exe'
 APP_MAIN_ICON='assassinscreed_game.exe'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_L10N PKG_DATA PKG_BIN'
 
-# Data package - common properties
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
+PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
-# Data package - English version
-PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
-PKG_DATA_DESCRIPTION_GOG_EN="${PKG_DATA_DESCRIPTION} - English version"
-# Data package - French version
-PKG_DATA_ID_GOG_FR="${PKG_DATA_ID}-fr"
-PKG_DATA_DESCRIPTION_GOG_FR="${PKG_DATA_DESCRIPTION} - French version"
 
-# Binaries package - common properties
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="${PKG_DATA_ID} wine"
-# Binaries package - English version
-PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
-PKG_BIN_DESCRIPTION_GOG_EN='English version'
-# Binaries package - French version
-PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_DESCRIPTION_GOG_FR='French version'
+PKG_BIN_DEPS="${PKG_DATA_ID} ${PKG_L10N_ID} wine"
 
 # Load common functions
 
