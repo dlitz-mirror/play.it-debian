@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210406.2
+script_version=20210406.3
 
 # Set game-specific variables
 
@@ -175,6 +175,26 @@ Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Wine\X11 Driver]
 "GrabFullscreen"="Y"
+EOF
+
+# Set game text language
+
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_FR'*)
+		language='French'
+	;;
+	('ARCHIVE_GOG_EN'*|*)
+		language='English'
+	;;
+esac
+APP_REGEDIT="${APP_REGEDIT} registry-keys/language.reg"
+REGISTRY_FILE="${PKG_L10N_PATH}${PATH_GAME}/registry-keys/language.reg"
+mkdir --parents "$(dirname "$REGISTRY_FILE")"
+cat > "$REGISTRY_FILE" << EOF
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\\Software\\Ubisoft\\Assassin's Creed]
+"Language"="$language"
 EOF
 
 # Write launchers
