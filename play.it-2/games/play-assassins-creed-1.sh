@@ -35,25 +35,42 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210331.3
+script_version=20210406.1
 
 # Set game-specific variables
 
 GAME_ID='assassins-creed-1'
 GAME_NAME='Assassin’s Creed'
 
-ARCHIVE_GOG='setup_assassins_creed_1.02_v2_(28524).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/assassins_creed_directors_cut'
-ARCHIVE_GOG_MD5='b14aa9508ce9653597558a6d834e2766'
-ARCHIVE_GOG_SIZE='7200000'
-ARCHIVE_GOG_VERSION='1.02-gog28524'
-ARCHIVE_GOG_TYPE='innosetup'
-ARCHIVE_GOG_PART1='setup_assassins_creed_1.02_v2_(28524)-1.bin'
-ARCHIVE_GOG_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
-ARCHIVE_GOG_PART1_TYPE='innosetup'
-ARCHIVE_GOG_PART2='setup_assassins_creed_1.02_v2_(28524)-2.bin'
-ARCHIVE_GOG_PART2_MD5='150870977feb60c9f344e35d220e1198'
-ARCHIVE_GOG_PART2_TYPE='innosetup'
+ARCHIVES_LIST='
+ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_0'
+
+ARCHIVE_GOG_EN_0='setup_assassins_creed_1.02_v2_(28524).exe'
+ARCHIVE_GOG_EN_0_MD5='b14aa9508ce9653597558a6d834e2766'
+ARCHIVE_GOG_EN_0_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_PART1='setup_assassins_creed_1.02_v2_(28524)-1.bin'
+ARCHIVE_GOG_EN_0_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
+ARCHIVE_GOG_EN_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_PART2='setup_assassins_creed_1.02_v2_(28524)-2.bin'
+ARCHIVE_GOG_EN_0_PART2_MD5='150870977feb60c9f344e35d220e1198'
+ARCHIVE_GOG_EN_0_PART2_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_SIZE='7200000'
+ARCHIVE_GOG_EN_0_VERSION='1.02-gog28524'
+ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/assassins_creed_directors_cut'
+
+ARCHIVE_GOG_FR_0='setup_assassins_creed_1.02_v2_(french)_(28524).exe'
+ARCHIVE_GOG_FR_0_MD5='eb346d8ec12bb055f941446d24207dbd'
+ARCHIVE_GOG_FR_0_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_PART1='setup_assassins_creed_1.02_v2_(french)_(28524)-1.bin'
+ARCHIVE_GOG_FR_0_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
+ARCHIVE_GOG_FR_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_PART2='setup_assassins_creed_1.02_v2_(french)_(28524)-2.bin'
+ARCHIVE_GOG_FR_0_PART2_MD5='2e31309a834daa7c7640a4848e701574'
+ARCHIVE_GOG_FR_0_PART2_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_SIZE='7200000'
+ARCHIVE_GOG_FR_0_VERSION='1.02-gog28524'
+ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/assassins_creed_directors_cut'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='eula manual readme'
@@ -70,11 +87,28 @@ APP_MAIN_ICON='assassinscreed_game.exe'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
+# Data package - common properties
 PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
+# Data package - English version
+PKG_DATA_ID_GOG_EN="${PKG_DATA_ID}-en"
+PKG_DATA_DESCRIPTION_GOG_EN="${PKG_DATA_DESCRIPTION} - English version"
+# Data package - French version
+PKG_DATA_ID_GOG_FR="${PKG_DATA_ID}-fr"
+PKG_DATA_DESCRIPTION_GOG_FR="${PKG_DATA_DESCRIPTION} - French version"
 
+# Binaries package - common properties
+PKG_BIN_ID="$GAME_ID"
+PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine"
+# Binaries package - English version
+PKG_BIN_ID_GOG_EN="${PKG_BIN_ID}-en"
+PKG_BIN_DESCRIPTION_GOG_EN='English version'
+# Binaries package - French version
+PKG_BIN_ID_GOG_FR="${PKG_BIN_ID}-fr"
+PKG_BIN_DESCRIPTION_GOG_FR='French version'
 
 # Load common functions
 
