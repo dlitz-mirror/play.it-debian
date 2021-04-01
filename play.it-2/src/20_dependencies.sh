@@ -168,9 +168,6 @@ check_deps_debian() {
 check_deps_innoextract() {
 	local keyword
 	local name
-	local version
-	local version_major
-	local version_minor
 	keyword="$1"
 	case "$keyword" in
 		('innoextract1.7')
@@ -183,19 +180,19 @@ check_deps_innoextract() {
 	if ! command -v 'innoextract' >/dev/null 2>&1; then
 		error_dependency_not_found "$name"
 	fi
-	version="$(innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)"
-	version_minor="${version#*.}"
-	version_major="${version%.*}"
+
+	# Check innoextract version
+	# shellcheck disable=SC2039
+	local innoextract_version
+	innoextract_version=$(LANG=C innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)
 	case "$keyword" in
 		('innoextract1.7')
-			if
-				[ "$version_major" -lt 1 ] || \
-				[ "$version_major" -lt 2 ] && [ "$version_minor" -lt 7 ]
-			then
+			if ! version_is_at_least '1.7' "$innoextract_version"; then
 				error_dependency_not_found "$name"
 			fi
 		;;
 	esac
+
 	return 0
 }
 
