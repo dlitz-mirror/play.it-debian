@@ -299,7 +299,8 @@ pkg_set_deps_gentoo() {
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
-	local pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2"
+	local pkg_filename_base
+	pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2"
 
 	# Get packages list for the current game
 	local packages_list
@@ -330,7 +331,8 @@ pkg_build_gentoo() {
 	fi
 
 	mkdir --parents "$PLAYIT_WORKDIR/portage-tmpdir"
-	local ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
+	local ebuild_path
+	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 	ebuild "$ebuild_path" manifest 1>/dev/null
 	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot-ng -- ebuild "$ebuild_path" package 1>/dev/null
 	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2" "$pkg_filename"
