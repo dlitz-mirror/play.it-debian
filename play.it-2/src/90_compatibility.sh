@@ -1,5 +1,15 @@
 # Keep compatibility with 2.12 and older
 
+get_package_version() {
+	PKG_VERSION=$(packages_get_version "$ARCHIVE")
+	export PKG_VERSION
+}
+
+set_architecture() {
+	pkg_architecture=$(package_get_architecture_string "$1")
+	export pkg_architecture
+}
+
 icons_linking_postinst() {
 	if \
 		version_target_is_older_than '2.8' && \

@@ -103,26 +103,8 @@ set_temp_directories_pkg() {
 	local package
 	package="$1"
 
-	# Get package ID
-	use_archive_specific_value "${package}_ID"
-	local pkg_id
-	pkg_id="$(get_value "${package}_ID")"
-	if [ -z "$pkg_id" ]; then
-		eval ${package}_ID=\"$GAME_ID\"
-		export ${package?}_ID
-		pkg_id="$GAME_ID"
-	fi
-
-	# Get package architecture
-	local pkg_architecture
-	set_architecture "$package"
-
 	# Set $PKG_PATH
-	if [ "$OPTION_PACKAGE" = 'arch' ] && [ "$(get_value "${package}_ARCH")" = '32' ]; then
-		pkg_id="lib32-$pkg_id"
-	fi
-	get_package_version
-	eval ${package}_PATH=\"$PLAYIT_WORKDIR/${pkg_id}_${PKG_VERSION}_${pkg_architecture}\"
+	eval ${package}_PATH=\"$PLAYIT_WORKDIR/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")\"
 	export ${package?}_PATH
 }
 
