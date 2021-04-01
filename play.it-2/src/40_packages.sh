@@ -338,19 +338,21 @@ package_get_description() {
 			if [ -n "$package_description" ]; then
 				package_description_full='Description: %s - %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059
+				# shellcheck disable=SC2059,SC2154
 				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$package_description" "$script_version")
 			else
 				package_description_full='Description: %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059
+				# shellcheck disable=SC2059,SC2154
 				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$script_version")
 			fi
 		;;
 		('arch'|'gentoo')
 			if [ -n "$package_description" ]; then
+				# shellcheck disable=SC2154
 				package_description_full="$GAME_NAME - $package_description - ./play.it script version $script_version"
 			else
+				# shellcheck disable=SC2154
 				package_description_full="$GAME_NAME - ./play.it script version $script_version"
 			fi
 		;;
