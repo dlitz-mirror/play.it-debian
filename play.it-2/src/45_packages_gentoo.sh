@@ -277,7 +277,7 @@ pkg_set_deps_gentoo() {
 				local package
 				for package in $PACKAGES_LIST; do
 					if [ "$package" != "$pkg" ]; then
-						if [ "$(package_get_provide "$package")" = $(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g') ]; then
+						if [ "$(package_get_provide "$package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
 							pkg_dep="|| ( ${pkg_dep} )"
 						fi
 					fi

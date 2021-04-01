@@ -104,7 +104,7 @@ set_temp_directories_pkg() {
 	package="$1"
 
 	# Set $PKG_PATH
-	eval ${package}_PATH=\"$PLAYIT_WORKDIR/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")\"
+	eval "${package}_PATH='$PLAYIT_WORKDIR/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")'"
 	export ${package?}_PATH
 }
 
