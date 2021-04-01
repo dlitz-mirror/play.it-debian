@@ -82,3 +82,53 @@ check_directory_supports_unix_permissions() {
 	return 0
 }
 
+# Compare two version strings using the x.y.z format
+# Arbitrary number of numeric fields should be supported
+# USAGE: version_is_at_least $version_reference $version_tested
+# RETURNS: 0 if bigger or equal, 1 otherwise
+version_is_at_least() {
+	# shellcheck disable=SC2039
+	local version_reference version_tested
+	version_reference="$1"
+	version_tested="$2"
+
+	# If both version numbers are the same, return early
+	if [ "$version_tested" = "$version_reference" ]; then
+			return 0
+	fi
+
+	# Compare version fields one at a time
+	# shellcheck disable=SC2039
+	local field field_reference field_tested
+	field=1
+	field_reference=$(printf '%s' "$version_reference" | cut --delimiter='.' --fields=$field)
+	field_tested=$(printf '%s' "$version_tested" | cut --delimiter='.' --fields=$field)
+	while [ -n "$field_reference" ] && [ -n "$field_tested" ]; do
+		if [ "$field_tested" -lt "$field_reference" ]; then
+			return 1
+		elif [ "$field_tested" -gt "$field_reference" ]; then
+			return 0
+		else
+			field=$((field + 1))
+			field_reference=$(printf '%s' "$version_reference" | cut --delimiter='.' --fields=$field)
+			field_tested=$(printf '%s' "$version_tested" | cut --delimiter='.' --fields=$field)
+		fi
+	done
+
+	# Both version number have a different number of fields, and all compared fields are the same
+	# If the reference is longer, the tested version number is lower
+	if [ -n "$field_reference" ]; then
+		return 1
+	# If the tested version is longer, it is higher than the reference one
+	elif [ -n "$field_tested" ]; then
+		return 0
+	# We should never enter this last case
+	else
+		###
+		# TODO
+		# Fail with some explicit error
+		###
+		return 1
+	fi
+}
+
