@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200103.6
+script_version=20210403.4
 
 # Set game-specific variables
 
@@ -107,12 +107,12 @@ ARCHIVE_GAME1_MAIN_PATH='__support/save'
 ARCHIVE_GAME1_MAIN_FILES='save/mission.dat'
 
 ARCHIVE_GAME_COMMON_PATH='.'
-ARCHIVE_GAME_COMMON_FILES='dos4gw.exe settler2.vmc settlers2.gog settlers2.inst data/*.dat data/editres.idx data/animdat data/bobs data/cbob data/io/*.dat data/io/*.fnt data/*.lst data/masks data/mbob data/missions/mis_00*.rtx data/missions/mis_10*.rtx data/sounddat/sng data/sounddat/sound.lst data/textures drivers/*.ad drivers/*.dig drivers/dig.ini drivers/*.exe drivers/*.lst drivers/*.mdi drivers/*.opl gfx/palette gfx/pics2 gfx/pics/install.lbm gfx/pics/mission gfx/pics/setup013.lbm gfx/pics/setup015.lbm gfx/pics/setup666.lbm gfx/pics/setup667.lbm gfx/pics/setup801.lbm gfx/pics/setup802.lbm gfx/pics/setup803.lbm gfx/pics/setup804.lbm gfx/pics/setup805.lbm gfx/pics/setup806.lbm gfx/pics/setup810.lbm gfx/pics/setup811.lbm gfx/pics/setup895.lbm gfx/pics/setup896.lbm gfx/pics/setup899.lbm gfx/pics/setup990.lbm gfx/pics/world.lbm gfx/pics/worldmsk.lbm gfx/textures video/smackply.exe'
+ARCHIVE_GAME_COMMON_FILES='dos4gw.exe settler2.vmc settlers2.gog settlers2.ins settlers2.inst data/*.dat data/editres.idx data/animdat data/bobs data/cbob data/io/*.dat data/io/*.fnt data/*.lst data/masks data/mbob data/missions/mis_00*.rtx data/missions/mis_10*.rtx data/sounddat/sng data/sounddat/sound.lst data/textures drivers/*.ad drivers/*.dig drivers/dig.ini drivers/*.exe drivers/*.lst drivers/*.mdi drivers/*.opl gfx/palette gfx/pics2 gfx/pics/install.lbm gfx/pics/mission gfx/pics/setup013.lbm gfx/pics/setup015.lbm gfx/pics/setup666.lbm gfx/pics/setup667.lbm gfx/pics/setup801.lbm gfx/pics/setup802.lbm gfx/pics/setup803.lbm gfx/pics/setup804.lbm gfx/pics/setup805.lbm gfx/pics/setup806.lbm gfx/pics/setup810.lbm gfx/pics/setup811.lbm gfx/pics/setup895.lbm gfx/pics/setup896.lbm gfx/pics/setup899.lbm gfx/pics/setup990.lbm gfx/pics/world.lbm gfx/pics/worldmsk.lbm gfx/textures video/smackply.exe'
 
 CONFIG_FILES='./SETUP.INI'
 DATA_DIRS='./DATA ./GFX ./SAVE ./WORLDS'
 
-GAME_IMAGE='SETTLERS2.INST'
+GAME_IMAGE='SETTLERS2.INS'
 GAME_IMAGE_TYPE='iso'
 
 APP_MAIN_TYPE='dosbox'
@@ -161,7 +161,7 @@ PKG_MAIN_DESCRIPTION_GOG_FR='French version'
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 @VIDEO\SMACKPLY VIDEO\INTRO.SMK'
 
-# Keep ocmpatibility with old archives
+# Keep compatibility with old archives
 
 ARCHIVE_DOC_MAIN_PATH_GOG_DE_0='app'
 ARCHIVE_DOC_MAIN_PATH_GOG_EN_0='app'
@@ -175,6 +175,10 @@ ARCHIVE_GAME1_MAIN_PATH_GOG_FR_0='app/__support/save'
 ARCHIVE_GAME_COMMON_PATH_GOG_DE_0='app'
 ARCHIVE_GAME_COMMON_PATH_GOG_EN_0='app'
 ARCHIVE_GAME_COMMON_PATH_GOG_FR_0='app'
+
+GAME_IMAGE_GOG_DE_0='SETTLERS2.INST'
+GAME_IMAGE_GOG_EN_0='SETTLERS2.INST'
+GAME_IMAGE_GOG_FR_0='SETTLERS2.INST'
 
 APP_MAIN_ICON_GOG_EN_0='app/gfw_high.ico'
 APP_EDITOR_ICON_GOG_EN_0="$APP_MAIN_ICON_GOG_EN_0"
@@ -267,6 +271,15 @@ launcher_write_script_dosbox_run() {
 	sed --in-place 's/    /\t/g' "$file"
 	return 0
 }
+
+# Ensure case consistency in disk image table of contents
+
+use_archive_specific_value 'GAME_IMAGE'
+DISK_IMAGE_TOC="${PKG_COMMON_PATH}${PATH_GAME}/${GAME_IMAGE}"
+pattern='settlers2.gog'
+replacement='SETTLERS2.GOG'
+expression="s/${pattern}/${replacement}/i"
+sed --in-place --expression="$expression" "$DISK_IMAGE_TOC"
 
 # Write launchers
 
