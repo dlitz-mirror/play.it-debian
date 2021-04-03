@@ -31,6 +31,9 @@ print_instructions() {
 	if [ "$OPTION_PACKAGE" = 'gentoo' ] && [ -n "$GENTOO_OVERLAYS" ]; then
 		information_required_gentoo_overlays "$GENTOO_OVERLAYS"
 	fi
+	if [ "$OPTION_PACKAGE" = 'egentoo' ]; then
+		info_local_overlay_gentoo
+	fi
 	information_installation_instructions_common "$GAME_NAME"
 	if [ -n "$packages_list_32" ] && [ -n "$packages_list_64" ]; then
 		print_instructions_architecture_specific '32' $packages_list_all $packages_list_32
