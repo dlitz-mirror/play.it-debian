@@ -53,7 +53,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_COMPRESSION_GENTOO='gzip xz bzip2 zstd lz4 lzip lzop'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_PACKAGE='arch deb gentoo'
+	ALLOWED_VALUES_PACKAGE='arch deb gentoo egentoo'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_ICONS='yes no auto'
 
@@ -70,11 +70,15 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	# shellcheck disable=SC2034
+	DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
+	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PREFIX_DEB='/usr/local'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PREFIX_ARCH='/usr'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PREFIX_GENTOO='/usr'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PACKAGE='deb'
 	# shellcheck disable=SC2034
@@ -252,7 +256,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set package paths
 
 	case $OPTION_PACKAGE in
-		('arch'|'gentoo')
+		('arch'|'gentoo'|'egentoo')
 			PATH_BIN="$OPTION_PREFIX/bin"
 			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
