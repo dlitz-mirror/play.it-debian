@@ -26,6 +26,13 @@ icons_linking_postinst() {
 
 archive_set() {
 	archive_initialize_optional "$@"
+	# shellcheck disable=SC2039
+	local archive
+	archive=$(archive_find_from_candidates "$@")
+	if [ -n "$archive" ]; then
+		ARCHIVE="$archive"
+		export ARCHIVE
+	fi
 }
 
 # Keep compatibility with 2.11 and older
