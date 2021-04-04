@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210404.4
+script_version=20210404.5
 
 # Set game-specific variables
 
@@ -83,6 +83,7 @@ ARCHIVE_GAME0_DATA_PATH='__support'
 ARCHIVE_GAME0_DATA_FILES='save'
 
 DATA_DIRS='./save ./user'
+DATA_FILES='./graphics/font.bmp'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='wa.exe'
