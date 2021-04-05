@@ -53,7 +53,8 @@ pkg_write_egentoo() {
 		;;
 	esac
 
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild")
+	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")"
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
