@@ -6,6 +6,7 @@ pkg_write_egentoo() {
 	local pkg_deps
 	local ebuild_path
 	local pkg_architectures
+	local pkg_filename_base
 
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
@@ -20,6 +21,7 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$pkg")"
 	fi
 
+	pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tar.gz"
 	ebuild_path="$PLAYIT_WORKDIR/$pkg/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 
 	case "$(package_get_architecture "$pkg")" in
@@ -35,18 +37,28 @@ pkg_write_egentoo() {
 	esac
 
 	cat > "$ebuild_path" <<- EOF
+	# Copyright 1999-2021 Gentoo Authors
+	# Distributed under the terms of the GNU General Public License v2
+
 	EAPI=7
 	RESTRICT="fetch strip binchecks"
 
 	KEYWORDS="$pkg_architectures"
 	DESCRIPTION="$(package_get_description "$pkg")"
+	SRC_URI="$pkg_filename_base"
 	SLOT="0"
 
 	RDEPEND="$pkg_deps"
 
+	pkg_nofetch() {
+		elog "Please move $SRC_URI"
+		elog "to your distfiles folder."
+	}
+
 	src_install() {
 		doins -r .
 	}
+
 	EOF
 
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
@@ -54,6 +66,7 @@ pkg_write_egentoo() {
 		pkg_postinst() {
 		$(get_value "${pkg}_POSTINST_RUN")
 		}
+
 		EOF
 	# For compatibility with pre-2.12 scripts,
 	# ignored if a package-specific value is already set
@@ -66,6 +79,7 @@ pkg_write_egentoo() {
 		pkg_prerm() {
 		$(get_value "${pkg}_PRERM_RUN")
 		}
+
 		EOF
 	# For compatibility with pre-2.12 scripts,
 	# ignored if a package-specific value is already set
