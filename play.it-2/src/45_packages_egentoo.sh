@@ -4,12 +4,14 @@
 # CALLED BY: write_metadata
 pkg_write_egentoo() {
 	local pkg
+	local pkg_path
 	local pkg_deps
 	local pkg_filename_base
 	local pkg_architectures
 	local ebuild_path
 
 	pkg="$1"
+	pkg_path=$(get_value "${pkg}_PATH")
 
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
@@ -24,7 +26,7 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$pkg")"
 	fi
 
-	pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tar"
+	pkg_filename_base="$(basename "$pkg_path").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			pkg_filename="${pkg_filename}.gz"
@@ -70,12 +72,12 @@ pkg_write_egentoo() {
 	RDEPEND="$pkg_deps"
 
 	pkg_nofetch() {
-		elog "Please move $SRC_URI"
-		elog "to your distfiles folder."
+		\telog "Please move \$SRC_URI"
+		\telog "to your distfiles folder."
 	}
 
 	src_install() {
-		doins -r .
+		\tdoins -r .
 	}
 
 	EOF
@@ -83,7 +85,7 @@ pkg_write_egentoo() {
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$ebuild_path" <<- EOF
 		pkg_postinst() {
-		$(get_value "${pkg}_POSTINST_RUN")
+			\t$(get_value "${pkg}_POSTINST_RUN")
 		}
 
 		EOF
@@ -96,7 +98,7 @@ pkg_write_egentoo() {
 	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
 		cat >> "$ebuild_path" <<- EOF
 		pkg_prerm() {
-		$(get_value "${pkg}_PRERM_RUN")
+			\t$(get_value "${pkg}_PRERM_RUN")
 		}
 
 		EOF

@@ -285,7 +285,7 @@ package_get_architecture_string() {
 				;;
 			esac
 		;;
-		('gentoo')
+		('gentoo'|'egentoo')
 			case "$package_architecture" in
 				('32')
 					package_architecture_string='x86'

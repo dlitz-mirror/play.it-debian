@@ -49,6 +49,9 @@ print_instructions() {
 			('gentoo')
 				print_instructions_gentoo "$@"
 			;;
+			('egentoo')
+				print_instructions_egentoo "$@"
+			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
 			;;
