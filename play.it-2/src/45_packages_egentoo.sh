@@ -29,13 +29,13 @@ pkg_write_egentoo() {
 	pkg_filename_base="$(basename "$pkg_path").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
-			pkg_filename="${pkg_filename}.gz"
+			pkg_filename_base="${pkg_filename_base}.gz"
 		;;
 		('xz')
-			pkg_filename="${pkg_filename}.xz"
+			pkg_filename_base="${pkg_filename_base}.xz"
 		;;
 		('bzip2')
-			pkg_filename="${pkg_filename}.bz2"
+			pkg_filename_base="${pkg_filename_base}.bz2"
 		;;
 		('none') ;;
 		(*)
@@ -55,40 +55,40 @@ pkg_write_egentoo() {
 		;;
 	esac
 
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild")
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(basename "$pkg_path").ebuild")
 
-	cat > "$ebuild_path" <<- EOF
-	# Copyright 1999-2021 Gentoo Authors
-	# Distributed under the terms of the GNU General Public License v2
+	cat > "$ebuild_path" << EOF
+# Copyright 1999-2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
 
-	EAPI=7
-	RESTRICT="fetch strip binchecks"
+EAPI=7
+RESTRICT="fetch strip binchecks"
 
-	KEYWORDS="$pkg_architectures"
-	DESCRIPTION="$(package_get_description "$pkg")"
-	SRC_URI="$pkg_filename_base"
-	SLOT="0"
+KEYWORDS="$pkg_architectures"
+DESCRIPTION="$(package_get_description "$pkg")"
+SRC_URI="$pkg_filename_base"
+SLOT="0"
 
-	RDEPEND="$pkg_deps"
+RDEPEND="$pkg_deps"
 
-	pkg_nofetch() {
-		\telog "Please move \$SRC_URI"
-		\telog "to your distfiles folder."
-	}
+pkg_nofetch() {
+	elog "Please move \$SRC_URI"
+	elog "to your distfiles folder."
+}
 
-	src_install() {
-		\tdoins -r .
-	}
-
-	EOF
+src_install() {
+	doins -r .
+}
+EOF
 
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
-		cat >> "$ebuild_path" <<- EOF
-		pkg_postinst() {
-			\t$(get_value "${pkg}_POSTINST_RUN")
-		}
+		cat >> "$ebuild_path" << EOF
 
-		EOF
+pkg_postinst() {
+	$(get_value "${pkg}_POSTINST_RUN")
+}
+EOF
+
 	# For compatibility with pre-2.12 scripts,
 	# ignored if a package-specific value is already set
 	elif [ -e "$postinst" ]; then
@@ -96,12 +96,13 @@ pkg_write_egentoo() {
 	fi
 
 	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
-		cat >> "$ebuild_path" <<- EOF
-		pkg_prerm() {
-			\t$(get_value "${pkg}_PRERM_RUN")
-		}
+		cat >> "$ebuild_path" << EOF
 
-		EOF
+pkg_prerm() {
+	$(get_value "${pkg}_PRERM_RUN")
+}
+EOF
+
 	# For compatibility with pre-2.12 scripts,
 	# ignored if a package-specific value is already set
 	elif [ -e "$prerm" ]; then
