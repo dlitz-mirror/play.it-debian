@@ -14,9 +14,9 @@ pkg_write_arch() {
 		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_ARCH")"
 	fi
 	local pkg_size
-	pkg_size=$(du --total --block-size=1 --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
+	pkg_size=$(du --total --block-size=1 --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
 	local target
-	target="$pkg_path/.PKGINFO"
+	target="$(package_get_path "$pkg")/.PKGINFO"
 
 	mkdir --parents "$(dirname "$target")"
 
@@ -51,7 +51,7 @@ pkg_write_arch() {
 		EOF
 	fi
 
-	target="$pkg_path/.INSTALL"
+	target="$(package_get_path "$pkg")/.INSTALL"
 
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$target" <<- EOF
@@ -84,7 +84,7 @@ pkg_write_arch() {
 	fi
 
 	# Creates .MTREE
-	package_archlinux_create_mtree "$pkg_path"
+	package_archlinux_create_mtree "$(package_get_path "$pkg")"
 }
 
 # set list or Arch Linux dependencies from generic names

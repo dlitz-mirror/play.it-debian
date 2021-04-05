@@ -52,16 +52,14 @@ launcher_write_script_dosbox_run() {
 			('cdrom')
 				local image
 				local package
-				local package_path
 
 				# Get packages list for the current game
 				local packages_list
 				packages_list=$(packages_get_list)
 
 				for package in $packages_list; do
-					package_path="$(get_value "${package}_PATH")"
-					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
-						image="${package_path}$PATH_GAME/$GAME_IMAGE"
+					if [ -e "$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE" ]; then
+						image="$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE"
 						break;
 					fi
 				done

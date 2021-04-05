@@ -48,12 +48,7 @@ icons_get_from_package() {
 	package=$(package_get_current)
 
 	local path
-	local path_pkg
-	path_pkg="$(get_value "${package}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_get_from_package'
-	fi
-	path="${path_pkg}${PATH_GAME}"
+	path="$(package_get_path "$package")${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
 }
 
@@ -81,7 +76,6 @@ icons_get_from_path() {
 	local file
 	local icon
 	local list
-	local path_pkg
 	local wrestool_id
 
 	# get the current package
@@ -91,10 +85,6 @@ icons_get_from_path() {
 	directory="$1"
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
-	path_pkg="$(get_value "${package}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_get_from_package'
-	fi
 	for app in "$@"; do
 		if ! testvar "$app" 'APP'; then
 			error_invalid_argument 'app' 'icons_get_from_package'
@@ -255,7 +245,6 @@ icons_include_png_from_directory() {
 	local file
 	local path
 	local path_icon
-	local path_pkg
 	local resolution
 
 	# get the current package
@@ -266,14 +255,10 @@ icons_include_png_from_directory() {
 	directory="$2"
 	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
-	path_pkg="$(get_value "${package}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_include_png_from_directory'
-	fi
 	for file in "$directory"/*.png; do
 		icon_get_resolution_from_file "$file"
 		path_icon="$PATH_ICON_BASE/$resolution/apps"
-		path="${path_pkg}${path_icon}"
+		path="$(package_get_path "$package")${path_icon}"
 		mkdir --parents "$path"
 		mv "$file" "$path/$name.png"
 	done
@@ -333,23 +318,10 @@ icons_move_to() {
 
 	local source_package      source_path      source_directory
 	local destination_package destination_path destination_directory
-
 	source_package=$(package_get_current)
+	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
 	destination_package="$1"
-
-	# Get source path, ensure it is set
-	source_path=$(get_value "${source_package}_PATH")
-	if [ -z "$source_path" ]; then
-		error_invalid_argument 'PKG' 'icons_move_to'
-	fi
-	source_directory="${source_path}${PATH_ICON_BASE}"
-
-	# Get destination path, ensure it is set
-	destination_path=$(get_value "${destination_package}_PATH")
-	if [ -z "$destination_path" ]; then
-		error_invalid_argument 'destination_package' 'icons_move_to'
-	fi
-	destination_directory="${destination_path}${PATH_ICON_BASE}"
+	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
 
 	# If called in dry-run mode, return early
 	if [ $DRY_RUN -eq 1 ]; then
