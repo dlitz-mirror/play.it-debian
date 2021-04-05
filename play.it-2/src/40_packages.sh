@@ -201,7 +201,7 @@ package_get_id() {
 
 	# on Gentoo, avoid mixups between numbers in package ID and version number
 	case "$OPTION_PACKAGE" in
-		('gentoo')
+		('gentoo'|'egentoo')
 			package_id=$(printf '%s' "$package_id" | sed 's/-/_/g')
 		;;
 	esac
@@ -568,7 +568,7 @@ packages_get_version() {
 
 	# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
 	case "$OPTION_PACKAGE" in
-		('gentoo')
+		('gentoo'|'egentoo')
 			set +o errexit
 			packages_version=$(printf '%s' "$packages_version" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?')
 			set -o errexit

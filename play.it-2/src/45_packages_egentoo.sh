@@ -4,14 +4,12 @@
 # CALLED BY: write_metadata
 pkg_write_egentoo() {
 	local pkg
-	local pkg_path
 	local pkg_deps
 	local pkg_filename_base
 	local pkg_architectures
 	local ebuild_path
 
 	pkg="$1"
-	pkg_path=$(get_value "${pkg}_PATH")
 
 	use_archive_specific_value "${pkg}_DEPS"
 	if [ "$(get_value "${pkg}_DEPS")" ]; then
@@ -26,7 +24,7 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$pkg")"
 	fi
 
-	pkg_filename_base="$(basename "$pkg_path").tar"
+	pkg_filename_base="$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			pkg_filename_base="${pkg_filename_base}.gz"
@@ -55,7 +53,7 @@ pkg_write_egentoo() {
 		;;
 	esac
 
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(basename "$pkg_path").ebuild")
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -71,13 +69,15 @@ SLOT="0"
 
 RDEPEND="$pkg_deps"
 
+S=\${WORKDIR}
+
 pkg_nofetch() {
 	elog "Please move \$SRC_URI"
 	elog "to your distfiles folder."
 }
 
 src_install() {
-	doins -r .
+	cp --recursive --link \$S/* \$D
 }
 EOF
 
@@ -123,7 +123,9 @@ pkg_build_egentoo() {
 	pkg="$1"
 	pkg_path=$(get_value "${pkg}_PATH")
 
-	pkg_filename=$(realpath "$OPTION_OUTPUT_DIR/$(basename "$pkg_path").tar")
+	# We don’t want both binary packages to overwrite each other
+	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")"
+	pkg_filename=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tar")
 
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		information_package_alreay_exists "$(basename "$pkg_filename")"
