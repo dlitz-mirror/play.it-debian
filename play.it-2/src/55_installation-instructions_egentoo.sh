@@ -3,10 +3,9 @@
 print_instructions_egentoo() {
 	local pkg_path
 	local ebuild_path
-	local distdir_path
 	local pkg_id
 
-	distdir_path=$(get_distdir_gentoo)
+	info_package_to_distfiles
 
 	for pkg in "$@"; do
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
@@ -17,7 +16,6 @@ print_instructions_egentoo() {
 		ebuild_path="$(basename "${pkg_path%%.*}").ebuild"
 		pkg_id="$(package_get_id "$pkg")"
 
-		printf 'mv %s %s\n' "${pkg_path}" "${distdir_path}"
 		printf 'mkdir -p ${OVERLAY_PATH}/games-playit/%s\n' "${pkg_id}"
 		printf 'mv %s ${OVERLAY_PATH}/games-playit/%s/\n' \
 			"${ebuild_path}" "${pkg_id}"

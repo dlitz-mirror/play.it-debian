@@ -289,3 +289,22 @@ info_local_overlay_gentoo() {
 	return 0
 }
 
+# inform the need to move the packages to a distfile on egentoo
+# USAGE: info_package_to_distfiles
+info_package_to_distfiles() {
+	local message
+
+	case "${LANG%_*}" in
+		('fr')
+			message='Déplacez les paquets créés dans votre disfile\n'
+			message="$message"'puis exécutez les instructions suivantes :\n'
+			;;
+		('en'|*)
+			message='Move the generated packages into your distfile\n'
+			message="$message"'then run the following commands:\n'
+			;;
+	esac
+	printf "$message"
+	return 0
+}
+
