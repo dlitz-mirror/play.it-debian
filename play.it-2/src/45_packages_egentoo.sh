@@ -128,13 +128,6 @@ pkg_build_egentoo() {
 	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")"
 	pkg_filename=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tar")
 
-	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
-		information_package_alreay_exists "$(basename "$pkg_filename")"
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg?}_PKG
-		return 0
-	fi
-
 	tar_options='--create'
 	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
 		guess_tar_implementation
@@ -170,6 +163,13 @@ pkg_build_egentoo() {
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
 		;;
 	esac
+
+	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+		information_package_alreay_exists "$(basename "$pkg_filename")"
+		eval ${pkg}_PKG=\"$pkg_filename\"
+		export ${pkg?}_PKG
+		return 0
+	fi
 
 	information_package_building "$(basename "$pkg_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
