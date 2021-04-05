@@ -400,6 +400,35 @@ package_get_provide() {
 	return 0
 }
 
+# get path to the directory where the given package is prepared
+# USAGE: package_get_path $package
+# RETURNS: path to a directory, it is not checked that it exists or is writable
+package_get_path() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_path' '$package'
+		return 1
+	fi
+
+	###
+	# TODO
+	# Check that the following variables are set:
+	# - $PLAYIT_WORKDIR
+	# - $ARCHIVE
+	###
+
+	# compute the package path from its identifier
+	local package_path
+	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
+
+	printf '%s' "$package_path"
+	return 0
+}
+
 # get the maintainer string
 # USAGE: packages_get_maintainer
 # RETURNS: packages maintainer, as a non-empty string
