@@ -36,6 +36,9 @@ write_metadata() {
 			('gentoo')
 				pkg_write_gentoo
 			;;
+			('egentoo')
+				pkg_write_egentoo $pkg
+			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
 			;;
@@ -80,6 +83,9 @@ build_pkg() {
 			;;
 			('gentoo')
 				pkg_build_gentoo "$(package_get_path "$pkg")"
+			;;
+			('egentoo')
+				pkg_build_egentoo "$pkg"
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
