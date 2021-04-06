@@ -403,18 +403,66 @@ package_get_path() {
 		return 1
 	fi
 
-	###
-	# TODO
-	# Check that the following variables are set:
-	# - $PLAYIT_WORKDIR
-	# - $ARCHIVE
-	###
+
+	# check that an archive is set by the global context
+	# shellcheck disable=SC2153
+	if [ -z "$ARCHIVE" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_name' '$ARCHIVE'
+	fi
+
+	# check that PLAYIT_WORKDIR is set by the global context
+	if [ -z "$PLAYIT_WORKDIR" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_name' '$PLAYIT_WORKDIR'
+	fi
 
 	# compute the package path from its identifier
+	# shellcheck disable=SC2039
 	local package_path
 	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
 
 	printf '%s' "$package_path"
+	return 0
+}
+
+# get name of the given package’s archive without suffix
+# USAGE: package_get_name $package
+# RETURNS: filename, without any suffix
+package_get_name() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_name' '$package'
+		return 1
+	fi
+
+	# check that an archive is set by the global context
+	# shellcheck disable=SC2153
+	if [ -z "$ARCHIVE" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_name' '$ARCHIVE'
+	fi
+
+	# compute the package path from its identifier
+	# shellcheck disable=SC2039
+	local package_name
+	case "$OPTION_PACKAGE" in
+		('arch'|'deb')
+			package_name=$(basename "$(package_get_path "$package")")
+		;;
+		('gentoo'|'egentoo')
+			package_name="$(package_get_id "$package")-$(packages_get_version "$ARCHIVE")"
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
+		;;
+	esac
+
+	printf '%s' "$package_name"
 	return 0
 }
 
