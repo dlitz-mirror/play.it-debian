@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,44 +30,44 @@ set -o errexit
 ###
 
 ###
-# Blackwell 4: Blackwell Deception
+# Blackwell 3: The Blackwell Convergence
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200830.1
+script_version=20210317.8
 
 # Set game-specific variables
 
-GAME_ID='blackwell-4-blackwell-deception'
-GAME_NAME='Blackwell 4: Blackwell Deception'
+GAME_ID='blackwell-3'
+GAME_NAME='Blackwell 3: The Blackwell Convergence'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_0'
 
-ARCHIVE_GOG_0='gog_blackwell_deception_2.0.0.3.sh'
+ARCHIVE_GOG_0='gog_blackwell_convergence_2.0.0.2.sh'
+ARCHIVE_GOG_0_MD5='784f9a8cf70213c938c801dadcd0b5e3'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_SIZE='340000'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.2'
 ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_bundle'
-ARCHIVE_GOG_0_MD5='1c2684697a98eee4d64c7e34311fac6c'
-ARCHIVE_GOG_0_SIZE='610000'
-ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.3'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='*.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='Convergence.bin.x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='*.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='Convergence.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='agsgame.dat acsetup.cfg audio.vox prog.bwd'
+ARCHIVE_GAME_DATA_FILES='Convergence.png *.cfg *.dat *.vox'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='Deception.bin.x86'
-APP_MAIN_EXE_BIN64='Deception.bin.x86_64'
-APP_MAIN_ICON='data/noarch/support/icon.png'
-
+APP_MAIN_EXE_BIN32='Convergence.bin.x86'
+APP_MAIN_EXE_BIN64='Convergence.bin.x86_64'
+APP_MAIN_ICON='Convergence.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -75,23 +75,32 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx sdl2"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ theora glx freetype libSDL2-2.0.so.0 libvorbisfile.so.3"
+PKG_BIN32_DEPS_DEB='libogg0, libvorbis0a'
+PKG_BIN32_DEPS_ARCH='lib32-libogg lib32-libvorbis'
+PKG_BIN32_DEPS_GENTOO='media-libs/libogg[abi_x86_32] media-libs/libvorbis[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_ARCH='libogg libvorbis'
+PKG_BIN64_DEPS_GENTOO='media-libs/libogg media-libs/libvorbis'
+
+# Ensure easy upgrade from packages generated with pre-20210317.1 game script
+PKG_BIN32_PROVIDE='blackwell-3-blackwell-convergence'
+PKG_BIN64_PROVIDE='blackwell-3-blackwell-convergence'
+PKG_DATA_PROVIDE='blackwell-3-blackwell-convergence-data'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -116,11 +125,11 @@ prepare_package_layout
 # Get game icon
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
+icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
