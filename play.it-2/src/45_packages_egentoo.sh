@@ -1,6 +1,6 @@
 # write .ebuild package meta-data
 # USAGE: pkg_write_egentoo PKG_xxx
-# NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
+# NEEDED VARS: PKG_DEPS_GENTOO OPTION_COMPRESSION OPTION_OUTPUT_DIR
 # CALLED BY: write_metadata
 pkg_write_egentoo() {
 	local package
@@ -10,6 +10,11 @@ pkg_write_egentoo() {
 	local ebuild_path
 
 	package="$1"
+	if [ -z "$package" ];then
+		# shellcheck disable=SC2016
+		error_empty_string 'pkg_write_egentoo' '$package'
+		return 1
+	fi
 
 	use_archive_specific_value "${package}_DEPS"
 	if [ "$(get_value "${package}_DEPS")" ]; then
@@ -122,6 +127,11 @@ pkg_build_egentoo() {
 	local tar_options
 
 	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'pkg_build_egentoo' '$package'
+		return 1
+	fi
 	package_path=$(package_get_path "$package")
 
 	# We don’t want both binary packages to overwrite each other
