@@ -8,6 +8,9 @@ prepare_package_layout() {
 		prepare_package_layout $(packages_get_list)
 		return 0
 	fi
+
+	debug_entering_function 'prepare_package_layout'
+
 	local package
 	for package in "$@"; do
 		PKG="$package"
@@ -20,6 +23,8 @@ prepare_package_layout() {
 			organize_data "DOC${i}_${package#PKG_}"  "$PATH_DOC"
 		done
 	done
+
+	debug_leaving_function 'prepare_package_layout'
 }
 
 # put files from archive in the right package directories
@@ -64,6 +69,7 @@ organize_data() {
 			set +o noglob
 			for source_file in "$source_path"/$source_files_pattern; do
 				if [ -e "$source_file" ]; then
+					debug_source_file 'Found' "$archive_path${source_file#$source_path}"
 					destination_file="${destination_path}/${source_file#$source_path}"
 					mkdir --parents "$(dirname "$destination_file")"
 					cp \
@@ -75,6 +81,8 @@ organize_data() {
 						--preserve=links \
 						"$source_file" "$destination_file"
 					rm --force --recursive "$source_file"
+				else
+					debug_source_file 'Missing' "$archive_path${source_file#$source_path}"
 				fi
 			done
 			set -o noglob

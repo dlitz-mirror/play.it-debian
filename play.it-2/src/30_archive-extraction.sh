@@ -5,6 +5,9 @@
 extract_data_from() {
 	[ "$PLAYIT_WORKDIR" ] || return 1
 	[ "$ARCHIVE" ] || return 1
+
+	debug_entering_function 'extract_data_from'
+
 	local file
 	for file in "$@"; do
 		information_archive_data_extraction "$(basename "$file")"
@@ -84,6 +87,8 @@ extract_data_from() {
 
 		information_archive_data_extraction_done
 	done
+
+	debug_leaving_function 'extract_data_from'
 }
 
 # extract data from 7z archive

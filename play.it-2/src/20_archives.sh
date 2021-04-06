@@ -3,6 +3,9 @@
 # RETURNS: nothing
 archive_initialize_required() {
 	local archive_name archive_candidate
+
+	debug_entering_function 'archive_initialize_required'
+
 	archive_name="$1"
 	shift 1
 
@@ -15,6 +18,9 @@ archive_initialize_required() {
 
 	# Call common part of archive initialization
 	archive_initialize "$archive_name" "$archive_candidate"
+
+	debug_leaving_function 'archive_initialize_required'
+
 	return 0
 }
 
@@ -23,6 +29,9 @@ archive_initialize_required() {
 # RETURNS: nothing
 archive_initialize_optional() {
 	local archive_name archive_candidate
+
+	debug_entering_function 'archive_initialize_optional'
+
 	archive_name="$1"
 	shift 1
 
@@ -35,6 +44,9 @@ archive_initialize_optional() {
 
 	# Call common part of archive initialization
 	archive_initialize "$archive_name" "$archive_candidate"
+
+	debug_leaving_function 'archive_initialize_optional'
+
 	return 0
 }
 
