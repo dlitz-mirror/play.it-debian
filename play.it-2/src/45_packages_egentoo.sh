@@ -174,28 +174,29 @@ pkg_build_egentoo() {
 		;;
 	esac
 
-	if [ -e "$package_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
-		eval ${package}_PKG=\"$package_filename\"
-		export ${package?}_PKG
+		eval "${package}"_PKG=\""$package_filename"\"
+		export "${package}"_PKG
 		return 0
 	fi
 
 	information_package_building "$(basename "$package_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
-		eval ${package}_PKG=\"$package_filename\"
-		export ${package?}_PKG
+		eval "${package}"_PKG=\""$package_filename"\"
+		export "${package}"_PKG
 		return 0
 	fi
 
 	(
 		cd "$package_path"
-		tar $tar_options --file "$package_filename" *
+		# shellcheck disable=SC2046
+		tar $tar_options --file "$package_filename" ./*
 	)
 
-	eval ${package}_PKG=\"$package_filename\"
-	export ${package?}_PKG
+	eval "${package}"_PKG=\""$package_filename"\"
+	export "${package}"_PKG
 
 	print_ok
 }
