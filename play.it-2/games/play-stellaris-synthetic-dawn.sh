@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,6 +45,8 @@ EXPANSION_ID='synthetic-dawn'
 EXPANSION_NAME='Synthetic Dawn Story Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_15
+ARCHIVE_GOG_14
 ARCHIVE_GOG_13
 ARCHIVE_GOG_12
 ARCHIVE_GOG_11
@@ -60,8 +62,20 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_15='stellaris_synthetic_dawn_story_pack_2_8_1_2_42827.sh'
+ARCHIVE_GOG_15_URL='https://www.gog.com/game/stellaris_synthetic_dawn_story_pack'
+ARCHIVE_GOG_15_MD5='2bcad8721700e5a8203fd7fe90c6f03c'
+ARCHIVE_GOG_15_SIZE='49000'
+ARCHIVE_GOG_15_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_15_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_14='stellaris_synthetic_dawn_story_pack_2_8_0_5_42441.sh'
+ARCHIVE_GOG_14_MD5='df7e6af404d8eb979a314a232430fbb3'
+ARCHIVE_GOG_14_SIZE='49000'
+ARCHIVE_GOG_14_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_14_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_13='stellaris_synthetic_dawn_story_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_13_URL='https://www.gog.com/game/stellaris_synthetic_dawn_story_pack'
 ARCHIVE_GOG_13_MD5='f199f4751b106516822e19249ab13014'
 ARCHIVE_GOG_13_SIZE='49000'
 ARCHIVE_GOG_13_VERSION='2.8.0.3-gog42321'

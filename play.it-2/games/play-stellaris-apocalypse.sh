@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,12 +45,26 @@ EXPANSION_ID='apocalypse'
 EXPANSION_NAME='Apocalypse'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_4='stellaris_apocalypse_2_8_1_2_42827.sh'
+ARCHIVE_GOG_4_URL='https://www.gog.com/game/stellaris_apocalypse'
+ARCHIVE_GOG_4_MD5='3b4bfaaaa89b80694173fcc8b7fe09dd'
+ARCHIVE_GOG_4_SIZE='39000'
+ARCHIVE_GOG_4_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_3='stellaris_apocalypse_2_8_0_5_42441.sh'
+ARCHIVE_GOG_3_MD5='57cdc15d3a426291609164aed447e70a'
+ARCHIVE_GOG_3_SIZE='39000'
+ARCHIVE_GOG_3_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_3_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_2='stellaris_apocalypse_2_8_0_3_42321.sh'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/stellaris_apocalypse'
 ARCHIVE_GOG_2_MD5='6ab9d43f5cf3d48e84907703b5d3a72f'
 ARCHIVE_GOG_2_SIZE='39000'
 ARCHIVE_GOG_2_VERSION='2.8.0.3-gog42321'

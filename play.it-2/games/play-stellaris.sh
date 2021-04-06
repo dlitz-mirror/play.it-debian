@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201030.1
+script_version=20201120.1
 
 # Set game-specific variables
 
@@ -46,6 +46,8 @@ GAME_NAME='Stellaris'
 # Archives using a name following the pattern "ARCHIVE_.*_[0-9]+" should be automatically listed by the library
 ###
 ARCHIVES_LIST='
+ARCHIVE_GOG_15
+ARCHIVE_GOG_14
 ARCHIVE_GOG_13
 ARCHIVE_GOG_12
 ARCHIVE_GOG_11
@@ -67,8 +69,20 @@ ARCHIVE_GOG_32BIT_LIBATOMIC_2
 ARCHIVE_GOG_32BIT_LIBATOMIC_1
 ARCHIVE_GOG_32BIT_LIBATOMIC_0'
 
+ARCHIVE_GOG_15='stellaris_2_8_1_2_42827.sh'
+ARCHIVE_GOG_15_URL='https://www.gog.com/game/stellaris'
+ARCHIVE_GOG_15_MD5='8278463a7b3a9b6b7f9c5ede4b51b222'
+ARCHIVE_GOG_15_SIZE='11000000'
+ARCHIVE_GOG_15_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_15_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_14='stellaris_english_2_8_0_5_42441.sh'
+ARCHIVE_GOG_14_MD5='3c4be57191620dbfb889c3f715e561b7'
+ARCHIVE_GOG_14_SIZE='11000000'
+ARCHIVE_GOG_14_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_14_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_13='stellaris_english_2_8_0_3_42321.sh'
-ARCHIVE_GOG_13_URL='https://www.gog.com/game/stellaris'
 ARCHIVE_GOG_13_MD5='44dddb3bc3729f0d2b4eb88c85728d31'
 ARCHIVE_GOG_13_SIZE='11000000'
 ARCHIVE_GOG_13_VERSION='2.8.0.3-gog42321'

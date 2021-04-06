@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,12 +45,26 @@ EXPANSION_ID='lithoids'
 EXPANSION_NAME='Lithoids Species Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_4
+ARCHIVE_GOG_3
 ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_4='stellaris_lithoids_species_pack_2_8_1_2_42827.sh'
+ARCHIVE_GOG_4_URL='https://www.gog.com/game/stellaris_lithoids_species_pack'
+ARCHIVE_GOG_4_MD5='8939eff1f210fff7dddef479a7bac685'
+ARCHIVE_GOG_4_SIZE='54000'
+ARCHIVE_GOG_4_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_4_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_3='stellaris_lithoids_species_pack_2_8_0_5_42441.sh'
+ARCHIVE_GOG_3_MD5='84fee40e38754178efccf25846ce0c9e'
+ARCHIVE_GOG_3_SIZE='54000'
+ARCHIVE_GOG_3_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_3_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_2='stellaris_lithoids_species_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/stellaris_lithoids_species_pack'
 ARCHIVE_GOG_2_MD5='028022399713fd19f9325730c4410f50'
 ARCHIVE_GOG_2_SIZE='54000'
 ARCHIVE_GOG_2_VERSION='2.8.0.3-gog42321'
