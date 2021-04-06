@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,70 +30,65 @@ set -o errexit
 ###
 
 ###
-# Stellaris - Lithoids Species Pack
+# Blackwell 1: The Blackwell Legacy
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.3
+script_version=20210317.4
 
 # Set game-specific variables
 
-GAME_ID='stellaris'
-GAME_NAME='Stellaris'
-
-EXPANSION_ID='lithoids'
-EXPANSION_NAME='Lithoids Species Pack'
+GAME_ID='blackwell-1'
+GAME_NAME='Blackwell 1: The Blackwell Legacy'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_4
-ARCHIVE_GOG_3
-ARCHIVE_GOG_2
-ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
-ARCHIVE_GOG_4='stellaris_lithoids_species_pack_2_8_1_2_42827.sh'
-ARCHIVE_GOG_4_URL='https://www.gog.com/game/stellaris_lithoids_species_pack'
-ARCHIVE_GOG_4_MD5='8939eff1f210fff7dddef479a7bac685'
-ARCHIVE_GOG_4_SIZE='54000'
-ARCHIVE_GOG_4_VERSION='2.8.1.2-gog42827'
-ARCHIVE_GOG_4_TYPE='mojosetup_unzip'
+ARCHIVE_GOG_0='gog_blackwell_legacy_2.0.0.2.sh'
+ARCHIVE_GOG_0_MD5='f16c09c0ca29b579a0d87c9be7361375'
+ARCHIVE_GOG_0_TYPE='mojosetup'
+ARCHIVE_GOG_0_SIZE='270000'
+ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.2'
+ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_bundle'
 
-ARCHIVE_GOG_3='stellaris_lithoids_species_pack_2_8_0_5_42441.sh'
-ARCHIVE_GOG_3_MD5='84fee40e38754178efccf25846ce0c9e'
-ARCHIVE_GOG_3_SIZE='54000'
-ARCHIVE_GOG_3_VERSION='2.8.0.5-gog42441'
-ARCHIVE_GOG_3_TYPE='mojosetup_unzip'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
-ARCHIVE_GOG_2='stellaris_lithoids_species_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_2_MD5='028022399713fd19f9325730c4410f50'
-ARCHIVE_GOG_2_SIZE='54000'
-ARCHIVE_GOG_2_VERSION='2.8.0.3-gog42321'
-ARCHIVE_GOG_2_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='Legacy.bin.x86'
 
-ARCHIVE_GOG_1='stellaris_lithoids_species_pack_2_7_2_38578.sh'
-ARCHIVE_GOG_1_MD5='ee0f7877dcc846bb08991bc74ee882ef'
-ARCHIVE_GOG_1_SIZE='54000'
-ARCHIVE_GOG_1_VERSION='2.7.2-gog38578'
-ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='Legacy.bin.x86_64'
 
-ARCHIVE_GOG_0='stellaris_lithoids_species_pack_2_7_1_38218.sh'
-ARCHIVE_GOG_0_MD5='e3d43b3e1e6d2544291081c90b3da17e'
-ARCHIVE_GOG_0_SIZE='54000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='Legacy.png *.cfg *.dat *.vox'
 
-ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='dlc/dlc022_lithoids'
+APP_MAIN_TYPE='native'
+APP_MAIN_EXE_BIN32='Legacy.bin.x86'
+APP_MAIN_EXE_BIN64='Legacy.bin.x86_64'
+APP_MAIN_ICON='Legacy.png'
 
-PACKAGES_LIST='PKG_MAIN'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
-PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
-PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
-PKG_MAIN_DEPS="$GAME_ID"
+PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_DESCRIPTION='data'
 
-# Ensure smooth upgrade from pre-20201031.1 packages
-PKG_MAIN_PROVIDE='stellaris-lithoids-species-pack'
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ theora glx freetype libSDL2-2.0.so.0 libvorbisfile.so.3"
+PKG_BIN32_DEPS_DEB='libogg0, libvorbis0a'
+PKG_BIN32_DEPS_ARCH='lib32-libogg lib32-libvorbis'
+PKG_BIN32_DEPS_GENTOO='media-libs/libogg[abi_x86_32] media-libs/libvorbis[abi_x86_32]'
+
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_ARCH='libogg libvorbis'
+PKG_BIN64_DEPS_GENTOO='media-libs/libogg media-libs/libvorbis'
+
+# Ensure easy upgrade from packages generated with pre-20210317.1 game script
+PKG_BIN32_PROVIDE='blackwell-1-the-blackwell-legacy'
+PKG_BIN64_PROVIDE='blackwell-1-the-blackwell-legacy'
+PKG_DATA_PROVIDE='blackwell-1-the-blackwell-legacy-data'
 
 # Load common functions
 
@@ -125,7 +121,21 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Write launchers
+
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	launchers_write 'APP_MAIN'
+done
 
 # Build package
 
@@ -138,7 +148,6 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0

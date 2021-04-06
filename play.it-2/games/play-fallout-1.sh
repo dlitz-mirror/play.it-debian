@@ -2,8 +2,9 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2018-2021, BetaRays
+# Copyright (c)      2021, dany_wilde
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200705.1
+script_version=20210112.1
 
 # Set game-specific variables
 
@@ -44,6 +45,7 @@ GAME_NAME='Fallout'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_EN_1
+ARCHIVE_GOG_FR_1
 ARCHIVE_GOG_OLDTEMPLATE_EN_0
 ARCHIVE_GOG_OLDTEMPLATE_FR_0
 '
@@ -57,6 +59,16 @@ ARCHIVE_GOG_EN_1_TYPE='innosetup'
 ARCHIVE_GOG_EN_1_PART1='setup_fallout_1.2_(27130)-1.bin'
 ARCHIVE_GOG_EN_1_PART1_MD5='b9a0a59bc1426df4cc9588fdd5a8d736'
 ARCHIVE_GOG_EN_1_PART1_TYPE='innosetup'
+
+ARCHIVE_GOG_FR_1='setup_fallout_1.2_(french)_(27130).exe'
+ARCHIVE_GOG_FR_1_URL='https://www.gog.com/game/fallout'
+ARCHIVE_GOG_FR_1_MD5='2c0d7a347a903bb52ed1d70305038e9c'
+ARCHIVE_GOG_FR_1_VERSION='1.2-gog27130'
+ARCHIVE_GOG_FR_1_SIZE='600000'
+ARCHIVE_GOG_FR_1_TYPE='innosetup'
+ARCHIVE_GOG_FR_1_PART1='setup_fallout_1.2_(french)_(27130)-1.bin'
+ARCHIVE_GOG_FR_1_PART1_MD5='7db5f755168b89cc38b6e090130b0e1a'
+ARCHIVE_GOG_FR_1_PART1_TYPE='innosetup'
 
 ARCHIVE_GOG_OLDTEMPLATE_EN_0='setup_fallout_2.1.0.18.exe'
 ARCHIVE_GOG_OLDTEMPLATE_EN_0_MD5='47b7b3c059d92c0fd6db5881635277ea'

@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20201120.3
 
 # Set game-specific variables
 
@@ -45,6 +45,8 @@ EXPANSION_ID='plantoid'
 EXPANSION_NAME='Plantoids Species Pack'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_16
+ARCHIVE_GOG_15
 ARCHIVE_GOG_14
 ARCHIVE_GOG_13
 ARCHIVE_GOG_12
@@ -61,8 +63,20 @@ ARCHIVE_GOG_2
 ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
 
+ARCHIVE_GOG_16='stellaris_plantoids_species_pack_2_8_1_2_42827.sh'
+ARCHIVE_GOG_16_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
+ARCHIVE_GOG_16_MD5='6512a887b13a3a781a6556f58be1928f'
+ARCHIVE_GOG_16_SIZE='1400'
+ARCHIVE_GOG_16_VERSION='2.8.1.2-gog42827'
+ARCHIVE_GOG_16_TYPE='mojosetup_unzip'
+
+ARCHIVE_GOG_15='stellaris_plantoids_species_pack_2_8_0_5_42441.sh'
+ARCHIVE_GOG_15_MD5='667be01a11d6c6f05303a499feeea4b4'
+ARCHIVE_GOG_15_SIZE='1400'
+ARCHIVE_GOG_15_VERSION='2.8.0.5-gog42441'
+ARCHIVE_GOG_15_TYPE='mojosetup_unzip'
+
 ARCHIVE_GOG_14='stellaris_plantoids_species_pack_2_8_0_3_42321.sh'
-ARCHIVE_GOG_14_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
 ARCHIVE_GOG_14_MD5='d6e3bebb0fa00fdbedbb5131a3e3a427'
 ARCHIVE_GOG_14_SIZE='1400'
 ARCHIVE_GOG_14_VERSION='2.8.0.3-gog42321'

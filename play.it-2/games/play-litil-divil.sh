@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210226.1
+script_version=20210326.1
 
 # Set game-specific variables
 
@@ -43,14 +43,21 @@ GAME_ID='litil-divil'
 GAME_NAME='Litil Divil'
 
 ARCHIVES_LIST='
+ARCHIVE_GOG_1
 ARCHIVE_GOG_0'
+
+ARCHIVE_GOG_1='gog_litil_divil_2.0.0.22.sh'
+ARCHIVE_GOG_1_MD5='89a1a0cedbf13d8e6aed285780b69def'
+ARCHIVE_GOG_1_TYPE='mojosetup'
+ARCHIVE_GOG_1_SIZE='45000'
+ARCHIVE_GOG_1_VERSION='1.0-gog2.0.0.22'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/litil_divil'
 
 ARCHIVE_GOG_0='gog_litil_divil_2.0.0.21.sh'
 ARCHIVE_GOG_0_MD5='1258be406cb4b40c912c4846df2ac92b'
 ARCHIVE_GOG_0_TYPE='mojosetup'
 ARCHIVE_GOG_0_SIZE='44000'
 ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.21'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/litil_divil'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC0_MAIN_FILES='*.txt *.pdf'
