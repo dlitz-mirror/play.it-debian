@@ -160,3 +160,31 @@ debug_source_file() {
 	fi
 }
 
+# print the type of the launcher being created
+# USAGE: debug_write_launcher $launcher_type
+debug_write_launcher() {
+	local launcher_type
+	local binary_file
+
+	if [ "$DEBUG" -eq 0 ]; then
+		return 0
+	else
+		launcher_type="$1"
+		binary_file="$2"
+
+		if [ -z "$launcher_type" ]; then
+			# shellcheck disable=SC2016
+			error_empty_string 'debug_write_launcher' '$launcher_type'
+			return 1
+		else
+			print_debug
+			if [ -z "$binary_file" ]; then
+				printf 'Writing launcher: %s\n' "$launcher_type"
+			else
+				printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file"
+			fi
+			return 0
+		fi
+	fi
+}
+

@@ -118,6 +118,7 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
+	debug_write_launcher "$application_type" "$binary_file"
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
