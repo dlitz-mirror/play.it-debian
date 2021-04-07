@@ -44,26 +44,18 @@ help() {
 
 	# print list of supported archives
 	printf 'ARCHIVE\n\n'
-	archives_get_list
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			if [ -n "${ARCHIVES_LIST##* *}" ]; then
-				message='Ce script reconnaît lʼarchive suivante :\n'
-			else
-				message='Ce script reconnaît les archives suivantes :\n'
-			fi
+			message='Ce script reconnaît les archives suivantes :'
 		;;
 		('en'|*)
-			if [ -n "${ARCHIVES_LIST##* *}" ]; then
-				message='This script can work on the following archive:\n'
-			else
-				message='This script can work on the following archives:\n'
-			fi
+			message='This script can work on the following archives:'
 		;;
 	esac
-	printf "$message"
-	information_archives_list $ARCHIVES_LIST
+	printf '%s\n' "$message"
+	# shellcheck disable=SC2046
+	information_archives_list $(archives_return_list)
 
 	return 0
 }
