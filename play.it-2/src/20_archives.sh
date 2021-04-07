@@ -330,6 +330,7 @@ archive_integrity_check() {
 #          as a list of strings separated by spaces or line breaks
 archives_return_list() {
 	# If a list is already explicitely set, return early
+	# shellcheck disable=SC2153
 	if [ -n "$ARCHIVES_LIST" ]; then
 		printf '%s' "$ARCHIVES_LIST"
 		return 0
@@ -339,10 +340,42 @@ archives_return_list() {
 	# shellcheck disable=SC2039
 	local script pattern
 	script="$0"
-	pattern='^ARCHIVE_[0-9A-Z]\+\(_OLD[0-9A-Z]*\)*='
-	grep --regexp="$pattern" "$script" | \
-		cut --delimiter='=' --fields=1
 
-	return 0
+	# Try to find archives using the ARCHIVE_BASE_xxx_[0-9]+ naming scheme
+	# Fall back to the older naming scheme for scripts targeting a library older than 2.13
+	# shellcheck disable=SC2039
+	local archives_list pattern
+	# shellcheck disable=SC2154
+	if version_is_at_least '2.13' "$target_version"; then
+		pattern='^ARCHIVE_BASE\(_[0-9A-Z]\+\)*_[0-9]\+='
+	else
+		pattern='^ARCHIVE_[0-9A-Z]\+\(_OLD[0-9A-Z]*\)*='
+	fi
+	archives_list=$(grep \
+		--regexp="$pattern" "$script" | \
+		cut --delimiter='=' --fields=1)
+
+	# Returns the list of found archives
+	if [ -n "$archives_list" ]; then
+		printf '%s' "$archives_list"
+		return 0
+	fi
+
+	# Fall back on trying to find archives using the old naming scheme
+	# This will be deprecated in some future release
+	pattern='^ARCHIVE_[0-9A-Z]\+\(_OLD[0-9A-Z]*\)*='
+	archives_list=$(grep \
+		--regexp="$pattern" "$script" | \
+		cut --delimiter='=' --fields=1)
+
+	# Returns the list of found archives
+	if [ -n "$archives_list" ]; then
+		printf '%s' "$archives_list"
+		return 0
+	fi
+
+	# The current script does not seem to support any archive
+	# This should not happen
+	return 1
 }
 
