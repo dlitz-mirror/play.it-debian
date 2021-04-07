@@ -324,6 +324,28 @@ archive_integrity_check() {
 	esac
 }
 
+# return the list of supported archives for the current script
+# USAGE: archives_return_list
+# RETURNS: the list of identifiers of the supported archives,
+#          as a list of strings separated by spaces or line breaks
+archives_return_list() {
+	# If a list is already explicitely set, return early
+	if [ -n "$ARCHIVES_LIST" ]; then
+		printf '%s' "$ARCHIVES_LIST"
+		return 0
+	fi
+
+	# Parse the calling script to guess the identifiers of the archives it supports
+	# shellcheck disable=SC2039
+	local script pattern
+	script="$0"
+	pattern='^ARCHIVE_[0-9A-Z]\+\(_OLD[0-9A-Z]*\)*='
+	grep --regexp="$pattern" "$script" | \
+		cut --delimiter='=' --fields=1
+
+	return 0
+}
+
 # get list of available archives, exported as ARCHIVES_LIST
 # USAGE: archives_get_list
 archives_get_list() {
