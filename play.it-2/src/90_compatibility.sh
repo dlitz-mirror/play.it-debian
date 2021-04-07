@@ -1,5 +1,10 @@
 # Keep compatibility with 2.12 and older
 
+archives_get_list() {
+	ARCHIVES_LIST=$(archives_return_list)
+	export ARCHIVES_LIST
+}
+
 get_package_version() {
 	PKG_VERSION=$(packages_get_version "$ARCHIVE")
 	export PKG_VERSION
