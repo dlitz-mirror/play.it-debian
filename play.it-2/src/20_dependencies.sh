@@ -68,6 +68,9 @@ check_deps() {
 		('lzip')
 			SCRIPT_DEPS="$SCRIPT_DEPS lzip"
 		;;
+		('lzop')
+			SCRIPT_DEPS="$SCRIPT_DEPS lzop"
+		;;
 	esac
 	if [ "$OPTION_CHECKSUM" = 'md5sum' ]; then
 		SCRIPT_DEPS="$SCRIPT_DEPS md5sum"
