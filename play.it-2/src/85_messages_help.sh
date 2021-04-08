@@ -121,6 +121,7 @@ help_checksum() {
 # display --compression option usage
 # CALLED BY: help
 help_compression() {
+	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -151,6 +152,7 @@ help_compression() {
 	esac
 	printf -- '--compression=none|gzip|xz|bzip2|zstd|lz4|lzip|lzop\n'
 	printf -- '--compression none|gzip|xz|bzip2|zstd|lz4|lzip|lzop\n\n'
+	# shellcheck disable=SC2059
 	printf "$message" 'none' 'gzip' 'xz' 'bzip2' 'zstd' 'lz4' 'lzip' 'lzop'
 	return 0
 }
