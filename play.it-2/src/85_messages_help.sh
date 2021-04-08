@@ -131,6 +131,7 @@ help_compression() {
 			message="$message"'\t%s\tcompression gzip (rapide)\n'
 			message="$message"'\t%s\tcompression xz (plus lent mais plus efficace que gzip)\n'
 			message="$message"'\t%s\tcompression bzip2\n'
+			message="$message"'\t%s\tcompression zstd\n\n'
 		;;
 		('en'|*)
 			message='\tGenerated packages compression method selection\n'
@@ -139,11 +140,12 @@ help_compression() {
 			message="$message"'\t%s\tgzip compression (fast)\n'
 			message="$message"'\t%s\txz compression (slower but more efficient than gzip)\n'
 			message="$message"'\t%s\tbzip2 compression\n'
+			message="$message"'\t%s\tzstd compression\n'
 		;;
 	esac
-	printf -- '--compression=none|gzip|xz|bzip2\n'
-	printf -- '--compression none|gzip|xz|bzip2\n\n'
-	printf "$message" 'none' 'gzip' 'xz' 'bzip2'
+	printf -- '--compression=none|gzip|xz|bzip2|zstd\n'
+	printf -- '--compression none|gzip|xz|bzip2|zstd\n\n'
+	printf "$message" 'none' 'gzip' 'xz' 'bzip2' 'zstd'
 	return 0
 }
 
