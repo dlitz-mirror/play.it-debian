@@ -49,7 +49,7 @@ debug_entering_function() {
 		debug_level=1
 	fi
 
-	if [ "$DEBUG" -ge "$debug_level" ]; then
+	if [ "$DEBUG" -lt "$debug_level" ]; then
 		return 0
 	else
 		function_name="$1"
@@ -85,7 +85,7 @@ debug_leaving_function() {
 		debug_level=1
 	fi
 
-	if [ "$DEBUG" -ge "$debug_level" ]; then
+	if [ "$DEBUG" -lt "$debug_level" ]; then
 		return 0
 	else
 		function_name="$1"
@@ -183,6 +183,28 @@ debug_write_launcher() {
 			else
 				printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file"
 			fi
+			return 0
+		fi
+	fi
+}
+
+# print an external command
+# USAGE: debug_external_command $command
+debug_external_command() {
+	local external_command
+
+	if [ "$DEBUG" -eq 0 ]; then
+		return 0
+	else
+		external_command="$1"
+
+		if [ -z "$external_command" ]; then
+			# shellcheck disable=SC2016
+			error_empty_string 'debug_external_command' '$external_command'
+			return 1
+		else
+			print_debug
+			printf 'Running: %s\n' "$external_command"
 			return 0
 		fi
 	fi

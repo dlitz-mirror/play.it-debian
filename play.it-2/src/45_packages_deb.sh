@@ -297,6 +297,7 @@ pkg_build_deb() {
 		export ${pkg?}_PKG
 		return 0
 	fi
+	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg?}_PKG
