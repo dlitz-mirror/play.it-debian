@@ -453,26 +453,6 @@ error_option_unknown() {
 	return 1
 }
 
-# display an error whent trying to set a compression method not compatible with the target package format
-# USAGE: error_compression_method_not_compatible $compression_method $package_format
-error_compression_method_not_compatible() {
-	local message compression_method package_format
-	compression_method="$1"
-	package_format="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
-		;;
-		('en'|*)
-			message='"%s" compression method is not compatible with "%s" package format.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$compression_method" "$package_format"
-	return 1
-}
-
 # display an error when a given path is not a directory
 # USAGE: error_not_a_directory $path
 error_not_a_directory() {
