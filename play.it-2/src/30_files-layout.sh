@@ -71,6 +71,7 @@ organize_data() {
 				if [ -e "$source_file" ]; then
 					debug_source_file 'Found' "$archive_path${source_file#$source_path}"
 					destination_file="${destination_path}/${source_file#$source_path}"
+					debug_file_to_package "$package"
 					mkdir --parents "$(dirname "$destination_file")"
 					cp \
 						--recursive \

@@ -160,6 +160,30 @@ debug_source_file() {
 	fi
 }
 
+# print the id of the package a source file is moved to
+# intended to be used after debug_source_file
+# USAGE: debug_file_to_package $package_id
+debug_file_to_package() {
+	local package_id
+
+	if [ "$DEBUG" -lt 3 ]; then
+		return 0
+	else
+		package_id="$1"
+
+		if [ -z "$package_id" ]; then
+			# shellcheck disable=SC2016
+			error_empty_string 'debug_file_to_package' '$package_id'
+			return 1
+
+		else
+			print_debug
+			printf 'Moving file to: %s\n' "$package_id"
+			return 0
+		fi
+	fi
+}
+
 # print the type of the launcher being created
 # USAGE: debug_write_launcher $launcher_type
 debug_write_launcher() {
