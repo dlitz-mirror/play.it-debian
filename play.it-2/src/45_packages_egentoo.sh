@@ -191,7 +191,7 @@ pkg_build_egentoo() {
 
 	(
 		cd "$package_path"
-		debug_external_command "tar \"$tar_options\" --file \"$package_filename\" ./*"
+		debug_external_command "tar $tar_options --file \"$package_filename\" ./*"
 		# shellcheck disable=SC2046
 		tar $tar_options --file "$package_filename" ./*
 	)
@@ -199,5 +199,5 @@ pkg_build_egentoo() {
 	eval "${package}"_PKG=\""$package_filename"\"
 	export "${package}"_PKG
 
-	print_ok
+	information_package_building_done
 }
