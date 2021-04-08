@@ -83,7 +83,7 @@ extract_data_from() {
 		esac
 
 		if [ "${archive_type#innosetup}" = "$archive_type" ]; then
-			print_ok
+			information_archive_data_extraction_done
 		fi
 	done
 }

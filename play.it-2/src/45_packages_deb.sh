@@ -301,6 +301,6 @@ pkg_build_deb() {
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg?}_PKG
 
-	print_ok
+	information_package_building_done
 }
 
