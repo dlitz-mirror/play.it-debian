@@ -36,6 +36,7 @@ help() {
 	help_icons
 	help_overwrite
 	help_output_dir
+	help_debug
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -292,3 +293,25 @@ help_output_dir() {
 	return 0
 }
 
+# display --debug option usage
+# USAGE: help_debug
+help_debug() {
+	local message
+
+	#shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tDéfinit le niveau de debug. Il vaut 1 par défaut.\n\n'
+			;;
+		('en'|*)
+			message='\tSet the debug level. Default is 1.\n\n'
+			;;
+	esac
+
+	printf -- '--debug\n'
+	printf -- '--debug=N\n'
+	printf -- '--debug N\n\n'
+	printf "$message"
+
+	return 0
+}
