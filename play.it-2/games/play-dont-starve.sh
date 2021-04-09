@@ -36,19 +36,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210807.3
+script_version=20210808.1
 
 # Set game-specific variables
 
 GAME_ID='dont-starve'
 GAME_NAME='Donʼt Starve'
 
-ARCHIVE_BASE_0='don_t_starve_en_222215_22450.sh'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/dont_starve'
-ARCHIVE_BASE_0_MD5='611cd70afd9b9feb3aca4d1eaf9ebbda'
+ARCHIVE_BASE_0='don_t_starve_4294041_41439.sh'
+ARCHIVE_BASE_0_MD5='05baa7fb659f79d4676a59bf3a64fc76'
 ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='760000'
-ARCHIVE_BASE_0_VERSION='276758-gog22450'
+ARCHIVE_BASE_0_SIZE='950000'
+ARCHIVE_BASE_0_VERSION='4294041-gog41439'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/dont_starve'
+
+ARCHIVE_BASE_OLDPATH_0='don_t_starve_en_222215_22450.sh'
+ARCHIVE_BASE_OLDPATH_0_MD5='611cd70afd9b9feb3aca4d1eaf9ebbda'
+ARCHIVE_BASE_OLDPATH_0_TYPE='mojosetup'
+ARCHIVE_BASE_OLDPATH_0_SIZE='760000'
+ARCHIVE_BASE_OLDPATH_0_VERSION='276758-gog22450'
 
 ARCHIVE_BASE_MULTIARCH_2='don_t_starve_en_20171215_17629.sh'
 ARCHIVE_BASE_MULTIARCH_2_MD5='f7dda3b3bdb15ac62acb212a89b24623'
@@ -66,17 +72,17 @@ ARCHIVE_BASE_MULTIARCH_0_MD5='2b0d363bea53654c0267ae424de7130a'
 ARCHIVE_BASE_MULTIARCH_0_SIZE='650000'
 ARCHIVE_BASE_MULTIARCH_0_VERSION='198251-gog2.6.0.8'
 
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game/dontstarve64'
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='
 *.json
 bin/dontstarve
 bin/lib64/libfmodevent64.so
-bin/lib64/libfmodevent64-4.44.07.so
+bin/lib64/libfmodevent64-4.44.??.so
 bin/lib64/libfmodex64.so
-bin/lib64/libfmodex64-4.44.07.so
+bin/lib64/libfmodex64-4.44.??.so
 bin/lib64/libSDL2*'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game/dontstarve64'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='
 data
 mods
@@ -106,14 +112,20 @@ APP_EXE=$(basename "$APP_EXE")'
 
 # Keep compatibility with old archives
 
+ARCHIVE_GAME_BIN64_PATH_OLDPATH='data/noarch/game/dontstarve64'
+ARCHIVE_GAME_BIN64_PATH_MULTIARCH='data/noarch/game/dontstarve64'
+
+ARCHIVE_GAME_DATA_PATH_OLDPATH='data/noarch/game/dontstarve64'
+ARCHIVE_GAME_DATA_PATH_MULTIARCH='data/noarch/game/dontstarve64'
+
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game/dontstarve32'
 ARCHIVE_GAME_BIN32_FILES='
 *.json
 bin/dontstarve
 bin/lib32/libfmodevent.so
-bin/lib32/libfmodevent-4.44.07.so
+bin/lib32/libfmodevent-4.44.??.so
 bin/lib32/libfmodex.so
-bin/lib32/libfmodex-4.44.07.so
+bin/lib32/libfmodex-4.44.??.so
 bin/lib32/libSDL2*'
 
 PKG_BIN32_ARCH='32'
