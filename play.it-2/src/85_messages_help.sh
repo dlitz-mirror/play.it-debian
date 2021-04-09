@@ -125,18 +125,20 @@ help_compression() {
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='\tChoix de la méthode de compression des paquets générés\n\n'
-			message="$message"'\t%s\tpas de compression\n'                                     # none
-			message="$message"'\t%s\tcompression gzip (rapide)\n'                              # gzip
-			message="$message"'\t%s\tcompression xz (plus lent mais plus efficace que gzip)\n' # xz
-			message="$message"'\t%s\tcompression bzip2\n\n'                                    # bzip2
+			message='\tChoix de la méthode de compression des paquets générés\n'
+			message="$message"'(Certaines options peuvent ne pas être disponible suivant le format de paquet choisi.)\n\n'
+			message="$message"'\t%s\tpas de compression\n'
+			message="$message"'\t%s\tcompression gzip (rapide)\n'
+			message="$message"'\t%s\tcompression xz (plus lent mais plus efficace que gzip)\n'
+			message="$message"'\t%s\tcompression bzip2\n'
 		;;
 		('en'|*)
-			message='\tGenerated packages compression method selection\n\n'
-			message="$message"'\t%s\tno compression\n'                                       # none
-			message="$message"'\t%s\tgzip compression (fast)\n'                              # gzip
-			message="$message"'\t%s\txz compression (slower but more efficient than gzip)\n' # xz
-			message="$message"'zt%s\tbzip2 compression\n\n'                                  # bzip2
+			message='\tGenerated packages compression method selection\n'
+			message="$message"'(Some options may not be available depending on the chosen package format.)\n\n'
+			message="$message"'\t%s\tno compression\n'
+			message="$message"'\t%s\tgzip compression (fast)\n'
+			message="$message"'\t%s\txz compression (slower but more efficient than gzip)\n'
+			message="$message"'\t%s\tbzip2 compression\n'
 		;;
 	esac
 	printf -- '--compression=none|gzip|xz|bzip2\n'

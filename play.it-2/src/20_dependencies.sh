@@ -49,6 +49,17 @@ check_deps() {
 			;;
 		esac
 	fi
+	case "$OPTION_COMPRESSION" in
+		('gzip')
+			SCRIPT_DEPS="$SCRIPT_DEPS gzip"
+		;;
+		('xz')
+			SCRIPT_DEPS="$SCRIPT_DEPS xz"
+		;;
+		('bzip2')
+			SCRIPT_DEPS="$SCRIPT_DEPS bzip2"
+		;;
+	esac
 	if [ "$OPTION_CHECKSUM" = 'md5sum' ]; then
 		SCRIPT_DEPS="$SCRIPT_DEPS md5sum"
 	fi

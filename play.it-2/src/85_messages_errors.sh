@@ -227,6 +227,36 @@ error_option_invalid() {
 	return 1
 }
 
+# display an error when the compression method is not compatible with the
+# package format
+# USAGE: error_compression_invalid
+error_compression_invalid() {
+	# shellcheck disable=SC2039
+	local compression_method allowed_values package_format message
+
+	compression_method="$OPTION_COMPRESSION"
+	allowed_values="$ALLOWED_VALUES_COMPRESSION"
+	package_format="$OPTION_PACKAGE"
+
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
+			message="$message"'Seules les méthodes suivantes sont acceptées :\n'
+			message="$message"'\t%s\n'
+			;;
+		('en'|*)
+			message='"%s" compression method is not compatible with "%s" package format.\n'
+			message="$message"'Only the following options are accepted:\n'
+			message="$message"'\t%s\n'
+			;;
+	esac
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$compression_method" "$package_format" "$allowed_values"
+	return 1
+}
+
 # display an error message when a required archive is not found
 # list all the archives that could fulfill the requirement, with their download URL if one is provided
 # USAGE: error_archive_not_found $archive[…]
@@ -420,26 +450,6 @@ error_option_unknown() {
 	esac
 	print_error
 	printf "$message" "$option_name"
-	return 1
-}
-
-# display an error whent trying to set a compression method not compatible with the target package format
-# USAGE: error_compression_method_not_compatible $compression_method $package_format
-error_compression_method_not_compatible() {
-	local message compression_method package_format
-	compression_method="$1"
-	package_format="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
-		;;
-		('en'|*)
-			message='"%s" compression method is not compatible with "%s" package format.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$compression_method" "$package_format"
 	return 1
 }
 
