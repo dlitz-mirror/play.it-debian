@@ -82,6 +82,11 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_OVERWRITE_PACKAGES=0
 	export DEFAULT_DEBUG=0
 
+	# Load configuration file values
+
+	config_file_path=$(find_configuration_file "$@")
+	load_configuration_file "$config_file_path"
+
 	# Parse arguments given to the script
 
 	parse_arguments "$@"
