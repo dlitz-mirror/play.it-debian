@@ -121,6 +121,7 @@ help_checksum() {
 # display --compression option usage
 # CALLED BY: help
 help_compression() {
+	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -131,6 +132,10 @@ help_compression() {
 			message="$message"'\t%s\tcompression gzip (rapide)\n'
 			message="$message"'\t%s\tcompression xz (plus lent mais plus efficace que gzip)\n'
 			message="$message"'\t%s\tcompression bzip2\n'
+			message="$message"'\t%s\tcompression zstd\n'
+			message="$message"'\t%s\tcompression lz4 (le plus rapide, mais le plus lourd)\n'
+			message="$message"'\t%s\tcompression lzip (similaire à xz)\n'
+			message="$message"'\t%s\tcompression lzop (plus lent que lz4 à décompresser mais plus efficace)\n\n'
 		;;
 		('en'|*)
 			message='\tGenerated packages compression method selection\n'
@@ -139,11 +144,16 @@ help_compression() {
 			message="$message"'\t%s\tgzip compression (fast)\n'
 			message="$message"'\t%s\txz compression (slower but more efficient than gzip)\n'
 			message="$message"'\t%s\tbzip2 compression\n'
+			message="$message"'\t%s\tzstd compression\n'
+			message="$message"'\t%s\tlz4 compression (fastest but biggest files)\n'
+			message="$message"'\t%s\tlzip compression (similar to xz)\n'
+			message="$message"'\t%s\tlzop compression (slower than lz4 at inflating but more efficient)\n\n'
 		;;
 	esac
-	printf -- '--compression=none|gzip|xz|bzip2\n'
-	printf -- '--compression none|gzip|xz|bzip2\n\n'
-	printf "$message" 'none' 'gzip' 'xz' 'bzip2'
+	printf -- '--compression=none|gzip|xz|bzip2|zstd|lz4|lzip|lzop\n'
+	printf -- '--compression none|gzip|xz|bzip2|zstd|lz4|lzip|lzop\n\n'
+	# shellcheck disable=SC2059
+	printf "$message" 'none' 'gzip' 'xz' 'bzip2' 'zstd' 'lz4' 'lzip' 'lzop'
 	return 0
 }
 
