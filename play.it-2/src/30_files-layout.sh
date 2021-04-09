@@ -1,7 +1,7 @@
 # prepare package layout by putting files from archive in the right packages
 # directories
 # USAGE: prepare_package_layout [$pkg…]
-# NEEDED VARS: (LANG) PLAYIT_WORKDIR (PKG_PATH)
+# NEEDED VARS: (LANG) PLAYIT_WORKDIR
 prepare_package_layout() {
 	if [ -z "$1" ]; then
 		# shellcheck disable=SC2046
@@ -25,7 +25,7 @@ prepare_package_layout() {
 # put files from archive in the right package directories
 # USAGE: organize_data $id $path
 organize_data() {
-	local pkg_path archive_path archive_files source_path destination_path source_files_pattern source_file destination_file
+	local archive_path archive_files source_path destination_path source_files_pattern source_file destination_file
 
 	# get the current package
 	local package
@@ -41,17 +41,11 @@ organize_data() {
 		return 0
 	fi
 
-	# Get current package path, check that it is set
-	pkg_path=$(get_value "${package}_PATH")
-	if [ -z "$pkg_path" ]; then
-		error_invalid_argument 'PKG' 'organize_data'
-	fi
-
 	use_archive_specific_value "ARCHIVE_${1}_PATH"
 	archive_path=$(get_value "ARCHIVE_${1}_PATH")
 	use_archive_specific_value "ARCHIVE_${1}_FILES"
 	archive_files=$(get_value "ARCHIVE_${1}_FILES")
-	destination_path="${pkg_path}${2}"
+	destination_path="$(package_get_path "$package")${2}"
 	source_path="$PLAYIT_WORKDIR/gamedata/$archive_path"
 
 	# When called in dry-run mode, return early

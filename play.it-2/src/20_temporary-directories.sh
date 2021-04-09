@@ -13,7 +13,7 @@ get_tmp_dir() {
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
 # NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: set_temp_directories_pkg testvar get_tmp_dir
+# CALLS: testvar get_tmp_dir
 set_temp_directories() {
 	local free_space
 	local needed_space
@@ -88,23 +88,15 @@ set_temp_directories() {
 	prerm="$PLAYIT_WORKDIR/scripts/prerm"
 	export prerm
 
-	# Set temporary directories for each package to build
-	for pkg in "$@"; do
-		testvar "$pkg" 'PKG'
-		set_temp_directories_pkg $pkg
-	done
-}
-
-# set package-secific temporary directory
-# USAGE: set_temp_directories_pkg $pkg
-# NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) PLAYIT_WORKDIR (PKG_ARCH) PKG_ID|GAME_ID
-# CALLED BY: set_temp_directories
-set_temp_directories_pkg() {
+	# Export the path to the packages to build as PKG_xxx_PATH
+	# Some game scripts are expecting this variable to be set
+	# These should be updated to call `package_get_path` instead
+	# shellcheck disable=SC2039
 	local package
-	package="$1"
-
-	# Set $PKG_PATH
-	eval "${package}_PATH='$PLAYIT_WORKDIR/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")'"
-	export ${package?}_PATH
+	for package in "$@"; do
+		testvar "$package" 'PKG'
+		eval "${package}_PATH='$(package_get_path "$package")'"
+		export "${package?}_PATH"
+	done
 }
 

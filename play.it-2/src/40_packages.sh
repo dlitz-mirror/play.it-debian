@@ -1,6 +1,6 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
-# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID (PKG_PATH) PKG_PROVIDE
+# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID PKG_PROVIDE
 # CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
@@ -8,7 +8,6 @@ write_metadata() {
 		write_metadata $(packages_get_list)
 		return 0
 	fi
-	local pkg_path
 
 	# Get packages list for the current game
 	local packages_list
@@ -23,11 +22,6 @@ write_metadata() {
 			continue
 		fi
 
-		# Set package-specific variables
-		pkg_path="$(get_value "${pkg}_PATH")"
-		if [ -z "$pkg_path" ]; then
-			error_invalid_argument 'pkg' 'write_metadata'
-		fi
 		[ "$DRY_RUN" -eq 1 ] && continue
 
 		case $OPTION_PACKAGE in
@@ -58,7 +52,6 @@ build_pkg() {
 		build_pkg $(packages_get_list)
 		return 0
 	fi
-	local pkg_path
 
 	# Get packages list for the current game
 	local packages_list
@@ -72,19 +65,15 @@ build_pkg() {
 			warning_skip_package 'build_pkg' "$pkg"
 			return 0
 		fi
-		pkg_path="$(get_value "${pkg}_PATH")"
-		if [ -z "$pkg_path" ]; then
-			error_invalid_argument 'PKG' 'build_pkg'
-		fi
 		case $OPTION_PACKAGE in
 			('arch')
-				pkg_build_arch "$pkg_path"
+				pkg_build_arch "$(package_get_path "$pkg")"
 			;;
 			('deb')
-				pkg_build_deb "$pkg_path"
+				pkg_build_deb "$(package_get_path "$pkg")"
 			;;
 			('gentoo')
-				pkg_build_gentoo "$pkg_path"
+				pkg_build_gentoo "$(package_get_path "$pkg")"
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
@@ -397,6 +386,35 @@ package_get_provide() {
 	esac
 
 	printf '%s' "$package_provide"
+	return 0
+}
+
+# get path to the directory where the given package is prepared
+# USAGE: package_get_path $package
+# RETURNS: path to a directory, it is not checked that it exists or is writable
+package_get_path() {
+	# single argument should be the package name
+	# shellcheck disable=SC2039
+	local package
+	package="$1"
+	if [ -z "$package" ]; then
+		# shellcheck disable=SC2016
+		error_empty_string 'package_get_path' '$package'
+		return 1
+	fi
+
+	###
+	# TODO
+	# Check that the following variables are set:
+	# - $PLAYIT_WORKDIR
+	# - $ARCHIVE
+	###
+
+	# compute the package path from its identifier
+	local package_path
+	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
+
+	printf '%s' "$package_path"
 	return 0
 }
 
