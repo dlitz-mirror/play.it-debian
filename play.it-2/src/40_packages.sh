@@ -177,7 +177,7 @@ package_get_id() {
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
 	case "$OPTION_PACKAGE" in
 		('arch')
-			case "$(package_get_architecture)" in
+			case "$(package_get_architecture "$package")" in
 				('32')
 					package_id="lib32-${package_id}"
 				;;
