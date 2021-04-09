@@ -12,7 +12,7 @@ set_architecture() {
 
 icons_linking_postinst() {
 	if \
-		version_target_is_older_than '2.8' && \
+		! version_is_at_least '2.8' "$target_version" && \
 		[ -z "${PACKAGES_LIST##*PKG_DATA*}" ]
 	then
 		(
@@ -33,6 +33,13 @@ archive_set() {
 		ARCHIVE="$archive"
 		export ARCHIVE
 	fi
+}
+
+version_target_is_older_than() {
+	if [ "$1" = "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" ]; then
+		return 1
+	fi
+	version_is_at_least "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" "$1"
 }
 
 # Keep compatibility with 2.11 and older

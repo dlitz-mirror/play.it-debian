@@ -72,7 +72,7 @@ launcher_write_script_wine_prefix_build() {
 	    LANG=C wineboot --init 2>/dev/null
 	EOF
 
-	if ! version_target_is_older_than '2.8'; then
+	if version_is_at_least '2.8' "$target_version"; then
 		cat >> "$file" <<- 'EOF'
 		    # Remove most links pointing outside of the WINE prefix
 		    rm "$WINEPREFIX/dosdevices/z:"

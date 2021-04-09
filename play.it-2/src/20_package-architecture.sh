@@ -3,7 +3,7 @@
 # NEEDED_VARS: OPTION_ARCHITECTURE
 select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
-	if version_target_is_older_than '2.6'; then
+	if ! version_is_at_least '2.6' "$target_version"; then
 		warning_option_not_supported '--architecture'
 		OPTION_ARCHITECTURE='all'
 		export OPTION_ARCHITECTURE

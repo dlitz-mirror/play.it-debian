@@ -301,7 +301,7 @@ icon_get_resolution_from_file() {
 		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
 	fi
 
-	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
+	if ! version_is_at_least '2.8' "$target_version" && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
 		while
