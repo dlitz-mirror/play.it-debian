@@ -171,6 +171,9 @@ icon_extract_png_from_file() {
 		('png')
 			icon_copy_png "$file" "$destination"
 		;;
+		('xpm')
+			icon_copy_xpm "$file" "$destination"
+		;;
 		(*)
 			error_invalid_argument 'extension' 'icon_extract_png_from_file'
 		;;
@@ -251,6 +254,25 @@ icon_copy_png() {
 	cp "$file" "$destination"
 }
 
+# copy .xpm file to directory
+# USAGE: icon_copy_xpm $file $destination
+# RETURNS: nothing
+# SIDE EFFECT: copy the given .png file to the given directory
+icon_copy_xpm() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local destination file
+	file="$1"
+	destination="$2"
+	cp "$file" "$destination"
+
+	return 0
+}
+
 # Get icon files from the given directory and put them in the current package
 # USAGE: icons_include_from_directory $app $directory
 # RETURNS: nothing
@@ -274,7 +296,8 @@ icons_include_from_directory() {
 	local source_directory source_file destination_name destination_directory destination_file
 	source_directory="$2"
 	for source_file in \
-		"$source_directory"/*.png
+		"$source_directory"/*.png \
+		"$source_directory"/*.xpm
 	do
 		# Skip the current pattern if it matched no file
 		if [ ! -e "$source_file" ]; then
