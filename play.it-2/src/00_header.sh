@@ -10,6 +10,7 @@
 # Copyright (c) 2019-2021, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
 # Copyright (c) 2020-2021, macaron
 # Copyright (c) 2020-2021, Hoël Bézier
+# Copyright (c) 2020-2021, quinao
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
