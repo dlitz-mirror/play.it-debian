@@ -88,25 +88,29 @@ toupper_shell() {
 }
 
 # get archive-specific value for a given variable name, or use default value
-# USAGE: use_archive_specific_value $var_name
+# USAGE: use_archive_specific_value $variable_name
+# RETURN: nothing
+# SIDE EFFECT: update the value of the variables using the given name
 use_archive_specific_value() {
-	[ -n "$ARCHIVE" ] || return 0
-	if ! testvar "$ARCHIVE" 'ARCHIVE'; then
-		error_invalid_argument 'ARCHIVE' 'use_archive_specific_value'
+	###
+	# TODO
+	# We should check that a valid shell variable name has been passed
+	###
+	# shellcheck disable=SC2039
+	local variable_name variable_value
+	variable_name="$1"
+
+	# Try to get an archive-specific value for the given variable
+	variable_value=$(get_archive_specific_value "$variable_name")
+
+	# If no archive-specific value exists, fall back on the default value
+	if [ -z "$variable_value" ]; then
+		variable_value=$(get_value "$variable_name")
 	fi
-	local name_real
-	name_real="$1"
-	local name
-	name="${name_real}_${ARCHIVE#ARCHIVE_}"
-	local value
-	while [ "$name" != "$name_real" ]; do
-		value="$(get_value "$name")"
-		if [ -n "$value" ]; then
-			export ${name_real?}="$value"
-			return 0
-		fi
-		name="${name%_*}"
-	done
+
+	# Update the variable value
+	export "$variable_name"="$variable_value"
+	return 0
 }
 
 # return an archive-specific value for a given variable name, if one exists
