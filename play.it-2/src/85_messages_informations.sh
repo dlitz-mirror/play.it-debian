@@ -71,36 +71,76 @@ information_file_integrity_check() {
 # print data extraction message
 # USAGE: information_archive_data_extraction $file
 information_archive_data_extraction() {
+	# shellcheck disable=SC2039
 	local message file
 	file="$1"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Extraction des données de %s'
+			message='Extraction des données de %s…\n'
 		;;
 		('en'|*)
-			message='Extracting data from %s'
+			message='Extracting data from %s…\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$message" "$file"
+	return 0
+}
+
+# print data extraction success message
+# USAGE: information_archive_data_extraction_done
+information_archive_data_extraction_done() {
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Extraction réussie !'
+		;;
+		('en'|*)
+			message='Extraction done!'
+		;;
+	esac
+	printf '%s\n' "$message"
 	return 0
 }
 
 # print package building message
 # USAGE: information_package_building $file
 information_package_building() {
+	# shellcheck disable=SC2039
 	local message file
 	file="$1"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Construction de %s'
+			message='Construction de %s…\n'
 		;;
 		('en'|*)
-			message='Building %s'
+			message='Building %s…\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$message" "$file"
+	return 0
+}
+
+# print package building message
+# USAGE: information_package_building $file
+information_package_building_done() {
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Contruction terminée !'
+		;;
+		('en'|*)
+			message='Building done!'
+		;;
+	esac
+	printf '%s\n' "$message"
 	return 0
 }
 
@@ -195,18 +235,38 @@ info_archive_integrity_check() {
 # print hash computation message
 # USAGE: info_archive_hash_computation $file
 info_archive_hash_computation() {
+	# shellcheck disable=SC2039
 	local file message
 	file=$(basename "$1")
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Calcul de la somme de contrôle de %s'
+			message='Calcul de la somme de contrôle de %s…\n'
 		;;
 		('en'|*)
-			message='Computing hashsum for %s'
+			message='Computing hashsum for %s…\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$message" "$file"
+	return 0
+}
+
+# print hash computation success message
+# USAGE: info_archive_hash_computation_done
+info_archive_hash_computation_done() {
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Somme de contrôle calculée !'
+		;;
+		('en'|*)
+			message='Hashsum computed!'
+		;;
+	esac
+	printf '%s\n' "$message"
 	return 0
 }
 
