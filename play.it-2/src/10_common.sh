@@ -109,6 +109,58 @@ use_archive_specific_value() {
 	done
 }
 
+# return an archive-specific value for a given variable name, if one exists
+# USAGE: get_archive_specific_value $variable_name
+# RETURN: an archive-specific value, or nothing
+get_archive_specific_value() {
+	# If $ARCHIVE is not set, return early
+	if [ -z "$ARCHIVE" ]; then
+		return 0
+	fi
+
+	# Try to find a variable using the base name + the current archive identifier suffix
+	# shellcheck disable=SC2039
+	local variable_base_name variable_name_with_suffix archive_suffix variable_value
+	variable_base_name="$1"
+
+	# Try first with "ARCHIVE_BASE_" as the base archive identifier
+	# This step should be skipped with game scripts targeting a library version older than 2.13
+	if \
+		# shellcheck disable=SC2154
+		version_is_at_least '2.13' "$target_version" && \
+		[ "${ARCHIVE#ARCHIVE_BASE_}" != "$ARCHIVE" ]
+	then
+		archive_suffix="${ARCHIVE#ARCHIVE_BASE_}"
+		variable_name_with_suffix="${variable_base_name}_${archive_suffix}"
+		while [ "$variable_name_with_suffix" != "$variable_base_name" ]; do
+			variable_value=$(get_value "$variable_name_with_suffix")
+			if [ -n "$variable_value" ]; then
+				printf '%s' "$variable_value"
+				return 0
+			fi
+			variable_name_with_suffix="${variable_name_with_suffix%_*}"
+		done
+	fi
+
+	# If no value has been found using "ARCHIVE_BASE_" as the base archive identifier, try again using "ARCHIVE_"
+	if [ "${ARCHIVE#ARCHIVE_}" != "$ARCHIVE" ]; then
+		archive_suffix="${ARCHIVE#ARCHIVE_}"
+		variable_name_with_suffix="${variable_base_name}_${archive_suffix}"
+		while [ "$variable_name_with_suffix" != "$variable_base_name" ]; do
+			variable_value=$(get_value "$variable_name_with_suffix")
+			if [ -n "$variable_value" ]; then
+				printf '%s' "$variable_value"
+				return 0
+			fi
+			variable_name_with_suffix="${variable_name_with_suffix%_*}"
+		done
+	fi
+
+	# No archive-specific value has been found
+	# This should not trigger an error
+	return 0
+}
+
 # get package-specific value for a given variable name, or use default value
 # USAGE: use_package_specific_value $var_name
 use_package_specific_value() {
