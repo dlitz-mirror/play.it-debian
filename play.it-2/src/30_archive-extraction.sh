@@ -82,9 +82,7 @@ extract_data_from() {
 			;;
 		esac
 
-		if [ "${archive_type#innosetup}" = "$archive_type" ]; then
-			information_archive_data_extraction_done
-		fi
+		information_archive_data_extraction_done
 	done
 }
 
@@ -186,7 +184,6 @@ archive_extraction_innosetup() {
 	if ! archive_extraction_innosetup_is_supported "$archive"; then
 		error_innoextract_version_too_old "$archive"
 	fi
-	printf '\n'
 	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null
 }
 
