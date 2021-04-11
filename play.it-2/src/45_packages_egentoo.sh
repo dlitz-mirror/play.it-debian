@@ -5,6 +5,8 @@
 pkg_write_egentoo() {
 	local package
 	local pkg_deps
+	local build_deps
+	local unpack_f
 	local package_filename
 	local package_architectures
 	local ebuild_path
@@ -30,6 +32,7 @@ pkg_write_egentoo() {
 	fi
 
 	package_filename="$(package_get_name "$package").tar"
+	unpack_f="default"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			package_filename="${package_filename}.gz"
@@ -39,6 +42,12 @@ pkg_write_egentoo() {
 		;;
 		('bzip2')
 			package_filename="${package_filename}.bz2"
+		;;
+		('zstd')
+			package_filename="${package_filename}.zst"
+			build_deps="$build_deps app-arch/zstd"
+			unpack_f="unzstd --force \$DISTDIR/$package_filename -o \$T/${package_filename%.zst}
+	unpack \$T/${package_filename%.zst}"
 		;;
 		('none') ;;
 		(*)
@@ -74,12 +83,17 @@ SRC_URI="$package_filename"
 SLOT="0"
 
 RDEPEND="$pkg_deps"
+BDEPEND="$build_deps"
 
 S=\${WORKDIR}
 
 pkg_nofetch() {
 	elog "Please move \$SRC_URI"
 	elog "to your distfiles folder."
+}
+
+src_unpack() {
+	$unpack_f
 }
 
 src_install() {
@@ -167,6 +181,10 @@ pkg_build_egentoo() {
 		('bzip2')
 			tar_options="$tar_options --bzip2"
 			package_filename="${package_filename}.bz2"
+		;;
+		('zstd')
+			tar_options="$tar_options --zstd"
+			package_filename="${package_filename}.zst"
 		;;
 		('none') ;;
 		(*)
