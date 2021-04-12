@@ -5,7 +5,7 @@
 pkg_write_egentoo() {
 	local package
 	local pkg_deps
-	local package_filename_base
+	local package_filename
 	local package_architectures
 	local ebuild_path
 
@@ -29,16 +29,16 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$package")"
 	fi
 
-	package_filename_base="$(package_get_name "$package").tar"
+	package_filename="$(package_get_name "$package").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
-			package_filename_base="${package_filename_base}.gz"
+			package_filename="${package_filename}.gz"
 		;;
 		('xz')
-			package_filename_base="${package_filename_base}.xz"
+			package_filename="${package_filename}.xz"
 		;;
 		('bzip2')
-			package_filename_base="${package_filename_base}.bz2"
+			package_filename="${package_filename}.bz2"
 		;;
 		('none') ;;
 		(*)
@@ -70,7 +70,7 @@ RESTRICT="fetch strip binchecks"
 
 KEYWORDS="$package_architectures"
 DESCRIPTION="$(package_get_description "$package")"
-SRC_URI="$package_filename_base"
+SRC_URI="$package_filename"
 SLOT="0"
 
 RDEPEND="$pkg_deps"
