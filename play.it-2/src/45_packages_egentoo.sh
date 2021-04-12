@@ -49,6 +49,12 @@ pkg_write_egentoo() {
 			unpack_f="unzstd --force \$DISTDIR/$package_filename -o \$T/${package_filename%.zst}
 	unpack \$T/${package_filename%.zst}"
 		;;
+		('lzip')
+			package_filename="${package_filename}.lz"
+			build_deps="$build_deps app-arch/lzip"
+			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz}
+	unpack \$T/${package_filename%.lz}"
+		;;
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
@@ -185,6 +191,10 @@ pkg_build_egentoo() {
 		('zstd')
 			tar_options="$tar_options --zstd"
 			package_filename="${package_filename}.zst"
+		;;
+		('lzip')
+			tar_options="$tar_options --lzip"
+			package_filename="${package_filename}.lz"
 		;;
 		('none') ;;
 		(*)
