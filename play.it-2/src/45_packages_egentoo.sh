@@ -55,6 +55,12 @@ pkg_write_egentoo() {
 			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz}
 	unpack \$T/${package_filename%.lz}"
 		;;
+		('lzop')
+			package_filename="${package_filename}.lzo"
+			build_deps="$build_deps app-arch/lzop"
+			unpack_f="lzop --decompress --path=\$T \$DISTDIR/$package_filename
+	unpack \$T/${package_filename%.lzo}"
+		;;
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
@@ -195,6 +201,10 @@ pkg_build_egentoo() {
 		('lzip')
 			tar_options="$tar_options --lzip"
 			package_filename="${package_filename}.lz"
+		;;
+		('lzop')
+			tar_options="$tar_options --lzop"
+			package_filename="${package_filename}.lzo"
 		;;
 		('none') ;;
 		(*)
