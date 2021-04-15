@@ -34,15 +34,33 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.5
+script_version=20210529.8
 
 # Set game-specific variables
 
 GAME_ID='stellaris'
 GAME_NAME='Stellaris'
 
+ARCHIVE_BASE_18='stellaris_3_0_3_47193.sh'
+ARCHIVE_BASE_18_MD5='3c818f2b540998ddcc9c18dd98e15cba'
+ARCHIVE_BASE_18_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_18_SIZE='12000000'
+ARCHIVE_BASE_18_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_18_URL='https://www.gog.com/game/stellaris'
+
+ARCHIVE_BASE_17='stellaris_3_0_2_46477.sh'
+ARCHIVE_BASE_17_MD5='41ed3442e94d3af2cdf501995b300e34'
+ARCHIVE_BASE_17_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_17_SIZE='12000000'
+ARCHIVE_BASE_17_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_16='stellaris_3_0_1_2_46213.sh'
+ARCHIVE_BASE_16_MD5='3940b97bb14e73edcee846e1a72501e5'
+ARCHIVE_BASE_16_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_16_SIZE='12000000'
+ARCHIVE_BASE_16_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_15='stellaris_2_8_1_2_42827.sh'
-ARCHIVE_BASE_15_URL='https://www.gog.com/game/stellaris'
 ARCHIVE_BASE_15_MD5='8278463a7b3a9b6b7f9c5ede4b51b222'
 ARCHIVE_BASE_15_SIZE='11000000'
 ARCHIVE_BASE_15_VERSION='2.8.1.2-gog42827'

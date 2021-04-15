@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='utopia'
 EXPANSION_NAME='Utopia'
 
+ARCHIVE_BASE_17='stellaris_utopia_3_0_3_47193.sh'
+ARCHIVE_BASE_17_MD5='0987db58e4cb8629714bbe9b2d01906e'
+ARCHIVE_BASE_17_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_17_SIZE='76000'
+ARCHIVE_BASE_17_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_17_URL='https://www.gog.com/game/stellaris_utopia'
+
+ARCHIVE_BASE_16='stellaris_utopia_3_0_2_46477.sh'
+ARCHIVE_BASE_16_MD5='c4de4c7e63a214400ac7543256b7ba6a'
+ARCHIVE_BASE_16_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_16_SIZE='76000'
+ARCHIVE_BASE_16_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_15='stellaris_utopia_3_0_1_2_46213.sh'
+ARCHIVE_BASE_15_MD5='3a7cd4bcce80a87a3383e8ca031dbc5d'
+ARCHIVE_BASE_15_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_15_SIZE='76000'
+ARCHIVE_BASE_15_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_14='stellaris_utopia_2_8_1_2_42827.sh'
-ARCHIVE_BASE_14_URL='https://www.gog.com/game/stellaris_utopia'
 ARCHIVE_BASE_14_MD5='02057c1076c581e2ad87ac0aa1aee10f'
 ARCHIVE_BASE_14_SIZE='76000'
 ARCHIVE_BASE_14_VERSION='2.8.1.2-gog42827'

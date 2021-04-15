@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='lithoids'
 EXPANSION_NAME='Lithoids Species Pack'
 
+ARCHIVE_BASE_7='stellaris_lithoids_species_pack_3_0_3_47193.sh'
+ARCHIVE_BASE_7_MD5='44a8e1008468825af82ec138be388fe9'
+ARCHIVE_BASE_7_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_7_SIZE='53000'
+ARCHIVE_BASE_7_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_7_URL='https://www.gog.com/game/stellaris_lithoids_species_pack'
+
+ARCHIVE_BASE_6='stellaris_lithoids_species_pack_3_0_2_46477.sh'
+ARCHIVE_BASE_6_MD5='724d3f8337c287b675d45a1d8a4c88fe'
+ARCHIVE_BASE_6_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_6_SIZE='53000'
+ARCHIVE_BASE_6_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_5='stellaris_lithoids_species_pack_3_0_1_2_46213.sh'
+ARCHIVE_BASE_5_MD5='88113021c675f3d00d0da55800632385'
+ARCHIVE_BASE_5_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_5_SIZE='53000'
+ARCHIVE_BASE_5_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_4='stellaris_lithoids_species_pack_2_8_1_2_42827.sh'
-ARCHIVE_BASE_4_URL='https://www.gog.com/game/stellaris_lithoids_species_pack'
 ARCHIVE_BASE_4_MD5='8939eff1f210fff7dddef479a7bac685'
 ARCHIVE_BASE_4_SIZE='54000'
 ARCHIVE_BASE_4_VERSION='2.8.1.2-gog42827'

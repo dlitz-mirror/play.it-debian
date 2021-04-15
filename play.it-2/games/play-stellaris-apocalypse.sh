@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='apocalypse'
 EXPANSION_NAME='Apocalypse'
 
+ARCHIVE_BASE_7='stellaris_apocalypse_3_0_3_47193.sh'
+ARCHIVE_BASE_7_MD5='3cdf97dedf2514fbb1e9fd123cb253b7'
+ARCHIVE_BASE_7_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_7_SIZE='39000'
+ARCHIVE_BASE_7_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_7_URL='https://www.gog.com/game/stellaris_apocalypse'
+
+ARCHIVE_BASE_6='stellaris_apocalypse_3_0_2_46477.sh'
+ARCHIVE_BASE_6_MD5='3d12130342539853d4a129e5d7c5f41d'
+ARCHIVE_BASE_6_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_6_SIZE='39000'
+ARCHIVE_BASE_6_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_5='stellaris_apocalypse_3_0_1_2_46213.sh'
+ARCHIVE_BASE_5_MD5='29de98c3d9ce822f88601d30bf512ed5'
+ARCHIVE_BASE_5_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_5_SIZE='39000'
+ARCHIVE_BASE_5_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_4='stellaris_apocalypse_2_8_1_2_42827.sh'
-ARCHIVE_BASE_4_URL='https://www.gog.com/game/stellaris_apocalypse'
 ARCHIVE_BASE_4_MD5='3b4bfaaaa89b80694173fcc8b7fe09dd'
 ARCHIVE_BASE_4_SIZE='39000'
 ARCHIVE_BASE_4_VERSION='2.8.1.2-gog42827'

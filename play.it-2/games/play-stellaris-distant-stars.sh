@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='distant-stars'
 EXPANSION_NAME='Distant Stars Story Pack'
 
+ARCHIVE_BASE_18='stellaris_distant_stars_story_pack_3_0_3_47193.sh'
+ARCHIVE_BASE_18_MD5='a19db33750977b3334a553f8c4259bf4'
+ARCHIVE_BASE_18_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_18_SIZE='22000'
+ARCHIVE_BASE_18_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_18_URL='https://www.gog.com/game/stellaris_distant_stars_story_pack'
+
+ARCHIVE_BASE_17='stellaris_distant_stars_story_pack_3_0_2_46477.sh'
+ARCHIVE_BASE_17_MD5='5c137a3103c6d504b3b1b41bb0646757'
+ARCHIVE_BASE_17_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_17_SIZE='22000'
+ARCHIVE_BASE_17_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_16='stellaris_distant_stars_story_pack_3_0_1_2_46213.sh'
+ARCHIVE_BASE_16_MD5='3537e49dc43b133386d69d64636993d7'
+ARCHIVE_BASE_16_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_16_SIZE='22000'
+ARCHIVE_BASE_16_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_15='stellaris_distant_stars_story_pack_2_8_1_2_42827.sh'
-ARCHIVE_BASE_15_URL='https://www.gog.com/game/stellaris_distant_stars_story_pack'
 ARCHIVE_BASE_15_MD5='8f108b37713fee10394e1d63b34da83e'
 ARCHIVE_BASE_15_SIZE='22000'
 ARCHIVE_BASE_15_VERSION='2.8.1.2-gog42827'

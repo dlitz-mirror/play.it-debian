@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='horizon-signal'
 EXPANSION_NAME='Horizon Signal'
 
+ARCHIVE_BASE_24='stellaris_horizon_signal_3_0_3_47193.sh'
+ARCHIVE_BASE_24_MD5='40ddcd078680c3ab2bb5e98d7658bfa9'
+ARCHIVE_BASE_24_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_24_SIZE='1200'
+ARCHIVE_BASE_24_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_24_URL='https://www.gog.com/game/stellaris_horizon_signal'
+
+ARCHIVE_BASE_23='stellaris_horizon_signal_3_0_2_46477.sh'
+ARCHIVE_BASE_23_MD5='2564fe58a6af8f53e08e66ee587c916d'
+ARCHIVE_BASE_23_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_23_SIZE='1200'
+ARCHIVE_BASE_23_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_22='stellaris_horizon_signal_3_0_1_2_46213.sh'
+ARCHIVE_BASE_22_MD5='c40c644c8de6b6835f75e4508a5603bb'
+ARCHIVE_BASE_22_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_22_SIZE='1200'
+ARCHIVE_BASE_22_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_21='stellaris_horizon_signal_2_8_1_2_42827.sh'
-ARCHIVE_BASE_21_URL='https://www.gog.com/game/stellaris_horizon_signal'
 ARCHIVE_BASE_21_MD5='0e9f53918e8b489add020cf91b4492e8'
 ARCHIVE_BASE_21_SIZE='1400'
 ARCHIVE_BASE_21_VERSION='2.8.1.2-gog42827'

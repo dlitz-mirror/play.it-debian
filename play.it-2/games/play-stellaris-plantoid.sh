@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.4
 
 # Set game-specific variables
 
@@ -44,8 +44,26 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='plantoid'
 EXPANSION_NAME='Plantoids Species Pack'
 
+ARCHIVE_BASE_19='stellaris_plantoids_species_pack_3_0_3_47193.sh'
+ARCHIVE_BASE_19_MD5='d1dc616e45d6d035ed3414687228f95a'
+ARCHIVE_BASE_19_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_19_SIZE='1200'
+ARCHIVE_BASE_19_VERSION='3.0.3-gog47193'
+ARCHIVE_BASE_19_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
+
+ARCHIVE_BASE_18='stellaris_plantoids_species_pack_3_0_2_46477.sh'
+ARCHIVE_BASE_18_MD5='12aed06ba1b1d87e14f5b59798c3d56b'
+ARCHIVE_BASE_18_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_18_SIZE='1200'
+ARCHIVE_BASE_18_VERSION='3.0.2-gog46477'
+
+ARCHIVE_BASE_17='stellaris_plantoids_species_pack_3_0_1_2_46213.sh'
+ARCHIVE_BASE_17_MD5='6d44560eb6785d33afaa0d32ba6d8728'
+ARCHIVE_BASE_17_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_17_SIZE='1200'
+ARCHIVE_BASE_17_VERSION='3.0.1.2-gog46213'
+
 ARCHIVE_BASE_16='stellaris_plantoids_species_pack_2_8_1_2_42827.sh'
-ARCHIVE_BASE_16_URL='https://www.gog.com/game/stellaris_plantoids_species_pack'
 ARCHIVE_BASE_16_MD5='6512a887b13a3a781a6556f58be1928f'
 ARCHIVE_BASE_16_SIZE='1400'
 ARCHIVE_BASE_16_VERSION='2.8.1.2-gog42827'
