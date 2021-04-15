@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.5
 
 # Set game-specific variables
 
@@ -177,6 +177,9 @@ ARCHIVE_BASE_32BIT_0_TYPE='mojosetup_unzip'
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='*.dll *.dylib *.py *.so *.so.* stellaris pdx_browser pdx_launcher pdx_online_assets'
 
+ARCHIVE_GAME_DATA_MODELS_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_MODELS_FILES='gfx/models'
+
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='*.txt common dlc events flags fonts gfx interface licenses locales localisation localisation_synced map music prescripted_countries previewer_assets sound tweakergui_assets'
 
@@ -184,10 +187,14 @@ APP_MAIN_TYPE='native_no-prefix'
 APP_MAIN_EXE='stellaris'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_DATA_MODELS PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
+
+PKG_DATA_MODELS_ID="${PKG_DATA_ID}-models"
+PKG_DATA_MODELS_DESCRIPTION="${PKG_DATA_DESCRIPTION} - models"
+PKG_DATA_DEPS="${PKG_DATA_DEPS} ${PKG_DATA_MODELS_ID}"
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx"
