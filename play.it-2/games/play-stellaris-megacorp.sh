@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210312.1
+script_version=20210529.1
 
 # Set game-specific variables
 
@@ -44,22 +44,18 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='megacorp'
 EXPANSION_NAME='MegaCorp'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_1
-ARCHIVE_GOG_0'
+ARCHIVE_BASE_1='stellaris_megacorp_2_8_1_2_42827.sh'
+ARCHIVE_BASE_1_MD5='2cd753517129dae46b0e92ca2d50dcb9'
+ARCHIVE_BASE_1_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/stellaris_megacorp'
+ARCHIVE_BASE_1_SIZE='140000'
+ARCHIVE_BASE_1_VERSION='2.8.1.2-gog42827'
 
-ARCHIVE_GOG_1='stellaris_megacorp_2_8_1_2_42827.sh'
-ARCHIVE_GOG_1_MD5='2cd753517129dae46b0e92ca2d50dcb9'
-ARCHIVE_GOG_1_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/stellaris_megacorp'
-ARCHIVE_GOG_1_SIZE='140000'
-ARCHIVE_GOG_1_VERSION='2.8.1.2-gog42827'
-
-ARCHIVE_GOG_0='stellaris_megacorp_2_7_1_38218.sh'
-ARCHIVE_GOG_0_MD5='d29d326e5923ead35e00c254293ab6fb'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_0_SIZE='140000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
+ARCHIVE_BASE_0='stellaris_megacorp_2_7_1_38218.sh'
+ARCHIVE_BASE_0_MD5='d29d326e5923ead35e00c254293ab6fb'
+ARCHIVE_BASE_0_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_0_SIZE='140000'
+ARCHIVE_BASE_0_VERSION='2.7.1-gog38218'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='dlc/dlc020_megacorp'
@@ -72,7 +68,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -83,8 +79,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
