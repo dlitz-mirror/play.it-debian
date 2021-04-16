@@ -19,6 +19,8 @@ set_temp_directories() {
 	local needed_space
 	local tmpdir
 
+	debug_entering_function 'set_temp_directories'
+
 	# If $PLAYIT_WORKDIR is already set, delete it before setting a new one
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
@@ -79,6 +81,8 @@ set_temp_directories() {
 
 	# Generate a directory with a unique name for the current instance
 	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "${GAME_ID}.XXXXX")"
+	debug_option_value 'PLAYIT_WORKDIR'
+	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR
 
 	# Set $postinst and $prerm
@@ -98,5 +102,7 @@ set_temp_directories() {
 		eval "${package}_PATH='$(package_get_path "$package")'"
 		export "${package?}_PATH"
 	done
+
+	debug_leaving_function 'set_temp_directories'
 }
 

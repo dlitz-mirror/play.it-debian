@@ -88,6 +88,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	NO_FREE_SPACE_CHECK='0'
 	SKIP_ICONS=0
 	OVERWRITE_PACKAGES=0
+	DEBUG=0
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
@@ -140,6 +141,21 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			('--overwrite')
 				OVERWRITE_PACKAGES=1
 				export OVERWRITE_PACKAGES
+			;;
+			('--debug'|'--debug='*)
+				if [ "${1%=*}" != "${1#*=}" ]; then
+					DEBUG="${1#*=}"
+				else
+					case "$2" in
+						([0-9])
+							DEBUG="$2"
+							shift 1
+							;;
+						(*)
+							DEBUG=1
+					esac
+				fi
+				export DEBUG
 			;;
 			('--'*)
 				error_option_unknown "$1"
@@ -196,6 +212,23 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		SKIP_ICONS=1
 		export SKIP_ICONS
 	fi
+
+	case "$DEBUG" in
+		([0-9]) ;;
+		(*)
+			error_option_invalid 'DEBUG' "$DEBUG"
+		;;
+	esac
+
+	# DEBUG: output all options value
+	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' \
+		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+		debug_option_value "$option"
+	done
+	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' \
+		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
+		debug_option_value "OPTION_$option"
+	done
 
 	# Make sure the output directory exists and is writable
 

@@ -472,6 +472,7 @@ pkg_build_arch() {
 		if [ -e '.INSTALL' ]; then
 			files=".INSTALL $files"
 		fi
+		debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
 		tar $tar_options --file "$pkg_filename" $files
 	)
 

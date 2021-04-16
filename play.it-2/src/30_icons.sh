@@ -194,6 +194,7 @@ icon_extract_ico_from_exe() {
 	file="$1"
 	destination="$2"
 	[ "$wrestool_id" ] && options="--name=$wrestool_id"
+	debug_external_command "wrestool --extract --type=14 $options --output=\"$destination\" \"$file\" 2>/dev/null"
 	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null
 }
 
@@ -218,6 +219,7 @@ icon_convert_to_png() {
 	file="$1"
 	destination="$2"
 	name="$(basename "$file")"
+	debug_external_command "convert \"$file\" \"$destination/${name%.*}.png\""
 	convert "$file" "$destination/${name%.*}.png"
 }
 

@@ -9,6 +9,8 @@ write_metadata() {
 		return 0
 	fi
 
+	debug_entering_function 'write_metadata'
+
 	# Get packages list for the current game
 	local packages_list
 	packages_list=$(packages_get_list)
@@ -40,6 +42,8 @@ write_metadata() {
 		esac
 	done
 	rm  --force "$postinst" "$prerm"
+
+	debug_leaving_function 'write_metadata'
 }
 
 # build .pkg.tar or .deb package
@@ -52,6 +56,8 @@ build_pkg() {
 		build_pkg $(packages_get_list)
 		return 0
 	fi
+
+	debug_entering_function 'build_pkg'
 
 	# Get packages list for the current game
 	local packages_list
@@ -80,6 +86,8 @@ build_pkg() {
 			;;
 		esac
 	done
+
+	debug_leaving_function 'build_pkg'
 }
 
 # guess package format to build from host OS

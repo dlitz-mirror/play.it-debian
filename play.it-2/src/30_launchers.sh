@@ -118,6 +118,7 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
+	debug_write_launcher "$application_type" "$binary_file"
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
@@ -610,6 +611,9 @@ launcher_write() {
 # NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write
 launchers_write() {
+
+	debug_entering_function 'launchers_write' 2
+
 	# get the current package
 	local package
 	package=$(package_get_current)
@@ -628,6 +632,9 @@ launchers_write() {
 	for application in "$@"; do
 		launcher_write "$application"
 	done
+
+	debug_leaving_function 'launchers_write' 2
+
 	return 0
 }
 
