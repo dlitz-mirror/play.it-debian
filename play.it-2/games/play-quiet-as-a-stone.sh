@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210417.1
+script_version=20210417.2
 
 # Set game-specific variables
 
@@ -48,7 +48,7 @@ ARCHIVE_BASE_0'
 ARCHIVE_BASE_0='quietasastone-win64.zip'
 ARCHIVE_BASE_0_MD5='72cd64e689dd398afaa9909abb15cb15'
 ARCHIVE_BASE_0_SIZE='1500000'
-ARCHIVE_BASE_0_VERSION='1.0-itch'
+ARCHIVE_BASE_0_VERSION='0.6.1-itch.2019.07.19'
 ARCHIVE_BASE_0_URL='https://distantlantern.itch.io/quietasastone'
 
 ARCHIVE_GAME_BIN_PATH='.'
