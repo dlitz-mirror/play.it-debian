@@ -35,31 +35,52 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210331.3
+script_version=20210406.3
 
 # Set game-specific variables
 
 GAME_ID='assassins-creed-1'
 GAME_NAME='Assassin’s Creed'
 
-ARCHIVE_GOG='setup_assassins_creed_1.02_v2_(28524).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/assassins_creed_directors_cut'
-ARCHIVE_GOG_MD5='b14aa9508ce9653597558a6d834e2766'
-ARCHIVE_GOG_SIZE='7200000'
-ARCHIVE_GOG_VERSION='1.02-gog28524'
-ARCHIVE_GOG_TYPE='innosetup'
-ARCHIVE_GOG_PART1='setup_assassins_creed_1.02_v2_(28524)-1.bin'
-ARCHIVE_GOG_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
-ARCHIVE_GOG_PART1_TYPE='innosetup'
-ARCHIVE_GOG_PART2='setup_assassins_creed_1.02_v2_(28524)-2.bin'
-ARCHIVE_GOG_PART2_MD5='150870977feb60c9f344e35d220e1198'
-ARCHIVE_GOG_PART2_TYPE='innosetup'
+ARCHIVES_LIST='
+ARCHIVE_GOG_EN_0
+ARCHIVE_GOG_FR_0'
 
-ARCHIVE_DOC_DATA_PATH='.'
-ARCHIVE_DOC_DATA_FILES='eula manual readme'
+ARCHIVE_GOG_EN_0='setup_assassins_creed_1.02_v2_(28524).exe'
+ARCHIVE_GOG_EN_0_MD5='b14aa9508ce9653597558a6d834e2766'
+ARCHIVE_GOG_EN_0_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_PART1='setup_assassins_creed_1.02_v2_(28524)-1.bin'
+ARCHIVE_GOG_EN_0_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
+ARCHIVE_GOG_EN_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_PART2='setup_assassins_creed_1.02_v2_(28524)-2.bin'
+ARCHIVE_GOG_EN_0_PART2_MD5='150870977feb60c9f344e35d220e1198'
+ARCHIVE_GOG_EN_0_PART2_TYPE='innosetup'
+ARCHIVE_GOG_EN_0_SIZE='7200000'
+ARCHIVE_GOG_EN_0_VERSION='1.02-gog28524'
+ARCHIVE_GOG_EN_0_URL='https://www.gog.com/game/assassins_creed_directors_cut'
+
+ARCHIVE_GOG_FR_0='setup_assassins_creed_1.02_v2_(french)_(28524).exe'
+ARCHIVE_GOG_FR_0_MD5='eb346d8ec12bb055f941446d24207dbd'
+ARCHIVE_GOG_FR_0_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_PART1='setup_assassins_creed_1.02_v2_(french)_(28524)-1.bin'
+ARCHIVE_GOG_FR_0_PART1_MD5='08f2ac5b1c558483ea27c921a7d7aad7'
+ARCHIVE_GOG_FR_0_PART1_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_PART2='setup_assassins_creed_1.02_v2_(french)_(28524)-2.bin'
+ARCHIVE_GOG_FR_0_PART2_MD5='2e31309a834daa7c7640a4848e701574'
+ARCHIVE_GOG_FR_0_PART2_TYPE='innosetup'
+ARCHIVE_GOG_FR_0_SIZE='7200000'
+ARCHIVE_GOG_FR_0_VERSION='1.02-gog28524'
+ARCHIVE_GOG_FR_0_URL='https://www.gog.com/game/assassins_creed_directors_cut'
+
+ARCHIVE_DOC_L10N_PATH='.'
+ARCHIVE_DOC_L10N_FILES_GOG_EN='manual eula/english* readme/english*'
+ARCHIVE_DOC_L10N_FILES_GOG_FR='manual eula/french* readme/french*'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='assassinscreed_dx10.exe assassinscreed_dx9.exe assassinscreed_game.exe binkw32.dll eax.dll'
+
+ARCHIVE_GAME_L10N_PATH='.'
+ARCHIVE_GAME_L10N_FILES='datapc_streamedsounds???.forge'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='*.forge defaultbindings.map resources videos'
@@ -68,13 +89,20 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='assassinscreed_dx9.exe'
 APP_MAIN_ICON='assassinscreed_game.exe'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_L10N PKG_DATA PKG_BIN'
+
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
+PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+PKG_L10N_DESCRIPTION_GOG_FR='French localization'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="${PKG_DATA_ID} ${PKG_L10N_ID} wine"
 
 # Load common functions
 
@@ -147,6 +175,26 @@ Windows Registry Editor Version 5.00
 
 [HKEY_CURRENT_USER\Software\Wine\X11 Driver]
 "GrabFullscreen"="Y"
+EOF
+
+# Set game text language
+
+case "$ARCHIVE" in
+	('ARCHIVE_GOG_FR'*)
+		language='French'
+	;;
+	('ARCHIVE_GOG_EN'*|*)
+		language='English'
+	;;
+esac
+APP_REGEDIT="${APP_REGEDIT} registry-keys/language.reg"
+REGISTRY_FILE="${PKG_L10N_PATH}${PATH_GAME}/registry-keys/language.reg"
+mkdir --parents "$(dirname "$REGISTRY_FILE")"
+cat > "$REGISTRY_FILE" << EOF
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\\Software\\Ubisoft\\Assassin's Creed]
+"Language"="$language"
 EOF
 
 # Write launchers
