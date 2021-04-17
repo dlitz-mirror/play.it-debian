@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,22 +31,25 @@ set -o errexit
 
 ###
 # Quiet as a Stone
-# build native Linux packages from the original installers
+# build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200928.1
+script_version=20210417.1
 
 # Set game-specific variables
 
 GAME_ID='quiet-as-a-stone'
 GAME_NAME='Quiet as a Stone'
 
-ARCHIVE_ITCH='quietasastone-win64.zip'
-ARCHIVE_ITCH_URL='https://distantlantern.itch.io/quietasastone'
-ARCHIVE_ITCH_MD5='72cd64e689dd398afaa9909abb15cb15'
-ARCHIVE_ITCH_SIZE='1500000'
-ARCHIVE_ITCH_VERSION='1.0-itch'
+ARCHIVES_LIST='
+ARCHIVE_BASE_0'
+
+ARCHIVE_BASE_0='quietasastone-win64.zip'
+ARCHIVE_BASE_0_MD5='72cd64e689dd398afaa9909abb15cb15'
+ARCHIVE_BASE_0_SIZE='1500000'
+ARCHIVE_BASE_0_VERSION='1.0-itch'
+ARCHIVE_BASE_0_URL='https://distantlantern.itch.io/quietasastone'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='QuietasaStone_Data/Plugins Mono UnityPlayer.dll UnityCrashHandler64.exe WinPixEventRuntime.dll QuietasaStone.exe'
