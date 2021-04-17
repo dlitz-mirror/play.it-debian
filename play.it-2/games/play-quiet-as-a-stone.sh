@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210417.2
+script_version=20210417.3
 
 # Set game-specific variables
 
@@ -52,7 +52,7 @@ ARCHIVE_BASE_0_VERSION='0.6.1-itch.2019.07.19'
 ARCHIVE_BASE_0_URL='https://distantlantern.itch.io/quietasastone'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='QuietasaStone_Data/Plugins Mono UnityPlayer.dll UnityCrashHandler64.exe WinPixEventRuntime.dll QuietasaStone.exe'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe QuietasaStone_Data/Plugins Mono'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='QuietasaStone_Data'
@@ -61,7 +61,7 @@ APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='QuietasaStone.exe'
 APP_MAIN_ICON='QuietasaStone.exe'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN'
+PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
