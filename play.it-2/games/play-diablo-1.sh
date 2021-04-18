@@ -34,11 +34,9 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210418.1
+script_version=20210418.8
 
 # Set game-specific variables
-
-SCRIPT_DEPS='7z'
 
 GAME_ID='diablo-1'
 GAME_NAME='Diablo'
@@ -88,25 +86,11 @@ ARCHIVE_BASE_0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
 ARCHIVE_BASE_0_VERSION='1.09-gog27873'
 ARCHIVE_BASE_0_SIZE='680000'
 
-# devilutionX 1.1.0 release
-ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.7z'
-ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.1.0'
-ARCHIVE_REQUIRED_DEVILUTIONX_MD5='ff0cb792e11e58862e908e6493cef2e4'
-
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf license.txt patch.txt readme.txt update.txt README.txt'
 
-ARCHIVE_DOC_DEVILUTIONX_DATA_PATH='devilutionx-linux-x86_64'
-ARCHIVE_DOC_DEVILUTIONX_DATA_FILES='*.txt'
-
-ARCHIVE_GAME_BIN_PATH='devilutionx-linux-x86_64'
-ARCHIVE_GAME_BIN_FILES='devilutionx'
-
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='diabdat.mpq'
-
-ARCHIVE_FONT_DATA_PATH='devilutionx-linux-x86_64'
-ARCHIVE_FONT_DATA_FILES='CharisSILB.ttf'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='devilutionx'
@@ -122,6 +106,32 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc sdl2_mixer sdl2 glx libudev1"
 PKG_BIN_DEPS_ARCH='sdl2_ttf'
 PKG_BIN_DEPS_DEB='libsdl2-ttf-2.0-0'
 PKG_BIN_DEPS_GENTOO='media-libs/sdl2-ttf'
+
+# DevilutionX 1.2.1 release
+
+###
+# TODO
+# Archive type is explicitely set as "tar"
+# This will no longer be required once the following update is included in a ./play.it release:
+# https://forge.dotslashplay.it/play.it/scripts/-/merge_requests/1309
+###
+
+ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.tar.xz'
+ARCHIVE_REQUIRED_DEVILUTIONX_MD5='b63937bb282604893be9b66417a143d4'
+ARCHIVE_REQUIRED_DEVILUTIONX_TYPE='tar'
+ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.2.1'
+
+ARCHIVE_DOC_DEVILUTIONX_DATA_PATH='.'
+ARCHIVE_DOC_DEVILUTIONX_DATA_FILES='*.txt'
+
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='devilutionx'
+
+ARCHIVE_GAME_DEVILUTIONX_DATA_PATH='.'
+ARCHIVE_GAME_DEVILUTIONX_DATA_FILES='devilutionx.mpq'
+
+ARCHIVE_FONT_DATA_PATH='.'
+ARCHIVE_FONT_DATA_FILES='CharisSILB.ttf'
 
 # Load common functions
 
@@ -169,13 +179,25 @@ prepare_package_layout
 
 # Include devilutionX-provided CharisSILB font
 
+###
+# TODO
+# PATH_FONTS should be set by the library
+###
+
 PKG='PKG_DATA'
-organize_data 'FONT_DATA' "/usr/local/share/fonts/truetype/$GAME_ID"
+PATH_FONTS="${OPTION_PREFIX}/share/fonts/truetype/${GAME_ID}"
+organize_data 'FONT_DATA' "$PATH_FONTS"
+APP_MAIN_OPTIONS="${APP_MAIN_OPTIONS} --ttf-dir ${PATH_FONTS}"
 
 # Include devilutionX documentation
 
 PKG='PKG_DATA'
 organize_data 'DOC_DEVILUTIONX_DATA' "$PATH_DOC/devilutionx"
+
+# Include devilutionX assets
+
+PKG='PKG_DATA'
+organize_data 'GAME_DEVILUTIONX_DATA' "$PATH_GAME"
 
 # Extract icons
 
