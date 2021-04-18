@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210418.1
+script_version=20210418.2
 
 # Set game-specific variables
 
@@ -81,7 +81,7 @@ ARCHIVE_GAME_DATA_FILES='config-path.cfg data'
 
 CONFIG_FILES='./config-path.cfg'
 CONFIG_DIRS='./config'
-DATA_FILES='./*.dat ./player-data.json'
+DATA_FILES='./*.dat'
 DATA_DIRS='./saves ./mods'
 
 APP_MAIN_TYPE='native'
@@ -136,6 +136,21 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Ensure persistent storage of player data
+# The game will delete/recreate the file instead of following the symbolic link
+
+DATA_FILES="${DATA_FILES} ./player-data.json"
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Ensure persistent storage of player data
+# The game will delete/recreate the file instead of following the symbolic link
+player_data_file="./player-data.json"
+if [ -f "$player_data_file" ]; then
+	mkdir --parents "$(dirname "${PATH_DATA}/${player_data_file}")"
+	mv "$player_data_file" "${PATH_DATA}/${player_data_file}"
+	ln --symbolic "${PATH_DATA}/${player_data_file}" "$player_data_file"
+fi'
 
 # Write launchers
 
