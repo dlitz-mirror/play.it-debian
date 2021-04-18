@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,89 +34,106 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200930.2
+script_version=20210418.1
 
 # Set game-specific variables
 
 GAME_ID='heroes-chronicles'
-for i in $(seq 1 8); do
-	export GAME_ID_GOG_$i="${GAME_ID}-$i"
-done
 GAME_NAME='Heroes Chronicles'
-GAME_NAME_GOG_1="$GAME_NAME 1 - Warlords of the Wasteland"
-GAME_NAME_GOG_2="$GAME_NAME 2 - Conquest of the Underworld"
-GAME_NAME_GOG_3="$GAME_NAME 3 - Masters of the Elements"
-GAME_NAME_GOG_4="$GAME_NAME 4 - Clash of the Dragons"
-GAME_NAME_GOG_5="$GAME_NAME 5 - The World Tree"
-GAME_NAME_GOG_6="$GAME_NAME 6 - The Fiery Moon"
-GAME_NAME_GOG_7="$GAME_NAME 7 - Revolt of the Beastmasters"
-GAME_NAME_GOG_8="$GAME_NAME 8 - The Sword of Frost"
 
-ARCHIVES_LIST='ARCHIVE_GOG_1 ARCHIVE_GOG_2 ARCHIVE_GOG_3 ARCHIVE_GOG_4 ARCHIVE_GOG_5 ARCHIVE_GOG_6 ARCHIVE_GOG_7 ARCHIVE_GOG_8'
+for i in $(seq 1 8); do
+	export GAME_ID_BASE_CHAPTER_${i}="${GAME_ID}-${i}"
+done
+GAME_NAME_BASE_CHAPTER_1="${GAME_NAME} 1 - Warlords of the Wasteland"
+GAME_NAME_BASE_CHAPTER_2="${GAME_NAME} 2 - Conquest of the Underworld"
+GAME_NAME_BASE_CHAPTER_3="${GAME_NAME} 3 - Masters of the Elements"
+GAME_NAME_BASE_CHAPTER_4="${GAME_NAME} 4 - Clash of the Dragons"
+GAME_NAME_BASE_CHAPTER_5="${GAME_NAME} 5 - The World Tree"
+GAME_NAME_BASE_CHAPTER_6="${GAME_NAME} 6 - The Fiery Moon"
+GAME_NAME_BASE_CHAPTER_7="${GAME_NAME} 7 - Revolt of the Beastmasters"
+GAME_NAME_BASE_CHAPTER_8="${GAME_NAME} 8 - The Sword of Frost"
 
-ARCHIVE_GOG_1='setup_heroes_chronicles_chapter1_2.1.0.42.exe'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_1_MD5='f584d6e11ed47d1d40e973a691adca5d'
-ARCHIVE_GOG_1_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_1_SIZE='500000'
+ARCHIVES_LIST='
+ARCHIVE_BASE_CHAPTER_1
+ARCHIVE_BASE_CHAPTER_2
+ARCHIVE_BASE_CHAPTER_3
+ARCHIVE_BASE_CHAPTER_4
+ARCHIVE_BASE_CHAPTER_5
+ARCHIVE_BASE_CHAPTER_6
+ARCHIVE_BASE_CHAPTER_7
+ARCHIVE_BASE_CHAPTER_8'
 
-ARCHIVE_GOG_2='setup_heroes_chronicles_chapter2_2.1.0.43.exe'
-ARCHIVE_GOG_2_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_2_MD5='0d240bc0309814ba251c2d9b557cf69f'
-ARCHIVE_GOG_2_VERSION='1.0-gog2.1.0.43'
-ARCHIVE_GOG_2_SIZE='510000'
+ARCHIVE_BASE_CHAPTER_1='setup_heroes_chronicles_chapter1_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_1_MD5='f584d6e11ed47d1d40e973a691adca5d'
+ARCHIVE_BASE_CHAPTER_1_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_1_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_1_SIZE='500000'
+ARCHIVE_BASE_CHAPTER_1_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_3='setup_heroes_chronicles_chapter3_2.1.0.41.exe'
-ARCHIVE_GOG_3_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_3_MD5='cb21751572960d47a259efc17b92c88c'
-ARCHIVE_GOG_3_VERSION='1.0-gog2.1.0.41'
-ARCHIVE_GOG_3_SIZE='490000'
+ARCHIVE_BASE_CHAPTER_2='setup_heroes_chronicles_chapter2_2.1.0.43.exe'
+ARCHIVE_BASE_CHAPTER_2_MD5='0d240bc0309814ba251c2d9b557cf69f'
+ARCHIVE_BASE_CHAPTER_2_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_2_VERSION='1.0-gog2.1.0.43'
+ARCHIVE_BASE_CHAPTER_2_SIZE='510000'
+ARCHIVE_BASE_CHAPTER_2_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_4='setup_heroes_chronicles_chapter4_2.1.0.42.exe'
-ARCHIVE_GOG_4_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_4_MD5='922291e16176cb4bd37ca88eb5f3a19e'
-ARCHIVE_GOG_4_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_4_SIZE='490000'
+ARCHIVE_BASE_CHAPTER_3='setup_heroes_chronicles_chapter3_2.1.0.41.exe'
+ARCHIVE_BASE_CHAPTER_3_MD5='cb21751572960d47a259efc17b92c88c'
+ARCHIVE_BASE_CHAPTER_3_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_3_VERSION='1.0-gog2.1.0.41'
+ARCHIVE_BASE_CHAPTER_3_SIZE='490000'
+ARCHIVE_BASE_CHAPTER_3_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_5='setup_heroes_chronicles_chapter5_2.1.0.42.exe'
-ARCHIVE_GOG_5_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_5_MD5='57b3ec588e627a2da30d3bc80ede5b1d'
-ARCHIVE_GOG_5_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_5_SIZE='470000'
+ARCHIVE_BASE_CHAPTER_4='setup_heroes_chronicles_chapter4_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_4_MD5='922291e16176cb4bd37ca88eb5f3a19e'
+ARCHIVE_BASE_CHAPTER_4_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_4_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_4_SIZE='490000'
+ARCHIVE_BASE_CHAPTER_4_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_6='setup_heroes_chronicles_chapter6_2.1.0.42.exe'
-ARCHIVE_GOG_6_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_6_MD5='64becfde1882eecd93fb02bf215eff11'
-ARCHIVE_GOG_6_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_6_SIZE='470000'
+ARCHIVE_BASE_CHAPTER_5='setup_heroes_chronicles_chapter5_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_5_MD5='57b3ec588e627a2da30d3bc80ede5b1d'
+ARCHIVE_BASE_CHAPTER_5_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_5_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_5_SIZE='470000'
+ARCHIVE_BASE_CHAPTER_5_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_7='setup_heroes_chronicles_chapter7_2.1.0.42.exe'
-ARCHIVE_GOG_7_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_7_MD5='07c189a731886b2d3891ac1c65581d40'
-ARCHIVE_GOG_7_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_7_SIZE='500000'
+ARCHIVE_BASE_CHAPTER_6='setup_heroes_chronicles_chapter6_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_6_MD5='64becfde1882eecd93fb02bf215eff11'
+ARCHIVE_BASE_CHAPTER_6_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_6_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_6_SIZE='470000'
+ARCHIVE_BASE_CHAPTER_6_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_GOG_8='setup_heroes_chronicles_chapter8_2.1.0.42.exe'
-ARCHIVE_GOG_8_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
-ARCHIVE_GOG_8_MD5='2b3e4c366db0f7e3e8b15b0935aad528'
-ARCHIVE_GOG_8_VERSION='1.0-gog2.1.0.42'
-ARCHIVE_GOG_8_SIZE='480000'
+ARCHIVE_BASE_CHAPTER_7='setup_heroes_chronicles_chapter7_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_7_MD5='07c189a731886b2d3891ac1c65581d40'
+ARCHIVE_BASE_CHAPTER_7_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_7_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_7_SIZE='500000'
+ARCHIVE_BASE_CHAPTER_7_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
 
-ARCHIVE_DOC_DATA_PATH_GOG_1='app/warlords of the wasteland'
-ARCHIVE_DOC_DATA_PATH_GOG_2='app/conquest of the underworld'
-ARCHIVE_DOC_DATA_PATH_GOG_3='app/masters of the elements'
-ARCHIVE_DOC_DATA_PATH_GOG_4='app/clash of the dragons'
-ARCHIVE_DOC_DATA_PATH_GOG_5='app/the world tree'
-ARCHIVE_DOC_DATA_PATH_GOG_6='app/the fiery moon'
-ARCHIVE_DOC_DATA_PATH_GOG_7='app/revolt of the beastmasters'
-ARCHIVE_DOC_DATA_PATH_GOG_8='app/the sword of frost'
+ARCHIVE_BASE_CHAPTER_8='setup_heroes_chronicles_chapter8_2.1.0.42.exe'
+ARCHIVE_BASE_CHAPTER_8_MD5='2b3e4c366db0f7e3e8b15b0935aad528'
+ARCHIVE_BASE_CHAPTER_8_TYPE='innosetup'
+ARCHIVE_BASE_CHAPTER_8_VERSION='1.0-gog2.1.0.42'
+ARCHIVE_BASE_CHAPTER_8_SIZE='480000'
+ARCHIVE_BASE_CHAPTER_8_URL='https://www.gog.com/game/heroes_chronicles_all_chapters'
+
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_1='app/warlords of the wasteland'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_2='app/conquest of the underworld'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_3='app/masters of the elements'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_4='app/clash of the dragons'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_5='app/the world tree'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_6='app/the fiery moon'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_7='app/revolt of the beastmasters'
+ARCHIVE_DOC_DATA_PATH_BASE_CHAPTER_8='app/the sword of frost'
 ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
 
 ARCHIVE_DOC_COMMON_PATH='tmp'
 ARCHIVE_DOC_COMMON_FILES='*.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*/*.asi */*.exe */binkw32.dll */ifc20.dll */mcp.dll */mss32.dll */smackw32.dll'
+ARCHIVE_GAME_BIN_FILES='*/*.asi */*.exe */*.dll'
 
 ARCHIVE_GAME_DATA_PATH='app'
 ARCHIVE_GAME_DATA_FILES='*/data */maps'
@@ -127,20 +144,15 @@ ARCHIVE_GAME_COMMON_FILES='data mp3'
 DATA_DIRS='./*/games ./*/maps'
 DATA_FILES='./data/*.lod ./*/data/*.lod'
 
-APP_WINETRICKS="vd=\$(xrandr|awk '/\\*/ {print \$1}')"
-
 APP_MAIN_TYPE='wine'
-APP_MAIN_PRERUN='# Run the game binary from its parent directory
-cd "$(dirname "$APP_EXE")"
-APP_EXE=$(basename "$APP_EXE")'
-APP_MAIN_EXE_GOG_1='warlords of the wasteland/warlords.exe'
-APP_MAIN_EXE_GOG_2='conquest of the underworld/underworld.exe'
-APP_MAIN_EXE_GOG_3='masters of the elements/elements.exe'
-APP_MAIN_EXE_GOG_4='clash of the dragons/dragons.exe'
-APP_MAIN_EXE_GOG_5='the world tree/worldtree.exe'
-APP_MAIN_EXE_GOG_6='the fiery moon/fierymoon.exe'
-APP_MAIN_EXE_GOG_7='revolt of the beastmasters/beastmaster.exe'
-APP_MAIN_EXE_GOG_8='the sword of frost/sword.exe'
+APP_MAIN_EXE_BASE_CHAPTER_1='warlords of the wasteland/warlords.exe'
+APP_MAIN_EXE_BASE_CHAPTER_2='conquest of the underworld/underworld.exe'
+APP_MAIN_EXE_BASE_CHAPTER_3='masters of the elements/elements.exe'
+APP_MAIN_EXE_BASE_CHAPTER_4='clash of the dragons/dragons.exe'
+APP_MAIN_EXE_BASE_CHAPTER_5='the world tree/worldtree.exe'
+APP_MAIN_EXE_BASE_CHAPTER_6='the fiery moon/fierymoon.exe'
+APP_MAIN_EXE_BASE_CHAPTER_7='revolt of the beastmasters/beastmaster.exe'
+APP_MAIN_EXE_BASE_CHAPTER_8='the sword of frost/sword.exe'
 
 PACKAGES_LIST='PKG_COMMON PKG_DATA PKG_BIN'
 
@@ -152,20 +164,19 @@ PKG_DATA_DESCRIPTION='data'
 PKG_DATA_DEPS="$PKG_COMMON_ID"
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks xrandr"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine"
 
 # Load common functions
 
 target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -195,7 +206,7 @@ APP_MAIN_ICON="$APP_MAIN_EXE"
 
 PKG_BIN_ID="$GAME_ID"
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine"
 
 # Update PATH_DOC and PATH_GAME based on new GAME_ID value
 
@@ -216,7 +227,6 @@ case "$OPTION_PACKAGE" in
 		liberror 'OPTION_PACKAGE' "$0"
 	;;
 esac
-# shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
 # Extract game data
@@ -237,7 +247,7 @@ icons_move_to 'PKG_DATA'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Create required missing directories
 
@@ -246,6 +256,38 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 	mkdir --parents 'games' 'maps'
 )
 
+# Set up a WINE virtual desktop on first launch, using the current desktop resolution
+
+APP_WINETRICKS="${APP_WINETRICKS} vd=\$(xrandr|awk '/\\*/ {print \$1}')"
+PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks xrandr"
+
+# Run the game binary from its parent directory
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Run the game binary from its parent directory
+cd "$(dirname "$APP_EXE")"
+APP_EXE=$(basename "$APP_EXE")'
+
+# Use a common directory and symbolic links to handle data shared between all Heroes Chronicles games
+
+PKG_DATA_POSTINST_RUN="$PKG_DATA_POSTINST_RUN
+
+# Link common files shared by the games series
+for dir in data mp3; do
+	if [ ! -e '${PATH_GAME}'/\$dir ]; then
+		cp --force --recursive --symbolic-link --update '${PATH_GAME_COMMON}'/\$dir '${PATH_GAME}'
+	fi
+done"
+PKG_DATA_PRERM_RUN="$PKG_DATA_PRERM_RUN
+
+# Delete links to common files shared by the games series
+for dir in data mp3; do
+	if [ -e '${PATH_GAME}'/\$dir ]; then
+		rm --force --recursive '${PATH_GAME}'/\$dir
+	fi
+done"
+
 # Write launchers
 
 PKG='PKG_BIN'
@@ -253,18 +295,6 @@ launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG_DATA_POSTINST_RUN="# Link common files shared by the games series
-for dir in data mp3; do
-	if [ ! -e '$PATH_GAME'/\$dir ]; then
-		cp --force --recursive --symbolic-link --update '$PATH_GAME_COMMON'/\$dir '$PATH_GAME'
-	fi
-done"
-PKG_DATA_PRERM_RUN="# Delete links to common files shared by the games series
-for dir in data mp3; do
-	if [ -e '$PATH_GAME'/\$dir ]; then
-		rm --force --recursive '$PATH_GAME'/\$dir
-	fi
-done"
 write_metadata 'PKG_DATA' 'PKG_BIN'
 (
 	GAME_NAME="$GAME_NAME_COMMON"
