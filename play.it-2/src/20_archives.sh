@@ -249,26 +249,31 @@ archive_add_size_to_total() {
 }
 
 # get the type of a given archive
-# USAGE: archive_get_type $archive_name
+# USAGE: archive_get_type $archive_identifier
 # RETURNS: an archive type
 archive_get_type() {
-	local archive_name archive_file archive_type
-	archive="$1"
-
-	###
-	# TODO
-	# Check that the provided archive name is not empty
-	###
+	# Get the archive identifier, check that it is not empty
+	# shellcheck disable=SC2039
+	local archive_identifier
+	archive_identifier="$1"
+	if [ -z "$archive_identifier" ]; then
+		error_empty_string 'archive_get_type' 'archive_identifier'
+		return 1
+	fi
 
 	# Return archive type early if it is already set
-	archive_type=$(get_value "${archive}_TYPE")
+	# shellcheck disable=SC2039
+	local archive_type
+	archive_type=$(get_value "${archive_identifier}_TYPE")
 	if [ -n "$archive_type" ]; then
 		printf '%s' "$archive_type"
 		return 0
 	fi
 
 	# Guess archive type from its file name
-	archive_file=$(get_value "$archive")
+	# shellcheck disable=SC2039
+	local archive_file
+	archive_file=$(get_value "$archive_identifier")
 	case "$archive_file" in
 		(*'.cab')
 			archive_type='cabinet'
@@ -304,7 +309,7 @@ archive_get_type() {
 			archive_type='7z'
 		;;
 		(*)
-			error_archive_type_not_set "$archive_name"
+			error_archive_type_not_set "$archive_identifier"
 		;;
 	esac
 
