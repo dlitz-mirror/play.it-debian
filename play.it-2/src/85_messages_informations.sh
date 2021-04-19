@@ -273,8 +273,9 @@ info_archive_hash_computation_done() {
 # inform the need of a local overlay on gentoo for ebuilds
 # USAGE: info_local_overlay_gentoo
 info_local_overlay_gentoo() {
+	# shellcheck disable=SC2039
 	local message
-
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\nUn overlay local est nécessaire pour utiliser les ebuilds générés par ./play.it\n'
@@ -285,6 +286,7 @@ info_local_overlay_gentoo() {
 			message="$message"'In what comes next, OVERLAY_PATH is the path to your local overlay\n'
 		;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$message"
 	return 0
 }
@@ -292,8 +294,9 @@ info_local_overlay_gentoo() {
 # inform the need to move the packages to a distfile on egentoo
 # USAGE: info_package_to_distfiles
 info_package_to_distfiles() {
+	# shellcheck disable=SC2039
 	local message
-
+	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Déplacez les paquets créés dans votre disfile\n'
@@ -304,6 +307,7 @@ info_package_to_distfiles() {
 			message="$message"'then run the following commands:\n'
 			;;
 	esac
+	# shellcheck disable=SC2059
 	printf "$message"
 	return 0
 }
