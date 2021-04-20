@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2018-2021, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,17 +30,17 @@ set -o errexit
 ###
 
 ###
-# Touhou Hifuu Nightmare Diary ~ Violet Detector
+# Touhou 16.5: Hifuu Nightmare Diary ~ Violet Detector
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200408.2
+script_version=20210420.1
 
 # Set game-specific variables
 
-GAME_ID='touhou-hifuu-nightmare-diary-violet-detector'
-GAME_NAME='Touhou Hifuu Nightmare Diary ~ Violet Detector'
+GAME_ID='touhou-16-5'
+GAME_NAME='Touhou 16.5: Hifuu Nightmare Diary ~ Violet Detector'
 
 SCRIPT_DEPS='iconv'
 
@@ -105,18 +105,22 @@ PKG_BIN_DEPS_ARCH='wqy-microhei'
 PKG_BIN_DEPS_GENTOO='media-fonts/wqy-microhei'
 PKG_BIN_POSTINST_WARN='You may need to generate the ja_JP.UTF-8 locale to play this game'
 
+# Ensure easy upgrade from packages generated with pre-20210420.1 scripts
+
+PKG_BIN_PROVIDE='touhou-hifuu-nightmare-diary-violet-detector'
+PKG_DATA_PROVIDE='touhou-hifuu-nightmare-diary-violet-detector-data'
+
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
