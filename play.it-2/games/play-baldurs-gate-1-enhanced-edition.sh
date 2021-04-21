@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,37 +35,41 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200610.2
+script_version=20210421.2
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-1-enhanced-edition'
 GAME_NAME='Baldurʼs Gate - Enhanced Edition'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_PRE25_OLD2 ARCHIVE_GOG_PRE25_OLD1 ARCHIVE_GOG_PRE25_OLD0'
+ARCHIVES_LIST='
+ARCHIVE_BASE_0
+ARCHIVE_BASE_32BIT_2
+ARCHIVE_BASE_32BIT_1
+ARCHIVE_BASE_32BIT_0'
 
-ARCHIVE_GOG='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
-ARCHIVE_GOG_MD5='853f6e66db6cc5a4df0f72d23d65fcf7'
-ARCHIVE_GOG_SIZE='3300000'
-ARCHIVE_GOG_VERSION='2.5.17.0-gog23121'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_BASE_0='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
+ARCHIVE_BASE_0_MD5='853f6e66db6cc5a4df0f72d23d65fcf7'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='3300000'
+ARCHIVE_BASE_0_VERSION='2.5.17.0-gog23121'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
 
-ARCHIVE_GOG_PRE25_OLD2='baldur_s_gate_enhanced_edition_en_2_3_67_3_20146.sh'
-ARCHIVE_GOG_PRE25_OLD2_MD5='4d08fe21fcdeab51624fa2e0de2f5813'
-ARCHIVE_GOG_PRE25_OLD2_SIZE='3200000'
-ARCHIVE_GOG_PRE25_OLD2_VERSION='2.3.67.3-gog20146'
-ARCHIVE_GOG_PRE25_OLD2_TYPE='mojosetup'
+ARCHIVE_BASE_32BIT_2='baldur_s_gate_enhanced_edition_en_2_3_67_3_20146.sh'
+ARCHIVE_BASE_32BIT_2_MD5='4d08fe21fcdeab51624fa2e0de2f5813'
+ARCHIVE_BASE_32BIT_2_SIZE='3200000'
+ARCHIVE_BASE_32BIT_2_VERSION='2.3.67.3-gog20146'
+ARCHIVE_BASE_32BIT_2_TYPE='mojosetup'
 
-ARCHIVE_GOG_PRE25_OLD1='gog_baldur_s_gate_enhanced_edition_2.5.0.9.sh'
-ARCHIVE_GOG_PRE25_OLD1_MD5='224be273fd2ec1eb0246f407dda16bc4'
-ARCHIVE_GOG_PRE25_OLD1_SIZE='3200000'
-ARCHIVE_GOG_PRE25_OLD1_VERSION='2.3.67.3-gog2.5.0.9'
+ARCHIVE_BASE_32BIT_1='gog_baldur_s_gate_enhanced_edition_2.5.0.9.sh'
+ARCHIVE_BASE_32BIT_1_MD5='224be273fd2ec1eb0246f407dda16bc4'
+ARCHIVE_BASE_32BIT_1_SIZE='3200000'
+ARCHIVE_BASE_32BIT_1_VERSION='2.3.67.3-gog2.5.0.9'
 
-ARCHIVE_GOG_PRE25_OLD0='gog_baldur_s_gate_enhanced_edition_2.5.0.7.sh'
-ARCHIVE_GOG_PRE25_OLD0_MD5='37ece59534ca63a06f4c047d64b82df9'
-ARCHIVE_GOG_PRE25_OLD0_SIZE='3200000'
-ARCHIVE_GOG_PRE25_OLD0_VERSION='2.3.67.3-gog2.5.0.7'
+ARCHIVE_BASE_32BIT_0='gog_baldur_s_gate_enhanced_edition_2.5.0.7.sh'
+ARCHIVE_BASE_32BIT_0_MD5='37ece59534ca63a06f4c047d64b82df9'
+ARCHIVE_BASE_32BIT_0_SIZE='3200000'
+ARCHIVE_BASE_32BIT_0_VERSION='2.3.67.3-gog2.5.0.7'
 
 ARCHIVE_OPTIONAL_ICONS='baldurs-gate-1-enhanced-edition_icons.tar.gz'
 ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/baldurs-gate-1-enhanced-edition/'
@@ -95,41 +99,41 @@ APP_MAIN_EXE_BIN64='BaldursGate64'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N PKG_DATA'
-# Keep compatibility with old archives
-PACKAGES_LIST_GOG_PRE25='PKG_BIN32 PKG_L10N PKG_DATA'
 
 PKG_L10N_ID="${GAME_ID}-l10n"
 PKG_L10N_DESCRIPTION='localizations'
-# Easier upgrade from packages generated with pre-20180926.3 scripts
-PKG_L10N_PROVIDE='baldurs-gate-enhanced-edition-l10n'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
-# Easier upgrade from packages generated with pre-20180926.3 scripts
-PKG_DATA_PROVIDE='baldurs-gate-enhanced-edition-data'
 
 PKG_BIN32_ARCH='32'
 PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor"
-# Easier upgrade from packages generated with pre-20180926.3 scripts
-PKG_BIN32_PROVIDE='baldurs-gate-enhanced-edition'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+
+# Keep compatibility with old archives
+
+PACKAGES_LIST_BASE_32BIT='PKG_BIN32 PKG_L10N PKG_DATA'
+
 # Easier upgrade from packages generated with pre-20180926.3 scripts
+
+PKG_BIN32_PROVIDE='baldurs-gate-enhanced-edition'
 PKG_BIN64_PROVIDE='baldurs-gate-enhanced-edition'
+PKG_L10N_PROVIDE='baldurs-gate-enhanced-edition-l10n'
+PKG_DATA_PROVIDE='baldurs-gate-enhanced-edition-data'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -277,7 +281,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 PKG='PKG_BIN32'
 launchers_write 'APP_MAIN'
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_PRE25'*)
+	('ARCHIVE_BASE_32BIT'*)
 		# No 64-bit binary provided
 	;;
 	(*)
@@ -289,7 +293,7 @@ esac
 # Build package
 
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_PRE25'*)
+	('ARCHIVE_BASE_32BIT'*)
 		# Old 32-bit version depends on libjson.so.0
 		PKG_BIN32_DEPS="$PKG_BIN32_DEPS json"
 		case "$OPTION_PACKAGE" in
