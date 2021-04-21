@@ -38,9 +38,9 @@ script_version=20210421.1
 
 # Set game-specific variables
 
-BASE_ID='warhammer-40k-gladius'
-GAME_ID="${BASE_ID}-relics-of-war"
+GAME_ID='warhammer-40k-gladius'
 GAME_NAME='Warhammer 40,000: Gladius'
+
 EXPANSION_ID='tyranids'
 EXPANSION_NAME='Tyranids'
 
@@ -59,7 +59,7 @@ ARCHIVE_GAME_MAIN_FILES='Data/Supplement2.dlc'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${BASE_ID}-${EXPANSION_ID}"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
 PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 
