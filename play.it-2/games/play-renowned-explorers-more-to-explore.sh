@@ -34,12 +34,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.3
 
 # Set game-specific variables
 
-GAME_ID='renowned-explorers-international-society'
-GAME_NAME='Renowned Explorers: More To Explore'
+GAME_ID='renowned-explorers'
+GAME_NAME='Renowned Explorers'
+
+EXPANSION_ID='more-to-explore'
+EXPANSION_NAME='More To Explore'
 
 ARCHIVE_BASE_7='renowned_explorers_international_society_more_to_explore_dlc_522_26056.sh'
 ARCHIVE_BASE_7_MD5='46b6534ff70a9efa4fc21b2ba139b52f'
@@ -98,12 +101,13 @@ ARCHIVE_GAME_MAIN_FILES='data'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-more-to-explore"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 
-# Easier upgrade from packages generated with pre-20180930.1 scripts
+# Easier upgrade from packages generated with pre-20210421.2 scripts
 
-PKG_MAIN_PROVIDE='renowned-explorers-more-to-explore'
+PKG_MAIN_PROVIDE='renowned-explorers-international-society-more-to-explore'
 
 # Load common functions
 
@@ -152,6 +156,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0

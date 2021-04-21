@@ -34,12 +34,15 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.3
 
 # Set game-specific variables
 
-GAME_ID='renowned-explorers-international-society'
-GAME_NAME='Renowned Explorers: The Emperorʼs Challenge'
+GAME_ID='renowned-explorers'
+GAME_NAME='Renowned Explorers'
+
+EXPANSION_ID='the-emperors-challenge'
+EXPANSION_NAME='The Emperorʼs Challenge'
 
 ARCHIVE_BASE_7='renowned_explorers_international_society_the_emperors_challenge_dlc_522_26056.sh'
 ARCHIVE_BASE_7_MD5='e87af99e5a726b06ee5b94d7f94d9f5a'
@@ -98,12 +101,13 @@ ARCHIVE_GAME_MAIN_FILES='data'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${GAME_ID}-the-emperors-challenge"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
+PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 
-# Easier upgrade from packages generated with pre-20180930.1 scripts
+# Easier upgrade from packages generated with pre-20210421.2 scripts
 
-PKG_MAIN_PROVIDE='renowned-explorers-the-emperors-challenge'
+PKG_MAIN_PROVIDE='renowned-explorers-international-society-the-emperors-challenge'
 
 # Load common functions
 
@@ -152,6 +156,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+GAME_NAME="$GAME_NAME - $EXPANSION_NAME"
 print_instructions
 
 exit 0
