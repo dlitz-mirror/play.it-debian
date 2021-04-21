@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210421.3
+script_version=20210421.4
 
 # Set game-specific variables
 
@@ -90,9 +90,6 @@ ARCHIVE_GAME_L10N_CS_FILES='lang/cs_CZ'
 ARCHIVE_GAME_L10N_DE_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_DE_FILES='lang/de_DE'
 
-ARCHIVE_GAME_L10N_EN_PATH='data/noarch/game'
-ARCHIVE_GAME_L10N_EN_FILES='lang/en_US'
-
 ARCHIVE_GAME_L10N_ES_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_ES_FILES='lang/es_ES'
 
@@ -130,7 +127,7 @@ ARCHIVE_GAME_L10N_ZH_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_ZH_FILES='lang/zh_CN'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='movies music chitin.key Manuals scripts data engine.lua'
+ARCHIVE_GAME_DATA_FILES='movies music chitin.key Manuals scripts data engine.lua lang/en_US'
 
 ARCHIVE_ICONS_PATH='.'
 ARCHIVE_ICONS_FILES='16x16 24x42 32x32 48x48 64x64 256x256'
@@ -140,89 +137,102 @@ APP_MAIN_EXE_BIN32='BaldursGate'
 APP_MAIN_EXE_BIN64='BaldursGate64'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N_CS PKG_L10N_DE PKG_L10N_EN PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
 
-PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_ID="${GAME_ID}-l10n-extra"
 
 PKG_L10N_CS_ID="${PKG_L10N_ID}-cs"
 PKG_L10N_CS_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_CS_DESCRIPTION='Czech localization'
+PKG_L10N_CS_DEPS="$GAME_ID"
 
 PKG_L10N_DE_ID="${PKG_L10N_ID}-de"
 PKG_L10N_DE_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_DE_DESCRIPTION='German localization'
-
-PKG_L10N_EN_ID="${PKG_L10N_ID}-en"
-PKG_L10N_EN_PROVIDE="$PKG_L10N_ID"
-PKG_L10N_EN_DESCRIPTION='English localization'
+PKG_L10N_DE_DEPS="$GAME_ID"
 
 PKG_L10N_ES_ID="${PKG_L10N_ID}-es"
 PKG_L10N_ES_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_ES_DESCRIPTION='Spanish localization'
+PKG_L10N_ES_DEPS="$GAME_ID"
 
 PKG_L10N_FR_ID="${PKG_L10N_ID}-fr"
 PKG_L10N_FR_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_FR_DESCRIPTION='French localization'
+PKG_L10N_FR_DEPS="$GAME_ID"
 
 PKG_L10N_HU_ID="${PKG_L10N_ID}-hu"
 PKG_L10N_HU_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_HU_DESCRIPTION='Hungarian localization'
+PKG_L10N_HU_DEPS="$GAME_ID"
 
 PKG_L10N_IT_ID="${PKG_L10N_ID}-it"
 PKG_L10N_IT_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_IT_DESCRIPTION='Italian localization'
+PKG_L10N_IT_DEPS="$GAME_ID"
 
 PKG_L10N_JA_ID="${PKG_L10N_ID}-ja"
 PKG_L10N_JA_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_JA_DESCRIPTION='Japanese localization'
+PKG_L10N_JA_DEPS="$GAME_ID"
 
 PKG_L10N_KO_ID="${PKG_L10N_ID}-ko"
 PKG_L10N_KO_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_KO_DESCRIPTION='Korean localization'
+PKG_L10N_KO_DEPS="$GAME_ID"
 
 PKG_L10N_PL_ID="${PKG_L10N_ID}-pl"
 PKG_L10N_PL_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_PL_DESCRIPTION='Polish localization'
+PKG_L10N_PL_DEPS="$GAME_ID"
 
 PKG_L10N_PT_ID="${PKG_L10N_ID}-pt"
 PKG_L10N_PT_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_PT_DESCRIPTION='Portuguese localization'
+PKG_L10N_PT_DEPS="$GAME_ID"
 
 PKG_L10N_RU_ID="${PKG_L10N_ID}-ru"
 PKG_L10N_RU_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_RU_DESCRIPTION='Russian localization'
+PKG_L10N_RU_DEPS="$GAME_ID"
 
 PKG_L10N_TR_ID="${PKG_L10N_ID}-tr"
 PKG_L10N_TR_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_TR_DESCRIPTION='Turkish localization'
+PKG_L10N_TR_DEPS="$GAME_ID"
 
 PKG_L10N_UK_ID="${PKG_L10N_ID}-uk"
 PKG_L10N_UK_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_UK_DESCRIPTION='Ukrainian localization'
+PKG_L10N_UK_DEPS="$GAME_ID"
 
 PKG_L10N_ZH_ID="${PKG_L10N_ID}-zh"
 PKG_L10N_ZH_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_ZH_DESCRIPTION='Chinese localization'
+PKG_L10N_ZH_DEPS="$GAME_ID"
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_L10N_ID $PKG_DATA_ID glibc libstdc++ glx openal libxrandr alsa xcursor"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx openal libxrandr alsa xcursor"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Keep compatibility with old archives
 
-PACKAGES_LIST_BASE_32BIT='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_EN PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+PACKAGES_LIST_BASE_32BIT='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
 
 # Easier upgrade from packages generated with pre-20180926.3 scripts
 
 PKG_BIN32_PROVIDE='baldurs-gate-enhanced-edition'
 PKG_BIN64_PROVIDE='baldurs-gate-enhanced-edition'
 PKG_L10N_PROVIDE='baldurs-gate-enhanced-edition-l10n'
-PKG_DATA_PROVIDE='baldurs-gate-enhanced-edition-data'
+
+# Easier upgrade from packages generated with pre-20210421.4 scripts
+
+PKG_DATA_PROVIDE='baldurs-gate-1-enhanced-edition-l10n'
 
 # Load common functions
 
@@ -433,7 +443,7 @@ case "$ARCHIVE" in
 		fi
 		EOF
 		write_metadata 'PKG_BIN32'
-		write_metadata 'PKG_L10N_CS' 'PKG_L10N_DE' 'PKG_L10N_EN' 'PKG_L10N_ES' 'PKG_L10N_FR' 'PKG_L10N_HU' 'PKG_L10N_IT' 'PKG_L10N_JA' 'PKG_L10N_KO' 'PKG_L10N_PL' 'PKG_L10N_PT' 'PKG_L10N_RU' 'PKG_L10N_TR' 'PKG_L10N_UK' 'PKG_L10N_ZH' 'PKG_DATA'
+		write_metadata 'PKG_L10N_CS' 'PKG_L10N_DE' 'PKG_L10N_ES' 'PKG_L10N_FR' 'PKG_L10N_HU' 'PKG_L10N_IT' 'PKG_L10N_JA' 'PKG_L10N_KO' 'PKG_L10N_PL' 'PKG_L10N_PT' 'PKG_L10N_RU' 'PKG_L10N_TR' 'PKG_L10N_UK' 'PKG_L10N_ZH' 'PKG_DATA'
 	;;
 	(*)
 		write_metadata
@@ -450,9 +460,9 @@ rm --recursive "$PLAYIT_WORKDIR"
 case "${LANG%_*}" in
 	('fr')
 		lang_string='version %s :'
+		lang_en='anglaise'
 		lang_cs='tchèque'
 		lang_de='allemande'
-		lang_en='anglaise'
 		lang_es='espagnole'
 		lang_fr='française'
 		lang_hu='hongroise'
@@ -468,9 +478,9 @@ case "${LANG%_*}" in
 	;;
 	('en'|*)
 		lang_string='%s version:'
+		lang_en='English'
 		lang_cs='Czech'
 		lang_de='German'
-		lang_en='English'
 		lang_es='Spanish'
 		lang_fr='French'
 		lang_hu='Hungarian'
@@ -487,14 +497,14 @@ case "${LANG%_*}" in
 esac
 printf '\n'
 # shellcheck disable=SC2059
+printf "$lang_string" "$lang_en"
+print_instructions 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2059
 printf "$lang_string" "$lang_cs"
 print_instructions 'PKG_L10N_CS' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_de"
 print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
-printf "$lang_string" "$lang_en"
-print_instructions 'PKG_L10N_EN' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
 # shellcheck disable=SC2059
 printf "$lang_string" "$lang_es"
 print_instructions 'PKG_L10N_ES' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
