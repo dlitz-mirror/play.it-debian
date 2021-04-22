@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,11 @@ set -o errexit
 
 ###
 # Aquaria
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210423.1
 
 # Set game-specific variables
 
@@ -81,7 +81,7 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libgl1-mesa-glx | libgl1, libsdl1.2debian, libopenal1, xdg-utils"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-libstdc++5 lib32-libgl lib32-sdl lib32-openal xdg-utils"
+PKG_BIN_DEPS_ARCH="${PKG_DATA_ID} lib32-glibc lib32-gcc-libs lib32-libgl lib32-sdl lib32-openal xdg-utils"
 
 # Load common functions
 
