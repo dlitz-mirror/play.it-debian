@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210423.4
+script_version=20210423.6
 
 # Set game-specific variables
 
@@ -120,6 +120,11 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
@@ -131,9 +136,7 @@ launchers_write 'APP_MAIN'
 
 # Build package
 
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
