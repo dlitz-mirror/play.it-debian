@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210423.2
+script_version=20210423.3
 
 # Set game-specific variables
 
@@ -43,21 +43,21 @@ GAME_ID='aquaria'
 GAME_NAME='Aquaria'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG
-ARCHIVE_GOG_OLD'
+ARCHIVE_BASE_1
+ARCHIVE_BASE_0'
 
-ARCHIVE_GOG='gog_aquaria_2.0.0.5.sh'
-ARCHIVE_GOG_MD5='4235398debdf268f233881fade9e0530'
-ARCHIVE_GOG_TYPE='mojosetup'
-ARCHIVE_GOG_SIZE='240000'
-ARCHIVE_GOG_VERSION='1.1.3-gog2.0.0.5'
-ARCHIVE_GOG_URL='https://www.gog.com/game/aquaria'
+ARCHIVE_BASE_1='gog_aquaria_2.0.0.5.sh'
+ARCHIVE_BASE_1_MD5='4235398debdf268f233881fade9e0530'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='240000'
+ARCHIVE_BASE_1_VERSION='1.1.3-gog2.0.0.5'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/aquaria'
 
-ARCHIVE_GOG_OLD='gog_aquaria_2.0.0.4.sh'
-ARCHIVE_GOG_OLD_MD5='1810de0d68028c6ec01d33181086180d'
-ARCHIVE_GOG_OLD_TYPT='mojosetup'
-ARCHIVE_GOG_OLD_SIZE='280000'
-ARCHIVE_GOG_OLD_VERSION='1.1.3-gog2.0.0.4'
+ARCHIVE_BASE_0='gog_aquaria_2.0.0.4.sh'
+ARCHIVE_BASE_0_MD5='1810de0d68028c6ec01d33181086180d'
+ARCHIVE_BASE_0_TYPT='mojosetup'
+ARCHIVE_BASE_0_SIZE='280000'
+ARCHIVE_BASE_0_VERSION='1.1.3-gog2.0.0.4'
 
 ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC0_DATA_FILES='*'
