@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210425.5
+script_version=20210425.7
 
 # Set game-specific variables
 
@@ -140,7 +140,7 @@ PKG_BIN_OPENMW_ID="${PKG_BIN_ID}-openmw"
 PKG_BIN_OPENMW_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_OPENMW_DEPS="${PKG_L10N_ID} ${PKG_DATA_ID}"
 PKG_BIN_OPENMW_DEPS_ARCH='openmw'
-PKG_BIN_OPENMW_DEPS_DEB='openmw'
+PKG_BIN_OPENMW_DEPS_DEB='openmw, openmw-launcher'
 PKG_BIN_OPENMW_DEPS_GENTOO='games-engines/openmw'
 
 # Easier upgrade from packages generated with pre-20190204.1 scripts
