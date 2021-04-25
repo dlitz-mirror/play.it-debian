@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210425.2
+script_version=20210425.3
 
 # Set game-specific variables
 
@@ -42,22 +42,22 @@ GAME_ID='the-elder-scrolls-3-morrowind'
 GAME_NAME='The Elder Scrolls Ⅲ: Morrowind'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_EN
-ARCHIVE_GOG_FR'
+ARCHIVE_BASE_EN_0
+ARCHIVE_BASE_FR_0'
 
-ARCHIVE_GOG_EN='setup_tes_morrowind_goty_2.0.0.7.exe'
-ARCHIVE_GOG_EN_MD5='3a027504a0e4599f8c6b5b5bcc87a5c6'
-ARCHIVE_GOG_EN_TYPE='innosetup'
-ARCHIVE_GOG_EN_VERSION='1.6.1820-gog2.0.0.7'
-ARCHIVE_GOG_EN_SIZE='2300000'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
+ARCHIVE_BASE_EN_0='setup_tes_morrowind_goty_2.0.0.7.exe'
+ARCHIVE_BASE_EN_0_MD5='3a027504a0e4599f8c6b5b5bcc87a5c6'
+ARCHIVE_BASE_EN_0_TYPE='innosetup'
+ARCHIVE_BASE_EN_0_VERSION='1.6.1820-gog2.0.0.7'
+ARCHIVE_BASE_EN_0_SIZE='2300000'
+ARCHIVE_BASE_EN_0_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
 
-ARCHIVE_GOG_FR='setup_tes_morrowind_goty_french_2.0.0.7.exe'
-ARCHIVE_GOG_FR_MD5='2aee024e622786b2cb5454ff074faf9b'
-ARCHIVE_GOG_FR_TYPE='innosetup'
-ARCHIVE_GOG_FR_VERSION='1.6.1820-gog2.0.0.7'
-ARCHIVE_GOG_FR_SIZE='2300000'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
+ARCHIVE_BASE_FR_0='setup_tes_morrowind_goty_french_2.0.0.7.exe'
+ARCHIVE_BASE_FR_0_MD5='2aee024e622786b2cb5454ff074faf9b'
+ARCHIVE_BASE_FR_0_TYPE='innosetup'
+ARCHIVE_BASE_FR_0_VERSION='1.6.1820-gog2.0.0.7'
+ARCHIVE_BASE_FR_0_SIZE='2300000'
+ARCHIVE_BASE_FR_0_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
 
 ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='*.pdf'
@@ -97,13 +97,13 @@ PKG_L10N_PROVIDE="$PKG_L10N_ID"
 
 # Localization — English version
 
-PKG_L10N_ID_GOG_EN="${PKG_L10N_ID}-en"
-PKG_L10N_DESCRIPTION_GOG_EN='English localization'
+PKG_L10N_ID_BASE_EN="${PKG_L10N_ID}-en"
+PKG_L10N_DESCRIPTION_BASE_EN='English localization'
 
 # Localization — French version
 
-PKG_L10N_ID_GOG_FR="${PKG_L10N_ID}-fr"
-PKG_L10N_DESCRIPTION_GOG_FR='French localization'
+PKG_L10N_ID_BASE_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_DESCRIPTION_BASE_FR='French localization'
 
 # Static assets
 
@@ -123,13 +123,13 @@ PKG_BIN_WINE_DEPS="${PKG_L10N_ID} ${PKG_DATA_ID} wine"
 
 # Binaries, WINE-powered — English version
 
-PKG_BIN_WINE_ID_GOG_EN="${PKG_BIN_WINE_ID}-en"
-PKG_BIN_WINE_DESCRIPTION_GOG_EN='English version'
+PKG_BIN_WINE_ID_BASE_EN="${PKG_BIN_WINE_ID}-en"
+PKG_BIN_WINE_DESCRIPTION_BASE_EN='English version'
 
 # Binaries, WINE-powered — French version
 
-PKG_BIN_WINE_ID_GOG_FR="${PKG_BIN_WINE_ID}-fr"
-PKG_BIN_WINE_DESCRIPTION_GOG_FR='French version'
+PKG_BIN_WINE_ID_BASE_FR="${PKG_BIN_WINE_ID}-fr"
+PKG_BIN_WINE_DESCRIPTION_BASE_FR='French version'
 
 # Binaries, OpenMW-powered
 
@@ -187,7 +187,7 @@ icons_move_to 'PKG_DATA'
 # Fix .bsa/.esm dates on French version
 
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_FR'*)
+	('ARCHIVE_BASE_FR_0'*)
 		touch --date='2002-06-21 17:31:46.000000000 +0200' \
 			"${PKG_L10N_PATH}${PATH_GAME}/data files/morrowind.bsa"
 		touch --date='2002-07-17 18:59:22.000000000 +0200' \
