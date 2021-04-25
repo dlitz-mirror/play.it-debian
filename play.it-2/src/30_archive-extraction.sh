@@ -91,7 +91,7 @@ extract_data_from() {
 				set_standard_permissions "$destination"
 			;;
 			(*)
-				error_invalid_argument 'ARCHIVE_TYPE' 'extract_data_from'
+				error_invalid_argument "${ARCHIVE}_TYPE" 'extract_data_from'
 			;;
 		esac
 
