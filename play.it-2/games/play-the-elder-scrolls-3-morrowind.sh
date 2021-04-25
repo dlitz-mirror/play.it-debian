@@ -34,12 +34,12 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210425.1
+script_version=20210425.2
 
 # Set game-specific variables
 
 GAME_ID='the-elder-scrolls-3-morrowind'
-GAME_NAME='The Elder Scrolls III: Morrowind'
+GAME_NAME='The Elder Scrolls Ⅲ: Morrowind'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_EN
