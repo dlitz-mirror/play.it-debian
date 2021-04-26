@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.10
+script_version=20210511.11
 
 # Set game-specific variables
 
@@ -138,6 +138,30 @@ REGEDIT4
 [HKEY_LOCAL_MACHINE\\Software\\Ubisoft\\Beyond Good & Evil]
 "Install path"="C:\\\\${GAME_ID}"
 EOF
+
+# Use persistent storage for game settings
+
+SETTINGS_REGISTRY_KEY='HKEY_CURRENT_USER\Software\Ubisoft\Beyond Good & Evil\settingsapplication.INI'
+SETTINGS_REGISTRY_DUMP='registry-dumps/settings.reg'
+
+CONFIG_DIRS="${CONFIG_DIRS} ./$(dirname "$SETTINGS_REGISTRY_DUMP")"
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN
+
+# Set path for persistent dump of game settings
+SETTINGS_REGISTRY_KEY='$SETTINGS_REGISTRY_KEY'
+SETTINGS_REGISTRY_DUMP='$SETTINGS_REGISTRY_DUMP'"
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Dump game settings
+regedit -E "$SETTINGS_REGISTRY_DUMP" "$SETTINGS_REGISTRY_KEY"'
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Load dump of game settings
+if [ -e "$SETTINGS_REGISTRY_DUMP" ]; then
+	wine regedit.exe "$SETTINGS_REGISTRY_DUMP"
+fi'
+APP_SETTINGS_PRERUN="$APP_MAIN_PRERUN"
+APP_SETTINGS_POSTRUN="$APP_MAIN_POSTRUN"
 
 # Write launchers
 
