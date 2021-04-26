@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.8
+script_version=20210511.9
 
 # Set game-specific variables
 
@@ -49,11 +49,8 @@ ARCHIVE_BASE_0_VERSION='1.0-gog2.1.0.9'
 ARCHIVE_BASE_0_SIZE='2200000'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/beyond_good_and_evil'
 
-ARCHIVE_DOC1_DATA_PATH='tmp'
-ARCHIVE_DOC1_DATA_FILES='*eula.txt'
-
-ARCHIVE_DOC2_DATA_PATH='app'
-ARCHIVE_DOC2_DATA_FILES='manual.pdf readme.txt'
+ARCHIVE_DOC_DATA_PATH='app'
+ARCHIVE_DOC_DATA_FILES='manual.pdf readme.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
 ARCHIVE_GAME_BIN_FILES='*.exe'
