@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.11
+script_version=20210511.12
 
 # Set game-specific variables
 
@@ -162,6 +162,28 @@ if [ -e "$SETTINGS_REGISTRY_DUMP" ]; then
 fi'
 APP_SETTINGS_PRERUN="$APP_MAIN_PRERUN"
 APP_SETTINGS_POSTRUN="$APP_MAIN_POSTRUN"
+
+# Automatically spawn game settings window on first launch
+
+case "$OPTION_PREFIX" in
+	('/usr'|'/usr/local')
+		SETTINGS_CMD="$APP_SETTINGS_ID"
+	;;
+	(*' '*)
+		SETTINGS_CMD="'${PATH_BIN}/${APP_SETTINGS_ID}'"
+	;;
+	(*)
+		SETTINGS_CMD="${PATH_BIN}/${APP_SETTINGS_ID}"
+	;;
+esac
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN
+
+# Automatically spawn game settings window on first launch
+if [ ! -e \"\$SETTINGS_REGISTRY_DUMP\" ]; then
+	$SETTINGS_CMD
+	exit 0
+fi"
 
 # Write launchers
 
