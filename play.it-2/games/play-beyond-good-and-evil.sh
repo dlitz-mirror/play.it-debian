@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.9
+script_version=20210511.10
 
 # Set game-specific variables
 
@@ -53,13 +53,13 @@ ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='manual.pdf readme.txt'
 
 ARCHIVE_GAME_BIN_PATH='app'
-ARCHIVE_GAME_BIN_FILES='*.exe'
+ARCHIVE_GAME_BIN_FILES='*.dll *.exe'
 
-ARCHIVE_GAME1_DATA_PATH='app'
-ARCHIVE_GAME1_DATA_FILES='bgemakingof.bik binkw32.dll jade.spe sally_clean.bf'
+ARCHIVE_GAME0_BIN_PATH='sys'
+ARCHIVE_GAME0_BIN_FILES='eax.dll'
 
-ARCHIVE_GAME2_DATA_PATH='sys'
-ARCHIVE_GAME2_DATA_FILES='eax.dll'
+ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_FILES='bgemakingof.bik jade.spe sally_clean.bf'
 
 DATA_FILES='./sally.idx ./*.sav'
 
