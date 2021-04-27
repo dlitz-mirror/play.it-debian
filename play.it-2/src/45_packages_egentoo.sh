@@ -40,15 +40,6 @@ pkg_write_egentoo() {
 		('bzip2')
 			package_filename_base="${package_filename_base}.bz2"
 		;;
-		('zstd')
-			package_filename_base="${package_filename_base}.zst"
-		;;
-		('lzip')
-			package_filename_base="${package_filename_base}.lz"
-		;;
-		('lzop')
-			package_filename_base="${package_filename_base}.lzo"
-		;;
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
@@ -176,18 +167,6 @@ pkg_build_egentoo() {
 		('bzip2')
 			tar_options="$tar_options --bzip2"
 			package_filename="${package_filename}.bz2"
-		;;
-		('zstd')
-			tar_options="$tar_options --zstd"
-			package_filename="${package_filename}.zst"
-		;;
-		('lzip')
-			tar_options="$tar_options --lzip"
-			package_filename="${package_filename}.lz"
-		;;
-		('lzop')
-			tar_options="$tar_options --lzop"
-			package_filename="${package_filename}.lzo"
 		;;
 		('none') ;;
 		(*)
