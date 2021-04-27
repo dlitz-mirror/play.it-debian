@@ -5,7 +5,9 @@
 pkg_write_egentoo() {
 	local package
 	local pkg_deps
-	local package_filename_base
+	local build_deps
+	local unpack_f
+	local package_filename
 	local package_architectures
 	local ebuild_path
 
@@ -29,25 +31,35 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$package")"
 	fi
 
-	package_filename_base="$(package_get_name "$package").tar"
+	package_filename="$(package_get_name "$package").tar"
+	unpack_f="default"
 	case $OPTION_COMPRESSION in
 		('gzip')
-			package_filename_base="${package_filename_base}.gz"
+			package_filename="${package_filename}.gz"
 		;;
 		('xz')
-			package_filename_base="${package_filename_base}.xz"
+			package_filename="${package_filename}.xz"
 		;;
 		('bzip2')
-			package_filename_base="${package_filename_base}.bz2"
+			package_filename="${package_filename}.bz2"
 		;;
 		('zstd')
-			package_filename_base="${package_filename_base}.zst"
+			package_filename="${package_filename}.zst"
+			build_deps="$build_deps app-arch/zstd"
+			unpack_f="unzstd --force \$DISTDIR/$package_filename -o \$T/${package_filename%.zst}
+	unpack \$T/${package_filename%.zst}"
 		;;
 		('lzip')
-			package_filename_base="${package_filename_base}.lz"
+			package_filename="${package_filename}.lz"
+			build_deps="$build_deps app-arch/lzip"
+			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz}
+	unpack \$T/${package_filename%.lz}"
 		;;
 		('lzop')
-			package_filename_base="${package_filename_base}.lzo"
+			package_filename="${package_filename}.lzo"
+			build_deps="$build_deps app-arch/lzop"
+			unpack_f="lzop --decompress --path=\$T \$DISTDIR/$package_filename
+	unpack \$T/${package_filename%.lzo}"
 		;;
 		('none') ;;
 		(*)
@@ -79,16 +91,21 @@ RESTRICT="fetch strip binchecks"
 
 KEYWORDS="$package_architectures"
 DESCRIPTION="$(package_get_description "$package")"
-SRC_URI="$package_filename_base"
+SRC_URI="$package_filename"
 SLOT="0"
 
 RDEPEND="$pkg_deps"
+BDEPEND="$build_deps"
 
 S=\${WORKDIR}
 
 pkg_nofetch() {
 	elog "Please move \$SRC_URI"
 	elog "to your distfiles folder."
+}
+
+src_unpack() {
+	$unpack_f
 }
 
 src_install() {
