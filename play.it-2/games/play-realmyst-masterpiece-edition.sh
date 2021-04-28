@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,25 +34,22 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200813.2
+script_version=20210511.1
 
 # Set game-specific variables
 
 GAME_ID='realmyst-masterpiece-edition'
 GAME_NAME='realMyst: Masterpiece Edition'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='setup_real_myst_masterpiece_edition_2.2_rev_10535_(64bit)_(23829).exe'
-ARCHIVE_GOG_0_MD5='fcb23e0256ab826e9a2ba9cad00d9a66'
-ARCHIVE_GOG_0_TYPE='innosetup'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/real_myst_masterpiece_edition'
-ARCHIVE_GOG_0_VERSION='2.2.10535-gog23829'
-ARCHIVE_GOG_0_SIZE='2800000'
-ARCHIVE_GOG_0_PART1='setup_real_myst_masterpiece_edition_2.2_rev_10535_(64bit)_(23829)-1.bin'
-ARCHIVE_GOG_0_PART1_MD5='038b24ec51a18b325574293d7f2d0ec2'
-ARCHIVE_GOG_0_PART1_TYPE='innosetup'
+ARCHIVE_BASE_0='setup_real_myst_masterpiece_edition_2.2_rev_10535_(64bit)_(23829).exe'
+ARCHIVE_BASE_0_MD5='fcb23e0256ab826e9a2ba9cad00d9a66'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_PART1='setup_real_myst_masterpiece_edition_2.2_rev_10535_(64bit)_(23829)-1.bin'
+ARCHIVE_BASE_0_PART1_MD5='038b24ec51a18b325574293d7f2d0ec2'
+ARCHIVE_BASE_0_PART1_TYPE='innosetup'
+ARCHIVE_BASE_0_VERSION='2.2.10535-gog23829'
+ARCHIVE_BASE_0_SIZE='2800000'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/real_myst_masterpiece_edition'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='realmyst.exe realmyst_data/mono'
@@ -60,22 +57,9 @@ ARCHIVE_GAME_BIN_FILES='realmyst.exe realmyst_data/mono'
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='realmyst_data'
 
-DATA_DIRS='./userdata'
-
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='realmyst.exe'
 APP_MAIN_ICON='realmyst.exe'
-# Use a per-session dedicated file for logs
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-# Store persistent user data outside of the game prefix
-APP_MAIN_PRERUN='# Store persistent user data outside of the game prefix
-user_data_path="$WINEPREFIX/drive_c/users/$USER/AppData/LocalLow/Cyan Worlds/realMyst"
-if [ ! -e "$user_data_path" ]; then
-	mkdir --parents "$(dirname "$user_data_path")"
-	mkdir --parents "$PATH_DATA/userdata"
-	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
-	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
-fi'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -83,24 +67,37 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+
+# Use persistent storage for user data
+
+DATA_DIRS="${DATA_DIRS} ./userdata"
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+userdata:users/${USER}/AppData/LocalLow/Cyan Worlds/realMyst'
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -126,7 +123,7 @@ icons_move_to 'PKG_DATA'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
