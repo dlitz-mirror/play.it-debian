@@ -12,7 +12,7 @@ else
         XDG_DATA_HOME := $(HOME)/.local/share
     endif
     prefix = $(XDG_DATA_HOME)
-    bindir = $(HOME)/bin
+    bindir = $(HOME)/.local/bin
     datadir = $(prefix)
     mandir = $(prefix)/man
 endif
