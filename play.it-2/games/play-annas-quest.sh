@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210502.4
+script_version=20210502.5
 
 # Set game-specific variables
 
@@ -56,7 +56,7 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game/documents'
 ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='anna config.ini libs64'
+ARCHIVE_GAME_BIN_FILES='anna config.ini libs64/libavcodec.so.56 libs64/libavdevice.so.56 libs64/libavfilter.so.5 libs64/libavformat.so.56 libs64/libavutil.so.54 libs64/libswresample.so.1 libs64/libswscale.so.3'
 
 ARCHIVE_GAME_VIDEO_PATH='data/noarch/game'
 ARCHIVE_GAME_VIDEO_FILES='videos'
@@ -80,7 +80,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="${PKG_VIDEO_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal"
+PKG_BIN_DEPS="${PKG_VIDEO_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal libz.so.1"
 
 # Load common functions
 
