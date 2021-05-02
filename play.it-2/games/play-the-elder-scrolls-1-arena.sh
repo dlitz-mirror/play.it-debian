@@ -35,27 +35,33 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.4
 
 # Set game-specific variables
 
 GAME_ID='the-elder-scrolls-1-arena'
 GAME_NAME='The Elder Scrolls: Arena'
 
+ARCHIVE_BASE_1='setup_the_elder_scrolls_arena_1.07_(28043).exe'
+ARCHIVE_BASE_1_MD5='53a12a1cc3955776f06fba5906cdc6fe'
+ARCHIVE_BASE_1_TYPE='innosetup'
+ARCHIVE_BASE_1_SIZE='120000'
+ARCHIVE_BASE_1_VERSION='1.07-gog28043'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
+
 ARCHIVE_BASE_0='setup_tes_arena_2.0.0.5.exe'
 ARCHIVE_BASE_0_MD5='ca5a894aa852f9dbb3ede787e51ec828'
 ARCHIVE_BASE_0_TYPE='innosetup'
 ARCHIVE_BASE_0_SIZE='130000'
 ARCHIVE_BASE_0_VERSION='1.07-gog2.0.0.5'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
 
-ARCHIVE_DOC_MAIN_PATH='app'
+ARCHIVE_DOC_MAIN_PATH='.'
 ARCHIVE_DOC_MAIN_FILES='*.pdf readme.txt'
 
-ARCHIVE_GAME0_MAIN_PATH='app'
+ARCHIVE_GAME0_MAIN_PATH='.'
 ARCHIVE_GAME0_MAIN_FILES='*.cfg *.exe *.inf *.ini *.65 *.ad *.adv *.bak *.bnk *.bsa *.cel *.cif *.clr *.col *.cpy *.dat *.flc *.gld *.img *.lgt *.lst *.me *.mif *.mnu *.ntz *.opl *.rci *.txt *.voc *.xfm cityintr citytxt extra speech'
 
-ARCHIVE_GAME1_MAIN_PATH='app/__support'
+ARCHIVE_GAME1_MAIN_PATH='__support'
 ARCHIVE_GAME1_MAIN_FILES='save'
 
 GAME_IMAGE='.'
@@ -77,6 +83,12 @@ PKG_MAIN_DEPS='dosbox'
 # Easier upgrade from packages generated with pre-20190302.3 scripts
 
 PKG_MAIN_PROVIDE='the-elder-scrolls-1-arena-data'
+
+# Keep compatibility with old archives
+
+ARCHIVE_DOC_MAIN_PATH_0='app'
+ARCHIVE_GAME0_MAIN_PATH_0='app'
+ARCHIVE_GAME1_MAIN_PATH_0='app/__support'
 
 # Load common functions
 
