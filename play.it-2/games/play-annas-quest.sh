@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210502.5
+script_version=20210502.6
 
 # Set game-specific variables
 
@@ -43,14 +43,21 @@ GAME_ID='annas-quest'
 GAME_NAME='Anna’s Quest'
 
 ARCHIVES_LIST='
+ARCHIVE_BASE_1
 ARCHIVE_BASE_0'
+
+ARCHIVE_BASE_1='anna_s_quest_1_1_0214_27877.sh'
+ARCHIVE_BASE_1_MD5='48fd7d6c2a8a519a227cbf604392109b'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='1200000'
+ARCHIVE_BASE_1_VERSION='1.1.0214-gog27877'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/annas_quest'
 
 ARCHIVE_BASE_0='gog_anna_s_quest_2.1.0.3.sh'
 ARCHIVE_BASE_0_MD5='cb4cf167a13413b6df8238397393298a'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='1100000'
 ARCHIVE_BASE_0_VERSION='1.0.0202-gog2.1.0.3'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/annas_quest'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game/documents'
 ARCHIVE_DOC_DATA_FILES='*'
