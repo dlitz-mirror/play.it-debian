@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.6
+script_version=20210511.7
 
 # Set game-specific variables
 
@@ -81,6 +81,19 @@ APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Use a per-session dedicated file for logs
 mkdir --parents logs
 APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Default to windowed mode on first launch
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Default to windowed mode on first launch
+config_file="${XDG_CONFIG_HOME:="$HOME/.config"}/unity3d/DrawDistance/VtM Coteries of New York/Saves/Settings.save"
+if [ ! -e "$config_file" ]; then
+	mkdir --parents "$(dirname "$config_file")"
+	cat > "$config_file" <<- EOF
+	{"FullScreenMode":false}
+	EOF
+fi'
 
 # Load common functions
 
