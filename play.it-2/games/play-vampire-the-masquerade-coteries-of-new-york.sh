@@ -35,12 +35,12 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.3
+script_version=20210511.4
 
 # Set game-specific variables
 
 GAME_ID='vampire-the-masquerade-coteries-of-new-york'
-GAME_NAME='Vampire: the Masquerade - Coteries of New York'
+GAME_NAME='Vampire: The Masquerade - Coteries of New York'
 
 ARCHIVE_BASE_0='vampire_the_masquerade_coteries_of_new_york_1_0_7_40980.sh'
 ARCHIVE_BASE_0_MD5='146113ea6b7295104413d8ce2b1fbf4e'
