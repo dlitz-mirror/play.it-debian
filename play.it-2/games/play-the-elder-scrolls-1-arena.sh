@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,18 +35,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200206.1
+script_version=20210515.2
 
 # Set game-specific variables
 
 GAME_ID='the-elder-scrolls-1-arena'
 GAME_NAME='The Elder Scrolls: Arena'
 
-ARCHIVE_GOG='setup_tes_arena_2.0.0.5.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
-ARCHIVE_GOG_MD5='ca5a894aa852f9dbb3ede787e51ec828'
-ARCHIVE_GOG_SIZE='130000'
-ARCHIVE_GOG_VERSION='1.07-gog2.0.0.5'
+ARCHIVE_BASE_0='setup_tes_arena_2.0.0.5.exe'
+ARCHIVE_BASE_0_MD5='ca5a894aa852f9dbb3ede787e51ec828'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_SIZE='130000'
+ARCHIVE_BASE_0_VERSION='1.07-gog2.0.0.5'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/the_elder_scrolls_iii_morrowind_goty_edition'
 
 ARCHIVE_DOC_MAIN_PATH='app'
 ARCHIVE_DOC_MAIN_FILES='*.pdf readme.txt'
@@ -71,25 +73,26 @@ APP_MAIN_ICON='app/goggame-1435828982.ico'
 PACKAGES_LIST='PKG_MAIN'
 
 PKG_MAIN_DEPS='dosbox'
+
 # Easier upgrade from packages generated with pre-20190302.3 scripts
+
 PKG_MAIN_PROVIDE='the-elder-scrolls-1-arena-data'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -110,7 +113,10 @@ prepare_package_layout
 # Extract icons
 
 icons_get_from_workdir 'APP_MAIN'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
