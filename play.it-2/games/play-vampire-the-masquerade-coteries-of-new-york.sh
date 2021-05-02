@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.5
+script_version=20210511.6
 
 # Set game-specific variables
 
@@ -48,9 +48,6 @@ ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='3200000'
 ARCHIVE_BASE_0_VERSION='1.0.7-gog40980'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/vampire_the_masquerade_coteries_of_new_york'
-
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_GAME_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge VtM?Coteries?of?New?York_Data/Plugins UnityPlayer.so'
