@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210502.2
+script_version=20210502.3
 
 # Set game-specific variables
 
@@ -52,11 +52,8 @@ ARCHIVE_BASE_0_SIZE='1100000'
 ARCHIVE_BASE_0_VERSION='1.0.0202-gog2.1.0.3'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/annas_quest'
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC1_DATA_FILES='*'
-
-ARCHIVE_DOC2_DATA_PATH='data/noarch/game/documents/licenses'
-ARCHIVE_DOC2_DATA_FILES='*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game/documents'
+ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='anna config.ini libs64'
