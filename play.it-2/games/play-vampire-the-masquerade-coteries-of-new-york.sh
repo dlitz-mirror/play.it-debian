@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.4
+script_version=20210511.5
 
 # Set game-specific variables
 
@@ -53,7 +53,7 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_GAME_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge/x86_64 VtM?Coteries?of?New?York_Data/Managed VtM?Coteries?of?New?York_Data/Plugins LinuxPlayer_s.debug UnityPlayer_s.debug UnityPlayer.so'
+ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge VtM?Coteries?of?New?York_Data/Plugins UnityPlayer.so'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='VtM?Coteries?of?New?York_Data'
