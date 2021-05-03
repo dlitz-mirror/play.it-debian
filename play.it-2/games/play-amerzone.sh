@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210503.1
+script_version=20210503.2
 
 # Set game-specific variables
 
@@ -43,14 +43,14 @@ GAME_ID='amerzone'
 GAME_NAME='L’Amerzone'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG'
+ARCHIVE_BASE_0'
 
-ARCHIVE_GOG='setup_amerzone_french_2.1.0.10.exe'
-ARCHIVE_GOG_MD5='00458580b95940b6d7257cfa6ba902b2'
-ARCHIVE_GOG_TYPE='innosetup'
-ARCHIVE_GOG_VERSION='1.0-gog2.1.0.10'
-ARCHIVE_GOG_SIZE='2000000'
-ARCHIVE_GOG_URL='https://www.gog.com/game/amerzone_the_explorer_legacy'
+ARCHIVE_BASE_0='setup_amerzone_french_2.1.0.10.exe'
+ARCHIVE_BASE_0_MD5='00458580b95940b6d7257cfa6ba902b2'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_VERSION='1.0-gog2.1.0.10'
+ARCHIVE_BASE_0_SIZE='2000000'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/amerzone_the_explorer_legacy'
 
 ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='*.pdf'
