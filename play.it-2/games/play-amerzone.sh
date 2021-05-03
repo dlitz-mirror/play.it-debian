@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210503.9
+script_version=20210503.10
 
 # Set game-specific variables
 
@@ -76,6 +76,11 @@ PKG_BIN_DEPS="${PKG_DATA_ID} wine"
 # Use persistent storage for saved games
 
 DATA_FILES="${DATA_FILES} ./Saved_*.bin"
+
+# Set up a WINE virtual desktop on first launch, using the current desktop resolution
+
+APP_WINETRICKS="${APP_WINETRICKS} vd=\$(xrandr|awk '/\\*/ {print \$1}')"
+PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks xrandr"
 
 # Load common functions
 
