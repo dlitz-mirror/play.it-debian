@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,22 +34,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200926.1
+script_version=20210511.2
 
 # Set game-specific variables
 
 GAME_ID='opus-magnum'
 GAME_NAME='Opus Magnum'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='opus_magnum_en_17_08_2018_update_23270.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/opus_magnum'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-ARCHIVE_GOG_0_MD5='dbe5137d4b7e2edd21f4117a80756872'
-ARCHIVE_GOG_0_SIZE='460000'
-ARCHIVE_GOG_0_VERSION='2018.08.17-gog23270'
+ARCHIVE_BASE_0='opus_magnum_en_17_08_2018_update_23270.sh'
+ARCHIVE_BASE_0_MD5='dbe5137d4b7e2edd21f4117a80756872'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='460000'
+ARCHIVE_BASE_0_VERSION='2018.08.17-gog23270'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/opus_magnum'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='*.txt'
@@ -75,7 +72,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID mono sdl2 sdl2_image sdl2_mixer vorbis glx"
+PKG_BIN32_DEPS="${PKG_DATA_ID} mono sdl2 sdl2_image sdl2_mixer vorbis glx"
 PKG_BIN32_DEPS_DEB='libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-security4.0-cil, libmono-system-web4.0-cil, libmono-system-web-extensions4.0-cil, libmono-system-web-http4.0-cil, libmono-system-web-services4.0-cil, libmono-system-xml4.0-cil'
 
 PKG_BIN64_ARCH='64'
@@ -84,20 +81,19 @@ PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -122,7 +118,7 @@ icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
