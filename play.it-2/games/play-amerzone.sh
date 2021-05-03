@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210503.2
+script_version=20210503.9
 
 # Set game-specific variables
 
@@ -72,6 +72,10 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine"
+
+# Use persistent storage for saved games
+
+DATA_FILES="${DATA_FILES} ./Saved_*.bin"
 
 # Load common functions
 
