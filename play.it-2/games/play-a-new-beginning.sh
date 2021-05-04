@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.3
 
 # Set game-specific variables
 
@@ -49,7 +49,7 @@ ARCHIVE_BASE_0_PART1='setup_a_new_beginning_final_cut_2.2.0.7.bin'
 ARCHIVE_BASE_0_PART1_MD5='1babc74ae7f29ff6ce16ea9fd3e4d3ff'
 ARCHIVE_BASE_0_PART1_TYPE='rar'
 ARCHIVE_BASE_0_SIZE='4100000'
-ARCHIVE_BASE_0_VERSION='1.0-gog2.2.0.7'
+ARCHIVE_BASE_0_VERSION='2.0.3.0395-gog2.2.0.7'
 ARCHIVE_BASE_0_GOGID='1207659150'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/a_new_beginning'
 
