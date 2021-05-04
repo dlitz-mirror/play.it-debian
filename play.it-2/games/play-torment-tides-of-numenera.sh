@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.3
 
 # Set game-specific variables
 
@@ -47,9 +47,6 @@ ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='9300000'
 ARCHIVE_BASE_0_VERSION='1.1.0-gog2.3.0.4'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/torment_tides_of_numenera_legacy_edition_content'
-
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='TidesOfNumenera TidesOfNumenera_Data/Mono TidesOfNumenera_Data/Plugins'
