@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210425.7
+script_version=20210504.1
 
 # Set game-specific variables
 
@@ -119,7 +119,7 @@ PKG_BIN_ID="$GAME_ID"
 PKG_BIN_WINE_ID="${PKG_BIN_ID}-wine"
 PKG_BIN_WINE_ARCH='32'
 PKG_BIN_WINE_PROVIDE="$PKG_BIN_ID"
-PKG_BIN_WINE_DEPS="${PKG_L10N_ID} ${PKG_DATA_ID} wine"
+PKG_BIN_WINE_DEPS="${PKG_L10N_ID} ${PKG_DATA_ID} wine glx"
 PKG_BIN_WINE_DEPS_ARCH='lib32-gst-plugins-good'
 PKG_BIN_WINE_DEPS_DEB='gstreamer1.0-plugins-good'
 PKG_BIN_WINE_DEPS_GENTOO='media-plugins/gst-plugins-mpg123[abi_x86_32]'
