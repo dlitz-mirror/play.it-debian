@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.3
+script_version=20210515.7
 
 # Set game-specific variables
 
@@ -63,7 +63,7 @@ ARCHIVE_BASE_GOG_0_VERSION='20160707-gog2.35.0.38'
 ARCHIVE_BASE_HUMBLE_1='WindwardLinux_HB_1505248588.zip'
 ARCHIVE_BASE_HUMBLE_1_MD5='9ea99157d13ae53905757f2fb3ab5b54'
 ARCHIVE_BASE_HUMBLE_1_SIZE='130000'
-ARCHIVE_BASE_HUMBLE_1_VERSION='20160707.0-humble170912'
+ARCHIVE_BASE_HUMBLE_1_VERSION='20170617.0-humble170912'
 
 ARCHIVE_BASE_HUMBLE_0='WindwardLinux_HB.zip'
 ARCHIVE_BASE_HUMBLE_0_MD5='f2d1a9a91055ecb6c5ce1bd7e3ddd803'
