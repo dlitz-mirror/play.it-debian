@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210329.1
+script_version=20210418.2
 
 # Set game-specific variables
 
@@ -43,35 +43,35 @@ GAME_ID='factorio'
 GAME_NAME='Factorio'
 
 ARCHIVES_LIST='
-ARCHIVE_OFFICIAL_3
-ARCHIVE_OFFICIAL_2
-ARCHIVE_OFFICIAL_1
-ARCHIVE_OFFICIAL_0'
+ARCHIVE_BASE_3
+ARCHIVE_BASE_2
+ARCHIVE_BASE_1
+ARCHIVE_BASE_0'
 
-ARCHIVE_OFFICIAL_3='factorio_alpha_x64_1.1.30.tar.xz'
-ARCHIVE_OFFICIAL_3_MD5='b039e25fef976f2ebe77bf5d9bca3c90'
-ARCHIVE_OFFICIAL_3_TYPE='tar'
-ARCHIVE_OFFICIAL_3_SIZE='1800000'
-ARCHIVE_OFFICIAL_3_VERSION='1.1.30-official1'
-ARCHIVE_OFFICIAL_3_URL='https://www.factorio.com/'
+ARCHIVE_BASE_3='factorio_alpha_x64_1.1.30.tar.xz'
+ARCHIVE_BASE_3_MD5='b039e25fef976f2ebe77bf5d9bca3c90'
+ARCHIVE_BASE_3_TYPE='tar'
+ARCHIVE_BASE_3_SIZE='1800000'
+ARCHIVE_BASE_3_VERSION='1.1.30-official1'
+ARCHIVE_BASE_3_URL='https://www.factorio.com/'
 
-ARCHIVE_OFFICIAL_2='factorio_alpha_x64_1.1.27.tar.xz'
-ARCHIVE_OFFICIAL_2_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
-ARCHIVE_OFFICIAL_2_TYPE='tar'
-ARCHIVE_OFFICIAL_2_SIZE='1800000'
-ARCHIVE_OFFICIAL_2_VERSION='1.1.27-official1'
+ARCHIVE_BASE_2='factorio_alpha_x64_1.1.27.tar.xz'
+ARCHIVE_BASE_2_MD5='71c370e0363c40e95f0a9af56b8f4a9b'
+ARCHIVE_BASE_2_TYPE='tar'
+ARCHIVE_BASE_2_SIZE='1800000'
+ARCHIVE_BASE_2_VERSION='1.1.27-official1'
 
-ARCHIVE_OFFICIAL_1='factorio_alpha_x64_1.1.19.tar.xz'
-ARCHIVE_OFFICIAL_1_MD5='ffe7310259e6176d20fc4add10d8a3d3'
-ARCHIVE_OFFICIAL_1_TYPE='tar'
-ARCHIVE_OFFICIAL_1_SIZE='1800000'
-ARCHIVE_OFFICIAL_1_VERSION='1.1.19-official1'
+ARCHIVE_BASE_1='factorio_alpha_x64_1.1.19.tar.xz'
+ARCHIVE_BASE_1_MD5='ffe7310259e6176d20fc4add10d8a3d3'
+ARCHIVE_BASE_1_TYPE='tar'
+ARCHIVE_BASE_1_SIZE='1800000'
+ARCHIVE_BASE_1_VERSION='1.1.19-official1'
 
-ARCHIVE_OFFICIAL_0='factorio_alpha_x64_1.0.0.tar.xz'
-ARCHIVE_OFFICIAL_0_MD5='001910cafbfa8f4ac61b2897f91fe77e'
-ARCHIVE_OFFICIAL_0_TYPE='tar'
-ARCHIVE_OFFICIAL_0_SIZE='1700000'
-ARCHIVE_OFFICIAL_0_VERSION='1.0.0-official1'
+ARCHIVE_BASE_0='factorio_alpha_x64_1.0.0.tar.xz'
+ARCHIVE_BASE_0_MD5='001910cafbfa8f4ac61b2897f91fe77e'
+ARCHIVE_BASE_0_TYPE='tar'
+ARCHIVE_BASE_0_SIZE='1700000'
+ARCHIVE_BASE_0_VERSION='1.0.0-official1'
 
 ARCHIVE_GAME_BIN_PATH='factorio'
 ARCHIVE_GAME_BIN_FILES='bin/x64/factorio'
@@ -81,7 +81,7 @@ ARCHIVE_GAME_DATA_FILES='config-path.cfg data'
 
 CONFIG_FILES='./config-path.cfg'
 CONFIG_DIRS='./config'
-DATA_FILES='./*.dat ./player-data.json'
+DATA_FILES='./*.dat'
 DATA_DIRS='./saves ./mods'
 
 APP_MAIN_TYPE='native'
@@ -136,6 +136,21 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Ensure persistent storage of player data
+# The game will delete/recreate the file instead of following the symbolic link
+
+DATA_FILES="${DATA_FILES} ./player-data.json"
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Ensure persistent storage of player data
+# The game will delete/recreate the file instead of following the symbolic link
+player_data_file="./player-data.json"
+if [ -f "$player_data_file" ]; then
+	mkdir --parents "$(dirname "${PATH_DATA}/${player_data_file}")"
+	mv "$player_data_file" "${PATH_DATA}/${player_data_file}"
+	ln --symbolic "${PATH_DATA}/${player_data_file}" "$player_data_file"
+fi'
 
 # Write launchers
 
