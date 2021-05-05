@@ -34,32 +34,32 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210211.1
+script_version=20210421.2
 
 # Set game-specific variables
 
-BASE_ID='warhammer-40k-gladius'
-GAME_ID="${BASE_ID}-relics-of-war"
+GAME_ID='warhammer-40k-gladius'
 GAME_NAME='Warhammer 40,000: Gladius'
+
 EXPANSION_ID='reinforcement-pack'
 EXPANSION_NAME='Reinforcement Pack'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_0'
+ARCHIVE_BASE_0'
 
-ARCHIVE_GOG_0='warhammer_40_000_gladius_reinforcement_pack_1_07_04_44200.sh'
-ARCHIVE_GOG_0_MD5='013e6db4458c5fe0c39b3a33bdda68e5'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-ARCHIVE_GOG_0_SIZE='1400'
-ARCHIVE_GOG_0_VERSION='1.7.4-gog44200'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/warhammer_40000_gladius_reinforcement_pack'
+ARCHIVE_BASE_0='warhammer_40_000_gladius_reinforcement_pack_1_07_04_44200.sh'
+ARCHIVE_BASE_0_MD5='013e6db4458c5fe0c39b3a33bdda68e5'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='1400'
+ARCHIVE_BASE_0_VERSION='1.7.4-gog44200'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/warhammer_40000_gladius_reinforcement_pack'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='Data/Supplement1.dlc'
 
 PACKAGES_LIST='PKG_MAIN'
 
-PKG_MAIN_ID="${BASE_ID}-${EXPANSION_ID}"
+PKG_MAIN_ID="${GAME_ID}-${EXPANSION_ID}"
 PKG_MAIN_DESCRIPTION="$EXPANSION_NAME"
 PKG_MAIN_DEPS="$GAME_ID"
 

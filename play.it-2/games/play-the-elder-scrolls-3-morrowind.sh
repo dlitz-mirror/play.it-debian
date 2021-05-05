@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210504.1
+script_version=20210504.2
 
 # Set game-specific variables
 
@@ -69,10 +69,10 @@ ARCHIVE_GAME_BIN_WINE_PATH='app'
 ARCHIVE_GAME_BIN_WINE_FILES='*.exe binkw32.dll tes?construction?set.cnt tes?construction?set.hlp'
 
 ARCHIVE_GAME_L10N_PATH='app'
-ARCHIVE_GAME_L10N_FILES='morrowind.ini data?files/bookart/*_377_253.tga data?files/bookart/empire?small*.bmp data?files/*.bsa data?files/*.esm data?files/sound/vo data?files/splash data?files/textures/menu_credits* data?files/textures/menu_*game* data?files/textures/menu_options* data?files/textures/menu_return* data?files/textures/tx_menubook_cancel* data?files/textures/tx_menubook_close* data?files/textures/tx_menubook_journal* data?files/textures/tx_menubook_next* data?files/textures/tx_menubook_prev* data?files/textures/tx_menubook_take* data?files/textures/tx_menubook_topics* data?files/video/bethesda?logo.bik data?files/video/bm_bearhunt?.bik data?files/video/bm_ceremony?.bik data?files/video/bm_endgame.bik data?files/video/bm_frostgiant?.bik data?files/video/mw_cavern.bik data?files/video/mw_credits.bik data?files/video/mw_end.bik data?files/video/mw_intro.bik data?files/video/mw_logo.bik data?files/meshes/r/*atronach_frost.*'
+ARCHIVE_GAME_L10N_FILES='morrowind.ini data?files/*.bsa data?files/*.esm data?files/sound/vo data?files/splash data?files/video/bethesda?logo.bik data?files/video/bm_bearhunt?.bik data?files/video/bm_ceremony?.bik data?files/video/bm_endgame.bik data?files/video/bm_frostgiant?.bik data?files/video/mw_cavern.bik data?files/video/mw_credits.bik data?files/video/mw_end.bik data?files/video/mw_intro.bik data?files/video/mw_logo.bik'
 
 ARCHIVE_GAME_DATA_PATH='app'
-ARCHIVE_GAME_DATA_FILES='data?files/bookart/barbarian_*.tga data?files/bookart/boethiah_256.tga data?files/bookart/divinemetaphysics_text?.tga data?files/bookart/divinemetaphysics.tga data?files/bookart/efoulkefirmament_*.tga data?files/bookart/eggoftime_illust?.tga data?files/bookart/*.htm data?files/bookart/magicstonemap4.dds data?files/bookart/moragtong.tga data?files/bookart/secret_of_dwemer?.tga data?files/bookart/*.ttf data?files/bookart/tx_icon_waterbreath.bmp data?files/*.esp data?files/fonts data?files/icons data?files/meshes data?files/music data?files/sound/cr data?files/sound/fx data?files/textures data?files/*.txt data?files/video/bm_were*.bik data?files/video/mw_menu.bik knife.ico'
+ARCHIVE_GAME_DATA_FILES='data?files/*.esp data?files/fonts data?files/music data?files/sound/cr data?files/sound/fx data?files/*.txt data?files/video/bm_were*.bik data?files/video/mw_menu.bik knife.ico'
 
 ARCHIVE_GAME_DATAFILES_DATA_PATH='app/_officialplugins/_unpacked_files'
 ARCHIVE_GAME_DATAFILES_DATA_FILES='*'
