@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210423.1
+script_version=20210505.1
 
 # Set game-specific variables
 
@@ -115,6 +115,48 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
+
+# Tweak default configuration file
+# This is required for the introduction movie to play
+
+###
+# TODO
+# Some function dedicated to ini files edition would be useful here
+###
+
+ini_file="${PKG_BIN_PATH}${PATH_GAME}/startopia.ini"
+
+ini_field='IntroPath'
+ini_value='C:\\'"$GAME_ID"'\\intro\\'
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="s/${pattern}/${replacement}/"
+
+ini_field='DrivePathMusic'
+ini_value='C:\\'"$GAME_ID"'\\data\\'
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+ini_field='DrivePathSound'
+ini_value='C:\\'"$GAME_ID"'\\data\\'
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+ini_field='SoundPathVoice'
+ini_value='C:\\'"$GAME_ID"'\\data\\'
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+dos2unix --quiet "$ini_file"
+sed --in-place --expression="$expression" "$ini_file"
+unix2dos --quiet "$ini_file"
 
 # Write launchers
 
