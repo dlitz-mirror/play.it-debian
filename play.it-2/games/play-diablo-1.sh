@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,79 +34,63 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201011.2
+script_version=20210418.8
 
 # Set game-specific variables
-
-SCRIPT_DEPS='7z'
 
 GAME_ID='diablo-1'
 GAME_NAME='Diablo'
 
 ARCHIVES_LIST='
-ARCHIVE_GOG_5
-ARCHIVE_GOG_4
-ARCHIVE_GOG_3
-ARCHIVE_GOG_2
-ARCHIVE_GOG_1
-ARCHIVE_GOG_0'
+ARCHIVE_BASE_5
+ARCHIVE_BASE_4
+ARCHIVE_BASE_3
+ARCHIVE_BASE_2
+ARCHIVE_BASE_1
+ARCHIVE_BASE_0'
 
-ARCHIVE_GOG_5='setup_diablo_1.09_hellfire_v2_(30038).exe'
-ARCHIVE_GOG_5_URL='https://www.gog.com/game/diablo'
-ARCHIVE_GOG_5_TYPE='innosetup'
-ARCHIVE_GOG_5_MD5='e70187d92fa120771db99dfa81679cfc'
-ARCHIVE_GOG_5_VERSION='1.09-gog30038'
-ARCHIVE_GOG_5_SIZE='850000'
+ARCHIVE_BASE_5='setup_diablo_1.09_hellfire_v2_(30038).exe'
+ARCHIVE_BASE_5_URL='https://www.gog.com/game/diablo'
+ARCHIVE_BASE_5_TYPE='innosetup'
+ARCHIVE_BASE_5_MD5='e70187d92fa120771db99dfa81679cfc'
+ARCHIVE_BASE_5_VERSION='1.09-gog30038'
+ARCHIVE_BASE_5_SIZE='850000'
 
-ARCHIVE_GOG_4='setup_diablo_1.09_v6_(28378).exe'
-ARCHIVE_GOG_4_TYPE='innosetup'
-ARCHIVE_GOG_4_MD5='588ab50c1ef25abb682b86ea4306ea50'
-ARCHIVE_GOG_4_VERSION='1.09-gog28378'
-ARCHIVE_GOG_4_SIZE='670000'
+ARCHIVE_BASE_4='setup_diablo_1.09_v6_(28378).exe'
+ARCHIVE_BASE_4_TYPE='innosetup'
+ARCHIVE_BASE_4_MD5='588ab50c1ef25abb682b86ea4306ea50'
+ARCHIVE_BASE_4_VERSION='1.09-gog28378'
+ARCHIVE_BASE_4_SIZE='670000'
 
-ARCHIVE_GOG_3='setup_diablo_1.09_v4_(27989).exe'
-ARCHIVE_GOG_3_TYPE='innosetup'
-ARCHIVE_GOG_3_MD5='8dac74a616646fa41d5d73f4765cef40'
-ARCHIVE_GOG_3_VERSION='1.09-gog27989'
-ARCHIVE_GOG_3_SIZE='670000'
+ARCHIVE_BASE_3='setup_diablo_1.09_v4_(27989).exe'
+ARCHIVE_BASE_3_TYPE='innosetup'
+ARCHIVE_BASE_3_MD5='8dac74a616646fa41d5d73f4765cef40'
+ARCHIVE_BASE_3_VERSION='1.09-gog27989'
+ARCHIVE_BASE_3_SIZE='670000'
 
-ARCHIVE_GOG_2='setup_diablo_1.09_v3_(27965).exe'
-ARCHIVE_GOG_2_TYPE='innosetup'
-ARCHIVE_GOG_2_MD5='38d654af858d7a2591711f0e6324fcd0'
-ARCHIVE_GOG_2_VERSION='1.09-gog27695'
-ARCHIVE_GOG_2_SIZE='670000'
+ARCHIVE_BASE_2='setup_diablo_1.09_v3_(27965).exe'
+ARCHIVE_BASE_2_TYPE='innosetup'
+ARCHIVE_BASE_2_MD5='38d654af858d7a2591711f0e6324fcd0'
+ARCHIVE_BASE_2_VERSION='1.09-gog27695'
+ARCHIVE_BASE_2_SIZE='670000'
 
-ARCHIVE_GOG_1='setup_diablo_1.09_v2_(27882).exe'
-ARCHIVE_GOG_1_TYPE='innosetup'
-ARCHIVE_GOG_1_MD5='83b2d6b8551a9825a426dac7b9302654'
-ARCHIVE_GOG_1_VERSION='1.09-gog27882'
-ARCHIVE_GOG_1_SIZE='670000'
+ARCHIVE_BASE_1='setup_diablo_1.09_v2_(27882).exe'
+ARCHIVE_BASE_1_TYPE='innosetup'
+ARCHIVE_BASE_1_MD5='83b2d6b8551a9825a426dac7b9302654'
+ARCHIVE_BASE_1_VERSION='1.09-gog27882'
+ARCHIVE_BASE_1_SIZE='670000'
 
-ARCHIVE_GOG_0='setup_diablo_1.09_(27873).exe'
-ARCHIVE_GOG_0_TYPE='innosetup'
-ARCHIVE_GOG_0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
-ARCHIVE_GOG_0_VERSION='1.09-gog27873'
-ARCHIVE_GOG_0_SIZE='680000'
-
-# devilutionX 1.1.0 release
-ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.7z'
-ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.1.0'
-ARCHIVE_REQUIRED_DEVILUTIONX_MD5='ff0cb792e11e58862e908e6493cef2e4'
+ARCHIVE_BASE_0='setup_diablo_1.09_(27873).exe'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_MD5='bf57594f5218a794a284b5e2a0f5ba14'
+ARCHIVE_BASE_0_VERSION='1.09-gog27873'
+ARCHIVE_BASE_0_SIZE='680000'
 
 ARCHIVE_DOC_DATA_PATH='.'
 ARCHIVE_DOC_DATA_FILES='*.pdf license.txt patch.txt readme.txt update.txt README.txt'
 
-ARCHIVE_DOC_DEVILUTIONX_DATA_PATH='devilutionx-linux-x86_64'
-ARCHIVE_DOC_DEVILUTIONX_DATA_FILES='*.txt'
-
-ARCHIVE_GAME_BIN_PATH='devilutionx-linux-x86_64'
-ARCHIVE_GAME_BIN_FILES='devilutionx'
-
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='diabdat.mpq'
-
-ARCHIVE_FONT_DATA_PATH='devilutionx-linux-x86_64'
-ARCHIVE_FONT_DATA_FILES='CharisSILB.ttf'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='devilutionx'
@@ -122,6 +106,32 @@ PKG_BIN_DEPS="$PKG_DATA_ID glibc sdl2_mixer sdl2 glx libudev1"
 PKG_BIN_DEPS_ARCH='sdl2_ttf'
 PKG_BIN_DEPS_DEB='libsdl2-ttf-2.0-0'
 PKG_BIN_DEPS_GENTOO='media-libs/sdl2-ttf'
+
+# DevilutionX 1.2.1 release
+
+###
+# TODO
+# Archive type is explicitely set as "tar"
+# This will no longer be required once the following update is included in a ./play.it release:
+# https://forge.dotslashplay.it/play.it/scripts/-/merge_requests/1309
+###
+
+ARCHIVE_REQUIRED_DEVILUTIONX='devilutionx-linux-x86_64.tar.xz'
+ARCHIVE_REQUIRED_DEVILUTIONX_MD5='b63937bb282604893be9b66417a143d4'
+ARCHIVE_REQUIRED_DEVILUTIONX_TYPE='tar'
+ARCHIVE_REQUIRED_DEVILUTIONX_URL='https://github.com/diasurgical/devilutionX/releases/tag/1.2.1'
+
+ARCHIVE_DOC_DEVILUTIONX_DATA_PATH='.'
+ARCHIVE_DOC_DEVILUTIONX_DATA_FILES='*.txt'
+
+ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_FILES='devilutionx'
+
+ARCHIVE_GAME_DEVILUTIONX_DATA_PATH='.'
+ARCHIVE_GAME_DEVILUTIONX_DATA_FILES='devilutionx.mpq'
+
+ARCHIVE_FONT_DATA_PATH='.'
+ARCHIVE_FONT_DATA_FILES='CharisSILB.ttf'
 
 # Load common functions
 
@@ -169,13 +179,25 @@ prepare_package_layout
 
 # Include devilutionX-provided CharisSILB font
 
+###
+# TODO
+# PATH_FONTS should be set by the library
+###
+
 PKG='PKG_DATA'
-organize_data 'FONT_DATA' "/usr/local/share/fonts/truetype/$GAME_ID"
+PATH_FONTS="${OPTION_PREFIX}/share/fonts/truetype/${GAME_ID}"
+organize_data 'FONT_DATA' "$PATH_FONTS"
+APP_MAIN_OPTIONS="${APP_MAIN_OPTIONS} --ttf-dir ${PATH_FONTS}"
 
 # Include devilutionX documentation
 
 PKG='PKG_DATA'
 organize_data 'DOC_DEVILUTIONX_DATA' "$PATH_DOC/devilutionx"
+
+# Include devilutionX assets
+
+PKG='PKG_DATA'
+organize_data 'GAME_DEVILUTIONX_DATA' "$PATH_GAME"
 
 # Extract icons
 
