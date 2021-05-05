@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210505.1
+script_version=20210505.2
 
 # Set game-specific variables
 
@@ -87,6 +87,10 @@ PKG_DATA_DEPS="$PKG_COMMON_ID"
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine"
+
+# iconv is used during .reg files generation
+
+SCRIPT_DEPS="${SCRIPT_DEPS} iconv"
 
 # Load common functions
 
@@ -155,6 +159,59 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 APP_WINETRICKS="${APP_WINETRICKS} vd=\$(xrandr|awk '/\\*/ {print \$1}')"
 PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks xrandr"
+
+# Allow to skip intro video on first launch
+# Sets default game settings
+
+registry_file='registry-dumps/init.reg'
+registry_file_path="${PKG_BIN_PATH}${PATH_GAME}/${registry_file}"
+
+APP_REGEDIT="${APP_REGEDIT} ${registry_file}"
+
+mkdir --parents "$(dirname "$registry_file_path")"
+cat > "$registry_file_path" << EOF
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\\Software\\New World Computing\\Heroes Chronicles\\WorldTree]
+"Animate SpellBook"=dword:00000001
+"AppPath"="C:\\\\${GAME_ID}\\\\the world tree\\\\"
+"Autosave"=dword:00000001
+"Bink Video"=dword:00000000
+"Blackout Computer"=dword:00000000
+"Combat Army Info Level"=dword:00000000
+"Combat Auto Creatures"=dword:00000001
+"Combat Auto Spells"=dword:00000001
+"Combat Ballista"=dword:00000001
+"Combat Catapult"=dword:00000001
+"Combat First Aid Tent"=dword:00000001
+"Combat Shade Level"=dword:00000000
+"Combat Speed"=dword:00000000
+"Computer Walk Speed"=dword:00000003
+"First Time"=dword:00000000
+"Last Music Volume"=dword:00000005
+"Last Sound Volume"=dword:00000005
+"Main Game Full Screen"=dword:00000001
+"Main Game Show Menu"=dword:00000001
+"Main Game X"=dword:0000000a
+"Main Game Y"=dword:0000000a
+"Move Reminder"=dword:00000001
+"Music Volume"=dword:00000005
+"Quick Combat"=dword:00000000
+"Show Combat Grid"=dword:00000000
+"Show Combat Mouse Hex"=dword:00000000
+"Show Intro"=dword:00000001
+"Show Route"=dword:00000001
+"Sound Volume"=dword:00000005
+"Test Blit"=dword:00000000
+"Test Decomp"=dword:00000000
+"Test Read"=dword:00000000
+"Town Outlines"=dword:00000001
+"Video Subtitles"=dword:00000001
+"Walk Speed"=dword:00000002
+"Window Scroll Speed"=dword:00000001
+EOF
+
+iconv --from-code=UTF-8 --to-code=UTF-16 --output="$registry_file_path" "$registry_file_path"
 
 # Run the game binary from its parent directory
 
