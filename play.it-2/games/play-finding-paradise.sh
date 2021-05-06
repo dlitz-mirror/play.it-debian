@@ -4,6 +4,7 @@ set -o errexit
 ###
 # Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # Copyright (c) 2016-2021, Mopi
+# Copyright (c)      2021, Anna Lea
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,19 +36,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.6
+script_version=20210515.7
 
 # Set game-specific variables
 
 GAME_ID='finding-paradise'
 GAME_NAME='Finding Paradise'
 
+ARCHIVE_BASE_1='finding_paradise_gog_3_lang_26461.sh'
+ARCHIVE_BASE_1_MD5='d5f8adf528d95845893b0d23dac449d6'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='320000'
+ARCHIVE_BASE_1_VERSION='3-gog26461'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/finding_paradise'
+
 ARCHIVE_BASE_0='finding_paradise_gog_3_lang_25982.sh'
 ARCHIVE_BASE_0_MD5='dbfe49910afb07109803ee24c796c868'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='310000'
 ARCHIVE_BASE_0_VERSION='3-gog25982'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/finding_paradise'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='FindingParadise.x86 lib/libruby.so.2.1'
