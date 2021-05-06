@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,23 +31,21 @@ set -o errexit
 ###
 # Pharaoh
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20181013.4
+script_version=20210506.1
 
 # Set game-specific variables
-
-SCRIPT_DEPS='convert identify wrestool'
 
 GAME_ID='pharaoh'
 GAME_NAME='Pharaoh'
 
 ARCHIVE_GOG='setup_pharaoh_gold_2.1.0.15.exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/pharaoh_cleopatra'
 ARCHIVE_GOG_MD5='62298f00f1f2268c8d5004f5b2e9fc93'
 ARCHIVE_GOG_SIZE='810000'
 ARCHIVE_GOG_VERSION='2.1-gog2.1.0.15'
+ARCHIVE_GOG_URL='https://www.gog.com/game/pharaoh_cleopatra'
 
 ARCHIVE_DOC0_DATA_PATH='tmp'
 ARCHIVE_DOC0_DATA_FILES='*.txt'
@@ -77,20 +75,24 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+
+# Explicitely set icons-related script dependencies
+# cf. https://forge.dotslashplay.it/play.it/scripts/-/issues/110
+
+SCRIPT_DEPS="${SCRIPT_DEPS} convert identify wrestool"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -104,14 +106,13 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icons
 
@@ -119,10 +120,14 @@ PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
 
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build packages
 
