@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210506.3
+script_version=20210506.4
 
 # Set game-specific variables
 
@@ -80,6 +80,9 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+PKG_BIN_DEPS_ARCH='lib32-gst-plugins-base-libs lib32-mpg123'
+PKG_BIN_DEPS_DEB='libgstreamer-plugins-base1.0-0, libmpg123-0'
+PKG_BIN_DEPS_GENTOO='media-libs/gst-plugins-base[abi_x86_32] media-sound/mpg123[abi_x86_32]'
 
 # Explicitely set icons-related script dependencies
 # cf. https://forge.dotslashplay.it/play.it/scripts/-/issues/110
