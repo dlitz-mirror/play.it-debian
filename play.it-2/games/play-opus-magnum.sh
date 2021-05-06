@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.2
+script_version=20210511.3
 
 # Set game-specific variables
 
@@ -48,36 +48,24 @@ ARCHIVE_BASE_0_SIZE='460000'
 ARCHIVE_BASE_0_VERSION='2018.08.17-gog23270'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/opus_magnum'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC_DATA_FILES='*.txt'
+ARCHIVE_DOC_MAIN_PATH='data/noarch/game'
+ARCHIVE_DOC_MAIN_FILES='*.txt'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='lib/libCSteamworks.so lib/libsteam_api.so'
-
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='lib64/libCSteamworks.so lib64/libsteam_api.so'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='Content PackedContent monoconfig monomachineconfig Lightning.exe Lightning.exe.config Ionic.Zip.Reduced.dll Steamworks.NET.dll'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='Content PackedContent monoconfig monomachineconfig Lightning.exe Lightning.exe.config Ionic.Zip.Reduced.dll Steamworks.NET.dll'
 
 APP_MAIN_TYPE='mono'
-APP_MAIN_LIBS_BIN32='lib'
-APP_MAIN_LIBS_BIN64='lib64'
 APP_MAIN_EXE='Lightning.exe'
 APP_MAIN_ICON='Lightning.exe'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_MAIN_DEPS='mono sdl2 sdl2_image sdl2_mixer vorbis glx'
+PKG_MAIN_DEPS_DEB='libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-security4.0-cil, libmono-system-web4.0-cil, libmono-system-web-extensions4.0-cil, libmono-system-web-http4.0-cil, libmono-system-web-services4.0-cil, libmono-system-xml4.0-cil'
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} mono sdl2 sdl2_image sdl2_mixer vorbis glx"
-PKG_BIN32_DEPS_DEB='libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-security4.0-cil, libmono-system-web4.0-cil, libmono-system-web-extensions4.0-cil, libmono-system-web-http4.0-cil, libmono-system-web-services4.0-cil, libmono-system-xml4.0-cil'
+# Ensure easy upgrade from packages generated with pre-20210506.1 script
 
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_MAIN_PROVIDE='opus-magnum-data'
 
 # Load common functions
 
@@ -113,7 +101,6 @@ prepare_package_layout
 
 # Extract icon
 
-PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
@@ -122,9 +109,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+launchers_write 'APP_MAIN'
 
 # Build package
 
