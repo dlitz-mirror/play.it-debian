@@ -1,9 +1,9 @@
 # select package architecture to build
 # USAGE: select_package_architecture
-# NEEDED_VARS: OPTION_ARCHITECTURE PACKAGES_LIST
+# NEEDED_VARS: OPTION_ARCHITECTURE
 select_package_architecture() {
 	[ "$OPTION_ARCHITECTURE" = 'all' ] && return 0
-	if version_target_is_older_than '2.6'; then
+	if ! version_is_at_least '2.6' "$target_version"; then
 		warning_option_not_supported '--architecture'
 		OPTION_ARCHITECTURE='all'
 		export OPTION_ARCHITECTURE
@@ -32,7 +32,12 @@ select_package_architecture() {
 	local packages_list_32
 	local packages_list_64
 	local packages_list_all
-	for package in $PACKAGES_LIST; do
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
+	for package in $packages_list; do
 		package_arch="$(get_value "${package}_ARCH")"
 		case "$package_arch" in
 			('32')

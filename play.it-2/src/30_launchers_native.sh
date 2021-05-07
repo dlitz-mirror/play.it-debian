@@ -90,12 +90,19 @@ launcher_write_script_nativenoprefix_run() {
 
 # native - get extra LD_LIBRARY_PATH entries (with a trailing :)
 # USAGE: launcher_native_get_extra_library_path
-# NEEDED VARS: OPTION_PACKAGE PKG
+# NEEDED VARS: OPTION_PACKAGE
 # CALLED BY: launcher_write_script_native_run_common
 launcher_native_get_extra_library_path() {
-	if [ "$OPTION_PACKAGE" = 'gentoo' ] && get_value "${PKG}_DEPS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet 'libcurl-gnutls'; then
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	if [ "$OPTION_PACKAGE" = 'gentoo' ] && get_value "${package}_DEPS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet 'libcurl-gnutls'; then
+		# Get package architecture
+		# shellcheck disable=SC2039
 		local pkg_architecture
-		set_architecture "$PKG"
+		pkg_architecture=$(package_get_architecture_string "$PKG")
+
 		printf '%s' "/usr/\$(portageq envvar 'LIBDIR_$pkg_architecture')/debiancompat:"
 	fi
 }

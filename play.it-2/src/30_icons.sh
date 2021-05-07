@@ -37,25 +37,24 @@ icons_list_dependencies() {
 
 # get .png file(s) from various icon sources in current package
 # USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icons_get_from_path
 icons_get_from_package() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	[ $SKIP_ICONS -eq 1 ] && return 0
 
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	local path
-	local path_pkg
-	path_pkg="$(get_value "${PKG}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_get_from_package'
-	fi
-	path="${path_pkg}${PATH_GAME}"
+	path="$(package_get_path "$package")${PATH_GAME}"
 	icons_get_from_path "$path" "$@"
 }
 
 # get .png file(s) from various icon sources in temporary work directory
 # USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icons_get_from_path
 icons_get_from_workdir() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
@@ -68,7 +67,7 @@ icons_get_from_workdir() {
 
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
 # CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar
 icons_get_from_path() {
 	local app
@@ -77,15 +76,15 @@ icons_get_from_path() {
 	local file
 	local icon
 	local list
-	local path_pkg
 	local wrestool_id
+
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	directory="$1"
 	shift 1
 	destination="$PLAYIT_WORKDIR/icons"
-	path_pkg="$(get_value "${PKG}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_get_from_package'
-	fi
 	for app in "$@"; do
 		if ! testvar "$app" 'APP'; then
 			error_invalid_argument 'app' 'icons_get_from_package'
@@ -98,14 +97,42 @@ icons_get_from_path() {
 			if [ -z "$file" ]; then
 				error_variable_not_set 'icons_get_from_path' '$'"$icon"
 			fi
-			if [ $DRY_RUN -eq 0 ] && [ ! -f "$directory/$file" ]; then
-				error_icon_file_not_found "$directory/$file"
-			fi
+
+			# Check icon file existence
+			file=$(icon_check_file_existence "$directory" "$file")
+
 			wrestool_id="$(get_value "${icon}_ID")"
 			icon_extract_png_from_file "$directory/$file" "$destination"
 			icons_include_png_from_directory "$app" "$destination"
 		done
 	done
+}
+
+# check icon file existence
+# USAGE: icon_check_file_existence $directory $file
+# RETURNS: $file or throws an error
+icon_check_file_existence() {
+	local directory file
+	directory="$1"
+	file="$2"
+
+	# Return early in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		printf '%s' "$file"
+		return 0
+	fi
+
+	if [ ! -f "$directory/$file" ]; then
+		# pre-2.8 scripts could use globbing in file path
+		if version_target_is_older_than '2.8'; then
+			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
+		else
+			error_icon_file_not_found "$directory/$file"
+		fi
+	fi
+
+	printf '%s' "$file"
+	return 0
 }
 
 # extract .png file(s) from target file
@@ -167,6 +194,7 @@ icon_extract_ico_from_exe() {
 	file="$1"
 	destination="$2"
 	[ "$wrestool_id" ] && options="--name=$wrestool_id"
+	debug_external_command "wrestool --extract --type=14 $options --output=\"$destination\" \"$file\" 2>/dev/null"
 	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null
 }
 
@@ -191,6 +219,7 @@ icon_convert_to_png() {
 	file="$1"
 	destination="$2"
 	name="$(basename "$file")"
+	debug_external_command "convert \"$file\" \"$destination/${name%.*}.png\""
 	convert "$file" "$destination/${name%.*}.png"
 }
 
@@ -208,7 +237,7 @@ icon_copy_png() {
 
 # get .png file(s) from target directory and put them in current package
 # USAGE: icons_include_png_from_directory $app $directory
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PKG
+# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE
 # CALLS: icon_get_resolution_from_file
 # CALLED BY: icons_get_from_path
 icons_include_png_from_directory() {
@@ -218,20 +247,20 @@ icons_include_png_from_directory() {
 	local file
 	local path
 	local path_icon
-	local path_pkg
 	local resolution
+
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	app="$1"
 	directory="$2"
 	name="$(get_value "${app}_ID")"
 	[ -n "$name" ] || name="$GAME_ID"
-	path_pkg="$(get_value "${PKG}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_include_png_from_directory'
-	fi
 	for file in "$directory"/*.png; do
 		icon_get_resolution_from_file "$file"
 		path_icon="$PATH_ICON_BASE/$resolution/apps"
-		path="${path_pkg}${path_icon}"
+		path="$(package_get_path "$package")${path_icon}"
 		mkdir --parents "$path"
 		mv "$file" "$path/$name.png"
 	done
@@ -259,7 +288,7 @@ icon_get_resolution_from_file() {
 		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
 	fi
 
-	if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
+	if ! version_is_at_least '2.8' "$target_version" && [ -n "${file##* *}" ]; then
 		field=2
 		unset resolution
 		while
@@ -277,76 +306,11 @@ icon_get_resolution_from_file() {
 	export resolution
 }
 
-# link icons in place post-installation from game directory
-# USAGE: icons_linking_postinst $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PKG
-icons_linking_postinst() {
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local app
-	local file
-	local icon
-	local list
-	local name
-	local path
-	local path_icon
-	local path_pkg
-	path_pkg="$(get_value "${PKG}_PATH")"
-	if [ -z "$path_pkg" ]; then
-		error_invalid_argument 'PKG' 'icons_linking_postinst'
-	fi
-	path="${path_pkg}${PATH_GAME}"
-	for app in "$@"; do
-		list="$(get_value "${app}_ICONS_LIST")"
-		[ "$list" ] || list="${app}_ICON"
-		name="$(get_value "${app}_ID")"
-		[ "$name" ] || name="$GAME_ID"
-		for icon in $list; do
-			file="$(get_value "$icon")"
-			if version_target_is_older_than '2.8'; then
-				# ensure compatibility with scripts targeting pre-2.8 library
-				if [ -e "$path/$file" ] || [ -e "$path"/$file ]; then
-					icon_get_resolution_from_file "$path/$file"
-				else
-					icon_get_resolution_from_file "${PKG_DATA_PATH}${PATH_GAME}/$file"
-				fi
-			else
-				icon_get_resolution_from_file "$path/$file"
-			fi
-			path_icon="$PATH_ICON_BASE/$resolution/apps"
-			if version_target_is_older_than '2.8' && [ -n "${file##* *}" ]; then
-				cat >> "$postinst" <<- EOF
-				if [ ! -e "$path_icon/$name.png" ]; then
-				  mkdir --parents "$path_icon"
-				  ln --symbolic "$PATH_GAME"/$file "$path_icon/$name.png"
-				fi
-				EOF
-			else
-				cat >> "$postinst" <<- EOF
-				if [ ! -e "$path_icon/$name.png" ]; then
-				  mkdir --parents "$path_icon"
-				  ln --symbolic "$PATH_GAME/$file" "$path_icon/$name.png"
-				fi
-				EOF
-			fi
-			cat >> "$prerm" <<- EOF
-			if [ -e "$path_icon/$name.png" ]; then
-			  rm "$path_icon/$name.png"
-			  rmdir --parents --ignore-fail-on-non-empty "$path_icon"
-			fi
-			EOF
-		done
-	done
-}
-
 # move icons to the target package
 # USAGE: icons_move_to $pkg
 icons_move_to() {
 	###
 	# TODO
-	# Check that $PKG is set to a valid package
 	# Check that $destination_package is set to a valid package
 	# Check that $PATH_ICON_BASE is set to an absolute path
 	###
@@ -356,23 +320,10 @@ icons_move_to() {
 
 	local source_package      source_path      source_directory
 	local destination_package destination_path destination_directory
-
-	source_package="$PKG"
+	source_package=$(package_get_current)
+	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
 	destination_package="$1"
-
-	# Get source path, ensure it is set
-	source_path=$(get_value "${source_package}_PATH")
-	if [ -z "$source_path" ]; then
-		error_invalid_argument 'PKG' 'icons_move_to'
-	fi
-	source_directory="${source_path}${PATH_ICON_BASE}"
-
-	# Get destination path, ensure it is set
-	destination_path=$(get_value "${destination_package}_PATH")
-	if [ -z "$destination_path" ]; then
-		error_invalid_argument 'destination_package' 'icons_move_to'
-	fi
-	destination_directory="${destination_path}${PATH_ICON_BASE}"
+	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
 
 	# If called in dry-run mode, return early
 	if [ $DRY_RUN -eq 1 ]; then

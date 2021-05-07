@@ -1,10 +1,11 @@
 # print installation instructions
 # USAGE: print_instructions $pkg[…]
-# NEEDED VARS: (GAME_NAME) (OPTION_PACKAGE) (PACKAGES_LIST)
+# NEEDED VARS: (GAME_NAME) (OPTION_PACKAGE)
 print_instructions() {
 	[ "$GAME_NAME" ] || return 1
 	if [ $# -eq 0 ]; then
-		print_instructions $PACKAGES_LIST
+		# shellcheck disable=SC2046
+		print_instructions $(packages_get_list)
 		return 0
 	fi
 	local package_arch
@@ -30,6 +31,9 @@ print_instructions() {
 	if [ "$OPTION_PACKAGE" = 'gentoo' ] && [ -n "$GENTOO_OVERLAYS" ]; then
 		information_required_gentoo_overlays "$GENTOO_OVERLAYS"
 	fi
+	if [ "$OPTION_PACKAGE" = 'egentoo' ]; then
+		info_local_overlay_gentoo
+	fi
 	information_installation_instructions_common "$GAME_NAME"
 	if [ -n "$packages_list_32" ] && [ -n "$packages_list_64" ]; then
 		print_instructions_architecture_specific '32' $packages_list_all $packages_list_32
@@ -44,6 +48,9 @@ print_instructions() {
 			;;
 			('gentoo')
 				print_instructions_gentoo "$@"
+			;;
+			('egentoo')
+				print_instructions_egentoo "$@"
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
@@ -70,6 +77,9 @@ print_instructions_architecture_specific() {
 		;;
 		('gentoo')
 			print_instructions_gentoo "$@"
+		;;
+		('egentoo')
+			print_instructions_egentoo "$@"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'

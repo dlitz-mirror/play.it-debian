@@ -1,3 +1,48 @@
+2.13.0
+
+  * New features:
+    * New option --version (or -v), displaying the library version
+    * Debug notices, disabled by default, enabled with --debug
+    * Archives: Add support for InstallShield installers
+    * Engines: Add ability to use system-provided Ren'Py
+    * Packages: Add support for extra compression methods: lz4, lzip, lzop and zstd
+    * Packages: Add an alternative output format targeting Gentoo
+
+  * The installation process GNU Make has been improved to allow targeted actions:
+    install-library, install-games, install-wrapper and install-manpage
+
+  * Archive-related fixes and improvements:
+    * Use a new archives naming convention, more robust, see our documentation for details:
+      https://forge.dotslashplay.it/play.it/doc/-/wikis/dev/scripts/variables#base-archives
+    * Rewrite functions related to archives initialization
+    * .deb archives: Extract data without relying on dpkg-deb only
+    * Fix the error shown when an archive type is not set and could not be guessed
+    * Fix the error shown when an unknown archive type is used
+
+  * WINE-specific improvements:
+    * Do not override WINEDEBUG if it is already set by the user
+    * Provide a standard method to divert arbitrary files from the WINE prefix
+      to persistent user-writable paths
+
+  * Packages-related changes:
+    * Provide wrapper functions to get package-related informations, including
+      packages metadata
+    * New generic dependency keywords
+    * Improve handling of supported compression methods based on the target
+      package format
+    * Debian: Update dependency on libgdk_pixbuf-2.0.so.0
+    * Gentoo: Change default installation prefix to /usr from /usr/local
+
+  * Environment checks:
+    * Run early filesystem checks, allowing to detect failure that would
+      happen only at the packages building step
+    * New function version_is_at_least comparing two version strings using
+      the "x.y.z" format
+
+  * Deprecation notices:
+    * icons_linking_postinst is now a compatibility wrapper around standard
+      icons extraction functions
+
 2.12.2
 
   * Archives-related improvements:

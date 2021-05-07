@@ -10,6 +10,7 @@
 # Copyright (c) 2019-2021, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
 # Copyright (c) 2020-2021, macaron
 # Copyright (c) 2020-2021, Hoël Bézier
+# Copyright (c) 2020-2021, quinao
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,7 +41,7 @@
 # send your bug reports to contact@dotslashplay.it
 ###
 
-library_version=2.12.2
+LIBRARY_VERSION=2.13.0
 # shellcheck disable=SC2034
-library_revision=20210227.1
+library_revision=20210507.1
 

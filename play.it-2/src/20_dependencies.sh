@@ -1,21 +1,27 @@
 # check script dependencies
 # USAGE: check_deps
-# NEEDED VARS: (ARCHIVE) (ARCHIVE_TYPE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
+# NEEDED VARS: (ARCHIVE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
+	local archive_type
+
 	if [ "$ARCHIVE" ]; then
-		case "$(get_value "${ARCHIVE}_TYPE")" in
+		archive_type=$(archive_get_type "$ARCHIVE")
+		case "$archive_type" in
 			('cabinet')
 				SCRIPT_DEPS="$SCRIPT_DEPS cabextract"
 			;;
 			('debian')
-				SCRIPT_DEPS="$SCRIPT_DEPS dpkg"
+				SCRIPT_DEPS="$SCRIPT_DEPS debian"
 			;;
 			('innosetup1.7'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract1.7"
 			;;
 			('innosetup'*)
 				SCRIPT_DEPS="$SCRIPT_DEPS innoextract"
+			;;
+			('installshield')
+				SCRIPT_DEPS="$SCRIPT_DEPS unshield"
 			;;
 			('lha')
 				SCRIPT_DEPS="$SCRIPT_DEPS lha"
@@ -43,6 +49,29 @@ check_deps() {
 			;;
 		esac
 	fi
+	case "$OPTION_COMPRESSION" in
+		('gzip')
+			SCRIPT_DEPS="$SCRIPT_DEPS gzip"
+		;;
+		('xz')
+			SCRIPT_DEPS="$SCRIPT_DEPS xz"
+		;;
+		('bzip2')
+			SCRIPT_DEPS="$SCRIPT_DEPS bzip2"
+		;;
+		('zstd')
+			SCRIPT_DEPS="$SCRIPT_DEPS zstd"
+		;;
+		('lz4')
+			SCRIPT_DEPS="$SCRIPT_DEPS lz4"
+		;;
+		('lzip')
+			SCRIPT_DEPS="$SCRIPT_DEPS lzip"
+		;;
+		('lzop')
+			SCRIPT_DEPS="$SCRIPT_DEPS lzop"
+		;;
+	esac
 	if [ "$OPTION_CHECKSUM" = 'md5sum' ]; then
 		SCRIPT_DEPS="$SCRIPT_DEPS md5sum"
 	fi
@@ -67,6 +96,9 @@ check_deps() {
 			;;
 			('lha')
 				check_deps_lha
+			;;
+			('debian')
+				check_deps_debian
 			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
@@ -121,6 +153,26 @@ check_deps_lha() {
 	error_dependency_not_found 'lha'
 }
 
+# check presence of a software to handle .deb packages
+# USAGE: check_deps_debian
+# CALLS: error_dependency_not_found
+# CALLED BY: check_deps
+check_deps_debian() {
+	for command in 'dpkg-deb' 'bsdtar' 'unar'; do
+		if command -v "$command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	if command -v 'tar' >/dev/null 2>&1; then
+		for command in '7z' '7zr' 'ar'; do
+			if command -v "$command" >/dev/null 2>&1; then
+				return 0
+			fi
+		done
+	fi
+	error_dependency_not_found 'dpkg-deb'
+}
+
 # check innoextract presence, optionally in a given minimum version
 # USAGE: check_deps_innoextract $keyword
 # CALLS: error_dependency_not_found
@@ -128,9 +180,6 @@ check_deps_lha() {
 check_deps_innoextract() {
 	local keyword
 	local name
-	local version
-	local version_major
-	local version_minor
 	keyword="$1"
 	case "$keyword" in
 		('innoextract1.7')
@@ -143,19 +192,19 @@ check_deps_innoextract() {
 	if ! command -v 'innoextract' >/dev/null 2>&1; then
 		error_dependency_not_found "$name"
 	fi
-	version="$(innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)"
-	version_minor="${version#*.}"
-	version_major="${version%.*}"
+
+	# Check innoextract version
+	# shellcheck disable=SC2039
+	local innoextract_version
+	innoextract_version=$(LANG=C innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)
 	case "$keyword" in
 		('innoextract1.7')
-			if
-				[ "$version_major" -lt 1 ] || \
-				[ "$version_major" -lt 2 ] && [ "$version_minor" -lt 7 ]
-			then
+			if ! version_is_at_least '1.7' "$innoextract_version"; then
 				error_dependency_not_found "$name"
 			fi
 		;;
 	esac
+
 	return 0
 }
 
@@ -180,6 +229,9 @@ dependency_provided_by() {
 		;;
 		('icotool'|'wrestool')
 			provider='icoutils'
+		;;
+		('dpkg-deb')
+			provider='dpkg'
 		;;
 		(*)
 			provider="$command"

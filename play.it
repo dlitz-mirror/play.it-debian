@@ -1,7 +1,6 @@
 #!/bin/sh
 set -o errexit
 
-INPUT_FILE="$1"
 LIB_ONLY=1
 
 : "${XDG_DATA_HOME:="$HOME/.local/share"}"
@@ -34,6 +33,13 @@ if [ "$#" = 0 ]; then
 	help
 	exit 0
 fi
+
+if [ "$1" = "--version" ] || [ "$1" = "-v" ] ; then
+        echo $LIBRARY_VERSION
+        exit 0
+fi
+
+INPUT_FILE="$1"
 
 if [ ! -f "$INPUT_FILE" ]; then
 	error_not_a_file "$INPUT_FILE"

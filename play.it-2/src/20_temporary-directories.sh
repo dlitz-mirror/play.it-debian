@@ -13,22 +13,22 @@ get_tmp_dir() {
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
 # NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: set_temp_directories_pkg testvar get_tmp_dir
+# CALLS: testvar get_tmp_dir
 set_temp_directories() {
-	local base_directory
 	local free_space
 	local needed_space
 	local tmpdir
 
+	debug_entering_function 'set_temp_directories'
+
 	# If $PLAYIT_WORKDIR is already set, delete it before setting a new one
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
-	# If there is only a single package, make it the default one for the current instance
-	[ $# -eq 1 ] && PKG="$1"
-
 	# Look for a directory with enough free space to work in
-	tmpdir="$(get_tmp_dir)"
+	# shellcheck disable=SC2039
+	local base_directory
 	unset base_directory
+	tmpdir="$(get_tmp_dir)"
 	if [ "$NO_FREE_SPACE_CHECK" -eq 1 ]; then
 		base_directory="$tmpdir/play.it"
 		mkdir --parents "$base_directory"
@@ -67,8 +67,22 @@ set_temp_directories() {
 		fi
 	fi
 
+	# Check that the candidate temporary directory is on a case-sensitive filesystem
+	if ! check_directory_is_case_sensitive "$base_directory"; then
+		error_case_insensitive_filesystem_is_not_supported "$base_directory"
+		return 1
+	fi
+
+	# Check that the candidate temporary directory is on a filesystem with support for UNIX permissions
+	if ! check_directory_supports_unix_permissions "$base_directory"; then
+		error_unix_permissions_support_is_required "$base_directory"
+		return 1
+	fi
+
 	# Generate a directory with a unique name for the current instance
 	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "${GAME_ID}.XXXXX")"
+	debug_option_value 'PLAYIT_WORKDIR'
+	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR
 
 	# Set $postinst and $prerm
@@ -78,40 +92,17 @@ set_temp_directories() {
 	prerm="$PLAYIT_WORKDIR/scripts/prerm"
 	export prerm
 
-	# Set temporary directories for each package to build
-	for pkg in "$@"; do
-		testvar "$pkg" 'PKG'
-		set_temp_directories_pkg $pkg
+	# Export the path to the packages to build as PKG_xxx_PATH
+	# Some game scripts are expecting this variable to be set
+	# These should be updated to call `package_get_path` instead
+	# shellcheck disable=SC2039
+	local package
+	for package in "$@"; do
+		testvar "$package" 'PKG'
+		eval "${package}_PATH='$(package_get_path "$package")'"
+		export "${package?}_PATH"
 	done
-}
 
-# set package-secific temporary directory
-# USAGE: set_temp_directories_pkg $pkg
-# NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) PLAYIT_WORKDIR (PKG_ARCH) PKG_ID|GAME_ID
-# CALLED BY: set_temp_directories
-set_temp_directories_pkg() {
-	PKG="$1"
-
-	# Get package ID
-	use_archive_specific_value "${PKG}_ID"
-	local pkg_id
-	pkg_id="$(get_value "${PKG}_ID")"
-	if [ -z "$pkg_id" ]; then
-		eval ${PKG}_ID=\"$GAME_ID\"
-		export ${PKG?}_ID
-		pkg_id="$GAME_ID"
-	fi
-
-	# Get package architecture
-	local pkg_architecture
-	set_architecture "$PKG"
-
-	# Set $PKG_PATH
-	if [ "$OPTION_PACKAGE" = 'arch' ] && [ "$(get_value "${PKG}_ARCH")" = '32' ]; then
-		pkg_id="lib32-$pkg_id"
-	fi
-	get_package_version
-	eval ${PKG}_PATH=\"$PLAYIT_WORKDIR/${pkg_id}_${PKG_VERSION}_${pkg_architecture}\"
-	export ${PKG?}_PATH
+	debug_leaving_function 'set_temp_directories'
 }
 
