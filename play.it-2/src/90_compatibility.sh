@@ -1,3 +1,52 @@
+# Keep compatibility with 2.12 and older
+
+archives_get_list() {
+	ARCHIVES_LIST=$(archives_return_list)
+	export ARCHIVES_LIST
+}
+
+get_package_version() {
+	PKG_VERSION=$(packages_get_version "$ARCHIVE")
+	export PKG_VERSION
+}
+
+set_architecture() {
+	pkg_architecture=$(package_get_architecture_string "$1")
+	export pkg_architecture
+}
+
+icons_linking_postinst() {
+	if \
+		! version_is_at_least '2.8' "$target_version" && \
+		[ -z "${PACKAGES_LIST##*PKG_DATA*}" ]
+	then
+		(
+			PKG='PKG_DATA'
+			icons_get_from_package "$@"
+		)
+	else
+		icons_get_from_package "$@"
+	fi
+}
+
+archive_set() {
+	archive_initialize_optional "$@"
+	# shellcheck disable=SC2039
+	local archive
+	archive=$(archive_find_from_candidates "$@")
+	if [ -n "$archive" ]; then
+		ARCHIVE="$archive"
+		export ARCHIVE
+	fi
+}
+
+version_target_is_older_than() {
+	if [ "$1" = "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" ]; then
+		return 1
+	fi
+	version_is_at_least "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" "$1"
+}
+
 # Keep compatibility with 2.11 and older
 
 compat_pkg_write_arch_postinst() {
@@ -184,6 +233,31 @@ write_desktop_winecfg() {
 
 write_launcher() {
 	launchers_write "$@"
+}
+
+# Keep compatibility with 2.8 and older
+
+icon_check_file_existence_pre_2_8() {
+	local directory file
+	directory="$1"
+	file="$2"
+
+	if [ ! -f "$directory/$file" ]; then
+		if \
+			[ -z "${file##* *}" ] || \
+			[ ! -f "$directory"/$file ]
+		then
+			error_icon_file_not_found "$directory/$file"
+		else
+			# get the real file name from its globbed one
+			local file_path
+			file_path=$(eval printf '%s' "$directory"/$file)
+			file="${file_path#${directory}/}"
+		fi
+	fi
+
+	printf '%s' "$file"
+	return 0
 }
 
 # Keep compatibility with 2.7 and older

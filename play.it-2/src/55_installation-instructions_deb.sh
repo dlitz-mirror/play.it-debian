@@ -3,19 +3,11 @@
 # CALLS: print_instructions_deb_apt print_instructions_deb_dpkg
 print_instructions_deb() {
 	if command -v apt >/dev/null 2>&1; then
-		debian_version=$(LANG=C apt --version 2>/dev/null | \
+		# shellcheck disable=SC2039
+		local apt_version
+		apt_version=$(LANG=C apt --version 2>/dev/null | \
 			grep --extended-regexp --only-matching '[0-9]+(\.[0-9]+)+')
-		debian_version_major=$(printf '%s' "$debian_version" | \
-			cut --delimiter='.' --fields=1)
-		debian_version_minor=$(printf '%s' "$debian_version" | \
-			cut --delimiter='.' --fields=2)
-		if \
-			[ $debian_version_major -ge 2 ] || \
-			{
-				[ $debian_version_major -eq 1 ] && \
-				[ ${debian_version_minor%~*} -ge 1 ]
-			}
-		then
+		if version_is_at_least '1.1' "$apt_version"; then
 			print_instructions_deb_apt "$@"
 		else
 			print_instructions_deb_dpkg "$@"
@@ -50,8 +42,13 @@ print_instructions_deb_dpkg() {
 print_instructions_deb_common() {
 	local pkg_path
 	local str_format
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	for pkg in "$@"; do
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'print_instructions_deb_common' "$pkg"
 			return 0
 		fi

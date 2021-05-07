@@ -6,12 +6,11 @@ pkg_write_deb() {
 	###
 	# TODO
 	# $pkg should be passed as a function argument, not inherited from the calling function
-	# $pkg_path should be computed from $pkg, not inherited from the calling function
 	###
 
 	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
 
-	control_directory="$pkg_path/DEBIAN"
+	control_directory="$(package_get_path "$pkg")/DEBIAN"
 	control_file="$control_directory/control"
 	postinst_script="$control_directory/postinst"
 	prerm_script="$control_directory/prerm"
@@ -32,11 +31,7 @@ pkg_write_deb() {
 	fi
 
 	# Get package size
-	pkg_size=$(du --total --block-size=1K --summarize "$pkg_path" | tail --lines=1 | cut --fields=1)
-
-	# Get package version
-	PKG="$pkg" \
-		get_package_version
+	pkg_size=$(du --total --block-size=1K --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
 
 	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"
@@ -44,19 +39,19 @@ pkg_write_deb() {
 
 	# Write main metadata file, enforce correct permissions
 	cat > "$control_file" <<- EOF
-	Package: $pkg_id
-	Version: $PKG_VERSION
-	Architecture: $pkg_architecture
+	Package: $(package_get_id "$pkg")
+	Version: $(packages_get_version "$ARCHIVE")
+	Architecture: $(package_get_architecture_string "$pkg")
 	Multi-Arch: foreign
-	Maintainer: $pkg_maint
+	Maintainer: $(packages_get_maintainer)
 	Installed-Size: $pkg_size
 	Section: non-free/games
 	EOF
-	if [ -n "$pkg_provide" ]; then
+	if [ -n "$(package_get_provide "$pkg")" ]; then
 		cat >> "$control_file" <<- EOF
-		Conflicts: $pkg_provide
-		Provides: $pkg_provide
-		Replaces: $pkg_provide
+		Conflicts: $(package_get_provide "$pkg")
+		Provides: $(package_get_provide "$pkg")
+		Replaces: $(package_get_provide "$pkg")
 		EOF
 	fi
 	if [ -n "$pkg_deps" ]; then
@@ -64,19 +59,9 @@ pkg_write_deb() {
 		Depends: $pkg_deps
 		EOF
 	fi
-	if [ -n "$pkg_description" ]; then
-		# shellcheck disable=SC2154
-		cat >> "$control_file" <<- EOF
-		Description: $GAME_NAME - $pkg_description
-		 ./play.it script version $script_version
-		EOF
-	else
-		# shellcheck disable=SC2154
-		cat >> "$control_file" <<- EOF
-		Description: $GAME_NAME
-		 ./play.it script version $script_version
-		EOF
-	fi
+	cat >> "$control_file" <<- EOF
+	$(package_get_description "$pkg")
+	EOF
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
@@ -113,7 +98,6 @@ pkg_write_deb() {
 # USAGE: pkg_set_deps_deb $dep[…]
 # CALLED BY: pkg_write_deb
 pkg_set_deps_deb() {
-	local architecture
 	for dep in "$@"; do
 		case $dep in
 			('alsa')
@@ -135,7 +119,7 @@ pkg_set_deps_deb() {
 				pkg_dep='libgconf-2-4'
 			;;
 			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep='libgdk-pixbuf2.0-0'
+				pkg_dep='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
 			;;
 			('glibc')
 				pkg_dep='libc6'
@@ -143,13 +127,13 @@ pkg_set_deps_deb() {
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
 				pkg_dep='libglib2.0-0'
 			;;
-			('glu')
+			('glu'|'libGLU.so.1')
 				pkg_dep='libglu1-mesa | libglu1'
 			;;
 			('glx')
 				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libgl1-mesa-glx'
 			;;
-			('gtk2')
+			('libgdk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='libgtk2.0-0'
 			;;
 			('java')
@@ -157,6 +141,12 @@ pkg_set_deps_deb() {
 			;;
 			('json')
 				pkg_dep='libjson-c3 | libjson-c2 | libjson0'
+			;;
+			('libasound.so.2')
+				pkg_dep='libasound2'
+			;;
+			('libasound_module_'*'.so')
+				pkg_dep='libasound2-plugins'
 			;;
 			('libcurl')
 				pkg_dep='libcurl4 | libcurl3'
@@ -170,11 +160,17 @@ pkg_set_deps_deb() {
 			('libpng16.so.16')
 				pkg_dep='libpng16-16'
 			;;
+			('libpulse.so.0'|'libpulse-simple.so.0')
+				pkg_dep='libpulse0'
+			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
 			;;
 			('libudev1')
 				pkg_dep='libudev1'
+			;;
+			('libX11.so.6')
+				pkg_dep='libx11-6'
 			;;
 			('libxrandr')
 				pkg_dep='libxrandr2'
@@ -191,7 +187,10 @@ pkg_set_deps_deb() {
 			('pulseaudio')
 				pkg_dep='pulseaudio:amd64 | pulseaudio'
 			;;
-			('sdl1.2')
+			('renpy')
+				pkg_dep='renpy'
+			;;
+			('sdl1.2'|'libSDL-1.2.so.0')
 				pkg_dep='libsdl1.2debian'
 			;;
 			('sdl2'|'libSDL2-2.0.so.0')
@@ -216,9 +215,7 @@ pkg_set_deps_deb() {
 				pkg_dep='libvorbisfile3'
 			;;
 			('wine')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_deb 'wine32' ;;
 					('64') pkg_set_deps_deb 'wine64' ;;
 				esac
@@ -230,9 +227,7 @@ pkg_set_deps_deb() {
 				pkg_dep='wine64 | wine64-development | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
 			;;
 			('wine-staging')
-				use_archive_specific_value "${pkg}_ARCH"
-				architecture="$(get_value "${pkg}_ARCH")"
-				case "$architecture" in
+				case "$(package_get_architecture "$pkg")" in
 					('32') pkg_set_deps_deb 'wine32-staging' ;;
 					('64') pkg_set_deps_deb 'wine64-staging' ;;
 				esac
@@ -302,10 +297,11 @@ pkg_build_deb() {
 		export ${pkg?}_PKG
 		return 0
 	fi
+	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg?}_PKG
 
-	print_ok
+	information_package_building_done
 }
 

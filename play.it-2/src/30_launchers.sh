@@ -8,14 +8,17 @@ launcher_write_script() {
 		error_extra_arguments 'launcher_write_script'
 	fi
 
-	# check that $PKG is set
-	if [ -z "$PKG" ]; then
-		error_variable_not_set 'launcher_write_script' '$PKG'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
 
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'launcher_write_script' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
 
@@ -32,23 +35,18 @@ launcher_write_script() {
 
 	# compute file name and path
 	local application_id
-	local package_path
 	local target_file
-	package_path="$(get_value "${PKG}_PATH")"
-	if [ -z "$package_path" ]; then
-		error_invalid_argument 'PKG' 'launcher_write_script'
-	fi
 	application_id="$(get_value "${application}_ID")"
 	if [ -z "$application_id" ]; then
 		application_id="$GAME_ID"
 	fi
-	target_file="${package_path}${PATH_BIN}/$application_id"
+	target_file="$(package_get_path "$package")${PATH_BIN}/$application_id"
 
 	# Check that the launcher target exists
-	local binary_file binary_path binary_found tested_package tested_package_path
+	local binary_file binary_path binary_found tested_package
 	case "$application_type" in
-		('residualvm'|'scummvm')
-			# ResidualVM and ScummVM games do not rely on a provided binary
+		('residualvm'|'scummvm'|'renpy')
+			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
@@ -61,9 +59,8 @@ launcher_write_script() {
 			fi
 
 			binary_found=0
-			for tested_package in $PACKAGES_LIST; do
-				tested_package_path=$(get_value "${tested_package}_PATH")
-				binary_path="${tested_package_path}${PATH_GAME}/$binary_file"
+			for tested_package in $packages_list; do
+				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$binary_file"
 				if [ -f "$binary_path" ]; then
 					binary_found=1
 					break;
@@ -73,7 +70,7 @@ launcher_write_script() {
 				[ $DRY_RUN -eq 0 ] && \
 				[ $binary_found -eq 0 ]
 			then
-				binary_path="${package_path}${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
 				error_launcher_missing_binary "$binary_path"
 			fi
 		;;
@@ -87,7 +84,7 @@ launcher_write_script() {
 			fi
 
 			if [ "$binary_file" != 'winecfg' ]; then
-				binary_path="${package_path}${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
 				if \
 					[ $DRY_RUN -eq 0 ] && \
 					[ ! -f "$binary_path" ]
@@ -105,7 +102,7 @@ launcher_write_script() {
 				error_empty_variable "${application}_EXE"
 			fi
 
-			binary_path="${package_path}${PATH_GAME}/$binary_file"
+			binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
 			if \
 				[ $DRY_RUN -eq 0 ] && \
 				[ ! -f "$binary_path" ]
@@ -121,6 +118,7 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
+	debug_write_launcher "$application_type" "$binary_file"
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
@@ -162,6 +160,14 @@ launcher_write_script() {
 			launcher_write_script_scummvm_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
 			launcher_write_script_scummvm_run "$application" "$target_file"
+		;;
+		('renpy')
+			launcher_write_script_game_variables "$target_file"
+			launcher_write_script_user_files "$target_file"
+			launcher_write_script_prefix_variables "$target_file"
+			launcher_write_script_prefix_functions "$target_file"
+			launcher_write_script_prefix_build "$target_file"
+			launcher_write_script_renpy_run "$application" "$target_file"
 		;;
 		('residualvm')
 			launcher_write_script_residualvm_application_variables "$application" "$target_file"
@@ -206,7 +212,7 @@ launcher_write_script() {
 			local application_exe
 			use_package_specific_value "${application}_EXE"
 			application_exe="$(get_value "${application}_EXE")"
-			chmod +x "${package_path}${PATH_GAME}/$application_exe"
+			chmod +x "$(package_get_path "$package")${PATH_GAME}/$application_exe"
 		;;
 	esac
 
@@ -214,7 +220,7 @@ launcher_write_script() {
 	case "$application_type" in
 		('wine')
 			local winecfg_file
-			winecfg_file="${package_path}${PATH_BIN}/${GAME_ID}_winecfg"
+			winecfg_file="$(package_get_path "$package")${PATH_BIN}/${GAME_ID}_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
 				launcher_write_script_wine_winecfg "$application"
 			fi
@@ -226,14 +232,14 @@ launcher_write_script() {
 
 # write launcher script headers
 # USAGE: launcher_write_script_headers $file
-# NEEDED VARS: library_version
+# NEEDED VARS: LIBRARY_VERSION
 # CALLED BY: launcher_write_script
 launcher_write_script_headers() {
 	local file
 	file="$1"
 	cat > "$file" <<- EOF
 	#!/bin/sh
-	# script generated by ./play.it $library_version - https://www.dotslashplay.it/
+	# script generated by ./play.it $LIBRARY_VERSION - https://www.dotslashplay.it/
 	set -o errexit
 
 	EOF
@@ -469,7 +475,7 @@ launcher_write_script_postrun() {
 
 # write menu entry
 # USAGE: launcher_write_desktop $app
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST GAME_ID GAME_NAME PATH_DESK PATH_BIN
+# NEEDED VARS: OPTION_ARCHITECTURE GAME_ID GAME_NAME PATH_DESK PATH_BIN
 # CALLS: error_missing_argument error_extra_arguments
 launcher_write_desktop() {
 	# check that this has been called with exactly one argument
@@ -479,14 +485,17 @@ launcher_write_desktop() {
 		error_extra_arguments 'launcher_write_desktop'
 	fi
 
-	# check that $PKG is set
-	if [ -z "$PKG" ]; then
-		error_variable_not_set 'launcher_write_desktop' '$PKG'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
 
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'launcher_write_desktop' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+		warning_skip_package 'launcher_write_desktop' "$package"
 		return 0
 	fi
 
@@ -521,13 +530,8 @@ launcher_write_desktop() {
 	fi
 
 	# compute file name and path
-	local package_path
 	local target_file
-	package_path="$(get_value "${PKG}_PATH")"
-	if [ -z "$package_path" ]; then
-		error_invalid_argument 'PKG' 'launcher_write_desktop'
-	fi
-	target_file="${package_path}${PATH_DESK}/${application_id}.desktop"
+	target_file="$(package_get_path "$package")${PATH_DESK}/${application_id}.desktop"
 
 	# include full binary path in Exec field if using non-standard installation prefix
 	local exec_field
@@ -565,7 +569,7 @@ launcher_write_desktop() {
 	case "$application_type" in
 		('wine')
 			local winecfg_desktop
-			winecfg_desktop="${package_path}${PATH_DESK}/${GAME_ID}_winecfg.desktop"
+			winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 			if [ ! -e "$winecfg_desktop" ]; then
 				launcher_write_desktop 'APP_WINECFG'
 			fi
@@ -577,13 +581,21 @@ launcher_write_desktop() {
 
 # write both launcher script and menu entry for a single application
 # USAGE: launcher_write $application
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST PKG
+# NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write_script launcher_write_desktop
 # CALLED BY: launchers_write
 launcher_write() {
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'launcher_write_script' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
 
@@ -596,12 +608,23 @@ launcher_write() {
 
 # write both launcher script and menu entry for a list of applications
 # USAGE: launchers_write $application[…]
-# NEEDED VARS: OPTION_ARCHITECTURE PACKAGES_LIST PKG
+# NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write
 launchers_write() {
+
+	debug_entering_function 'launchers_write' 2
+
+	# get the current package
+	local package
+	package=$(package_get_current)
+
+	# Get packages list for the current game
+	local packages_list
+	packages_list=$(packages_get_list)
+
 	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${PACKAGES_LIST##*$PKG*}" ]; then
-		warning_skip_package 'launcher_write_script' "$PKG"
+	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
 
@@ -609,6 +632,9 @@ launchers_write() {
 	for application in "$@"; do
 		launcher_write "$application"
 	done
+
+	debug_leaving_function 'launchers_write' 2
+
 	return 0
 }
 

@@ -21,6 +21,7 @@ launcher_write_script_wine_application_variables() {
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
+	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
 	return 0
@@ -28,17 +29,21 @@ launcher_write_script_wine_application_variables() {
 
 # WINE - write launcher script prefix initialization
 # USAGE: launcher_write_script_wine_prefix_build $file
-# NEEDED VARS: PKG APP_WINETRICKS APP_REGEDIT
+# NEEDED VARS: APP_WINETRICKS APP_REGEDIT
 # CALLED BY: launcher_write_build
 launcher_write_script_wine_prefix_build() {
 	local file
 	file="$1"
 
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	# compute WINE prefix architecture
 	local architecture
 	local winearch
-	use_archive_specific_value "${PKG}_ARCH"
-	architecture="$(get_value "${PKG}_ARCH")"
+	use_archive_specific_value "${package}_ARCH"
+	architecture="$(get_value "${package}_ARCH")"
 	case "$architecture" in
 		('32') winearch='win32' ;;
 		('64') winearch='win64' ;;
@@ -51,7 +56,7 @@ launcher_write_script_wine_prefix_build() {
 	EOF
 
 	cat >> "$file" <<- 'EOF'
-	WINEDEBUG='-all'
+	: "${WINEDEBUG:=-all}"
 	WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
 	WINEPREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
 	# Work around WINE bug 41639
@@ -67,7 +72,7 @@ launcher_write_script_wine_prefix_build() {
 	    LANG=C wineboot --init 2>/dev/null
 	EOF
 
-	if ! version_target_is_older_than '2.8'; then
+	if version_is_at_least '2.8' "$target_version"; then
 		cat >> "$file" <<- 'EOF'
 		    # Remove most links pointing outside of the WINE prefix
 		    rm "$WINEPREFIX/dosdevices/z:"
@@ -145,6 +150,22 @@ launcher_write_script_wine_prefix_build() {
 	init_prefix_files "$PATH_DATA" "$DATA_FILES"
 	init_prefix_dirs "$PATH_CONFIG" "$CONFIG_DIRS"
 	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+
+	# Move files that should be diverted to persistent paths to the game directory
+	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
+	    prefix_dir="$PATH_PREFIX/${line%%:*}"
+	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
+	    if [ ! -h "$wine_dir" ]; then
+	        if [ -d "$wine_dir" ]; then
+	            mv --no-target-directory "$wine_dir" "$prefix_dir"
+	        fi
+	        if [ ! -d "$prefix_dir" ]; then
+	            mkdir --parents "$prefix_dir"
+	        fi
+	        mkdir --parents "$(dirname "$wine_dir")"
+	        ln --symbolic "$prefix_dir" "$wine_dir"
+	    fi
+	done
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"
