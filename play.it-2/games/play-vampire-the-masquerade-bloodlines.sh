@@ -29,19 +29,19 @@ set -o errexit
 ###
 
 ###
-# Vampire the Masquerade: Bloodlines
+# Vampire: The Masquerade - Bloodlines
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.8
+script_version=20210507.9
 
 # Set game-specific variables
 
 SCRIPT_DEPS_DOTEMU='unzip'
 
 GAME_ID='vampire-the-masquerade-bloodlines'
-GAME_NAME='Vampire the Masquerade: Bloodlines'
+GAME_NAME='Vampire: The Masquerade - Bloodlines'
 
 ARCHIVE_BASE_DOTEMU_0='vampire_the_masquerade_bloodlines_v1.2.exe'
 ARCHIVE_BASE_DOTEMU_0_MD5='8981da5fa644475583b2888a67fdd741'
