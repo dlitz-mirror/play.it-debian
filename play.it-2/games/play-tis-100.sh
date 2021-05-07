@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.2
+script_version=20210507.6
 
 # Set game-specific variables
 
@@ -76,6 +76,21 @@ PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Work around Unity3D poor support for non-US locales
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around Unity3D poor support for non-US locales
+export LANG=C'
 
 # Load common functions
 
