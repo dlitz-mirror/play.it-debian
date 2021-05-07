@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.14
+script_version=20210507.15
 
 # Set game-specific variables
 
@@ -107,7 +107,8 @@ ARCHIVE_GAME_DATA_FILES_DOTEMU='*.mpg *.tth *.txt *.dat vampire/maps vampire/med
 ARCHIVE_GAME_DATA_FILES_GOG='*.mpg *.pdf *.tth *.txt *.dat version.inf doc vampire unofficial_patch'
 
 APP_MAIN_TYPE='wine'
-APP_MAIN_EXE='vampire.exe'
+APP_MAIN_EXE_GOG='vampire.exe'
+APP_MAIN_EXE_DOTEMU='launcher.exe'
 APP_MAIN_ICON='vampire.exe'
 
 APP_UP_ID="${GAME_ID}-up"
@@ -341,6 +342,7 @@ esac
 # Write launchers
 
 PKG='PKG_BIN'
+use_archive_specific_value 'APP_MAIN_EXE'
 launchers_write 'APP_MAIN'
 # shellcheck disable=SC2031
 case "$ARCHIVE" in
