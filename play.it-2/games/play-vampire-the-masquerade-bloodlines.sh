@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210507.9
+script_version=20210507.14
 
 # Set game-specific variables
 
@@ -293,6 +293,50 @@ icons_move_to 'PKG_DATA'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Enable dxvk patches in the WINE prefix
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+# Install dxvk on first launch
+if [ ! -e dxvk_installed ]; then
+	# Wait a bit to ensure there is no lingering wine process
+	sleep 1s
+
+	if \
+		command -v dxvk-setup >/dev/null 2>&1 && \
+		command -v wine-development >/dev/null 2>&1
+	then
+		dxvk-setup install --development
+		touch dxvk_installed
+	elif command -v winetricks >/dev/null 2>&1; then
+		winetricks dxvk
+		touch dxvk_installed
+	else
+		message="\\033[1;33mWarning:\\033[0m\\n"
+		message="${message}DXVK patches could not be installed in the WINE prefix.\\n"
+		message="${message}The game might run with display or performance issues.\\n"
+		printf "\\n${message}\\n"
+	fi
+
+	# Wait a bit to ensure there is no lingering wine process
+	sleep 1s
+fi'
+case "$OPTION_PACKAGE" in
+	('deb')
+		# Debian-based distributions should use repositories-provided dxvk
+		# winetricks is used as a fallback for branches not having access to dxvk-setup
+		extra_dependencies='vulkan-icd | mesa-vulkan-drivers, dxvk-wine32-development | winetricks, dxvk | winetricks'
+		if [ -n "$PKG_BIN_DEPS_DEB" ]; then
+			PKG_BIN_DEPS_DEB="${PKG_BIN_DEPS_DEB}, ${extra_dependencies}"
+		else
+			PKG_BIN_DEPS_DEB="$extra_dependencies"
+		fi
+	;;
+	(*)
+		# Default is to use winetricks
+		PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks"
+	;;
+esac
 
 # Write launchers
 
