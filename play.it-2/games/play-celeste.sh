@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210508.1
+script_version=20210508.2
 
 # Set game-specific variables
 
@@ -56,8 +56,6 @@ ARCHIVE_GAME_BIN64_FILES='lib64/libfmod*.so* lib64/libmojoshader.so'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='Content FNA.dll FNA.dll.config Celeste.exe Celeste.exe.config gamecontrollerdb.txt Celeste.png'
-
-DATA_FILES='error_log.txt'
 
 APP_MAIN_TYPE='mono'
 APP_MAIN_LIBS_BIN32='lib'
