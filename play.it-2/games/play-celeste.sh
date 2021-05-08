@@ -35,27 +35,38 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210508.2
+script_version=20210508.3
 
 # Set game-specific variables
 
 GAME_ID='celeste'
 GAME_NAME='Celeste'
 
+ARCHIVE_BASE_1='celeste-linux.zip'
+ARCHIVE_BASE_1_MD5='518ea69d60079109a2575d428eff8a53'
+ARCHIVE_BASE_1_SIZE='1200000'
+ARCHIVE_BASE_1_VERSION='1.4.0.0-itch.2021.03.29'
+ARCHIVE_BASE_1_URL='https://mattmakesgames.itch.io/celeste'
+
+###
+# TODO
+# Informations about older archives are kept
+# But as for ./play.it 2.13, they will not be used due to name collisions with the newest archive
+###
+
 ARCHIVE_BASE_0='celeste-linux.zip'
 ARCHIVE_BASE_0_MD5='b27c983b95b2a2a35a272b7ecd94cbc2'
 ARCHIVE_BASE_0_SIZE='1400000'
 ARCHIVE_BASE_0_VERSION='1.3.1.2-itch'
-ARCHIVE_BASE_0_URL='https://mattmakesgames.itch.io/celeste'
 
 ARCHIVE_GAME_BIN32_PATH='.'
 ARCHIVE_GAME_BIN32_FILES='lib/libfmod*.so* lib/libmojoshader.so'
 
 ARCHIVE_GAME_BIN64_PATH='.'
-ARCHIVE_GAME_BIN64_FILES='lib64/libfmod*.so* lib64/libmojoshader.so'
+ARCHIVE_GAME_BIN64_FILES='lib64/libfmod*.so* lib64/libmojoshader.so lib64/libFNA3D.so.0'
 
 ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='Content FNA.dll FNA.dll.config Celeste.exe Celeste.exe.config gamecontrollerdb.txt Celeste.png'
+ARCHIVE_GAME_DATA_FILES='Content FNA.dll FNA.dll.config FNA3D.dll Celeste.Content.dll Celeste.exe Celeste.exe.config Celeste.png gamecontrollerdb.txt'
 
 APP_MAIN_TYPE='mono'
 APP_MAIN_LIBS_BIN32='lib'
