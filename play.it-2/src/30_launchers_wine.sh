@@ -144,12 +144,6 @@ launcher_write_script_wine_prefix_build() {
 	        fi
 	    done
 	)
-	init_userdir_files "$PATH_CONFIG" "$CONFIG_FILES"
-	init_userdir_files "$PATH_DATA" "$DATA_FILES"
-	init_prefix_files "$PATH_CONFIG" "$CONFIG_FILES"
-	init_prefix_files "$PATH_DATA" "$DATA_FILES"
-	init_prefix_dirs "$PATH_CONFIG" "$CONFIG_DIRS"
-	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
 
 	# Move files that should be diverted to persistent paths to the game directory
 	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
@@ -166,6 +160,14 @@ launcher_write_script_wine_prefix_build() {
 	        ln --symbolic "$prefix_dir" "$wine_dir"
 	    fi
 	done
+
+	# Use persistent storage for user data
+	init_prefix_dirs   "$PATH_CONFIG" "$CONFIG_DIRS"
+	init_prefix_dirs   "$PATH_DATA"   "$DATA_DIRS"
+	init_userdir_files "$PATH_CONFIG" "$CONFIG_FILES"
+	init_userdir_files "$PATH_DATA"   "$DATA_FILES"
+	init_prefix_files  "$PATH_CONFIG" "$CONFIG_FILES"
+	init_prefix_files  "$PATH_DATA"   "$DATA_FILES"
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"
