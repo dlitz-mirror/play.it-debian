@@ -150,11 +150,12 @@ launcher_write_script_wine_prefix_build() {
 	    prefix_dir="$PATH_PREFIX/${line%%:*}"
 	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
 	    if [ ! -h "$wine_dir" ]; then
+	        mkdir --parents "$prefix_dir"
 	        if [ -d "$wine_dir" ]; then
-	            mv --no-target-directory "$wine_dir" "$prefix_dir"
-	        fi
-	        if [ ! -d "$prefix_dir" ]; then
-	            mkdir --parents "$prefix_dir"
+	            # Migrate existing user data to the persistent path
+	            find "$prefix_dir" -type l -delete
+	            cp --no-target-directory --recursive --remove-destination "$wine_dir" "$prefix_dir"
+	            rm --recursive "$wine_dir"
 	        fi
 	        mkdir --parents "$(dirname "$wine_dir")"
 	        ln --symbolic "$prefix_dir" "$wine_dir"
