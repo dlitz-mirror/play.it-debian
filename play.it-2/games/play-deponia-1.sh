@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201124.7
+script_version=20210509.1
 
 # Set game-specific variables
 
@@ -87,7 +87,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_VIDEO_ID $PKG_DATA_ID glibc libstdc++ glx openal"
+PKG_BIN_DEPS="$PKG_VIDEOS_ID $PKG_DATA_ID glibc libstdc++ glx openal"
 
 # Ensure easy upgrades from packages generated with pre-20201124.7 scripts
 
