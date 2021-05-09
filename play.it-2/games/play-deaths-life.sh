@@ -40,7 +40,7 @@ script_version=20201023.4
 # Set game-specific variables
 
 GAME_ID='deaths-life'
-GAME_NAME='Death’s Life'
+GAME_NAME='Deathʼs Life'
 
 ARCHIVE_ITCH='deaths-life-win.zip'
 ARCHIVE_ITCH_URL='https://umbugames.itch.io/deaths-life'

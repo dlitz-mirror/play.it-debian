@@ -40,7 +40,7 @@ script_version=20200925.1
 # Set game-specific variables
 
 GAME_ID='a-morticians-tale'
-GAME_NAME='A Mortician’s Tale'
+GAME_NAME='A Morticianʼs Tale'
 
 ARCHIVES_LIST='ARCHIVE_ITCH_32 ARCHIVE_ITCH_64'
 

@@ -40,7 +40,7 @@ script_version=20210418.7
 # Set game-specific variables
 
 GAME_ID='lennas-inception'
-GAME_NAME='Lenna’s Inception'
+GAME_NAME='Lennaʼs Inception'
 
 ARCHIVES_LIST='
 ARCHIVE_BASE_1

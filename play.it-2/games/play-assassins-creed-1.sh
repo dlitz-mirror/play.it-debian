@@ -40,7 +40,7 @@ script_version=20210406.3
 # Set game-specific variables
 
 GAME_ID='assassins-creed-1'
-GAME_NAME='Assassin’s Creed'
+GAME_NAME='Assassinʼs Creed'
 
 ARCHIVES_LIST='
 ARCHIVE_GOG_EN_0

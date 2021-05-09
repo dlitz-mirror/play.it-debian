@@ -40,7 +40,7 @@ script_version=20210413.5
 # Set game-specific variables
 
 GAME_ID='the-lions-song'
-GAME_NAME='The Lion’s Song'
+GAME_NAME='The Lionʼs Song'
 
 ARCHIVES_LIST='
 ARCHIVE_BASE_0'
