@@ -223,6 +223,9 @@ mkdir --parents "$(dirname "$launcher_file")"
 touch "$launcher_file"
 chmod 755 "$launcher_file"
 launcher_write_script_headers "$launcher_file"
+
+# In the following here-document ShellCheck treats the inner "EOF" tokens as tokens for the outer here-document indented by error
+# shellcheck disable=SC1039
 cat >> "$launcher_file" << EOF
 OPENMW_CONFIG_PATH="\${XDG_CONFIG_HOME:=\$HOME/.config}/openmw"
 OPENMW_CONFIG_FILE="\${OPENMW_CONFIG_PATH}/openmw.cfg"
@@ -248,6 +251,7 @@ openmw-launcher
 
 exit 0
 EOF
+
 launcher_write_desktop 'APP_MAIN'
 
 # Build package
