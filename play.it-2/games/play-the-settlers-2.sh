@@ -236,8 +236,8 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 ###
 
 launcher_write_script_dosbox_run() {
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 	cat >> "$file" <<- 'EOF'
