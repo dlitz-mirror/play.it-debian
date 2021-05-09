@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201006.3
+script_version=20210509.1
 
 # Set game-specific variables
 
@@ -85,7 +85,7 @@ PKG_BIN32_DEPS_GENTOO='x11-libs/libX11[abi_x86_32] net-dns/libidn[abi_x86_32]'
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 PKG_BIN64_DEPS_ARCH='libx11 libidn11'
-PKG_BIN64_DEPS_DEB="$PKG_BIN_DEPS_DEB"
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
 PKG_BIN64_DEPS_GENTOO='x11-libs/libX11 net-dns/libidn'
 
 # Load common functions
