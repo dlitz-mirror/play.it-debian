@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210408.1
+script_version=20210509.1
 
 # Set game-specific variables
 
@@ -89,7 +89,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine"
 # Store user data in persistent paths
 
 CONFIG_FILES="${CONFIG_FILES} userdata/Settings.ini"
-DATA_FILES="${DATA_DILES} userdata/monkey1.bin userdata/savegame.*"
+DATA_FILES="${DATA_FILES} userdata/monkey1.bin userdata/savegame.*"
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Store user data in persistent paths
 userdata_path_prefix="$WINEPREFIX/drive_c/users/$USER/Application Data/LucasArts/The Secret of Monkey Island Special Edition"
