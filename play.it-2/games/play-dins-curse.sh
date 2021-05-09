@@ -40,7 +40,7 @@ script_version=20200131.1
 # Set game-specific variables
 
 GAME_ID='dins-curse'
-GAME_NAME='Din’s Curse'
+GAME_NAME='Dinʼs Curse'
 
 ARCHIVE_GOG='gog_din_s_curse_2.0.0.6.sh'
 ARCHIVE_GOG_URL='https://www.gog.com/game/dins_curse'

@@ -145,6 +145,7 @@ launchers_write 'APP_CONFIG'
 # This function override could be avoided by fixing the special behaviour of APP_xxx_PRERUN with DOSBox games
 ###
 launcher_write_script_dosbox_run() {
+	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"

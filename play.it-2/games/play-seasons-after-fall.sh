@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210416.4
+script_version=20210509.1
 
 # Set game-specific variables
 
@@ -113,7 +113,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Use persistent storage for saved games and settings
 
-CONFIG_FILES="${CONFGI_FILES} ./userdata/UserOptions.json"
+CONFIG_FILES="${CONFIG_FILES} ./userdata/UserOptions.json"
 DATA_FILES="${DATA_FILES} ./userdata/*.save"
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 

@@ -40,7 +40,7 @@ script_version=20210329.5
 # Set game-specific variables
 
 GAME_ID='yokus-island-express'
-GAME_NAME='Yoku’s Island Express'
+GAME_NAME='Yokuʼs Island Express'
 
 ARCHIVE_GOG='setup_yokus_island_express_aug_24_2018_205911_(24871).exe'
 ARCHIVE_GOG_URL='https://www.gog.com/game/yokus_island_express'

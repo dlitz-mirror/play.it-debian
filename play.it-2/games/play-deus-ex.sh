@@ -236,8 +236,8 @@ PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks"
 APP_WINETRICKS="${APP_WINETRICKS} csmt=off"
 launcher_write_script_wine_run() {
 	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 

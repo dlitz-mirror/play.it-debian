@@ -249,9 +249,17 @@ case "$ARCHIVE" in
 		tolower "$PLAYIT_WORKDIR/gamedata"
 	;;
 esac
+
+###
+# TODO
+# There might be a less tricky way to rename the included directory
+# The current method will break if some future version of the archive includes multiple files matching "unofficial_patch_*"
+###
+# shellcheck disable=SC2144
 if [ -e "$PLAYIT_WORKDIR"/gamedata/unofficial_patch_* ]; then
 	mv "$PLAYIT_WORKDIR"/gamedata/unofficial_patch_* "$PLAYIT_WORKDIR/gamedata/unofficial_patch"
 fi
+
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"
 

@@ -40,7 +40,7 @@ script_version=20210503.11
 # Set game-specific variables
 
 GAME_ID='amerzone'
-GAME_NAME='L’Amerzone'
+GAME_NAME='LʼAmerzone'
 
 ARCHIVES_LIST='
 ARCHIVE_BASE_EN_0

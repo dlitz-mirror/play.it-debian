@@ -140,9 +140,8 @@ prepare_package_layout
 ###
 icon_extract_ico_from_exe() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
-	local destination
-	local file
-	local options
+	# shellcheck disable=SC2039
+	local destination file options
 	file="$1"
 	destination="$2"
 	[ "$wrestool_id" ] && options="--name=$wrestool_id"

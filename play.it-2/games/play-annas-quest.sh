@@ -40,7 +40,7 @@ script_version=20210502.6
 # Set game-specific variables
 
 GAME_ID='annas-quest'
-GAME_NAME='Anna’s Quest'
+GAME_NAME='Annaʼs Quest'
 
 ARCHIVES_LIST='
 ARCHIVE_BASE_1
