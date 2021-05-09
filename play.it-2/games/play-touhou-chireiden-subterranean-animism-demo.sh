@@ -123,7 +123,7 @@ if [ "$(innoextract --version | head -n1)" = 'innoextract 1.8' ]
 then
 	case "${LANG%_*}" in
 		('fr')
-			message='Votre version d’innoextract peut rencontrer des problèmes de compatibilité avec cette archive.\n'
+			message='Votre version dʼinnoextract peut rencontrer des problèmes de compatibilité avec cette archive.\n'
 			message="$message"'Voir %s\n\n'
 			url='https://forge.dotslashplay.it/play.it/doc/-/wikis/tools/fr/innoextract#innoextract-18-sur-les-archives-japonaises'
 		;;
