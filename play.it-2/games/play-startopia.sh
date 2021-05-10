@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210505.1
+script_version=20210510.1
 
 # Set game-specific variables
 
@@ -127,28 +127,28 @@ icons_move_to 'PKG_DATA'
 ini_file="${PKG_BIN_PATH}${PATH_GAME}/startopia.ini"
 
 ini_field='IntroPath'
-ini_value='C:\\'"$GAME_ID"'\\intro\\'
+ini_value="C:\\\\${GAME_ID}\\\\intro\\\\"
 
 pattern="^${ini_field}=.*"
 replacement="${ini_field}=${ini_value}"
 expression="s/${pattern}/${replacement}/"
 
 ini_field='DrivePathMusic'
-ini_value='C:\\'"$GAME_ID"'\\data\\'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
 
 pattern="^${ini_field}=.*"
 replacement="${ini_field}=${ini_value}"
 expression="${expression};s/${pattern}/${replacement}/"
 
 ini_field='DrivePathSound'
-ini_value='C:\\'"$GAME_ID"'\\data\\'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
 
 pattern="^${ini_field}=.*"
 replacement="${ini_field}=${ini_value}"
 expression="${expression};s/${pattern}/${replacement}/"
 
 ini_field='SoundPathVoice'
-ini_value='C:\\'"$GAME_ID"'\\data\\'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
 
 pattern="^${ini_field}=.*"
 replacement="${ini_field}=${ini_value}"
