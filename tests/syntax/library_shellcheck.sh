@@ -1,9 +1,30 @@
-#!/usr/bin/env sh
+#!/bin/sh
 set -o errexit
 
-file='play.it-2/lib/libplayit2.sh'
-shell='sh'
-printf 'Testing %s validity using ShellCheck in %s mode…\n' "$file" "$shell"
-shellcheck --shell="$shell" --exclude=SC2016,SC2039,SC2059,SC2086 "$file"
+TESTED_SCRIPT='play.it-2/lib/libplayit2.sh'
+SHELLCHECK_OPTIONS='--shell=sh'
+
+# Exclude warning SC2016:
+# Expressions don't expand in single quotes, use double quotes for that.
+# cf. https://github.com/koalaman/shellcheck/wiki/SC2016
+SHELLCHECK_OPTIONS="${SHELLCHECK_OPTIONS} --exclude=SC2016"
+
+# Exclude warning SC2039:
+# In POSIX sh, something is undefined.
+# cf. https://github.com/koalaman/shellcheck/wiki/SC2039
+SHELLCHECK_OPTIONS="${SHELLCHECK_OPTIONS} --exclude=SC2039"
+
+# Exclude warning SC2059:
+# Don't use variables in the printf format string. Use printf "..%s.." "$foo".
+# cf. https://github.com/koalaman/shellcheck/wiki/SC2059
+SHELLCHECK_OPTIONS="${SHELLCHECK_OPTIONS} --exclude=SC2059"
+
+# Exclude warning SC2086:
+# Double quote to prevent globbing and word splitting.
+# cf. https://github.com/koalaman/shellcheck/wiki/SC2086
+SHELLCHECK_OPTIONS="${SHELLCHECK_OPTIONS} --exclude=SC2086"
+
+printf 'Testing %s validity using ShellCheck…\n' "$TESTED_SCRIPT"
+shellcheck $SHELLCHECK_OPTIONS "$TESTED_SCRIPT"
 
 exit 0
