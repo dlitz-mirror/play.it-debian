@@ -4,6 +4,10 @@ stages:
 
 build_library:
   stage: build
+  only:
+    - master@play.it/scripts
+    - /^staging-.*$/@play.it/scripts
+    - tags@play.it/scripts
   script:
     - make
   artifacts:
@@ -12,6 +16,10 @@ build_library:
 
 build_game_syntax_config:
   stage: build
+  only:
+    - master@play.it/scripts
+    - /^staging-.*$/@play.it/scripts
+    - tags@play.it/scripts
   script:
     - tests/gitlab/generate-syntax-game-configuration.sh
   artifacts:
@@ -20,16 +28,28 @@ build_game_syntax_config:
 
 syntax_library:
   stage: syntax
+  only:
+    - master@play.it/scripts
+    - /^staging-.*$/@play.it/scripts
+    - tags@play.it/scripts
   script:
     - ./tests/syntax/library_shellcheck.sh
 
 syntax_wrapper:
   stage: syntax
+  only:
+    - master@play.it/scripts
+    - /^staging-.*$/@play.it/scripts
+    - tags@play.it/scripts
   script:
     - ./tests/syntax/wrapper_shellcheck.sh
 
 syntax_games:
   stage: syntax
+  only:
+    - master@play.it/scripts
+    - /^staging-.*$/@play.it/scripts
+    - tags@play.it/scripts
   trigger:
     include:
       - artifact: tests/gitlab/syntax-game.yml
