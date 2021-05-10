@@ -1,24 +1,39 @@
 stages:
-    - syntax
+  - build
+  - syntax
 
-library_shellcheck:
-    stage: syntax
-    only:
-        - master@play.it/scripts
-        - /^staging-.*$/@play.it/scripts
-        - tags@play.it/scripts
-    before_script:
-        - make
-    script:
-        - ./tests/syntax/library_shellcheck.sh
+build_library:
+  stage: build
+  script:
+    - make
+  artifacts:
+    paths:
+      - ./play.it-2/lib/libplayit2.sh
 
-wrapper_shellcheck:
-    stage: syntax
-    only:
-        - master@play.it/scripts
-        - /^staging-.*$/@play.it/scripts
-        - tags@play.it/scripts
-    before_script:
-        - make
-    script:
-        - ./tests/syntax/wrapper_shellcheck.sh
+build_game_syntax_config:
+  stage: build
+  script:
+    - tests/gitlab/generate-syntax-game-configuration.sh
+  artifacts:
+    paths:
+      - ./tests/gitlab/syntax-game.yml
+
+syntax_library:
+  stage: syntax
+  script:
+    - ./tests/syntax/library_shellcheck.sh
+
+syntax_wrapper:
+  stage: syntax
+  script:
+    - ./tests/syntax/wrapper_shellcheck.sh
+
+syntax_games:
+  stage: syntax
+  trigger:
+    include:
+      - artifact: tests/gitlab/syntax-game.yml
+        job: build_game_syntax_config
+    strategy: depend
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
