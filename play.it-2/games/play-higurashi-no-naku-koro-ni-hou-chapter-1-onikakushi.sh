@@ -100,6 +100,7 @@ fi'
 
 # Work around crash on launch related to libpulse
 
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Start pulseaudio if it is available
 if command -v pulseaudio >/dev/null 2>&1; then
@@ -128,6 +129,7 @@ else
 		rmdir --ignore-fail-on-non-empty --parents "$APP_LIBS"
 	fi
 fi'
+# shellcheck disable=SC1004
 APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
 # Stop pulseaudio if it has specifically been started for the game
 if \

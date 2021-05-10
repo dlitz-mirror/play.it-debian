@@ -190,6 +190,7 @@ esac
 archive_set 'ARCHIVE_RESIDUALVM_PATCH' "$ARCHIVE_PATCH"
 if [ -n "$ARCHIVE_RESIDUALVM_PATCH" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_RESIDUALVM"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 ARCHIVE="$ARCHIVE_MAIN"

@@ -165,6 +165,7 @@ set_archive 'ARCHIVE_JULIUS' \
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_JULIUS" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_JULIUS"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 

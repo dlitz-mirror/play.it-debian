@@ -331,6 +331,7 @@ fi
 # Set list of packages to build based on provided archive
 
 use_archive_specific_value 'PACKAGES_LIST'
+# shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
 # Extract game data

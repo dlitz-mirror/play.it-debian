@@ -112,6 +112,7 @@ APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
 # Dump game settings and key bindings
 regedit -E "$registry_dump_settings" "HKEY_CURRENT_USER\Software\CD Projekt RED\Witcher\Settings"
 regedit -E "$registry_dump_bindings" "HKEY_CURRENT_USER\Software\CD Projekt RED\Witcher\Bindings"'
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Load dumps of game settings and key bindings
 for registry_dump in \
