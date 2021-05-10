@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.1
+script_version=20210511.2
 
 # Set game-specific variables
 
@@ -78,7 +78,8 @@ PKG_BIN_DEPS="${PKG_DATA_ID} wine xcursor glx"
 # Use persistent storage for user data
 
 APP_WINE_LINK_DIRS='userdata:users/${USER}/Application Data/runic games/torchlight'
-DATA_DIRS="${DATA_DIRS} ./userdata"
+CONFIG_FILES="${CONFIG_FILES} ./userdata/local_settings.txt ./userdata/settings.txt"
+DATA_DIRS="${DATA_DIRS} ./userdata/save"
 
 # Keep compatibility with old archives
 
