@@ -289,6 +289,7 @@ extract_data_from "$SOURCE_ARCHIVE"
 # Get extra German localization
 if [ -n "$ARCHIVE_L10N_DE" ]; then
 	(
+		# shellcheck disable=SC2030
 		ARCHIVE='ARCHIVE_L10N_DE'
 		extract_data_from "$ARCHIVE_L10N_DE"
 	)
@@ -296,6 +297,7 @@ fi
 # Get extra French localization
 if [ -n "$ARCHIVE_L10N_FR" ]; then
 	(
+		# shellcheck disable=SC2030
 		ARCHIVE='ARCHIVE_L10N_FR'
 		extract_data_from "$ARCHIVE_L10N_FR"
 	)

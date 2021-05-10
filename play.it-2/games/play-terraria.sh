@@ -177,6 +177,7 @@ fi
 # Update the list of packages to build, based on the source archive
 
 use_archive_specific_value 'PACKAGES_LIST'
+# shellcheck disable=SC2086
 set_temp_directories $PACKAGES_LIST
 
 # Dependency on FAudio is only required starting with game version 1.4.1

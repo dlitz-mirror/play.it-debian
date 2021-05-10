@@ -73,6 +73,7 @@ if command -v pulseaudio >/dev/null 2>&1; then
 else
 	PULSEAUDIO_IS_AVAILABLE=0
 fi'
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Work around crash on launch related to libpulse
 # Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
@@ -91,7 +92,7 @@ fi'
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Work around Unity3D poor support for non-US locales
 export LANG=C'
-
+# shellcheck disable=SC1004
 APP_MAIN_POSTRUN='# Stop pulseaudio if it has specifically been started for the game
 if \
 	[ $PULSEAUDIO_IS_AVAILABLE -eq 1 ] && \

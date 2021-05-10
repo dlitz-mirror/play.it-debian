@@ -146,6 +146,7 @@ icon_extract_ico_from_exe() {
 	destination="$2"
 	[ "$wrestool_id" ] && options="--name=$wrestool_id"
 	options="${options} --language=0"
+	# shellcheck disable=SC2086
 	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null
 }
 PKG='PKG_BIN'
@@ -174,6 +175,7 @@ APP_WINETRICKS="${APP_WINETRICKS} physx"
 # Store saved games in a persistent path
 
 DATA_DIRS="${DATA_DIRS} ./saves"
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 
 # Store saved games in a persistent path

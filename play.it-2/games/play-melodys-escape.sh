@@ -141,6 +141,7 @@ set_archive 'ARCHIVE_LIB64' 'ARCHIVE_OPTIONAL_LIB64'
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_LIB64" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_LIB64"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 
