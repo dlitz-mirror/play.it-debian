@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.1
+script_version=20210511.3
 
 # Set game-specific variables
 
@@ -71,7 +71,8 @@ PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
 
 # Use persistent storage for user data
 
-DATA_DIRS="${DATA_DIRS} ./userdata"
+CONFIG_FILES="${DATA_FILES} ./userdata/*.ini"
+DATA_FILES="${DATA_DIRS} ./userdata/*.sav ./userdata/*.png"
 APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
 userdata:users/${USER}/AppData/LocalLow/Cyan Worlds/realMyst'
 
