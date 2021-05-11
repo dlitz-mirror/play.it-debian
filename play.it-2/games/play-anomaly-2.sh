@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210514.1
+script_version=20210514.2
 
 # Set game-specific variables
 
@@ -106,7 +106,7 @@ PKG_BIN_ARCH='32'
 
 # binaries package — Linux version
 PKG_BIN_ID_LINUX="${PKG_BIN_ID}-linux"
-PKG_BIN_DEPS_LINUX="${PKG_COMMON_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal gcc32 pulseaudio"
+PKG_BIN_DEPS_LINUX="${PKG_COMMON_ID} ${PKG_DATA_ID} glibc libstdc++ glx openal pulseaudio"
 PKG_BIN_DEPS_ARCH_LINUX='lib32-libpulse lib32-libx11'
 PKG_BIN_DEPS_DEB_LINUX='libpulse0, libx11-6'
 PKG_BIN_DEPS_GENTOO_LINUX='media-sound/pulseaudio[abi_x86_32] x11-libs/libX11[abi_x86_32]'
@@ -200,6 +200,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 # TODO
 # This hack could probably be included in the package, instead of built at run time
 ###
+PKG_BIN_DEPS_LINUX="${PKG_BIN_DEPS_LINUX} gcc32"
 case "$ARCHIVE" in
 	('ARCHIVE_BASE_LINUX'*)
 		cat > "${PKG_BIN_PATH}${PATH_GAME}/preload.c" <<- EOF
@@ -231,6 +232,10 @@ APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN_LINUX"'
 gcc -m32 -o preload.so preload.c -ldl -shared -fPIC -Wall -Wextra
 LD_PRELOAD=./preload.so
 export LD_PRELOAD'
+APP_MAIN_POSTRUN_LINUX="$APP_MAIN_POSTRUN_LINUX"'
+
+# Unload hack used to work around infinite loading time bug
+unset LD_PRELOAD'
 
 # Share saved games and config between Linux and Windows engines
 
@@ -269,6 +274,7 @@ userdata:users/$USER/Application Data/11bitstudios/Anomaly 2'
 PKG='PKG_BIN'
 use_archive_specific_value 'APP_MAIN_TYPE'
 use_archive_specific_value 'APP_MAIN_PRERUN'
+use_archive_specific_value 'APP_MAIN_POSTRUN'
 use_archive_specific_value 'APP_MAIN_EXE'
 launchers_write 'APP_MAIN'
 
