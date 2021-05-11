@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.2
+script_version=20210511.3
 
 # Set game-specific variables
 
@@ -59,8 +59,6 @@ ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.ini'
 
 ARCHIVE_GAME_DATA_PATH='app'
 ARCHIVE_GAME_DATA_FILES='gamedata'
-
-CONFIG_FILES='./*.ini'
 
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='rayman origins.exe'
