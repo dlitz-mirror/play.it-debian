@@ -35,22 +35,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.10
+script_version=20210512.1
 
 # Set game-specific variables
 
 GAME_ID='blackwell-5'
 GAME_NAME='Blackwell 5: The Blackwell Epiphany'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='gog_blackwell_epiphany_2.0.0.2.sh'
-ARCHIVE_GOG_0_MD5='058091975ee359d7bc0f9d9848052296'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-ARCHIVE_GOG_0_SIZE='1500000'
-ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.2'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_epiphany_the'
+ARCHIVE_BASE_0='gog_blackwell_epiphany_2.0.0.2.sh'
+ARCHIVE_BASE_0_MD5='058091975ee359d7bc0f9d9848052296'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='1500000'
+ARCHIVE_BASE_0_VERSION='1.0-gog2.0.0.2'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/blackwell_epiphany_the'
 
 # Optional ./play.it-provided icons pack
 ARCHIVE_OPTIONAL_ICONS='blackwell-5_icons.tar.gz'
@@ -99,7 +96,7 @@ PKG_DATA_PROVIDE='the-blackwell-epiphany-data'
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -110,8 +107,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
