@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210513.2
+script_version=20210513.3
 
 # Set game-specific variables
 
@@ -53,13 +53,13 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='*.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='darwinia.bin.x86'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='*.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='darwinia.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='*'
+ARCHIVE_GAME_DATA_FILES='*.dat darwinian.png'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='darwinia.bin.x86'
@@ -72,10 +72,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ vorbis libGLU.so.1 libSDL-1.2.so.0"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libGLU.so.1 libvorbisfile.so.3 libSDL-1.2.so.0"
+PKG_BIN32_DEPS_ARCH='lib32-libogg lib32-libvorbis'
+PKG_BIN32_DEPS_DEB='libogg0, libvorbis0a'
+PKG_BIN32_DEPS_GENTOO='media-libs/libogg[abi_x86_32] media-libs/libvorbis[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libogg libvorbis'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='media-libs/libogg media-libs/libvorbis'
 
 # Load common functions
 
