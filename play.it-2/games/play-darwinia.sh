@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210513.1
+script_version=20210513.2
 
 # Set game-specific variables
 
@@ -49,11 +49,8 @@ ARCHIVE_BASE_0_SIZE='45000'
 ARCHIVE_BASE_0_VERSION='1.4.2-gog2.0.0.5'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/darwinia'
 
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
-
-ARCHIVE_DOC1_DATA_PATH='data/noarch/game'
-ARCHIVE_DOC1_DATA_FILES='*.txt'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='*.x86 lib'
