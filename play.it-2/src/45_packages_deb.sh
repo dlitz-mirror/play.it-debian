@@ -169,7 +169,7 @@ pkg_set_deps_deb() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='libpulse0'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='libstdc++6'
 			;;
 			('libudev1')

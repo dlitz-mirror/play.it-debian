@@ -175,7 +175,7 @@ pkg_set_deps_gentoo() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep="media-sound/pulseaudio${architecture_suffix}"
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
 			('libudev1')

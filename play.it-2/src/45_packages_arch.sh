@@ -174,7 +174,7 @@ pkg_set_deps_arch32() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='lib32-libpulse'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
 			('libudev1')
@@ -323,7 +323,7 @@ pkg_set_deps_arch64() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='libpulse'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='gcc-libs'
 			;;
 			('libudev1')
