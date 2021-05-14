@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210514.1
+script_version=20210514.2
 
 # Set game-specific variables
 
@@ -45,7 +45,7 @@ GAME_NAME='Where the Water Tastes Like Wine'
 ARCHIVE_BASE_0='where-the-water-tastes-like-wine-linux.zip'
 ARCHIVE_BASE_0_MD5='b7e3d981ff707f5687a79552514a49fe'
 ARCHIVE_BASE_0_SIZE='7000000'
-ARCHIVE_BASE_0_VERSION='1.0-itch1'
+ARCHIVE_BASE_0_VERSION='1.4.2-itch.2019.07.24'
 ARCHIVE_BASE_0_URL='https://dimbulbgames.itch.io/where-the-water-tastes-like-wine'
 
 ARCHIVE_GAME_BIN32_PATH='.'
