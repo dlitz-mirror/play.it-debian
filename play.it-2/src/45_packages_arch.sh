@@ -132,7 +132,7 @@ pkg_set_deps_arch32() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='lib32-gdk-pixbuf2'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='lib32-glibc'
 			;;
 			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
@@ -281,7 +281,7 @@ pkg_set_deps_arch64() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='gdk-pixbuf2'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='glibc'
 			;;
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')

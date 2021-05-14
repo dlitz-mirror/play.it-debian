@@ -129,7 +129,7 @@ pkg_set_deps_gentoo() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep="x11-libs/gdk-pixbuf:2$architecture_suffix"
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep="sys-libs/glibc"
 				if [ "$(package_get_architecture "$pkg")" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"

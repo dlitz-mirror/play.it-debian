@@ -127,7 +127,7 @@ pkg_set_deps_deb() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='libc6'
 			;;
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
