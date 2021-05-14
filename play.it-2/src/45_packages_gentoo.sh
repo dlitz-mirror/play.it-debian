@@ -141,7 +141,7 @@ pkg_set_deps_gentoo() {
 			('glu'|'libGLU.so.1')
 				pkg_dep="virtual/glu$architecture_suffix"
 			;;
-			('glx')
+			('libGL.so.1'|'glx')
 				pkg_dep="virtual/opengl$architecture_suffix"
 			;;
 			('libgdk-x11-2.0.so.0'|'gtk2')
