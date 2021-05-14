@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210514.3
+script_version=20210514.4
 
 # Set game-specific variables
 
@@ -56,8 +56,6 @@ ARCHIVE_GAME_BIN64_FILES='WTWTLW.x86_64 WTWTLW_Data/*/x86_64'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='WTWTLW_Data'
-
-DATA_DIRS='./UserData'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='WTWTLW.x86'
