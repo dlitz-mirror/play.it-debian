@@ -137,7 +137,7 @@ pkg_set_deps_deb() {
 				pkg_dep='libglu1-mesa | libglu1'
 			;;
 			('libGL.so.1'|'glx')
-				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libgl1-mesa-glx'
+				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
 			;;
 			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='libgtk2.0-0'
