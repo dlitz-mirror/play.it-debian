@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.6
+script_version=20210515.7
 
 # Set game-specific variables
 
@@ -146,13 +146,6 @@ PKG_DATA_ID_PL="${PKG_DATA_ID}-pl"
 PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_ID_DE="${PKG_BIN_ID}-de"
-PKG_BIN_ID_EN="${PKG_BIN_ID}-en"
-PKG_BIN_ID_ES="${PKG_BIN_ID}-es"
-PKG_BIN_ID_FR="${PKG_BIN_ID}-fr"
-PKG_BIN_ID_PL="${PKG_BIN_ID}-pl"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ libGLU.so.1 libSDL-1.2.so.0"
 
