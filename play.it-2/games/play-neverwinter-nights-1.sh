@@ -34,11 +34,11 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.5
+script_version=20210515.6
 
 # Set game-specific variables
 
-GAME_ID='neverwinter-nights'
+GAME_ID='neverwinter-nights-1'
 GAME_NAME='Neverwinter Nights'
 
 ARCHIVE_BASE_DE_0='setup_nwn_diamond_german_2.1.0.21.exe'
