@@ -59,7 +59,7 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='*.txt licenses'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='*.x86 lib/libCg*.so lib/libfltk.so.1.3'
+ARCHIVE_GAME_BIN_FILES='Braid.bin.x86 lib/libCg.so lib/libCgGL.so'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='data Icon.png'
@@ -75,7 +75,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx xft libSDL2-2.0.so.0"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libSDL2-2.0.so.0"
 
 # Load common functions
 
@@ -117,13 +117,6 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
-
-# Add execution permission on the game launcher
-
-launcher_binary="$(package_get_path 'PKG_BIN')${PATH_GAME}/launcher.bin.x86"
-if [ $DRY_RUN -eq 0 ]; then
-	chmod 755 "$launcher_binary"
-fi
 
 # Write launchers
 
