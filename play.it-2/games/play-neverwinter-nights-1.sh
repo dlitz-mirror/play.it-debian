@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.7
+script_version=20210613.1
 
 # Set game-specific variables
 
@@ -107,11 +107,11 @@ ARCHIVE_OPTIONAL_NWMOVIES='nwmovies-mpv.tar.gz'
 ARCHIVE_OPTIONAL_NWMOVIES_URL='https://sites.google.com/site/gogdownloader/nwmovies-mpv.tar.gz'
 ARCHIVE_OPTIONAL_NWMOVIES_MD5='71f3d88db1cd75665b62b77f7604dce1'
 
-ARCHIVE_DOC0_DATA_PATH='game/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
+ARCHIVE_DOC_L10N_PATH='game/docs'
+ARCHIVE_DOC_L10N_FILES='*'
 
-ARCHIVE_DOC1_DATA_PATH='.'
-ARCHIVE_DOC1_DATA_FILES='*.txt'
+ARCHIVE_DOC_DATA_PATH='.'
+ARCHIVE_DOC_DATA_FILES='*.txt'
 
 ARCHIVE_GAME0_BIN_PATH='support/app'
 ARCHIVE_GAME0_BIN_FILES='nwncdkey.ini'
@@ -122,8 +122,11 @@ ARCHIVE_GAME1_BIN_FILES='dmclient fixinstall lib miles nwn nwmain nwserver nwn.i
 ARCHIVE_GAME2_BIN_PATH='.'
 ARCHIVE_GAME2_BIN_FILES='nwmovies nwmovies_install.pl'
 
+ARCHIVE_GAME_L10N_PATH='game'
+ARCHIVE_GAME_L10N_FILES='*.key *.tlk movies/Chap?_Chap?.bik movies/credits.bik movies/ending.bik movies/prelude.bik movies/prelude_chap1.bik movies/XP?_*.bik data/*convo.bif data/models_??.bif data/music*.bif data/templates.bif data/*voicesets.bif data/xp1_sounds*.bif data/xp2_german.bif data/xp2_french.bif data/xp2_polish.bif'
+
 ARCHIVE_GAME0_DATA_PATH='game'
-ARCHIVE_GAME0_DATA_FILES='*.key *.tlk ambient data dmvault hak localvault modules movies music nwm override texturepacks'
+ARCHIVE_GAME0_DATA_FILES='ambient dmvault hak localvault modules music nwm override texturepacks movies/*Logo.bik movies/dd_??_credits.bik movies/fge_logo_black.bik movies/NWNintro.bik movies/premiumdemo.bik movies/WOTCLogo.bik data/2da.bif data/aurora_???.bif data/editor.bif data/ini.bif data/loadscreens.bif data/misc.bif data/scripts.bif data/sounds.bif data/textures_??.bif data/xp1.bif data/xp1patch.bif data/xp1_models.bif data/xp1_scripts.bif data/xp1_templates.bif data/xp1_textures.bif data/xp1_tiles.bif data/xp2.bif data/xp2_models.bif data/xp2_scripts.bif data/xp2_templates.bif data/xp2_textures.bif data/xp2_tiles.bif'
 
 ARCHIVE_GAME1_DATA_PATH='.'
 ARCHIVE_GAME1_DATA_FILES='override'
@@ -135,19 +138,32 @@ APP_MAIN_TYPE='native'
 APP_MAIN_EXE='nwn'
 APP_MAIN_ICON='game/nwn.exe'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
+
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_PROVIDE="$PKG_L10N_ID"
+PKG_L10N_DESCRIPTION='Localization'
+
+PKG_L10N_ID_DE="${PKG_L10N_ID}-de"
+PKG_L10N_DESCRIPTION_DE="${PKG_L10N_DESCRIPTION} - German"
+
+PKG_L10N_ID_ES="${PKG_L10N_ID}-es"
+PKG_L10N_DESCRIPTION_ES="${PKG_L10N_DESCRIPTION} - Spanish"
+
+PKG_L10N_ID_EN="${PKG_L10N_ID}-en"
+PKG_L10N_DESCRIPTION_EN="${PKG_L10N_DESCRIPTION} - English"
+
+PKG_L10N_ID_FR="${PKG_L10N_ID}-fr"
+PKG_L10N_DESCRIPTION_FR="${PKG_L10N_DESCRIPTION} - French"
+
+PKG_L10N_ID_PL="${PKG_L10N_ID}-pl"
+PKG_L10N_DESCRIPTION_PL="${PKG_L10N_DESCRIPTION} - Polish"
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_ID_DE="${PKG_DATA_ID}-de"
-PKG_DATA_ID_EN="${PKG_DATA_ID}-en"
-PKG_DATA_ID_ES="${PKG_DATA_ID}-es"
-PKG_DATA_ID_FR="${PKG_DATA_ID}-fr"
-PKG_DATA_ID_PL="${PKG_DATA_ID}-pl"
-PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ libGLU.so.1 libSDL-1.2.so.0"
+PKG_BIN_DEPS="${PKG_DATA_ID} ${PKG_L10N_ID} glibc libstdc++ libGLU.so.1 libSDL-1.2.so.0"
 
 # Play movies using nwmovies
 
