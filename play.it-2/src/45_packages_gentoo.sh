@@ -51,7 +51,7 @@ pkg_write_gentoo() {
 	SLOT="0"
 	EOF
 
-	# fowners is needed to make sure all files in the generated package belong to root (arch linux packages use tar options that do the same thing)
+	# fakeroot >=1.25.1 considers all files belong to root by default
 	cat >> "$target" <<- EOF
 	RDEPEND="$pkg_deps"
 
@@ -60,7 +60,6 @@ pkg_write_gentoo() {
 	}
 	src_install() {
 		cp --recursive --link \$FILESDIR/install/* \$ED/
-		fowners --recursive root:root /
 	}
 	EOF
 
@@ -336,8 +335,8 @@ pkg_build_gentoo() {
 	local ebuild_path
 	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 	ebuild "$ebuild_path" manifest 1>/dev/null
-	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$OPTION_COMPRESSION\" fakeroot-ng -- ebuild \"$ebuild_path\" package 1>/dev/null"
-	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot-ng -- ebuild "$ebuild_path" package 1>/dev/null
+	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$OPTION_COMPRESSION\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
 	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").tbz2" "$pkg_filename"
 	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 
