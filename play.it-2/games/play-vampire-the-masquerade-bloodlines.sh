@@ -219,6 +219,7 @@ extract_data_from "$SOURCE_ARCHIVE"
 case "$ARCHIVE" in
 	('ARCHIVE_BASE_DOTEMU'*)
 		(
+			# shellcheck disable=SC2030
 			ARCHIVE='ARCHIVE_DE'
 			ARCHIVE_DE="${PLAYIT_WORKDIR}/gamedata/de.zip"
 			ARCHIVE_DE_TYPE='zip'
@@ -283,7 +284,6 @@ prepare_package_layout
 
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
-# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG'*)
 		icons_get_from_package 'APP_UP'
@@ -297,6 +297,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Enable dxvk patches in the WINE prefix
 
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 # Install dxvk on first launch
 if [ ! -e dxvk_installed ]; then
@@ -344,7 +345,6 @@ esac
 PKG='PKG_BIN'
 use_archive_specific_value 'APP_MAIN_EXE'
 launchers_write 'APP_MAIN'
-# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_GOG'*)
 		launchers_write 'APP_UP'
@@ -362,7 +362,6 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-# shellcheck disable=SC2031
 case "$ARCHIVE" in
 	('ARCHIVE_BASE_DOTEMU'*)
 		case "${LANG%_*}" in
@@ -380,13 +379,10 @@ case "$ARCHIVE" in
 			;;
 		esac
 		printf '\n'
-		# shellcheck disable=SC2059
 		printf "$lang_string" "$lang_de"
 		print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$lang_string" "$lang_en"
 		print_instructions 'PKG_L10N_EN' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$lang_string" "$lang_fr"
 		print_instructions 'PKG_L10N_FR' 'PKG_DATA' 'PKG_BIN'
 	;;
