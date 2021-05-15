@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210515.2
+script_version=20210515.6
 
 # Set game-specific variables
 
@@ -50,10 +50,10 @@ ARCHIVE_BASE_0_VERSION='3-gog25982'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/finding_paradise'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='FindingParadise.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='FindingParadise.x86 lib/libruby.so.2.1'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='FindingParadise.amd64 lib64'
+ARCHIVE_GAME_BIN64_FILES='FindingParadise.amd64 lib64/libruby.so.2.1'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Audio.dat Finding?Paradise.ini Finding?Paradise.rgssad Fonts icon.png mkxp mkxp.conf'
@@ -69,10 +69,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libudev1 glx libSDL2-2.0.so.0"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libz.so.1 libvorbisfile.so.3 libSDL2-2.0.so.0 libopenal.so.1 sdl2_image glx"
+PKG_BIN32_DEPS_ARCH='lib32-libsigc++ lib32-pixman lib32-physfs lib32-sdl2_ttf lib32-sdl_sound'
+PKG_BIN32_DEPS_DEB='libsigc++-2.0-0v5, libpixman-1-0, libphysfs1, libsdl2-ttf-2.0-0, libsdl-sound1.2'
+PKG_BIN32_DEPS_GENTOO='dev-libs/libsigc++[abi_x86_32] x11-libs/pixman[abi_x86_32] dev-games/physfs[abi_x86_32] media-libs/sdl2-ttf[abi_x86_32] media-libs/sdl-sound[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libsigc++ pixman physfs sdl2_ttf sdl_sound'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='dev-libs/libsigc++ x11-libs/pixman dev-games/physfs media-libs/sdl2-ttf media-libs/sdl-sound'
 
 # Load common functions
 
