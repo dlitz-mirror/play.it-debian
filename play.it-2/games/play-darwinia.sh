@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210513.3
+script_version=20210516.8
 
 # Set game-specific variables
 
@@ -123,6 +123,57 @@ icons_get_from_package 'APP_MAIN'
 # Clean-up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Divert saved games and settings to XDG-compliant paths
+# This prevents the creation of a hidden directory at the top level in $HOME
+
+CONFIG_FILES="${CONFIG_FILES} ./preferences.txt"
+DATA_DIRS="${DATA_DIRS} ./users"
+# shellcheck disable=SC1004
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Divert saved games and settings to XDG-compliant paths
+# This prevents the creation of a hidden directory at the top level in $HOME
+
+# Skip this operation if the hidden directory already exists
+if [ ! -e "${HOME}/.darwinia" ]; then
+	# Prevent $HOME clutter
+	FAKE_HOME="${PATH_PREFIX}/fake-home"
+	mkdir --parents "${FAKE_HOME}/.local"
+	ln --force --no-target-directory --symbolic \
+		"${XDG_CACHE_HOME:=$HOME/.cache}" \
+		"${FAKE_HOME}/.cache"
+	ln --force --no-target-directory --symbolic \
+		"${XDG_CONFIG_HOME:=$HOME/.config}" \
+		"${FAKE_HOME}/.config"
+	ln --force --no-target-directory --symbolic \
+		"${XDG_DATA_HOME:=$HOME/.local/share}" \
+		"${FAKE_HOME}/.local/share"
+	HOME="$FAKE_HOME"
+	export XDG_CACHE_HOME XDG_CONFIG_HOME XDG_DATA_HOME HOME
+
+	# Migrate user data to the diverted paths
+	divert_path() {
+		# shellcheck disable=SC2039
+		local path_original path_diverted
+		path_original="$1"
+		path_diverted="$2"
+		if [ -e "$path_original" ] && [ ! -h "$path_original" ]; then
+			mv --no-target-directory "$path_original" "$(realpath "$path_diverted")"
+		fi
+		if [ -e "$path_diverted" ]; then
+			mkdir --parents "$(dirname "$path_original")"
+			ln --force --no-target-directory --symbolic "$path_diverted" "$path_original"
+		fi
+		return 0
+	}
+	divert_path \
+		"${HOME}/.darwinia/full/preferences.txt" \
+		"${PATH_PREFIX}/preferences.txt"
+	divert_path \
+		"${HOME}/.darwinia/full/users" \
+		"${PATH_PREFIX}/users"
+fi'
 
 # Write launchers
 
