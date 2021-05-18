@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2020, ahub
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2020-2021, ahub
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,13 +30,12 @@ set -o errexit
 ###
 
 ###
-# TEMPLATE_GAME_NAME
+# Devil Daggers
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-
-script_version='20210518.0' # yyyymmdd.numberOfTries
+script_version=20210518.5
 
 # Set game-specific variables
 
@@ -58,21 +57,15 @@ ARCHIVE_BASE_GOG_0_SIZE='420000' # rounded up
 ARCHIVE_BASE_GOG_0_TYPE='mojosetup_unzip'
 ARCHIVE_BASE_GOG_0_VERSION='3.0-gog20080' # get that from the filename gameVersion-providerVersion
 
-ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC1_DATA_FILES='*'
-ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC0_DATA_FILES='*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC_DATA_FILES='*'
 
 # dd/  default-44100.mhr  default-48000.mhr  devildaggers  lib64/  res/
-ARCHIVE_GAME1_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME1_BIN_FILES='devildaggers lib64'
-ARCHIVE_GAME0_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME0_BIN_FILES='devildaggers lib64'
+ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_FILES='devildaggers lib64'
 
-ARCHIVE_GAME1_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME1_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
-ARCHIVE_GAME0_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME0_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
+ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
 
 DATA_FILES='error_log.txt'
 
