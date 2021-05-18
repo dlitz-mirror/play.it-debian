@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210518.7
+script_version=20210518.8
 
 # Set game-specific variables
 
@@ -62,7 +62,7 @@ ARCHIVE_DOC_DATA_FILES='*'
 
 # dd/  default-44100.mhr  default-48000.mhr  devildaggers  lib64/  res/
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='devildaggers lib64'
+ARCHIVE_GAME_BIN_FILES='devildaggers'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
@@ -79,12 +79,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID"
-
-# TODO: A voir
-# PKG_BIN_DEPS_DEB="$PKG_BIN_DEPS_DEB"
-# PKG_BIN_DEPS_ARCH='faudio'
-# PKG_BIN_DEPS_GENTOO='app-emulation/faudio'
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libopenal.so.1 libX11.so.6"
 
 # Load common functions
 
