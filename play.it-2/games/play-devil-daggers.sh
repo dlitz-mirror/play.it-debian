@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210518.6
+script_version=20210518.7
 
 # Set game-specific variables
 
@@ -113,26 +113,32 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-# Ensure availability of libcurl.so.4 providing CURL_OPENSSL_3 symbol
+# Ensure availability of CURL_OPENSSL_3 symbol
 
+PKG='PKG_BIN'
 ARCHIVE_OPTIONAL_LIBCURL3='libcurl3_7.52.1_64-bit.tar.gz'
 ARCHIVE_OPTIONAL_LIBCURL3_URL='https://downloads.dotslashplay.it/resources/libcurl/'
 ARCHIVE_OPTIONAL_LIBCURL3_MD5='e276dd3620c31617baace84dfa3dca21'
-ARCHIVE_MAIN="$ARCHIVE"
-set_archive 'ARCHIVE_LIBCURL3' 'ARCHIVE_OPTIONAL_LIBCURL3'
+archive_initialize_optional 'ARCHIVE_LIBCURL3' \
+	'ARCHIVE_OPTIONAL_LIBCURL3'
 if [ "$ARCHIVE_LIBCURL3" ]; then
-	extract_data_from "$ARCHIVE_LIBCURL3"
-	mkdir --parents "${PKG_BIN_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-	mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
+	(
+		ARCHIVE='ARCHIVE_LIBCURL3'
+		extract_data_from "$ARCHIVE_LIBCURL3"
+	)
+	mkdir --parents "$(package_get_path "$PKG")${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+	mv "$PLAYIT_WORKDIR"/gamedata/* "$(package_get_path "$PKG")${PATH_GAME}/$APP_MAIN_LIBS"
 	rm --recursive "$PLAYIT_WORKDIR/gamedata"
 else
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼarchive suivante nʼayant pas été fournie, libcurl.so.4.5.0 ne sera pas inclus dans les paquets : %s\n'
+			message='Archive introuvable : %s\n'
+			message="$message"'La bibliothèque cURL fournissant le symbole CURL_OPENSSL_3 ne sera pas incluse.\n'
 			message="$message"'Cette archive peut être téléchargée depuis %s\n'
 		;;
 		('en'|*)
-			message='Due to the following archive missing, the packages will not include libcurl.so.4.5.0: %s\n'
+			message='Archive not found: %s\n'
+			message="$message"'The cURL library providing CURL_OPENSSL_3 symbol will not be included.\n'
 			message="$message"'This archive can be downloaded from %s\n'
 		;;
 	esac
@@ -140,7 +146,6 @@ else
 	printf "$message" "$ARCHIVE_OPTIONAL_LIBCURL3" "$ARCHIVE_OPTIONAL_LIBCURL3_URL"
 	printf '\n'
 fi
-ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
