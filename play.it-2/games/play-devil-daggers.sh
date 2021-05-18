@@ -36,7 +36,7 @@ set -o errexit
 ###
 
 
-script_version='20200925.0' # yyyymmdd.numberOfTries
+script_version='20210518.0' # yyyymmdd.numberOfTries
 
 # Set game-specific variables
 
@@ -44,28 +44,40 @@ GAME_ID='devil-daggers' # used for package name
 GAME_NAME='Devil Daggers' # used for menu display
 
 
-ARCHIVE_GOG='devil_daggers_en_update_1_20080.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/devil_daggers'
-ARCHIVE_GOG_MD5='cf92f20e5a1662e9585fa500608ebdd1'
-ARCHIVE_GOG_SIZE='420000' # rounded up 
-ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_VERSION='1.0-gog20080' # get that from the filename gameVersion-providerVersion
+ARCHIVE_BASE_GOG_1='devil_daggers_v3_1_45183.sh'
+ARCHIVE_BASE_GOG_1_URL='https://www.gog.com/game/devil_daggers'
+ARCHIVE_BASE_GOG_1_MD5='2276b69f73738a0bad313a6e442558f4'
+ARCHIVE_BASE_GOG_1_SIZE='460000' 
+ARCHIVE_BASE_GOG_1_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_GOG_1_VERSION='3.1-gog45183' 
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='*'
+ARCHIVE_BASE_GOG_0='devil_daggers_en_update_1_20080.sh'
+ARCHIVE_BASE_GOG_0_URL='https://www.gog.com/game/devil_daggers'
+ARCHIVE_BASE_GOG_0_MD5='cf92f20e5a1662e9585fa500608ebdd1'
+ARCHIVE_BASE_GOG_0_SIZE='420000' # rounded up 
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_GOG_0_VERSION='3.0-gog20080' # get that from the filename gameVersion-providerVersion
+
+ARCHIVE_DOC1_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC1_DATA_FILES='*'
+ARCHIVE_DOC0_DATA_PATH='data/noarch/docs'
+ARCHIVE_DOC0_DATA_FILES='*'
 
 # dd/  default-44100.mhr  default-48000.mhr  devildaggers  lib64/  res/
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='devildaggers lib64'
+ARCHIVE_GAME1_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME1_BIN_FILES='devildaggers lib64'
+ARCHIVE_GAME0_BIN_PATH='data/noarch/game'
+ARCHIVE_GAME0_BIN_FILES='devildaggers lib64'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
+ARCHIVE_GAME1_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME1_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
+ARCHIVE_GAME0_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME0_DATA_FILES='default-44100.mhr  default-48000.mhr res core dd'
 
 DATA_FILES='error_log.txt'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_ICON='data/noarch/support/icon.png'
-# APP_MAIN_ICON='../support/icon.png'
 APP_MAIN_EXE='devildaggers' 
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
@@ -83,7 +95,7 @@ PKG_BIN_DEPS="$PKG_DATA_ID"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
