@@ -206,7 +206,9 @@ pkg_set_deps_gentoo() {
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
 			;;
 			('sdl2_image')
-				pkg_dep="media-libs/sdl2-image$architecture_suffix"
+				# Most games will require at least jpeg and png
+				# Maybe we should add gif and tiff to that list?
+				pkg_dep="media-libs/sdl2-image[jpeg,png$architecture_suffix_use]"
 			;;
 			('sdl2_mixer')
 				#Most games will require at least one of flac, mp3, vorbis or wav USE flags, it should better to require them all instead of not requiring any and having non-fonctionnal sound in some games.
