@@ -1,3 +1,10 @@
+2.13.1
+
+  * Fix data migration from volatile prefix to persistent paths
+  * Fix filenames case conversion failure on non-ascii characters
+  * Fix wrapper installation path
+  * Gentoo: Ensure sdl2-image is built with png and jpeg support
+
 2.13.0
 
   * New features:

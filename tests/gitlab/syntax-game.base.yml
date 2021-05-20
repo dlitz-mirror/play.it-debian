@@ -1,0 +1,8 @@
+game_shellcheck_${game}:
+  stage: syntax
+  script:
+    - ./tests/syntax/game_shellcheck.sh ./play.it-2/games/play-${game}.sh
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: build_library
+
