@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,107 +34,94 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201002.4
+script_version=20210516.2
 
 # Set game-specific variables
 
 GAME_ID='neverwinter-nights-1-enhanced-edition'
 GAME_NAME='Neverwinter Nights: Enhanced Edition'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_1
-ARCHIVE_GOG_0
-ARCHIVE_GOG_EN_1
-ARCHIVE_GOG_FR_1
-ARCHIVE_GOG_EN_0
-ARCHIVE_GOG_FR_0
-'
-
 # Base game archive
 
-ARCHIVE_GOG_1='neverwinter_nights_enhanced_edition_81_8193_16_41300.sh'
-ARCHIVE_GOG_1_MD5='a52646002ab14c452731b0636fdc8278'
-ARCHIVE_GOG_1_TYPE='mojosetup'
-ARCHIVE_GOG_1_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
-ARCHIVE_GOG_1_VERSION='1.81.8193.16-gog41300'
-ARCHIVE_GOG_1_SIZE='6200000'
+ARCHIVE_BASE_2='neverwinter_nights_enhanced_edition_82_8193_20_1_43497.sh'
+ARCHIVE_BASE_2_MD5='c80e73f0305ad99355cc089c632b8b0c'
+ARCHIVE_BASE_2_TYPE='mojosetup'
+ARCHIVE_BASE_2_VERSION='1.82.8193.20.1-gog43497'
+ARCHIVE_BASE_2_SIZE='6200000'
+ARCHIVE_BASE_2_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_pack'
 
-ARCHIVE_GOG_0='neverwinter_nights_enhanced_edition_80_8193_9_37029.sh'
-ARCHIVE_GOG_0_MD5='fb98f859b5f5516fc7df8b00c7264c07'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-ARCHIVE_GOG_0_VERSION='1.80.8193.9-gog37029'
-ARCHIVE_GOG_0_SIZE='5000000'
+ARCHIVE_BASE_1='neverwinter_nights_enhanced_edition_81_8193_16_41300.sh'
+ARCHIVE_BASE_1_MD5='a52646002ab14c452731b0636fdc8278'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_VERSION='1.81.8193.16-gog41300'
+ARCHIVE_BASE_1_SIZE='6200000'
 
-ARCHIVE_GOG_EN_1='neverwinter_nights_enhanced_edition_78_8186_1_32700.sh'
-ARCHIVE_GOG_EN_1_MD5='4fbd9086c0c355245e2645ecb80eac44'
-ARCHIVE_GOG_EN_1_TYPE='mojosetup'
-ARCHIVE_GOG_EN_1_VERSION='1.78.8186.1-gog32700'
-ARCHIVE_GOG_EN_1_SIZE='4800000'
+ARCHIVE_BASE_0='neverwinter_nights_enhanced_edition_80_8193_9_37029.sh'
+ARCHIVE_BASE_0_MD5='fb98f859b5f5516fc7df8b00c7264c07'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_VERSION='1.80.8193.9-gog37029'
+ARCHIVE_BASE_0_SIZE='5000000'
 
-ARCHIVE_GOG_FR_1='neverwinter_nights_enhanced_edition_french_78_8186_1_32700.sh'
-ARCHIVE_GOG_FR_1_MD5='80d9a74b706cf4706c5c4f55c8e10c3c'
-ARCHIVE_GOG_FR_1_TYPE='mojosetup'
-ARCHIVE_GOG_FR_1_VERSION='1.78.8186.1-gog32700'
-ARCHIVE_GOG_FR_1_SIZE='4800000'
+ARCHIVE_BASE_EN_1='neverwinter_nights_enhanced_edition_78_8186_1_32700.sh'
+ARCHIVE_BASE_EN_1_MD5='4fbd9086c0c355245e2645ecb80eac44'
+ARCHIVE_BASE_EN_1_TYPE='mojosetup'
+ARCHIVE_BASE_EN_1_VERSION='1.78.8186.1-gog32700'
+ARCHIVE_BASE_EN_1_SIZE='4800000'
 
-ARCHIVE_GOG_EN_0='neverwinter_nights_enhanced_edition_78_8186_25455.sh'
-ARCHIVE_GOG_EN_0_MD5='da5a06cc92c4e43cbd851e6df8b5bb9e'
-ARCHIVE_GOG_EN_0_TYPE='mojosetup'
-ARCHIVE_GOG_EN_0_VERSION='1.78.8186-gog25455'
-ARCHIVE_GOG_EN_0_SIZE='4700000'
+ARCHIVE_BASE_FR_1='neverwinter_nights_enhanced_edition_french_78_8186_1_32700.sh'
+ARCHIVE_BASE_FR_1_MD5='80d9a74b706cf4706c5c4f55c8e10c3c'
+ARCHIVE_BASE_FR_1_TYPE='mojosetup'
+ARCHIVE_BASE_FR_1_VERSION='1.78.8186.1-gog32700'
+ARCHIVE_BASE_FR_1_SIZE='4800000'
 
-ARCHIVE_GOG_FR_0='neverwinter_nights_enhanced_edition_french_78_8186_25455.sh'
-ARCHIVE_GOG_FR_0_MD5='61b7d20a09288694e9930d74d335b950'
-ARCHIVE_GOG_FR_0_TYPE='mojosetup'
-ARCHIVE_GOG_FR_0_VERSION='1.78.8186-gog25455'
-ARCHIVE_GOG_FR_0_SIZE='4700000'
+ARCHIVE_BASE_EN_0='neverwinter_nights_enhanced_edition_78_8186_25455.sh'
+ARCHIVE_BASE_EN_0_MD5='da5a06cc92c4e43cbd851e6df8b5bb9e'
+ARCHIVE_BASE_EN_0_TYPE='mojosetup'
+ARCHIVE_BASE_EN_0_VERSION='1.78.8186-gog25455'
+ARCHIVE_BASE_EN_0_SIZE='4700000'
+
+ARCHIVE_BASE_FR_0='neverwinter_nights_enhanced_edition_french_78_8186_25455.sh'
+ARCHIVE_BASE_FR_0_MD5='61b7d20a09288694e9930d74d335b950'
+ARCHIVE_BASE_FR_0_TYPE='mojosetup'
+ARCHIVE_BASE_FR_0_VERSION='1.78.8186-gog25455'
+ARCHIVE_BASE_FR_0_SIZE='4700000'
 
 # Extra language packs
 
-ARCHIVE_GOG_1_OPTIONAL_L10N_DE='neverwinter_nights_enhanced_edition_german_extras_81_8193_16_41300.sh'
-ARCHIVE_GOG_1_OPTIONAL_L10N_DE_MD5='1e81fcf9d40bcf23dec0a77069222a52'
-ARCHIVE_GOG_1_OPTIONAL_L10N_DE_TYPE='mojosetup'
-ARCHIVE_GOG_1_OPTIONAL_L10N_DE_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_german_extras'
-ARCHIVE_GOG_1_OPTIONAL_L10N_DE_SIZE='900000'
+ARCHIVE_BASE_1_OPTIONAL_L10N_DE='neverwinter_nights_enhanced_edition_german_extras_81_8193_16_41300.sh'
+ARCHIVE_BASE_1_OPTIONAL_L10N_DE_MD5='1e81fcf9d40bcf23dec0a77069222a52'
+ARCHIVE_BASE_1_OPTIONAL_L10N_DE_TYPE='mojosetup'
+ARCHIVE_BASE_1_OPTIONAL_L10N_DE_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_german_extras'
+ARCHIVE_BASE_1_OPTIONAL_L10N_DE_SIZE='900000'
 
-ARCHIVE_GOG_1_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_81_8193_16_41300.sh'
-ARCHIVE_GOG_1_OPTIONAL_L10N_FR_MD5='1fe0cc196c146834ff186935ae2d3d66'
-ARCHIVE_GOG_1_OPTIONAL_L10N_FR_TYPE='mojosetup'
-ARCHIVE_GOG_1_OPTIONAL_L10N_FR_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_french_extras'
-ARCHIVE_GOG_1_OPTIONAL_L10N_FR_SIZE='840000'
+ARCHIVE_BASE_1_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_81_8193_16_41300.sh'
+ARCHIVE_BASE_1_OPTIONAL_L10N_FR_MD5='1fe0cc196c146834ff186935ae2d3d66'
+ARCHIVE_BASE_1_OPTIONAL_L10N_FR_TYPE='mojosetup'
+ARCHIVE_BASE_1_OPTIONAL_L10N_FR_URL='https://www.gog.com/game/neverwinter_nights_enhanced_edition_french_extras'
+ARCHIVE_BASE_1_OPTIONAL_L10N_FR_SIZE='840000'
 
-ARCHIVE_GOG_0_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_80_8193_9_37029.sh'
-ARCHIVE_GOG_0_OPTIONAL_L10N_FR_MD5='5e0564a161259b003c7dc0f8d8aa743f'
-ARCHIVE_GOG_0_OPTIONAL_L10N_FR_TYPE='mojosetup'
-ARCHIVE_GOG_0_OPTIONAL_L10N_FR_SIZE='840000'
+ARCHIVE_BASE_0_OPTIONAL_L10N_FR='neverwinter_nights_enhanced_edition_french_extras_80_8193_9_37029.sh'
+ARCHIVE_BASE_0_OPTIONAL_L10N_FR_MD5='5e0564a161259b003c7dc0f8d8aa743f'
+ARCHIVE_BASE_0_OPTIONAL_L10N_FR_TYPE='mojosetup'
+ARCHIVE_BASE_0_OPTIONAL_L10N_FR_SIZE='840000'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/game/lang/en/docs'
 ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
-# Keep compatibility with old archives
-ARCHIVE_DOC_DATA_PATH_GOG_EN='data/noarch/docs'
-ARCHIVE_DOC_DATA_PATH_GOG_FR='data/noarch/docs'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='bin/linux-x86'
-# Keep compatibility with old archives
-ARCHIVE_GAME_BIN_FILES_GOG_EN_0='bin/linux'
-ARCHIVE_GAME_BIN_FILES_GOG_FR_0='bin/linux'
 
 ARCHIVE_DOC_L10N_DE_PATH='data/noarch/game/lang/de/docs/legacy'
 ARCHIVE_DOC_L10N_DE_FILES='*.pdf *.rtf *.txt'
 
 ARCHIVE_DOC_L10N_EN_PATH='data/noarch/game/lang/en/docs/legacy'
 ARCHIVE_DOC_L10N_EN_FILES='*.pdf *.rtf *.txt'
-# Keep compatibility with old archives
-ARCHIVE_DOC_L10N_EN_PATH_GOG_EN='data/noarch/docs/legacy'
 
 ARCHIVE_DOC_L10N_ES_PATH='data/noarch/game/lang/es/docs/legacy'
 ARCHIVE_DOC_L10N_ES_FILES='*.pdf *.rtf *.txt'
 
 ARCHIVE_DOC_L10N_FR_PATH='data/noarch/game/lang/fr/docs/legacy'
 ARCHIVE_DOC_L10N_FR_FILES='*.pdf *.rtf *.txt'
-# Keep compatibility with old archives
-ARCHIVE_DOC_L10N_FR_PATH_GOG_FR='data/noarch/docs/legacy'
 
 ARCHIVE_DOC_L10N_IT_PATH='data/noarch/game/lang/it/docs/legacy'
 ARCHIVE_DOC_L10N_IT_FILES='*.pdf *.rtf *.txt'
@@ -145,17 +132,11 @@ ARCHIVE_DOC_L10N_PL_FILES='*.pdf *.rtf *.txt'
 ARCHIVE_GAME_L10N_DE_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_DE_FILES='lang/de/data'
 
-# Keep compatibility with old archives
-ARCHIVE_GAME_L10N_EN_PATH_GOG_EN='data/noarch/game'
-ARCHIVE_GAME_L10N_EN_FILES_GOG_EN='data/*.tlk'
-
 ARCHIVE_GAME_L10N_ES_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_ES_FILES='lang/es/data'
 
 ARCHIVE_GAME_L10N_FR_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_FR_FILES='lang/fr/data'
-# Keep compatibility with old archives
-ARCHIVE_GAME_L10N_FR_FILES_GOG_FR='data/*.tlk'
 
 ARCHIVE_GAME_L10N_IT_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_IT_FILES='lang/it/data'
@@ -167,29 +148,16 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='data ovr lang/en/data'
 
 APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='# Run the game binary from its parent directory
-cd "$(dirname "$APP_EXE")"
-APP_EXE=$(basename "$APP_EXE")'
 APP_MAIN_EXE='bin/linux-x86/nwmain-linux'
 APP_MAIN_ICON='data/noarch/game/bin/win32/nwmain.exe'
-# Keep compatibility with old archives
-APP_MAIN_EXE_GOG_EN_0='bin/linux/nwmain-linux'
-APP_MAIN_EXE_GOG_FR_0='bin/linux/nwmain-linux'
 
 APP_SERVER_ID="${GAME_ID}_server"
-APP_SERVER_NAME="$GAME_NAME - server"
+APP_SERVER_NAME="${GAME_NAME} - server"
 APP_SERVER_TYPE='native'
-APP_SERVER_PRERUN="$APP_MAIN_PRERUN"
 APP_SERVER_EXE='bin/linux-x86/nwserver-linux'
 APP_SERVER_ICON='data/noarch/game/bin/win32/nwserver.exe'
-# Keep compatibility with old archives
-APP_SERVER_EXE_GOG_EN_0='bin/linux/nwserver-linux'
-APP_SERVER_EXE_GOG_FR_0='bin/linux/nwserver-linux'
 
 PACKAGES_LIST='PKG_BIN PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_IT PKG_L10N_PL PKG_DATA'
-PACKAGES_LIST_GOG_EN='PKG_BIN PKG_L10N_EN PKG_DATA'
-PACKAGES_LIST_GOG_FR='PKG_BIN PKG_L10N_FR PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
@@ -221,16 +189,50 @@ PKG_L10N_PL_PROVIDE="$PKG_L10N_ID"
 PKG_L10N_PL_DESCRIPTION='Polish localization'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx openal"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libopenal.so.1"
+
+# Run the game binary from its parent directory
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Run the game binary from its parent directory
+cd "$(dirname "$APP_EXE")"
+APP_EXE=$(basename "$APP_EXE")'
+APP_SERVER_PRERUN="$APP_MAIN_PRERUN"
+
 # Keep compatibility with old archives
-PKG_BIN_ARCH_GOG_EN='32'
-PKG_BIN_ARCH_GOG_FR='32'
-PKG_BIN_DEPS_GOG_EN="$PKG_DATA_ID $PKG_L10N_ID glibc libstdc++ glx openal"
-PKG_BIN_DEPS_GOG_FR="$PKG_DATA_ID $PKG_L10N_ID glibc libstdc++ glx openal"
+
+ARCHIVE_DOC_DATA_PATH_EN='data/noarch/docs'
+ARCHIVE_DOC_DATA_PATH_FR='data/noarch/docs'
+
+ARCHIVE_DOC_L10N_EN_PATH_EN='data/noarch/docs/legacy'
+ARCHIVE_DOC_L10N_FR_PATH_FR='data/noarch/docs/legacy'
+
+ARCHIVE_GAME_L10N_EN_PATH_EN='data/noarch/game'
+
+ARCHIVE_GAME_L10N_EN_FILES_EN='data/*.tlk'
+ARCHIVE_GAME_L10N_FR_FILES_FR='data/*.tlk'
+
+ARCHIVE_GAME_BIN_FILES_EN_0='bin/linux'
+ARCHIVE_GAME_BIN_FILES_FR_0='bin/linux'
+
+APP_MAIN_EXE_EN_0='bin/linux/nwmain-linux'
+APP_MAIN_EXE_FR_0='bin/linux/nwmain-linux'
+
+APP_SERVER_EXE_BASE_EN_0='bin/linux/nwserver-linux'
+APP_SERVER_EXE_BASE_FR_0='bin/linux/nwserver-linux'
+
+PACKAGES_LIST_EN='PKG_BIN PKG_L10N_EN PKG_DATA'
+PACKAGES_LIST_FR='PKG_BIN PKG_L10N_FR PKG_DATA'
+
+PKG_BIN_ARCH_BASE_EN='32'
+PKG_BIN_ARCH_BASE_FR='32'
+PKG_BIN_DEPS_BASE_EN="${PKG_DATA_ID} ${PKG_L10N_ID} glibc libstdc++ glx libopenal.so.1"
+PKG_BIN_DEPS_BASE_FR="${PKG_DATA_ID} ${PKG_L10N_ID} glibc libstdc++ glx libopenal.so.1"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -241,8 +243,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -272,16 +274,16 @@ set_temp_directories $PACKAGES_LIST
 # We could display warnings about missing archives
 ###
 
-ARCHIVE_MAIN="$ARCHIVE"
 # Extra German localization
-if [ -n "$(get_value "${ARCHIVE_MAIN}_OPTIONAL_L10N_DE")" ]; then
-	set_archive 'ARCHIVE_L10N_DE' "${ARCHIVE_MAIN}_OPTIONAL_L10N_DE"
+if [ -n "$(get_value "${ARCHIVE}_OPTIONAL_L10N_DE")" ]; then
+	archive_initialize_optional 'ARCHIVE_L10N_DE' \
+		"${ARCHIVE}_OPTIONAL_L10N_DE"
 fi
 # Extra French localization
-if [ -n "$(get_value "${ARCHIVE_MAIN}_OPTIONAL_L10N_FR")" ]; then
-	set_archive 'ARCHIVE_L10N_FR' "${ARCHIVE_MAIN}_OPTIONAL_L10N_FR"
+if [ -n "$(get_value "${ARCHIVE}_OPTIONAL_L10N_FR")" ]; then
+	archive_initialize_optional 'ARCHIVE_L10N_FR' \
+		"${ARCHIVE}_OPTIONAL_L10N_FR"
 fi
-ARCHIVE="$ARCHIVE_MAIN"
 
 # Extract game data
 
@@ -307,7 +309,7 @@ prepare_package_layout
 # Get game icon
 
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_EN_0'|'ARCHIVE_GOG_FR_0')
+	('ARCHIVE_BASE_EN_0'|'ARCHIVE_BASE_FR_0')
 		###
 		# TODO
 		# No icon seems to be provided for some old archives
@@ -319,7 +321,10 @@ case "$ARCHIVE" in
 		icons_get_from_workdir 'APP_MAIN' 'APP_SERVER'
 	;;
 esac
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
@@ -340,7 +345,7 @@ rm --recursive "$PLAYIT_WORKDIR"
 # Print instructions
 
 case "$ARCHIVE" in
-	('ARCHIVE_GOG_EN'*|'ARCHIVE_GOG_FR'*)
+	('ARCHIVE_BASE_EN'*|'ARCHIVE_BASE_FR'*)
 		print_instructions
 	;;
 	(*)
@@ -365,22 +370,16 @@ case "$ARCHIVE" in
 			;;
 		esac
 		printf '\n'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_de"
 		print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_es"
 		print_instructions 'PKG_L10N_ES' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_en"
 		print_instructions 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_fr"
 		print_instructions 'PKG_L10N_FR' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_it"
 		print_instructions 'PKG_L10N_IT' 'PKG_DATA' 'PKG_BIN'
-		# shellcheck disable=SC2059
 		printf "$message" "$lang_pl"
 		print_instructions 'PKG_L10N_PL' 'PKG_DATA' 'PKG_BIN'
 	;;
