@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,26 +34,22 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200603.3
+script_version=20210511.3
 
 # Set game-specific variables
 
 GAME_ID='rayman-origins'
 GAME_NAME='Rayman Origins'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0
-'
-
-ARCHIVE_GOG_0='setup_rayman_origins_1.0.32504_(18757).exe'
-ARCHIVE_GOG_0_MD5='a1021275180a433cd26ccb708c03dde4'
-ARCHIVE_GOG_0_TYPE='innosetup'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/rayman_origins'
-ARCHIVE_GOG_0_VERSION='1.0.32504-gog18757'
-ARCHIVE_GOG_0_SIZE='2500000'
-ARCHIVE_GOG_0_PART1='setup_rayman_origins_1.0.32504_(18757)-1.bin'
-ARCHIVE_GOG_0_PART1_MD5='813c51f290371869157b62b26abad411'
-ARCHIVE_GOG_0_PART1_TYPE='innosetup'
+ARCHIVE_BASE_0='setup_rayman_origins_1.0.32504_(18757).exe'
+ARCHIVE_BASE_0_MD5='a1021275180a433cd26ccb708c03dde4'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_PART1='setup_rayman_origins_1.0.32504_(18757)-1.bin'
+ARCHIVE_BASE_0_PART1_MD5='813c51f290371869157b62b26abad411'
+ARCHIVE_BASE_0_PART1_TYPE='innosetup'
+ARCHIVE_BASE_0_VERSION='1.0.32504-gog18757'
+ARCHIVE_BASE_0_SIZE='2500000'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/rayman_origins'
 
 ARCHIVE_DOC_DATA_PATH='app/support'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -64,26 +60,12 @@ ARCHIVE_GAME_BIN_FILES='*.dll *.exe *.ini'
 ARCHIVE_GAME_DATA_PATH='app'
 ARCHIVE_GAME_DATA_FILES='gamedata'
 
-CONFIG_FILES='./*.ini'
-
-# d3dcompiler_47 - Work around rendering issues making the game menu unusable
-APP_WINETRICKS='d3dcompiler_47'
-
 APP_MAIN_TYPE='wine'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='# Store user data outside of WINE prefix
-user_data_path="$WINEPREFIX/drive_c/users/$USER/My Documents/My Games/Rayman Origins"
-if [ ! -e "$user_data_path" ]; then
-	mkdir --parents "$(dirname "$user_data_path")"
-	mkdir --parents "$PATH_DATA/userdata"
-	ln --symbolic "$PATH_DATA/userdata" "$user_data_path"
-	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
-fi'
 APP_MAIN_EXE='rayman origins.exe'
 APP_MAIN_ICON='rayman origins.exe'
 
 APP_L10N_ID="${GAME_ID}_language-setup"
-APP_L10N_NAME="$GAME_NAME - Language setup"
+APP_L10N_NAME="${GAME_NAME} - Language setup"
 APP_L10N_CAT='Settings'
 APP_L10N_TYPE='wine'
 APP_L10N_EXE='language_setup.exe'
@@ -95,24 +77,34 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine winetricks"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+
+# Work around rendering issues making the game menu unusable
+
+APP_WINETRICKS="${APP_WINETRICKS} d3dcompiler_47"
+PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks"
+
+# Use persistent storage for user data
+
+DATA_DIRS="${DATA_DIRS} ./userdata"
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+userdata:users/${USER}/My Documents/My Games/Rayman Origins'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -129,13 +121,16 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get game icons
 
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN' 'APP_L10N'
 icons_move_to 'PKG_DATA'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
