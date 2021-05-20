@@ -35,12 +35,12 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210517.1
+script_version=20210520.1
 
 # Set game-specific variables
 
 GAME_ID='maries-room'
-GAME_NAME='Marie’s Room'
+GAME_NAME='Marieʼs Room'
 
 ARCHIVE_BASE_0='MariesRoom.zip'
 ARCHIVE_BASE_0_MD5='4c7375a2fcf5bdd49405f4ddd9ce5770'
