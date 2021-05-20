@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,42 +35,29 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201014.1
+script_version=20210511.7
 
 # Set game-specific variables
 
 GAME_ID='vampire-the-masquerade-coteries-of-new-york'
-GAME_NAME='Vampire: the Masquerade - Coteries of New York'
+GAME_NAME='Vampire: The Masquerade - Coteries of New York'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='vampire_the_masquerade_coteries_of_new_york_1_0_7_40980.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/vampire_the_masquerade_coteries_of_new_york'
-ARCHIVE_GOG_0_MD5='146113ea6b7295104413d8ce2b1fbf4e'
-ARCHIVE_GOG_0_SIZE='3200000'
-ARCHIVE_GOG_0_VERSION='1.0.7-gog40980'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_GAME_DATA_FILES='*'
+ARCHIVE_BASE_0='vampire_the_masquerade_coteries_of_new_york_1_0_7_40980.sh'
+ARCHIVE_BASE_0_MD5='146113ea6b7295104413d8ce2b1fbf4e'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='3200000'
+ARCHIVE_BASE_0_VERSION='1.0.7-gog40980'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/vampire_the_masquerade_coteries_of_new_york'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge/x86_64 VtM?Coteries?of?New?York_Data/Managed VtM?Coteries?of?New?York_Data/Plugins LinuxPlayer_s.debug UnityPlayer_s.debug UnityPlayer.so'
+ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge VtM?Coteries?of?New?York_Data/Plugins UnityPlayer.so'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='VtM?Coteries?of?New?York_Data'
 
-DATA_DIRS='./logs'
-
 APP_MAIN_TYPE='native'
-APP_MAIN_PRERUN='# Work around Unity3D poor support for non-US locales
-export LANG=C'
 APP_MAIN_EXE='VtM Coteries of New York.x86_64'
 APP_MAIN_ICON='VtM Coteries of New York_Data/Resources/UnityPlayer.png'
-# Use a per-session dedicated file for logs
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
@@ -78,11 +65,39 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++"
+
+# Work around Unity3D poor support for non-US locales
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around Unity3D poor support for non-US locales
+export LANG=C'
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Default to windowed mode on first launch
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Default to windowed mode on first launch
+config_file="${XDG_CONFIG_HOME:="$HOME/.config"}/unity3d/DrawDistance/VtM Coteries of New York/Saves/Settings.save"
+if [ ! -e "$config_file" ]; then
+	mkdir --parents "$(dirname "$config_file")"
+	cat > "$config_file" <<- EOF
+	{"FullScreenMode":false}
+	EOF
+fi'
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -93,8 +108,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -119,7 +134,7 @@ icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary directories
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
