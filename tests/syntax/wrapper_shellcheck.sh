@@ -1,9 +1,10 @@
-#!/usr/bin/env sh
+#!/bin/sh
 set -o errexit
 
-file='play.it'
-shell='sh'
-printf 'Testing %s validity using ShellCheck in %s mode…\n' "$file" "$shell"
-shellcheck --external-sources --shell="$shell" "$file"
+TESTED_SCRIPT='play.it'
+SHELLCHECK_OPTIONS='--external-sources --shell=sh'
+
+printf 'Testing %s validity using ShellCheck…\n' "$TESTED_SCRIPT"
+shellcheck $SHELLCHECK_OPTIONS "$TESTED_SCRIPT"
 
 exit 0
