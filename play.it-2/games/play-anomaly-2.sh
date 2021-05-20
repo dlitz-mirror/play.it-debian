@@ -175,6 +175,7 @@ case "$ARCHIVE" in
 	('ARCHIVE_BASE_LINUX'*)
 		if [ -n "$ARCHIVE_ICONS" ]; then
 			(
+				# shellcheck disable=SC2030
 				ARCHIVE='ARCHIVE_ICONS'
 				extract_data_from "$ARCHIVE_ICONS"
 			)
@@ -239,6 +240,7 @@ unset LD_PRELOAD'
 
 # Share saved games and config between Linux and Windows engines
 
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN_LINUX="$APP_MAIN_PRERUN_LINUX"'
 
 # Share saved games and config between Linux and Windows engines
