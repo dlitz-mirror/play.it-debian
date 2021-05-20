@@ -75,6 +75,7 @@ APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
 
 # Work around crash on launch related to libpulse
 
+# shellcheck disable=SC1004
 APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 
 # Start pulseaudio if it is available
@@ -107,6 +108,7 @@ fi
 
 # Do not exit early if the game exits in a failure state
 set +o errexit'
+# shellcheck disable=SC1004
 APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
 
 # Restore exit on error
