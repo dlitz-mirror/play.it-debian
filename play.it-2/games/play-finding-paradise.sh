@@ -1,9 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
+# Copyright (c)      2021, Anna Lea
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,31 +33,34 @@ set -o errexit
 ###
 # Finding Paradise
 # build native packages from the original installers
-# send your bug reports to mopi@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190210.2
+script_version=20210515.7
 
 # Set game-specific variables
 
 GAME_ID='finding-paradise'
 GAME_NAME='Finding Paradise'
 
-ARCHIVE_GOG='finding_paradise_gog_3_lang_25982.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/finding_paradise'
-ARCHIVE_GOG_MD5='dbfe49910afb07109803ee24c796c868'
-ARCHIVE_GOG_SIZE='310000'
-ARCHIVE_GOG_VERSION='3-gog25982'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_BASE_1='finding_paradise_gog_3_lang_26461.sh'
+ARCHIVE_BASE_1_MD5='d5f8adf528d95845893b0d23dac449d6'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='320000'
+ARCHIVE_BASE_1_VERSION='3-gog26461'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/finding_paradise'
 
-ARCHIVE_DOC_PATH='data/noarch/docs'
-ARCHIVE_DOC_FILES='*'
+ARCHIVE_BASE_0='finding_paradise_gog_3_lang_25982.sh'
+ARCHIVE_BASE_0_MD5='dbfe49910afb07109803ee24c796c868'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='310000'
+ARCHIVE_BASE_0_VERSION='3-gog25982'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='FindingParadise.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='FindingParadise.x86 lib/libruby.so.2.1'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='FindingParadise.amd64 lib64'
+ARCHIVE_GAME_BIN64_FILES='FindingParadise.amd64 lib64/libruby.so.2.1'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Audio.dat Finding?Paradise.ini Finding?Paradise.rgssad Fonts icon.png mkxp mkxp.conf'
@@ -72,27 +76,32 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 libudev1 glx"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libz.so.1 libvorbisfile.so.3 libSDL2-2.0.so.0 libopenal.so.1 sdl2_image glx"
+PKG_BIN32_DEPS_ARCH='lib32-libsigc++ lib32-pixman lib32-physfs lib32-sdl2_ttf lib32-sdl_sound'
+PKG_BIN32_DEPS_DEB='libsigc++-2.0-0v5, libpixman-1-0, libphysfs1, libsdl2-ttf-2.0-0, libsdl-sound1.2'
+PKG_BIN32_DEPS_GENTOO='dev-libs/libsigc++[abi_x86_32] x11-libs/pixman[abi_x86_32] dev-games/physfs[abi_x86_32] media-libs/sdl2-ttf[abi_x86_32] media-libs/sdl-sound[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libsigc++ pixman physfs sdl2_ttf sdl_sound'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='dev-libs/libsigc++ x11-libs/pixman dev-games/physfs media-libs/sdl2-ttf media-libs/sdl-sound'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -109,7 +118,15 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
@@ -119,10 +136,7 @@ done
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up
@@ -134,4 +148,3 @@ rm --recursive "$PLAYIT_WORKDIR"
 print_instructions
 
 exit 0
-
