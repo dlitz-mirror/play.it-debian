@@ -309,24 +309,34 @@ launcher_write_script_prefix_functions() {
 	# Set prefix-related functions
 
 	init_prefix_dirs() {
+	    # shellcheck disable=SC2039
+	    local destination directories
+	    destination="$1"
+	    directories="$2"
 	    (
 	        cd "$PATH_GAME"
-	        for dir in $2; do
-	            if [ ! -e "$1/$dir" ]; then
-	                if [ -e "$PATH_PREFIX/$dir" ]; then
-	                    (
-	                        cd "$PATH_PREFIX"
-	                        cp --dereference --parents --recursive "$dir" "$1"
-	                    )
-	                elif [ -e "$PATH_GAME/$dir" ]; then
-	                    cp --parents --recursive "$dir" "$1"
-	                else
-	                    mkdir --parents "$1/$dir"
-	                fi
+	        for directory in $directories; do
+	            mkdir --parents "${destination}/${directory}"
+	            mkdir --parents "$(dirname "${PATH_PREFIX}/${directory}")"
+	            if \
+	                [ -d "${PATH_PREFIX}/${directory}" ] && \
+	                [ ! -h "${PATH_PREFIX}/${directory}" ]
+	            then
+	                # Migrate existing data from the prefix
+	                (
+	                    cd "$PATH_PREFIX"
+	                    find "$directory" -type f | while read -r file; do
+	                        cp --parents --remove-destination "$file" "$destination"
+	                        rm "$file"
+	                    done
+	                    find "$directory" -type l | while read -r link; do
+	                        cp --parents --dereference --no-clobber "$link" "$destination"
+	                        rm "$link"
+	                    done
+	                )
+	                rm --recursive "${PATH_PREFIX:?}/${directory:?}"
 	            fi
-	            rm --force --recursive "$PATH_PREFIX/$dir"
-	            mkdir --parents "$PATH_PREFIX/$(dirname "$dir")"
-	            ln --symbolic "$(readlink --canonicalize-existing "$1/$dir")" "$PATH_PREFIX/$dir"
+	            ln --force --symbolic --no-target-directory "${destination}/${directory}" "${PATH_PREFIX}/${directory}"
 	        done
 	    )
 	}
@@ -417,12 +427,14 @@ launcher_write_script_prefix_build() {
 	        fi
 	    done
 	)
+
+	# Use persistent storage for user data
+	init_prefix_dirs   "$PATH_CONFIG" "$CONFIG_DIRS"
+	init_prefix_dirs   "$PATH_DATA"   "$DATA_DIRS"
 	init_userdir_files "$PATH_CONFIG" "$CONFIG_FILES"
-	init_userdir_files "$PATH_DATA" "$DATA_FILES"
-	init_prefix_files "$PATH_CONFIG" "$CONFIG_FILES"
-	init_prefix_files "$PATH_DATA" "$DATA_FILES"
-	init_prefix_dirs "$PATH_CONFIG" "$CONFIG_DIRS"
-	init_prefix_dirs "$PATH_DATA" "$DATA_DIRS"
+	init_userdir_files "$PATH_DATA"   "$DATA_FILES"
+	init_prefix_files  "$PATH_CONFIG" "$CONFIG_FILES"
+	init_prefix_files  "$PATH_DATA"   "$DATA_FILES"
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"

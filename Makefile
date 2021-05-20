@@ -43,7 +43,7 @@ install-games:
 	install -D --mode=755 --target-directory=$(DESTDIR)$(datadir)/play.it play.it-2/games/*
 
 install-wrapper:
-	install -D --mode=755 play.it $(DESTDIR)$(bindir)
+	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
 
 install-manpage:
 ifneq ($(wildcard play.it.6),)
