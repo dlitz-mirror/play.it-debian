@@ -180,7 +180,8 @@ icon_path_empty_error() {
 }
 
 set_temp_directories_error_not_enough_space() {
-	error_not_enough_free_space "$XDG_RUNTIME_DIR" "$(get_tmp_dir)" "$XDG_CACHE_HOME" "$PWD"
+	# shellcheck disable=SC2046
+	error_not_enough_free_space $(temporary_directories_list_candidates)
 }
 
 archive_extraction_innosetup_error_version() {
