@@ -103,7 +103,10 @@ temporary_directories_find_base() {
 			elif [ ! -w "$directory" ]; then
 				debug_temp_dir_nonwritable "$directory"
 			else
-				free_space=$(df --output=avail "$directory" 2>/dev/null | \
+				free_space=$(df \
+					--block-size=1K \
+					--output=avail \
+					"$directory" 2>/dev/null | \
 					tail --lines=1)
 				if [ $free_space -ge $needed_space ]; then
 					base_directory=$(temporary_directories_full_path "$directory")
