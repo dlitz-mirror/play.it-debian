@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210522.1
+script_version=20210522.2
 
 # Set game-specific variables
 
@@ -127,6 +127,27 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Switch French keyboard layout to us-azerty to provide direct access to digits
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Switch French keyboard layout to us-azerty to provide direct access to digits
+KEYBOARD_LAYOUT=$(LANG=C setxkbmap -query | awk "/layout:/ {print \$2}")
+RESTORE_VARIANT=0
+if [ $KEYBOARD_LAYOUT = "fr" ]; then
+	KEYBOARD_VARIANT=$(LANG=C setxkbmap -query | awk "/variant:/ {print \$2}")
+	if [ $KEYBOARD_VARIANT != "us-azerty" ]; then
+		setxkbmap -variant us-azerty
+		RESTORE_VARIANT=1
+	fi
+fi'
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Restore the keyboard variant
+if [ $RESTORE_VARIANT -eq 1 ]; then
+	setxkbmap -variant "$KEYBOARD_VARIANT"
+fi'
 
 # Write launchers
 
