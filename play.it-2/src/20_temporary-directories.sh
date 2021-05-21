@@ -84,8 +84,12 @@ temporary_directories_find_base() {
 	tmpdir="$(temporary_directories_list_candidates | cut --delimiter='' --fields=1)"
 	if [ "$NO_FREE_SPACE_CHECK" -eq 1 ]; then
 		base_directory=$(temporary_directories_full_path "$tmpdir")
-		mkdir --parents "$base_directory"
-		chmod 777 "$base_directory"
+		if [ -d "$base_directory" ]; then
+			debug_using_directory "$base_directory"
+		else
+			debug_creating_directory "$base_directory"
+			mkdir --parents "$base_directory"
+		fi
 	else
 		if [ "$ARCHIVE_SIZE" ]; then
 			needed_space=$((ARCHIVE_SIZE * 2))
@@ -94,23 +98,30 @@ temporary_directories_find_base() {
 		fi
 		while read -r candidate_directory
 		do
-			free_space=$(df --output=avail "$directory" 2>/dev/null | \
-				tail --lines=1)
-			if [ -w "$directory" ] && [ $free_space -ge $needed_space ]; then
-				base_directory=$(temporary_directories_full_path "$directory")
-				if [ "$directory" = "$tmpdir" ]; then
-					if [ ! -e "$base_directory" ]; then
-						mkdir --parents "$base_directory"
-						chmod 777 "$base_directory"
-					fi
+			if [ ! -d "$directory" ]; then
+				debug_temp_dir_nonexistant "$directory"
+			elif [ ! -w "$directory" ]; then
+				debug_temp_dir_nonwritable "$directory"
+			else
+				free_space=$(df --output=avail "$directory" 2>/dev/null | \
+					tail --lines=1)
+				if [ $free_space -ge $needed_space ]; then
+					base_directory=$(temporary_directories_full_path "$directory")
+					break;
+				else
+					debug_temp_dir_not_enough_space "$directory"
 				fi
-				break;
 			fi
 		done <<- EOF
 		$(temporary_directories_list_candidates)
 		EOF
 		if [ -n "$base_directory" ]; then
-			mkdir --parents "$base_directory"
+			if [ -d "$base_directory" ]; then
+				debug_using_directory "$base_directory"
+			else
+				debug_creating_directory "$base_directory"
+				mkdir --parents "$base_directory"
+			fi
 		else
 			error_not_enough_free_space $(temporary_directories_list_candidates)
 		fi
