@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210524.2
+script_version=20210524.5
 
 # Set game-specific variables
 
@@ -76,6 +76,15 @@ PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libopenal.so.1 libSDL2-2.0.so.0"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="${PKG_BIN32_DEPS}"
+
+# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around terminfo Mono bug
+# cf. https://github.com/mono/mono/issues/6752
+export TERM="${TERM%-256color}"'
 
 # Load common functions
 
