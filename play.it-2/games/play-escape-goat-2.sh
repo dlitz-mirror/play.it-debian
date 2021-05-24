@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210524.5
+script_version=20210524.7
 
 # Set game-specific variables
 
@@ -52,39 +52,19 @@ ARCHIVE_BASE_0_URL='https://www.gog.com/game/escape_goat_2'
 ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='Linux.README ReadMe.txt'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='EscapeGoat2.bin.x86 lib/libmono-2.0.so.1'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='Content fr mono EscapeGoat2.exe Escape?Goat?2.bmp Common.dll EG2.ICSharpCode.SharpZipLib.dll EG2.Newtonsoft.Json.dll Illuminant.dll MonoGame.Framework.dll Physics.dll SDL2-CS.dll SDL2-CS.dll.config Squared.*.dll'
 
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='EscapeGoat2.bin.x86_64 lib64/libmono-2.0.so.1'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='Common.dll Content EG2.ICSharpCode.SharpZipLib.dll EG2.Newtonsoft.Json.dll fr Escape?Goat?2.bmp I18N.dll I18N.West.dll Illuminant.dll mono MonoGame.Framework.dll Mono.Posix.dll Mono.Security.dll mscorlib.dll Physics.dll SDL2-CS.dll SDL2-CS.dll.config Squared.Game.dll Squared.Render.dll Squared.Task.dll Squared.Util.dll System.Configuration.dll System.Core.dll System.Data.dll System.dll System.Drawing.dll System.Runtime.Serialization.dll System.Security.dll System.Xml.dll System.Xml.Linq.dll EscapeGoat2.exe'
-
-APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='EscapeGoat2.bin.x86'
-APP_MAIN_EXE_BIN64='EscapeGoat2.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_EXE='EscapeGoat2.exe'
 APP_MAIN_ICON='Escape Goat 2.bmp'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+PKG_MAIN_DEPS='mono libopenal.so.1 libSDL2-2.0.so.0'
+PKG_MAIN_DEPS_DEB='libmono-i18n4.0-cil, libmono-i18n-west4.0-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-corlib4.5-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+# Ensure easy upgrade from packages generated with pre-20210524.7 game script
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libopenal.so.1 libSDL2-2.0.so.0"
-
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="${PKG_BIN32_DEPS}"
-
-# Work around terminfo Mono bug
-# cf. https://github.com/mono/mono/issues/6752
-
-APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
-
-# Work around terminfo Mono bug
-# cf. https://github.com/mono/mono/issues/6752
-export TERM="${TERM%-256color}"'
+PKG_MAIN_PROVIDE='escape-goat-2-data'
 
 # Load common functions
 
@@ -120,7 +100,6 @@ prepare_package_layout
 
 # Get game icon
 
-PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
 # Clean up temporary files
@@ -129,9 +108,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+launchers_write 'APP_MAIN'
 
 # Build package
 
