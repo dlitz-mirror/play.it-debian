@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210524.1
+script_version=20210524.2
 
 # Set game-specific variables
 
@@ -53,10 +53,10 @@ ARCHIVE_DOC_DATA_PATH='data/noarch/game'
 ARCHIVE_DOC_DATA_FILES='Linux.README ReadMe.txt'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='EscapeGoat2.bin.x86 lib'
+ARCHIVE_GAME_BIN32_FILES='EscapeGoat2.bin.x86 lib/libmono-2.0.so.1'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='EscapeGoat2.bin.x86_64 lib64'
+ARCHIVE_GAME_BIN64_FILES='EscapeGoat2.bin.x86_64 lib64/libmono-2.0.so.1'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='Common.dll Content EG2.ICSharpCode.SharpZipLib.dll EG2.Newtonsoft.Json.dll fr Escape?Goat?2.bmp I18N.dll I18N.West.dll Illuminant.dll mono MonoGame.Framework.dll Mono.Posix.dll Mono.Security.dll mscorlib.dll Physics.dll SDL2-CS.dll SDL2-CS.dll.config Squared.Game.dll Squared.Render.dll Squared.Task.dll Squared.Util.dll System.Configuration.dll System.Core.dll System.Data.dll System.dll System.Drawing.dll System.Runtime.Serialization.dll System.Security.dll System.Xml.dll System.Xml.Linq.dll EscapeGoat2.exe'
@@ -72,7 +72,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ libopenal.so.1 libSDL2-2.0.so.0"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="${PKG_BIN32_DEPS}"
