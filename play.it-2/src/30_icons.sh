@@ -294,36 +294,32 @@ sort_icons() {
 	done
 }
 
-# get image resolution for target file, exported as $resolution
-# USAGE: icon_get_resolution_from_file $file
-# RETURNS: nothing
-# SIDE EFFECT: export the resolution of the given file as $resolution, using the format "${width}x${height}"
-icon_get_resolution_from_file() {
-	local file
-	file="$1"
+# Return the resolution of the given image file
+# USAGE: icon_get_resolution $file
+# RETURNS: image resolution, using the format ${width}x${height}
+icon_get_resolution() {
+	# shellcheck disable=SC2039
+	local image_file
+	image_file="$1"
 
 	# `identify` should be available when this function is called.
 	# Exits with an explicit error if it is missing
 	if ! command -v 'identify' >/dev/null 2>&1; then
-		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
+		error_unavailable_command 'icon_get_resolution' 'identify'
 	fi
 
-	if ! version_is_at_least '2.8' "$target_version" && [ -n "${file##* *}" ]; then
-		field=2
-		unset resolution
-		while
-			[ -z "$resolution" ] || \
-			[ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]
-		do
-			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
-			resolution="${resolution%+0+0}"
-			field=$((field + 1))
-		done
+	# shellcheck disable=SC2039
+	local image_resolution_string image_resolution
+	# shellcheck disable=SC2154
+	if version_is_at_least '2.8' "$target_version"; then
+		image_resolution_string=$(identify "$image_file" | sed "s;^${image_file} ;;" | cut --delimiter=' ' --fields=2)
+		image_resolution="${image_resolution_string%+0+0}"
 	else
-		resolution="$(identify "$file" | sed "s;^$file ;;" | cut --delimiter=' ' --fields=2)"
-		resolution="${resolution%+0+0}"
+		image_resolution=$(icon_get_resolution_pre_2_8 "$image_file")
 	fi
-	export resolution
+
+	printf '%s' "$image_resolution"
+	return 0
 }
 
 # move icons to the target package

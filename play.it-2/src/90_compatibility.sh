@@ -1,3 +1,10 @@
+# Keep compatibility with 2.13 and older
+
+icon_get_resolution_from_file() {
+	resolution=$(icon_get_resolution "$@")
+	export resolution
+}
+
 # Keep compatibility with 2.12 and older
 
 archives_get_list() {
@@ -237,6 +244,28 @@ write_launcher() {
 }
 
 # Keep compatibility with 2.8 and older
+
+icon_get_resolution_pre_2_8() {
+	# shellcheck disable=SC2039
+	local image_file image_resolution_string image_resolution string_field
+	image_file="$1"
+	string_field=2
+	while
+		[ -z "$image_resolution" ] || \
+		[ -n "$(printf '%s' "$image_resolution" | sed 's/[0-9]*x[0-9]*//')" ]
+	do
+		if [ -n "${file##* *}" ]; then
+			image_resolution_string=$(identify $image_file | cut --delimiter=' ' --fields=$string_field)
+		else
+			image_resolution_string=$(identify "$image_file" | cut --delimiter=' ' --fields=$string_field)
+		fi
+		image_resolution="${image_resolution_string%+0+0}"
+		string_field=$((string_field + 1))
+	done
+
+	printf '%s' "$image_resolution"
+	return 0
+}
 
 icon_check_file_existence_pre_2_8() {
 	# shellcheck disable=SC2039
