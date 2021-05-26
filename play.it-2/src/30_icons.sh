@@ -251,46 +251,46 @@ icon_copy_png() {
 	cp "$file" "$destination"
 }
 
-# get .png file(s) from target directory and put them in current package
-# USAGE: icons_include_png_from_directory $app $directory
+# Get icon files from the given directory and put them in the current package
+# USAGE: icons_include_from_directory $app $directory
 # RETURNS: nothing
 # SIDE EFFECT: take the icons from the given directory, move them to standard paths into the current package
-icons_include_png_from_directory() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local app
-	local directory
-	local file
-	local path
-	local path_icon
-	local resolution
+icons_include_from_directory() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
 
-	# get the current package
-	local package
-	package=$(package_get_current)
+	# Get the application name, falls back on the game name
+	# shellcheck disable=SC2039
+	local application application_name
+	application="$1"
+	application_name=$(get_value "${application}_ID")
+	: "${application_name:=$GAME_ID}"
 
-	app="$1"
-	directory="$2"
-	name="$(get_value "${app}_ID")"
-	[ -n "$name" ] || name="$GAME_ID"
-	for file in "$directory"/*.png; do
-		icon_get_resolution_from_file "$file"
-		path_icon="$PATH_ICON_BASE/$resolution/apps"
-		path="$(package_get_path "$package")${path_icon}"
-		mkdir --parents "$path"
-		mv "$file" "$path/$name.png"
-	done
-}
-# compatibility alias
-###
-# TODO
-# This function should be moved to the compatibility aliases source file
-###
-sort_icons() {
-	local app
-	local directory
-	directory="$PLAYIT_WORKDIR/icons"
-	for app in "$@"; do
-		icons_include_png_from_directory "$app" "$directory"
+	# Get the icons from the given source directory,
+	# then move them to the current package
+	# shellcheck disable=SC2039
+	local source_directory source_file destination_name destination_directory destination_file
+	source_directory="$2"
+	for source_file in \
+		"$source_directory"/*.png
+	do
+		# Skip the current pattern if it matched no file
+		if [ ! -e "$source_file" ]; then
+			continue
+		fi
+
+		# Compute icon file name
+		destination_name="${application_name}.${source_file##*.}"
+
+		# Compute icon path
+		destination_directory="$(package_get_path "$(package_get_current)")${PATH_ICON_BASE}/$(icon_get_resolution "$source_file")/apps"
+
+		# Move current icon file to its destination
+		destination_file="${destination_directory}/${destination_name}"
+		mkdir --parents "$destination_directory"
+		mv "$source_file" "$destination_file"
 	done
 }
 
