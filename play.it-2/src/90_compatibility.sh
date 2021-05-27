@@ -238,22 +238,23 @@ write_launcher() {
 # Keep compatibility with 2.8 and older
 
 icon_check_file_existence_pre_2_8() {
+	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
 
-	if [ ! -f "$directory/$file" ]; then
-		if \
-			[ -z "${file##* *}" ] || \
-			[ ! -f "$directory"/$file ]
-		then
-			error_icon_file_not_found "$directory/$file"
-		else
-			# get the real file name from its globbed one
-			local file_path
-			file_path=$(eval printf '%s' "$directory"/$file)
-			file="${file_path#${directory}/}"
-		fi
+	if \
+		[ -z "${file##* *}" ] || \
+		[ ! -f "$directory"/$file ]
+	then
+		error_icon_file_not_found "$directory/$file"
+		return 1
+	else
+		# get the real file name from its globbed one
+		# shellcheck disable=SC2039
+		local file_path
+		file_path=$(eval printf '%s' "$directory/$file")
+		file="${file_path#${directory}/}"
 	fi
 
 	printf '%s' "$file"
