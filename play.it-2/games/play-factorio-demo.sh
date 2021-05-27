@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2018-2021, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,24 +30,24 @@ set -o errexit
 ###
 
 ###
-# Factorio - Demo
+# Factorio (demo)
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190707.1
+script_version=20210527.2
 
 # Set game-specific variables
 
 GAME_ID='factorio-demo'
-GAME_NAME='Factorio - Demo'
+GAME_NAME='Factorio (demo)'
 
-ARCHIVE_OFFICIAL='factorio_demo_x64_0.16.51.tar.xz'
-ARCHIVE_OFFICIAL_URL='https://www.factorio.com/download-demo'
-ARCHIVE_OFFICIAL_MD5='130267c91df0be6c2034b64fb05d389b'
-ARCHIVE_OFFICIAL_VERSION='0.16.51-1'
-ARCHIVE_OFFICIAL_SIZE='680000'
-ARCHIVE_OFFICIAL_TYPE='tar'
+ARCHIVE_BASE_0='factorio_demo_x64_0.16.51.tar.xz'
+ARCHIVE_BASE_0_MD5='130267c91df0be6c2034b64fb05d389b'
+ARCHIVE_BASE_0_TYPE='tar'
+ARCHIVE_BASE_0_VERSION='0.16.51-1'
+ARCHIVE_BASE_0_SIZE='680000'
+ARCHIVE_BASE_0_URL='https://www.factorio.com/download-demo'
 
 ARCHIVE_GAME_BIN_PATH='factorio'
 ARCHIVE_GAME_BIN_FILES='bin/x64/factorio'
@@ -70,33 +70,31 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc glx libxrandr xcursor alsa"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc glx libxrandr xcursor alsa"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	[ -n "$XDG_DATA_HOME" ] || XDG_DATA_HOME="$HOME/.local/share"
-	for path in\
-		'./'\
-		"$XDG_DATA_HOME/play.it/"\
-		"$XDG_DATA_HOME/play.it/play.it-2/lib/"\
-		'/usr/local/share/games/play.it/'\
-		'/usr/local/share/play.it/'\
-		'/usr/share/games/play.it/'\
-		'/usr/share/play.it/'
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
+		'/usr/share/play.it'
 	do
-		if [ -z "$PLAYIT_LIB2" ] && [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
-	if [ -z "$PLAYIT_LIB2" ]; then
-		printf '\n\033[1;31mError:\033[0m\n'
-		printf 'libplayit2.sh not found.\n'
-		exit 1
-	fi
+fi
+if [ -z "$PLAYIT_LIB2" ]; then
+	printf '\n\033[1;31mError:\033[0m\n'
+	printf 'libplayit2.sh not found.\n'
+	exit 1
 fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
@@ -105,7 +103,15 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
@@ -114,10 +120,7 @@ launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
