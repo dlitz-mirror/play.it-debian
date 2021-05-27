@@ -36,19 +36,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210527.11
+script_version=20210527.12
 
 # Set game-specific variables
 
 GAME_ID='factorio-demo'
 GAME_NAME='Factorio (demo)'
 
+ARCHIVE_BASE_5='factorio_demo_x64_1.1.33.tar.xz'
+ARCHIVE_BASE_5_MD5='82cc1137048cf98121cd6943e51ae597'
+ARCHIVE_BASE_5_TYPE='tar'
+ARCHIVE_BASE_5_VERSION='1.1.33-1'
+ARCHIVE_BASE_5_SIZE='1700000'
+ARCHIVE_BASE_5_URL='https://www.factorio.com/download-demo'
+
+ARCHIVE_BASE_4='factorio_demo_x64_1.1.32.tar.xz'
+ARCHIVE_BASE_4_MD5='275b63133ac56e59ccb73e98f5bebed2'
+ARCHIVE_BASE_4_TYPE='tar'
+ARCHIVE_BASE_4_VERSION='1.1.32-1'
+ARCHIVE_BASE_4_SIZE='1700000'
+
 ARCHIVE_BASE_3='factorio_demo_x64_1.1.30.tar.xz'
 ARCHIVE_BASE_3_MD5='36186abcbe560591bd8e4c207291409f'
 ARCHIVE_BASE_3_TYPE='tar'
 ARCHIVE_BASE_3_VERSION='1.1.30-1'
 ARCHIVE_BASE_3_SIZE='1700000'
-ARCHIVE_BASE_3_URL='https://www.factorio.com/download-demo'
 
 ARCHIVE_BASE_2='factorio_demo_x64_1.1.27.tar.xz'
 ARCHIVE_BASE_2_MD5='cdb61b4b98a704e9c6a1090938dfabee'
