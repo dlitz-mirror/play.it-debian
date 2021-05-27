@@ -1,3 +1,10 @@
+2.13.2
+
+  * Fix getting icon path for pre-2.8 game scripts with globs expanding to spaces
+  * Improve the search for a proper working directory
+  * Improve function descriptions in the icons source file
+  * Gentoo: Use fakeroot (≥1.25.1) instead of fakeroot-ng
+
 2.13.1
 
   * Fix data migration from volatile prefix to persistent paths
