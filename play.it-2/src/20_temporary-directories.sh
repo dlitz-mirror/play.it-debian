@@ -73,62 +73,67 @@ temporary_directories_list_candidates() {
 # USAGE: temporary_directories_find_base
 # RETURNS: the path to a directory with enough free space to use for ./play.it temporary files
 temporary_directories_find_base() {
-	local base_directory
-	local tmpdir
-	local needed_space
-	local free_space
-
 	debug_entering_function 'temporary_directories_find_base' 2
 
-	unset base_directory
-	tmpdir="$(temporary_directories_list_candidates | cut --delimiter='' --fields=1)"
-	if [ "$NO_FREE_SPACE_CHECK" -eq 1 ]; then
-		base_directory=$(temporary_directories_full_path "$tmpdir")
-		if [ -d "$base_directory" ]; then
-			debug_using_directory "$base_directory"
-		else
-			debug_creating_directory "$base_directory"
-			mkdir --parents "$base_directory"
-		fi
+	# shellcheck disable=SC2039
+	local base_directory
+	if [ $NO_FREE_SPACE_CHECK -eq 1 ]; then
+		# If free space check has been explicitely disabled,
+		# use the first directory returned by temporary_directories_list_candidates
+		# shellcheck disable=SC2039
+		local default_directory
+		default_directory="$(temporary_directories_list_candidates | head --lines=1)"
+		base_directory=$(temporary_directories_full_path "$default_directory")
 	else
-		if [ "$ARCHIVE_SIZE" ]; then
-			needed_space=$((ARCHIVE_SIZE * 2))
-		else
-			error_variable_not_set 'temporary_directories_find_base' '$ARCHIVE_SIZE'
+		###
+		# TODO
+		# The required free space should be returned by a dedicated function,
+		# instead of relying on a global variable.
+		###
+		# Fail early if the required free space for the current archive is not computable
+		if [ -z "$ARCHIVE_SIZE" ]; then
+			error_variable_not_set 'temporary_directories_find_base' 'ARCHIVE_SIZE'
+			return 1
 		fi
+
+		# Scan candidate directories to find one with enough free space to use for storing temporary files
+		# shellcheck disable=SC2039
+		local free_space_required free_space_available candidate_directory
+		free_space_required=$((ARCHIVE_SIZE * 2))
 		while read -r candidate_directory
 		do
-			if [ ! -d "$directory" ]; then
-				debug_temp_dir_nonexistant "$directory"
-			elif [ ! -w "$directory" ]; then
-				debug_temp_dir_nonwritable "$directory"
-			else
-				free_space=$(df \
-					--block-size=1K \
-					--output=avail \
-					"$directory" 2>/dev/null | \
-					tail --lines=1)
-				if [ $free_space -ge $needed_space ]; then
-					base_directory=$(temporary_directories_full_path "$directory")
-					break;
-				else
-					debug_temp_dir_not_enough_space "$directory"
-				fi
+			if [ ! -d "$candidate_directory" ]; then
+				debug_temp_dir_nonexistant "$candidate_directory"
+				continue
 			fi
+			if [ ! -w "$candidate_directory" ]; then
+				debug_temp_dir_nonwritable "$candidate_directory"
+				continue
+			fi
+			free_space_available=$(LANG=C df \
+				--block-size=1K \
+				--output=avail \
+				"$candidate_directory" 2>/dev/null | \
+				tail --lines=1)
+			if [ $free_space_available -ge $free_space_required ]; then
+				base_directory=$(temporary_directories_full_path "$candidate_directory")
+				break;
+			fi
+			debug_temp_dir_not_enough_space "$candidate_directory"
 		done <<- EOF
 		$(temporary_directories_list_candidates)
 		EOF
-		if [ -n "$base_directory" ]; then
-			if [ -d "$base_directory" ]; then
-				debug_using_directory "$base_directory"
-			else
-				debug_creating_directory "$base_directory"
-				mkdir --parents "$base_directory"
-			fi
-		else
+
+		# Fail with an explicit error if no valid candidate has been found
+		if [ -z "$base_directory" ]; then
+			# shellcheck disable=SC2046
 			error_not_enough_free_space $(temporary_directories_list_candidates)
+			return 1
 		fi
 	fi
+
+	debug_using_directory "$base_directory"
+	mkdir --parents "$base_directory"
 
 	printf '%s' "$base_directory"
 	debug_leaving_function 'temporary_directories_find_base' 2
