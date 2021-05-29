@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.14
+script_version=20210529.17
 
 # Set game-specific variables
 
@@ -86,6 +86,14 @@ if [ ! -e "${APP_LIBS:=libs}/libva.so.1" ]; then
 	library_file=$(/sbin/ldconfig --print-cache | awk -F " => " '\''/libva\.so/ {print $2}'\'' | head --lines=1)
 	ln --force --symbolic "$library_file" "${APP_LIBS}/libva.so.1"
 fi'
+
+# Set required environment hacks
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Set required environment hacks
+export PATH="jre/bin:$PATH" # this has no effect when using system-provided Java
+export MESA_GL_VERSION_OVERRIDE=2.1'
 
 # Load common functions
 
