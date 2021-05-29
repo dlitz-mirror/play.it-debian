@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.5
+script_version=20210529.6
 
 # Set game-specific variables
 
@@ -78,6 +78,26 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+
+# Force software rendering to work around a failure to render anything, including splash screen and menus
+# cf. https://forge.dotslashplay.it/play.it/games/-/issues/334
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Force software rendering to work around a failure to render anything, including splash screen and menus
+
+# Any alternative not requiring software rendering would be welcome,
+# please suggest them on the following page:
+# https://forge.dotslashplay.it/play.it/games/-/issues/334
+# or by e-mail to:
+# contact@dotslashplay.it
+
+# To bypass this workaround, export the following environment variable prior to running the game:
+# export LIBGL_ALWAYS_SOFTWARE=false
+
+: ${LIBGL_ALWAYS_SOFTWARE:=true}
+export LIBGL_ALWAYS_SOFTWARE'
+
 
 # Load common functions
 
