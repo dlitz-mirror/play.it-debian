@@ -83,10 +83,10 @@ upload your attempts to [pastebin] for commentary, or feel free to raise a WIP
 
 ### IRC channel
 
-Some ./play.it developers and users can be reached on IRC, channel is `#play.it` on server `irc.oftc.net`.
+Some ./play.it developers and users can be reached on IRC, channel is `#play.it` on network `irc.oftc.net`.
 The main language on this IRC channel is English.
 
-A secondary channel is provided for French speakers, `#play.it` on server `irc.geeknode.net`.
+A secondary channel is provided for French speakers, `#play.it` on network `irc.geeknode.org`.
 A clever bot will automatically translate and share messages between the English and French channels.
 
 ### E-mail
