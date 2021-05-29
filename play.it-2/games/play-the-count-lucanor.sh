@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.17
+script_version=20210529.18
 
 # Set game-specific variables
 
@@ -95,6 +95,27 @@ APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
 export PATH="jre/bin:$PATH" # this has no effect when using system-provided Java
 export MESA_GL_VERSION_OVERRIDE=2.1'
 
+# Since this game seems to be broken on OpenJDK ≥ 11, we build an extra package allowing to use the shipped OpenJDK 1.8
+
+ARCHIVE_GAME_BIN_SHIPPED_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN_SHIPPED_FILES='jre'
+
+PACKAGES_LIST="${PACKAGES_LIST:=PKG_MAIN} PKG_BIN_SYSTEM PKG_BIN_SHIPPED"
+
+PKG_BIN_ID="${GAME_ID}-bin"
+PKG_BIN_PROVIDE="$PKG_BIN_ID"
+
+PKG_BIN_SYSTEM_ID="${PKG_BIN_ID}-system"
+PKG_BIN_SYSTEM_PROVIDE="$PKG_BIN_PROVIDE"
+PKG_BIN_SYSTEM_DESCRIPTION='Using system-provided Java'
+
+PKG_BIN_SHIPPED_ID="${PKG_BIN_ID}-shipped"
+PKG_BIN_SHIPPED_PROVIDE="$PKG_BIN_PROVIDE"
+PKG_BIN_SHIPPED_DESCRIPTION='Using shipped Java binaries'
+PKG_BIN_SHIPPED_ARCH='64'
+
+PKG_MAIN_DEPS="${PKG_MAIN_DEPS} ${PKG_BIN_ID}"
+
 # Load common functions
 
 target_version='2.13'
@@ -129,6 +150,7 @@ prepare_package_layout
 
 # Get game icon
 
+PKG='PKG_MAIN'
 icons_get_from_package 'APP_MAIN'
 
 # Delete temporary files
@@ -137,7 +159,43 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
+###
+# TODO
+# Work around the binary file presence check
+# Current library (./play.it 2.13) does not check all packages for the binary presence
+###
+
+dummy_file_system="$(package_get_path 'PKG_BIN_SHIPPED')${PATH_GAME}/${APP_MAIN_EXE}"
+dummy_file_shipped="$(package_get_path 'PKG_BIN_SYSTEM')${PATH_GAME}/${APP_MAIN_EXE}"
+mkdir --parents "$(dirname "$dummy_file_system")"
+mkdir --parents "$(dirname "$dummy_file_shipped")"
+touch "$dummy_file_system"
+touch "$dummy_file_shipped"
+
+PKG='PKG_BIN_SYSTEM'
 launchers_write 'APP_MAIN'
+
+###
+# TODO
+# When generating launchers for Java games, we should use ${PLAYIT_JAVA_BINARY:-java} instead of hardcoded "java"
+###
+
+PKG='PKG_BIN_SHIPPED'
+launchers_write 'APP_MAIN'
+
+shipped_java_binary='jre/bin/java'
+chmod 755 "$(package_get_path 'PKG_BIN_SHIPPED')${PATH_GAME}/${shipped_java_binary}"
+
+launcher_file="$(package_get_path 'PKG_BIN_SHIPPED')${PATH_BIN}/${GAME_ID}"
+pattern='^java '
+replacement="./${shipped_java_binary} "
+expression="s#${pattern}#${replacement}#"
+sed --in-place --expression="$expression" "$launcher_file"
+
+rm "$dummy_file_system"
+rm "$dummy_file_shipped"
+rmdir --parents --ignore-fail-on-non-empty "$(dirname "$dummy_file_system")"
+rmdir --parents --ignore-fail-on-non-empty "$(dirname "$dummy_file_shipped")"
 
 # Build package
 
@@ -150,6 +208,22 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-print_instructions
+case "${LANG%_*}" in
+	('fr')
+		message='Utilisation des binaires fournis par %s :'
+		bin_shipped='les développeurs'
+		bin_system='le système'
+	;;
+	('en'|*)
+		message='Using binaries provided by %s:'
+		bin_shipped='the developers'
+		bin_system='the system'
+	;;
+esac
+printf '\n'
+printf "$message" "$bin_system"
+print_instructions 'PKG_MAIN' 'PKG_BIN_SYSTEM'
+printf "$message" "$bin_shipped"
+print_instructions 'PKG_MAIN' 'PKG_BIN_SHIPPED'
 
 exit 0
