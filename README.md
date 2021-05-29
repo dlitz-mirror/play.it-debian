@@ -71,12 +71,25 @@ first argument to create the package.
 
 There is [some documentation] on how to add support for new games, but the best
 bet is to find a similar game and copy its script. You'll likely need to visit
-\#play.it on [IRC]/[Matrix] to ask for more help. It can also be useful to
+our IRC channel to ask for more help. It can also be useful to
 upload your attempts to [pastebin] for commentary, or feel free to raise a WIP
 [Merge Request].
 
 [some documentation]: https://forge.dotslashplay.it/play.it/scripts/wikis/home
-[IRC]: irc://chat.freenode.net/#play.it
-[Matrix]: https://matrix.to/#/!tKCYmGJvyaFDYHUmzm:matrix.org
 [pastebin]: https://paste.debian.net/
 [Merge Request]: https://forge.dotslashplay.it/play.it/scripts/merge_requests/new
+
+## Contact informations
+
+### IRC channel
+
+Some ./play.it developers and users can be reached on IRC, channel is `#play.it` on server `irc.oftc.net`.
+The main language on this IRC channel is English.
+
+A secondary channel is provided for French speakers, `#play.it` on server `irc.geeknode.net`.
+A clever bot will automatically translate and share messages between the English and French channels.
+
+### E-mail
+
+A contact e-mail for feedback can usually be found in each ./play.it game script, as well as in the library.
+Open one of these files with any text editor to see the contact e-mail.
