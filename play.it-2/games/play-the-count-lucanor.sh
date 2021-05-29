@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.1
+script_version=20210529.14
 
 # Set game-specific variables
 
@@ -56,7 +56,7 @@ ARCHIVE_BASE_0_SIZE='720000'
 ARCHIVE_BASE_0_VERSION='1.1.4.7-gog23841'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='lucanor.ico lib res'
+ARCHIVE_GAME_MAIN_FILES='lucanor.ico res lib/*.jar lib/libavcodec.so.56 lib/libavdevice.so.56 lib/libavfilter.so.5 lib/libavformat.so.56 lib/libavresample.so.2 lib/libavutil.so.54 lib/libgluegen-rt.so lib/libjinput-linux64.so lib/libjoal.so lib/libjogl_desktop.so lib/libjogl_mobile.so lib/libnativewindow_awt.so lib/libnativewindow_x11.so lib/libnewt.so lib/libsteam_api64.so lib/libsteamworks4j64.so lib/libswresample.so.1 lib/libswscale.so.3 lib/libvpx.so.2'
 
 CONFIG_DIRS='./res/settings'
 DATA_DIRS='./logs ./res/level ./res/db'
@@ -67,7 +67,8 @@ APP_MAIN_EXE='lib/build-desktop.jar'
 APP_MAIN_LIBS='lib'
 APP_MAIN_ICON='lucanor.ico'
 
-PKG_MAIN_DEPS='java'
+PKG_MAIN_ARCH='64'
+PKG_MAIN_DEPS='java libSDL-1.2.so.0 libopenal.so.1'
 
 # Ensure the game finds the libva.so.1 library it depends on
 
