@@ -76,6 +76,32 @@ check_directory_supports_unix_permissions() {
 	return 0
 }
 
+# check that the target directory is on a filesystem supporting executable files
+# USAGE: check_directory_supports_executable_files $tested_directory
+# RETURNS: 0 if has support for executable files, 1 otherwise
+check_directory_supports_executable_files() {
+	local tested_directory
+	tested_directory="$1"
+	if [ ! -d "$tested_directory" ]; then
+		error_not_a_directory "$tested_directory"
+		return 1
+	fi
+
+	findmnt --first-only --list --options +noexec --target "$tested_directory" >/dev/null
+	case $? in
+		(0)
+			return 1
+			;;
+		(1)
+			return 0
+			;;
+		(*)
+			# Something unexpected happened, we do not want to deal with it
+			return 1
+			;;
+	esac
+}
+
 # Compare two version strings using the x.y.z format
 # Arbitrary number of numeric fields should be supported
 # USAGE: version_is_at_least $version_reference $version_tested

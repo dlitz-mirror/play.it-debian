@@ -96,6 +96,12 @@ temporary_directories_find_base() {
 			debug_temp_dir_no_unix_permissions "$candidate_directory"
 			continue
 		fi
+		if [ $OPTION_PACKAGE = "gentoo" ] && \
+			! check_directory_supports_executable_files "$candidate_directory"
+		then
+			debug_temp_dir_no_executable_files "$candidate_directory"
+			continue
+		fi
 		if [ "$NO_FREE_SPACE_CHECK" -eq 0 ]; then
 			free_space_available=$(LANG=C df \
 				--block-size=1K \
