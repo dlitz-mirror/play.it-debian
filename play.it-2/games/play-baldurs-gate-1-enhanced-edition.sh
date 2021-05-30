@@ -35,18 +35,12 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210421.4
+script_version=20210615.1
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-1-enhanced-edition'
 GAME_NAME='Baldurʼs Gate - Enhanced Edition'
-
-ARCHIVES_LIST='
-ARCHIVE_BASE_0
-ARCHIVE_BASE_32BIT_2
-ARCHIVE_BASE_32BIT_1
-ARCHIVE_BASE_32BIT_0'
 
 ARCHIVE_BASE_0='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
 ARCHIVE_BASE_0_MD5='853f6e66db6cc5a4df0f72d23d65fcf7'
@@ -57,23 +51,21 @@ ARCHIVE_BASE_0_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
 
 ARCHIVE_BASE_32BIT_2='baldur_s_gate_enhanced_edition_en_2_3_67_3_20146.sh'
 ARCHIVE_BASE_32BIT_2_MD5='4d08fe21fcdeab51624fa2e0de2f5813'
+ARCHIVE_BASE_32BIT_2_TYPE='mojosetup'
 ARCHIVE_BASE_32BIT_2_SIZE='3200000'
 ARCHIVE_BASE_32BIT_2_VERSION='2.3.67.3-gog20146'
-ARCHIVE_BASE_32BIT_2_TYPE='mojosetup'
 
 ARCHIVE_BASE_32BIT_1='gog_baldur_s_gate_enhanced_edition_2.5.0.9.sh'
 ARCHIVE_BASE_32BIT_1_MD5='224be273fd2ec1eb0246f407dda16bc4'
+ARCHIVE_BASE_32BIT_1_TYPE='mojosetup'
 ARCHIVE_BASE_32BIT_1_SIZE='3200000'
 ARCHIVE_BASE_32BIT_1_VERSION='2.3.67.3-gog2.5.0.9'
 
 ARCHIVE_BASE_32BIT_0='gog_baldur_s_gate_enhanced_edition_2.5.0.7.sh'
 ARCHIVE_BASE_32BIT_0_MD5='37ece59534ca63a06f4c047d64b82df9'
+ARCHIVE_BASE_32BIT_0_TYPE='mojosetup'
 ARCHIVE_BASE_32BIT_0_SIZE='3200000'
 ARCHIVE_BASE_32BIT_0_VERSION='2.3.67.3-gog2.5.0.7'
-
-ARCHIVE_OPTIONAL_ICONS='baldurs-gate-1-enhanced-edition_icons.tar.gz'
-ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/baldurs-gate-1-enhanced-edition/'
-ARCHIVE_OPTIONAL_ICONS_MD5='58401cf80bc9f1a9e9a0896f5d74b02a'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -128,9 +120,6 @@ ARCHIVE_GAME_L10N_ZH_FILES='lang/zh_CN'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='movies music chitin.key Manuals scripts data engine.lua lang/en_US'
-
-ARCHIVE_ICONS_PATH='.'
-ARCHIVE_ICONS_FILES='16x16 24x42 32x32 48x48 64x64 256x256'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='BaldursGate'
@@ -222,7 +211,7 @@ PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Keep compatibility with old archives
 
-PACKAGES_LIST_BASE_32BIT='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+PACKAGES_LIST_32BIT='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
 
 # Easier upgrade from packages generated with pre-20180926.3 scripts
 
@@ -236,7 +225,7 @@ PKG_DATA_PROVIDE='baldurs-gate-1-enhanced-edition-l10n'
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -247,8 +236,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -269,101 +258,81 @@ set_temp_directories $PACKAGES_LIST
 
 # Load icons archive if available
 
-ARCHIVE_MAIN="$ARCHIVE"
-archive_set 'ARCHIVE_ICONS' 'ARCHIVE_OPTIONAL_ICONS'
-ARCHIVE="$ARCHIVE_MAIN"
+ARCHIVE_OPTIONAL_ICONS='baldurs-gate-1-enhanced-edition_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/baldurs-gate-1-enhanced-edition/'
+ARCHIVE_OPTIONAL_ICONS_MD5='58401cf80bc9f1a9e9a0896f5d74b02a'
 
-# Ensure availability of 32-bit libssl.so.1.0.0
+ARCHIVE_ICONS_PATH='.'
+ARCHIVE_ICONS_FILES='16x16 24x42 32x32 48x48 64x64 256x256'
 
+archive_initialize_optional \
+	'ARCHIVE_ICONS' \
+	'ARCHIVE_OPTIONAL_ICONS'
+if [ -z "$ARCHIVE_ICONS" ]; then
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼarchive suivante nʼayant pas été fournie, lʼicône spécifique à GOG sera utilisée au lieu de lʼicône originale : %s\n'
+			message="$message"'Cette archive peut être téléchargée depuis %s\n'
+		;;
+		('en'|*)
+			message='Due to the following archive missing, the GOG-specific icon will be used instead of the original one: %s\n'
+			message="$message"'This archive can be downloaded from %s\n'
+		;;
+	esac
+	print_warning
+	printf "$message" "$ARCHIVE_OPTIONAL_ICONS" "$ARCHIVE_OPTIONAL_ICONS_URL"
+	printf '\n'
+fi
+
+# Ensure availability of libSSL 1.0.0 (32-bit)
+
+PKG='PKG_BIN32'
 case "$OPTION_PACKAGE" in
-	('arch')
+	('arch'|'gentoo')
 		# Use package from official repositories
-		PKG_BIN32_DEPS_ARCH="$PKG_BIN32_DEPS_ARCH lib32-openssl-1.0"
+		PKG_BIN32_DEPS_ARCH="${PKG_BIN32_DEPS_ARCH} lib32-openssl-1.0"
+		PKG_BIN32_DEPS_GENTOO="${PKG_BIN32_DEPS_GENTOO} dev-libs/openssl-compat[abi_x86_32]"
 	;;
 	('deb')
 		# Use archive provided by ./play.it
 		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
 		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
 		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
-		ARCHIVE_MAIN="$ARCHIVE"
-		set_archive 'ARCHIVE_LIBSSL32' 'ARCHIVE_OPTIONAL_LIBSSL32'
-		if [ "$ARCHIVE_LIBSSL32" ]; then
-			extract_data_from "$ARCHIVE_LIBSSL32"
-			mkdir --parents "${PKG_BIN32_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-			mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-			rm --recursive "$PLAYIT_WORKDIR/gamedata"
-		else
-			case "${LANG%_*}" in
-				('fr')
-					message='Lʼarchive suivante nʼayant pas été fournie, libssl.so.1.0.0 ne sera pas inclus dans les paquets : %s\n'
-					message="$message"'Cette archive peut être téléchargée depuis %s\n'
-				;;
-				('en'|*)
-					message='Due to the following archive missing, the packages will not include libssl.so.1.0.0: %s\n'
-					message="$message"'This archive can be downloaded from %s\n'
-				;;
-			esac
-			print_warning
-			printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL32" "$ARCHIVE_OPTIONAL_LIBSSL32_URL"
-			printf '\n'
-		fi
-		ARCHIVE="$ARCHIVE_MAIN"
-	;;
-	('gentoo')
-		# Use package from official repositories
-		PKG_BIN32_DEPS_GENTOO="$PKG_BIN32_DEPS_GENTOO dev-libs/openssl-compat[abi_x86_32]"
-	;;
-	(*)
-		# Unsupported package type, throw an error
-		liberror 'OPTION_PACKAGE' "$0"
+		ARCHIVE_LIBSSL32_PATH='.'
+		ARCHIVE_LIBSSL32_FILES='*'
+		archive_initialize_required \
+			'ARCHIVE_LIBSSL32' \
+			'ARCHIVE_OPTIONAL_LIBSSL32'
+		extract_data_from "$ARCHIVE_LIBSSL32"
+		organize_data 'LIBSSL32' "${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+		rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 	;;
 esac
 
-# Ensure availability of 64-bit libssl.so.1.0.0
-# This library is not required for the older archives only providing 32-bit binaries
+# Ensure availability of libSSL 1.0.0 (64-bit)
+# This library is not required for the older archives providing 32-bit only binaries
 
-if [ -z "${PACKAGES_LIST##*PKG_BIN64*}" ]; then
+PKG='PKG_BIN64'
+if packages_get_list | grep --quiet "$PKG"; then
 	case "$OPTION_PACKAGE" in
-		('arch')
+		('arch'|'gentoo')
 			# Use package from official repositories
-			PKG_BIN64_DEPS_ARCH="$PKG_BIN64_DEPS_ARCH openssl-1.0"
+			PKG_BIN64_DEPS_ARCH="${PKG_BIN64_DEPS_ARCH} openssl-1.0"
+			PKG_BIN64_DEPS_GENTOO="${PKG_BIN64_DEPS_GENTOO} dev-libs/openssl-compat"
 		;;
 		('deb')
 			# Use archive provided by ./play.it
 			ARCHIVE_OPTIONAL_LIBSSL64='libssl_1.0.0_64-bit.tar.gz'
 			ARCHIVE_OPTIONAL_LIBSSL64_URL='https://downloads.dotslashplay.it/resources/libssl/'
 			ARCHIVE_OPTIONAL_LIBSSL64_MD5='89917bef5dd34a2865cb63c2287e0bd4'
-			ARCHIVE_MAIN="$ARCHIVE"
-			set_archive 'ARCHIVE_LIBSSL64' 'ARCHIVE_OPTIONAL_LIBSSL64'
-			if [ "$ARCHIVE_LIBSSL64" ]; then
-				extract_data_from "$ARCHIVE_LIBSSL64"
-				mkdir --parents "${PKG_BIN64_PATH}${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-				mv "$PLAYIT_WORKDIR"/gamedata/* "${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_LIBS"
-				rm --recursive "$PLAYIT_WORKDIR/gamedata"
-			else
-				case "${LANG%_*}" in
-					('fr')
-						message='Lʼarchive suivante nʼayant pas été fournie, libssl.so.1.0.0 ne sera pas inclus dans les paquets : %s\n'
-						message="$message"'Cette archive peut être téléchargée depuis %s\n'
-					;;
-					('en'|*)
-						message='Due to the following archive missing, the packages will not include libssl.so.1.0.0: %s\n'
-						message="$message"'This archive can be downloaded from %s\n'
-					;;
-				esac
-				print_warning
-				printf "$message" "$ARCHIVE_OPTIONAL_LIBSSL64" "$ARCHIVE_OPTIONAL_LIBSSL64_URL"
-				printf '\n'
-			fi
-			ARCHIVE="$ARCHIVE_MAIN"
-		;;
-		('gentoo')
-			# Use package from official repositories
-			PKG_BIN64_DEPS_GENTOO="$PKG_BIN64_DEPS_GENTOO dev-libs/openssl-compat"
-		;;
-		(*)
-			# Unsupported package type, throw an error
-			liberror 'OPTION_PACKAGE' "$0"
+			ARCHIVE_LIBSSL64_PATH='.'
+			ARCHIVE_LIBSSL64_FILES='*'
+			archive_initialize_required \
+				'ARCHIVE_LIBSSL64' \
+				'ARCHIVE_OPTIONAL_LIBSSL64'
+			extract_data_from "$ARCHIVE_LIBSSL64"
+			organize_data 'LIBSSL64' "${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+			rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 		;;
 	esac
 fi
@@ -373,82 +342,88 @@ fi
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 
-# Get icons
+# Use original game icon if provided,
+# falls back on GOG-provided icon.
 
 PKG='PKG_DATA'
-if [ "$ARCHIVE_ICONS" ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	ARCHIVE='ARCHIVE_ICONS'
-	extract_data_from "$ARCHIVE_ICONS"
-	ARCHIVE="$ARCHIVE_MAIN"
+if [ -n "$ARCHIVE_ICONS" ]; then
+	(
+		ARCHIVE='ARCHIVE_ICONS'
+		extract_data_from "$ARCHIVE_ICONS"
+	)
 	organize_data 'ICONS' "$PATH_ICON_BASE"
 else
 	icons_get_from_workdir 'APP_MAIN'
 fi
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-PKG='PKG_BIN32'
-launchers_write 'APP_MAIN'
-case "$ARCHIVE" in
-	('ARCHIVE_BASE_32BIT'*)
-		# No 64-bit binary provided
+for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
+	if packages_get_list | grep --quiet "$PKG"; then
+		launchers_write 'APP_MAIN'
+	fi
+done
+
+# Old 32-bit only binaries depend on libjson.so.0
+
+PKG_BIN32_DEPS_32BIT="${PKG_BIN32_DEPS} json"
+case "$OPTION_PACKAGE" in
+	('arch'|'gentoo'|'egentoo')
+		SYSTEM_LIB32_PATH='/usr/lib32'
+	;;
+	('deb')
+		SYSTEM_LIB32_PATH='/lib/i386-linux-gnu'
 	;;
 	(*)
-		PKG='PKG_BIN64'
-		launchers_write 'APP_MAIN'
+		# Unsupported package type, throw an error
+		error_invalid_argument 'OPTION_PACKAGE' "$0"
 	;;
 esac
+LIBRARY_GAME_DIR="${PATH_GAME}/${APP_MAIN_LIBS=:libs}"
+LIBRARY_GAME_FILE="${LIBRARY_GAME_FILE}/libjson.so.0"
+# shellcheck disable=SC1004
+PKG_BIN32_POSTINST_RUN_32BIT="$PKG_BIN32_POSTINST_RUN
+
+# The game engine expects 32-bit libjson.so.0 to be available
+SYSTEM_LIB32_PATH='$SYSTEM_LIB32_PATH'
+LIBRARY_GAME_DIR='$LIBRARY_GAME_DIR'
+LIBRARY_GAME_FILE='$LIBRARY_GAME_FILE'"'
+if \
+    [ ! -e "${SYSTEM_LIB32_PATH}/libjson.so.0" ] && \
+    [ ! -e "$LIBRARY_GAME_FILE" ]
+then
+    for library_file in \
+        libjson-c.so \
+        libjson-c.so.2 \
+        libjson-c.so.3
+    do
+        if [ -e "${SYSTEM_LIB32_PATH}/${library_file}" ]; then
+			mkdir --parents "$LIBRARY_GAME_DIR"
+            ln --symbolic "${SYSTEM_LIB32_PATH}/${library_file}" "$LIBRARY_GAME_FILE"
+            break
+        fi
+    done
+fi'
+PKG_BIN32_PRERM_RUN_32BIT="$PKG_BIN32_PRERM_RUN
+
+# The game engine expects 32-bit libjson.so.0 to be available
+LIBRARY_GAME_DIR='$LIBRARY_GAME_DIR'
+LIBRARY_GAME_FILE='$LIBRARY_GAME_FILE'"'
+if [ -e "$LIBRARY_GAME_FILE" ]; then
+	rm "$LIBRARY_GAME_FILE"
+	rmdir --parents --ignore-fail-on-non-empty "$LIBRARY_GAME_DIR"
+fi'
+use_archive_specific_value 'PKG_BIN32_DEPS'
+use_archive_specific_value 'PKG_BIN32_POSTINST_RUN'
+use_archive_specific_value 'PKG_BIN32_PRERM_RUN'
 
 # Build package
 
-case "$ARCHIVE" in
-	('ARCHIVE_BASE_32BIT'*)
-		# Old 32-bit version depends on libjson.so.0
-		PKG_BIN32_DEPS="$PKG_BIN32_DEPS json"
-		case "$OPTION_PACKAGE" in
-			('arch'|'gentoo')
-				LIB_PATH='/usr/lib32'
-			;;
-			('deb')
-				LIB_PATH='/lib/i386-linux-gnu'
-			;;
-			(*)
-				# Unsupported package type, throw an error
-				liberror 'OPTION_PACKAGE' "$0"
-			;;
-		esac
-		cat > "$postinst" <<- EOF
-		if \
-		    [ ! -e "$LIB_PATH/libjson.so.0" ] && \
-		    [ ! -e "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0" ]
-		then
-		    for file in \
-		        libjson-c.so \
-		        libjson-c.so.2 \
-		        libjson-c.so.3
-		    do
-		        if [ -e "$LIB_PATH/\$file" ] ; then
-		            mkdir --parents "$PATH_GAME/${APP_MAIN_LIBS:=libs}"
-		            ln --symbolic "$LIB_PATH/\$file" "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
-		            break
-		        fi
-		    done
-		fi
-		EOF
-		cat > "$prerm" <<- EOF
-		if [ -e "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0" ]; then
-		    rm "$PATH_GAME/$APP_MAIN_LIBS/libjson.so.0"
-		fi
-		EOF
-		write_metadata 'PKG_BIN32'
-		write_metadata 'PKG_L10N_CS' 'PKG_L10N_DE' 'PKG_L10N_ES' 'PKG_L10N_FR' 'PKG_L10N_HU' 'PKG_L10N_IT' 'PKG_L10N_JA' 'PKG_L10N_KO' 'PKG_L10N_PL' 'PKG_L10N_PT' 'PKG_L10N_RU' 'PKG_L10N_TR' 'PKG_L10N_UK' 'PKG_L10N_ZH' 'PKG_DATA'
-	;;
-	(*)
-		write_metadata
-	;;
-esac
+write_metadata
 build_pkg
 
 # Clean up
@@ -496,49 +471,34 @@ case "${LANG%_*}" in
 	;;
 esac
 printf '\n'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_en"
 print_instructions 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_cs"
 print_instructions 'PKG_L10N_CS' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_de"
 print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_es"
 print_instructions 'PKG_L10N_ES' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_fr"
 print_instructions 'PKG_L10N_FR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_hu"
 print_instructions 'PKG_L10N_HU' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_it"
 print_instructions 'PKG_L10N_IT' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_ja"
 print_instructions 'PKG_L10N_JA' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_ko"
 print_instructions 'PKG_L10N_KO' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_pl"
 print_instructions 'PKG_L10N_PL' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_pt"
 print_instructions 'PKG_L10N_PT' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_ru"
 print_instructions 'PKG_L10N_RU' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_tr"
 print_instructions 'PKG_L10N_TR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_uk"
 print_instructions 'PKG_L10N_UK' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
-# shellcheck disable=SC2059
 printf "$lang_string" "$lang_zh"
 print_instructions 'PKG_L10N_ZH' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
 
