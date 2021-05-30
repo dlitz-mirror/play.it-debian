@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210615.1
+script_version=20210615.2
 
 # Set game-specific variables
 
@@ -204,10 +204,17 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx openal libxrandr alsa xcursor"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libxrandr xcursor libopenal.so.1 libX11.so.6 libasound.so.2"
+PKG_BIN32_DEPS_ARCH='lib32-expat'
+PKG_BIN32_DEPS_DEB='libexpat1'
+PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
+
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='expat'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
 
 # Keep compatibility with old archives
 
