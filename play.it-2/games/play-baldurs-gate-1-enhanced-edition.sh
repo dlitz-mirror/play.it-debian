@@ -35,19 +35,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210615.2
+script_version=20210615.6
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-1-enhanced-edition'
 GAME_NAME='Baldurʼs Gate - Enhanced Edition'
 
-ARCHIVE_BASE_0='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
-ARCHIVE_BASE_0_MD5='853f6e66db6cc5a4df0f72d23d65fcf7'
+ARCHIVE_BASE_1='baldur_s_gate_enhanced_edition_2_6_6_0_47291.sh'
+ARCHIVE_BASE_1_MD5='6f7be163ebb80a0fbc9d6331f9c6f09c'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='3300000'
+ARCHIVE_BASE_1_VERSION='2.6.6.0-gog47291'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
+
+ARCHIVE_BASE_0='baldur_s_gate_enhanced_edition_2_6_5_0_46477.sh'
+ARCHIVE_BASE_0_MD5='a87444f36602b5059e3c885ec2ff50e1'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='3300000'
-ARCHIVE_BASE_0_VERSION='2.5.17.0-gog23121'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/baldurs_gate_enhanced_edition'
+ARCHIVE_BASE_0_VERSION='2.6.5.0-gog46477'
+
+ARCHIVE_BASE_MULTIARCH_0='baldur_s_gate_enhanced_edition_en_2_5_23121.sh'
+ARCHIVE_BASE_MULTIARCH_0_MD5='853f6e66db6cc5a4df0f72d23d65fcf7'
+ARCHIVE_BASE_MULTIARCH_0_TYPE='mojosetup'
+ARCHIVE_BASE_MULTIARCH_0_SIZE='3300000'
+ARCHIVE_BASE_MULTIARCH_0_VERSION='2.5.17.0-gog23121'
 
 ARCHIVE_BASE_32BIT_2='baldur_s_gate_enhanced_edition_en_2_3_67_3_20146.sh'
 ARCHIVE_BASE_32BIT_2_MD5='4d08fe21fcdeab51624fa2e0de2f5813'
@@ -70,11 +82,8 @@ ARCHIVE_BASE_32BIT_0_VERSION='2.3.67.3-gog2.5.0.7'
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='BaldursGate'
-
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='BaldursGate64'
+ARCHIVE_GAME_BIN64_FILES='BaldursGate'
 
 ARCHIVE_GAME_L10N_CS_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_CS_FILES='lang/cs_CZ'
@@ -122,11 +131,11 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='movies music chitin.key Manuals scripts data engine.lua lang/en_US'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='BaldursGate'
-APP_MAIN_EXE_BIN64='BaldursGate64'
+APP_MAIN_EXE='BaldursGate'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+PACKAGES_LIST_COMMON='PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+PACKAGES_LIST="PKG_BIN64 ${PACKAGES_LIST_COMMON}"
 
 PKG_L10N_ID="${GAME_ID}-l10n-extra"
 
@@ -203,22 +212,41 @@ PKG_L10N_ZH_DEPS="$GAME_ID"
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libxrandr xcursor libopenal.so.1 libX11.so.6 libasound.so.2"
-PKG_BIN32_DEPS_ARCH='lib32-expat'
-PKG_BIN32_DEPS_DEB='libexpat1'
-PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
-
-
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libxrandr xcursor libopenal.so.1 libasound.so.2"
 PKG_BIN64_DEPS_ARCH='expat'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_DEB='libexpat1'
 PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
 
 # Keep compatibility with old archives
 
-PACKAGES_LIST_32BIT='PKG_BIN32 PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_HU PKG_L10N_IT PKG_L10N_JA PKG_L10N_KO PKG_L10N_PL PKG_L10N_PT PKG_L10N_RU PKG_L10N_TR PKG_L10N_UK PKG_L10N_ZH PKG_DATA'
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='BaldursGate'
+
+PKG_BIN32_ARCH='32'
+PKG_BIN32_DEPS="$PKG_BIN64_DEPS"
+PKG_BIN32_DEPS_ARCH='lib32-expat'
+PKG_BIN32_DEPS_DEB="$PKG_BIN64_DEPS_DEB"
+PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
+
+APP_MAIN_EXE_BIN32='BaldursGate'
+
+## 64-bit + 32-bit
+
+ARCHIVE_GAME_BIN64_FILES_MULTIARCH='BaldursGate64'
+
+APP_MAIN_EXE_BIN64_MULTIARCH='BaldursGate64'
+
+PACKAGES_LIST_MULTIARCH="PKG_BIN32 PKG_BIN64 ${PACKAGES_LIST_COMMON}"
+
+PKG_BIN32_DEPS_MULTIARCH="${PKG_BIN32_DEPS} libX11.so.6"
+PKG_BIN64_DEPS_MULTIARCH="${PKG_BIN64_DEPS} libX11.so.6"
+
+## 32-bit only
+
+PACKAGES_LIST_32BIT="PKG_BIN32 ${PACKAGES_LIST_COMMON}"
+
+PKG_BIN32_DEPS_32BIT="${PKG_BIN32_DEPS} libX11.so.6"
 
 # Easier upgrade from packages generated with pre-20180926.3 scripts
 
@@ -294,30 +322,31 @@ fi
 # Ensure availability of libSSL 1.0.0 (32-bit)
 
 PKG='PKG_BIN32'
-case "$OPTION_PACKAGE" in
-	('arch'|'gentoo')
-		# Use package from official repositories
-		PKG_BIN32_DEPS_ARCH="${PKG_BIN32_DEPS_ARCH} lib32-openssl-1.0"
-		PKG_BIN32_DEPS_GENTOO="${PKG_BIN32_DEPS_GENTOO} dev-libs/openssl-compat[abi_x86_32]"
-	;;
-	('deb')
-		# Use archive provided by ./play.it
-		ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
-		ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
-		ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
-		ARCHIVE_LIBSSL32_PATH='.'
-		ARCHIVE_LIBSSL32_FILES='*'
-		archive_initialize_required \
-			'ARCHIVE_LIBSSL32' \
-			'ARCHIVE_OPTIONAL_LIBSSL32'
-		extract_data_from "$ARCHIVE_LIBSSL32"
-		organize_data 'LIBSSL32' "${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
-		rm --recursive "${PLAYIT_WORKDIR}/gamedata"
-	;;
-esac
+if packages_get_list | grep --quiet "$PKG"; then
+	case "$OPTION_PACKAGE" in
+		('arch'|'gentoo')
+			# Use package from official repositories
+			PKG_BIN32_DEPS_ARCH="${PKG_BIN32_DEPS_ARCH} lib32-openssl-1.0"
+			PKG_BIN32_DEPS_GENTOO="${PKG_BIN32_DEPS_GENTOO} dev-libs/openssl-compat[abi_x86_32]"
+		;;
+		('deb')
+			# Use archive provided by ./play.it
+			ARCHIVE_OPTIONAL_LIBSSL32='libssl_1.0.0_32-bit.tar.gz'
+			ARCHIVE_OPTIONAL_LIBSSL32_URL='https://downloads.dotslashplay.it/resources/libssl/'
+			ARCHIVE_OPTIONAL_LIBSSL32_MD5='9443cad4a640b2512920495eaf7582c4'
+			ARCHIVE_LIBSSL32_PATH='.'
+			ARCHIVE_LIBSSL32_FILES='*'
+			archive_initialize_required \
+				'ARCHIVE_LIBSSL32' \
+				'ARCHIVE_OPTIONAL_LIBSSL32'
+			extract_data_from "$ARCHIVE_LIBSSL32"
+			organize_data 'LIBSSL32' "${PATH_GAME}/${APP_MAIN_LIBS:=libs}"
+			rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+		;;
+	esac
+fi
 
 # Ensure availability of libSSL 1.0.0 (64-bit)
-# This library is not required for the older archives providing 32-bit only binaries
 
 PKG='PKG_BIN64'
 if packages_get_list | grep --quiet "$PKG"; then
@@ -371,6 +400,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	if packages_get_list | grep --quiet "$PKG"; then
+		use_archive_specific_value "APP_MAIN_EXE_${PKG#PKG_}"
 		launchers_write 'APP_MAIN'
 	fi
 done
@@ -439,6 +469,10 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
+COMMON_PACKAGES='PKG_DATA PKG_BIN64'
+COMMON_PACKAGES_MULTIARCH='PKG_DATA PKG_BIN32 PKG_BIN64'
+COMMON_PACKAGES_32BIT='PKG_DATA PKG_BIN32'
+use_archive_specific_value 'COMMON_PACKAGES'
 case "${LANG%_*}" in
 	('fr')
 		lang_string='version %s :'
@@ -479,34 +513,49 @@ case "${LANG%_*}" in
 esac
 printf '\n'
 printf "$lang_string" "$lang_en"
-print_instructions 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions $COMMON_PACKAGES
 printf "$lang_string" "$lang_cs"
-print_instructions 'PKG_L10N_CS' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_CS' $COMMON_PACKAGES
 printf "$lang_string" "$lang_de"
-print_instructions 'PKG_L10N_DE' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_DE' $COMMON_PACKAGES
 printf "$lang_string" "$lang_es"
-print_instructions 'PKG_L10N_ES' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_ES' $COMMON_PACKAGES
 printf "$lang_string" "$lang_fr"
-print_instructions 'PKG_L10N_FR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_FR' $COMMON_PACKAGES
 printf "$lang_string" "$lang_hu"
-print_instructions 'PKG_L10N_HU' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_HU' $COMMON_PACKAGES
 printf "$lang_string" "$lang_it"
-print_instructions 'PKG_L10N_IT' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_IT' $COMMON_PACKAGES
 printf "$lang_string" "$lang_ja"
-print_instructions 'PKG_L10N_JA' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_JA' $COMMON_PACKAGES
 printf "$lang_string" "$lang_ko"
-print_instructions 'PKG_L10N_KO' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_KO' $COMMON_PACKAGES
 printf "$lang_string" "$lang_pl"
-print_instructions 'PKG_L10N_PL' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_PL' $COMMON_PACKAGES
 printf "$lang_string" "$lang_pt"
-print_instructions 'PKG_L10N_PT' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_PT' $COMMON_PACKAGES
 printf "$lang_string" "$lang_ru"
-print_instructions 'PKG_L10N_RU' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_RU' $COMMON_PACKAGES
 printf "$lang_string" "$lang_tr"
-print_instructions 'PKG_L10N_TR' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_TR' $COMMON_PACKAGES
 printf "$lang_string" "$lang_uk"
-print_instructions 'PKG_L10N_UK' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_UK' $COMMON_PACKAGES
 printf "$lang_string" "$lang_zh"
-print_instructions 'PKG_L10N_ZH' 'PKG_DATA' 'PKG_BIN32' 'PKG_BIN64'
+# shellcheck disable=SC2086
+print_instructions 'PKG_L10N_ZH' $COMMON_PACKAGES
 
 exit 0
