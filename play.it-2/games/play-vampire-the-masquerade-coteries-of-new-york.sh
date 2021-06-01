@@ -35,19 +35,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.7
+script_version=20210520.1
 
 # Set game-specific variables
 
 GAME_ID='vampire-the-masquerade-coteries-of-new-york'
 GAME_NAME='Vampire: The Masquerade - Coteries of New York'
 
+ARCHIVE_BASE_1='vampire_the_masquerade_coteries_of_new_york_1_0_9_45543.sh'
+ARCHIVE_BASE_1_MD5='6310c15fabd1768d00faa57f83f2de5e'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='3300000'
+ARCHIVE_BASE_1_VERSION='1.0.9-gog45543'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/vampire_the_masquerade_coteries_of_new_york'
+
 ARCHIVE_BASE_0='vampire_the_masquerade_coteries_of_new_york_1_0_7_40980.sh'
 ARCHIVE_BASE_0_MD5='146113ea6b7295104413d8ce2b1fbf4e'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='3200000'
 ARCHIVE_BASE_0_VERSION='1.0.7-gog40980'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/vampire_the_masquerade_coteries_of_new_york'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='VtM?Coteries?of?New?York.x86_64 VtM?Coteries?of?New?York_Data/MonoBleedingEdge VtM?Coteries?of?New?York_Data/Plugins UnityPlayer.so'
