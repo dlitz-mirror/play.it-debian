@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210524.1
+script_version=20210602.1
 
 # Set game-specific variables
 
@@ -192,6 +192,7 @@ use_archive_specific_value 'APPS_LIST'
 # Get game icons
 
 PKG='PKG_BIN'
+# shellcheck disable=SC2086
 icons_get_from_package $APPS_LIST
 icons_move_to 'PKG_DATA'
 
@@ -202,6 +203,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 # Write launchers
 
 PKG='PKG_BIN'
+# shellcheck disable=SC2086
 launchers_write $APPS_LIST
 
 # Build package
