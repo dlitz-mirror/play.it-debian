@@ -34,19 +34,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.3
+script_version=20210520.1
 
 # Set game-specific variables
 
 GAME_ID='opus-magnum'
 GAME_NAME='Opus Magnum'
 
+ARCHIVE_BASE_1='opus_magnum_11_14_2020_43144.sh'
+ARCHIVE_BASE_1_MD5='2defb1198c5a5778eb9ac20ff201f086'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='520000'
+ARCHIVE_BASE_1_VERSION='2020.11.14-gog43144'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/opus_magnum'
+
 ARCHIVE_BASE_0='opus_magnum_en_17_08_2018_update_23270.sh'
 ARCHIVE_BASE_0_MD5='dbe5137d4b7e2edd21f4117a80756872'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='460000'
 ARCHIVE_BASE_0_VERSION='2018.08.17-gog23270'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/opus_magnum'
 
 ARCHIVE_DOC_MAIN_PATH='data/noarch/game'
 ARCHIVE_DOC_MAIN_FILES='*.txt'

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201120.1
+script_version=20210529.1
 
 # Set game-specific variables
 
@@ -44,15 +44,12 @@ GAME_NAME='Stellaris'
 EXPANSION_ID='federations'
 EXPANSION_NAME='Federations'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='stellaris_federations_2_7_1_38218.sh'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/stellaris_federations'
-ARCHIVE_GOG_0_MD5='371a88b8771ed4c58144a00494285c46'
-ARCHIVE_GOG_0_SIZE='15000'
-ARCHIVE_GOG_0_VERSION='2.7.1-gog38218'
-ARCHIVE_GOG_0_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_0='stellaris_federations_2_7_1_38218.sh'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/stellaris_federations'
+ARCHIVE_BASE_0_MD5='371a88b8771ed4c58144a00494285c46'
+ARCHIVE_BASE_0_SIZE='15000'
+ARCHIVE_BASE_0_VERSION='2.7.1-gog38218'
+ARCHIVE_BASE_0_TYPE='mojosetup_unzip'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
 ARCHIVE_GAME_MAIN_FILES='dlc/dlc023_federations'
@@ -65,7 +62,7 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -76,8 +73,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done

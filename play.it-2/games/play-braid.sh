@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,48 +31,43 @@ set -o errexit
 
 ###
 # Braid
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210515.1
 
 # Set game-specific variables
 
 GAME_ID='braid'
 GAME_NAME='Braid'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
+ARCHIVE_BASE_1='gog_braid_2.0.0.3.sh'
+ARCHIVE_BASE_1_MD5='0d60f92ed8d1c72afb11c217cc907264'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='170000'
+ARCHIVE_BASE_1_VERSION='2015.06.11-gog2.0.0.3'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/braid'
 
-ARCHIVE_GOG='gog_braid_2.0.0.3.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/braid'
-ARCHIVE_GOG_MD5='0d60f92ed8d1c72afb11c217cc907264'
-ARCHIVE_GOG_SIZE='170000'
-ARCHIVE_GOG_VERSION='2015.06.11-gog2.0.0.3'
+ARCHIVE_BASE_0='gog_braid_2.0.0.2.sh'
+ARCHIVE_BASE_0_MD5='22bac5c37b44916fea3e23092706d55d'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='170000'
+ARCHIVE_BASE_0_VERSION='2015.06.11-gog2.0.0.2'
 
-ARCHIVE_GOG_OLD='gog_braid_2.0.0.2.sh'
-ARCHIVE_GOG_OLD_MD5='22bac5c37b44916fea3e23092706d55d'
-ARCHIVE_GOG_OLD_SIZE='170000'
-ARCHIVE_GOG_OLD_VERSION='2015.06.11-gog2.0.0.2'
-
-ARCHIVE_DOC1_PATH='data/noarch/docs'
-ARCHIVE_DOC1_FILES='./*'
-
-ARCHIVE_DOC2_PATH='data/noarch/game'
-ARCHIVE_DOC2_FILES='./*.txt ./licenses'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC_DATA_FILES='*.txt licenses'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='./*.x86 ./lib/libCg*.so ./lib/libfltk.so.1.3'
+ARCHIVE_GAME_BIN_FILES='Braid.bin.x86 lib/libCg.so lib/libCgGL.so'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='./data ./Icon.png'
+ARCHIVE_GAME_DATA_FILES='data Icon.png'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_LIBS='lib'
 APP_MAIN_EXE='Braid.bin.x86'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
 APP_MAIN_ICON='Icon.png'
-APP_MAIN_ICON_RES='256'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -79,25 +75,23 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS_DEB="$PKG_DATA_ID, libc6, libstdc++6, libsdl2-2.0-0, libgl1-mesa-glx | libgl1, libxft2"
-PKG_BIN_DEPS_ARCH="$PKG_DATA_ID lib32-sdl2 lib32-libgl lib32-glibc lib32-libxcursor lib32-libxft lib32-libxinerama"
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libSDL2-2.0.so.0"
 
 # Load common functions
 
-target_version='2.3'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -107,35 +101,31 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-PKG='PKG_BIN'
-organize_data 'GAME_BIN' "$PATH_GAME"
+# Include game icon
 
 PKG='PKG_DATA'
-organize_data 'DOC1'      "$PATH_DOC"
-organize_data 'DOC2'      "$PATH_DOC"
-organize_data 'GAME_DATA' "$PATH_GAME"
+icons_get_from_package 'APP_MAIN'
 
-chmod 755 "${PKG_BIN_PATH}${PATH_GAME}/launcher.bin.x86"
+# Clean up temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up

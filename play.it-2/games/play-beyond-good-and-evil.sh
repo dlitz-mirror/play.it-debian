@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210511.13
+script_version=20210520.1
 
 # Set game-specific variables
 
@@ -184,6 +184,16 @@ if [ ! -e \"\$SETTINGS_REGISTRY_DUMP\" ]; then
 	$SETTINGS_CMD
 	exit 0
 fi"
+
+# Hide EAX library from the game
+# This helps avoiding some sound issues
+# The library should still be available to the settings application
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Hide EAX library from the game
+# This helps avoiding some sound issues
+rm --force eax.dll'
 
 # Write launchers
 
