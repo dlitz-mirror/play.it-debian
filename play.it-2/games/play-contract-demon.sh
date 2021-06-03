@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210603.13
+script_version=20210603.14
 
 # Set game-specific variables
 
@@ -49,7 +49,7 @@ ARCHIVE_BASE_0_VERSION='1.7.1-itch'
 ARCHIVE_BASE_0_URL='https://nomnomnami.itch.io/contract-demon'
 
 ARCHIVE_GAME_BIN32_PATH='contractdemon-1.7.1-pc'
-ARCHIVE_GAME_BIN32_FILES='lib/linux-i686 contractdemon.sh'
+ARCHIVE_GAME_BIN32_FILES='lib/linux-i686'
 
 ARCHIVE_GAME_BIN64_PATH='contractdemon-1.7.1-pc'
 ARCHIVE_GAME_BIN64_FILES='lib/linux-x86_64'
@@ -58,7 +58,8 @@ ARCHIVE_GAME_DATA_PATH='contractdemon-1.7.1-pc'
 ARCHIVE_GAME_DATA_FILES='lib/pythonlib2.7 game contractdemon.py renpy'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE='contractdemon.sh'
+APP_MAIN_EXE_BIN32='lib/linux-i686/contractdemon'
+APP_MAIN_EXE_BIN64='lib/linux-x86_64/contractdemon'
 APP_MAIN_ICON='contractdemon-1.7.1-pc/contractdemon.exe'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
@@ -103,13 +104,6 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-
-# Copy launching script between the binaries packages
-
-LAUNCHER_SOURCE="${PKG_BIN32_PATH}${PATH_GAME}/${APP_MAIN_EXE}"
-LAUNCHER_DESTINATION="${PKG_BIN64_PATH}${PATH_GAME}/${APP_MAIN_EXE}"
-mkdir --parents "$(dirname "$LAUNCHER_DESTINATION")"
-cp "$LAUNCHER_SOURCE" "$LAUNCHER_DESTINATION"
 
 # Get icon
 
