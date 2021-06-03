@@ -35,32 +35,37 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210603.15
+script_version=20210603.16
 
 # Set game-specific variables
 
 GAME_ID='contract-demon'
 GAME_NAME='Contract Demon'
 
+ARCHIVE_BASE_1='contractdemon-1.8.0-pc.zip'
+ARCHIVE_BASE_1_MD5='269db9bdbf6f40c7362814de7c8f46da'
+ARCHIVE_BASE_1_SIZE='200000'
+ARCHIVE_BASE_1_VERSION='1.8.0-itch.2021.05.08'
+ARCHIVE_BASE_1_URL='https://nomnomnami.itch.io/contract-demon'
+
 ARCHIVE_BASE_0='contractdemon-1.7.1-pc.zip'
 ARCHIVE_BASE_0_MD5='81de84b69550eae7ae13e019a4aec3bf'
 ARCHIVE_BASE_0_SIZE='150000'
 ARCHIVE_BASE_0_VERSION='1.7.1-itch'
-ARCHIVE_BASE_0_URL='https://nomnomnami.itch.io/contract-demon'
 
-ARCHIVE_GAME_BIN32_PATH='contractdemon-1.7.1-pc'
+ARCHIVE_GAME_BIN32_PATH='contractdemon-1.8.0-pc'
 ARCHIVE_GAME_BIN32_FILES='lib/linux-i686'
 
-ARCHIVE_GAME_BIN64_PATH='contractdemon-1.7.1-pc'
+ARCHIVE_GAME_BIN64_PATH='contractdemon-1.8.0-pc'
 ARCHIVE_GAME_BIN64_FILES='lib/linux-x86_64'
 
-ARCHIVE_GAME_DATA_PATH='contractdemon-1.7.1-pc'
-ARCHIVE_GAME_DATA_FILES='lib/pythonlib2.7 game contractdemon.py renpy'
+ARCHIVE_GAME_DATA_PATH='contractdemon-1.8.0-pc'
+ARCHIVE_GAME_DATA_FILES='lib/python2.7 game contractdemon.py renpy'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='lib/linux-i686/contractdemon'
 APP_MAIN_EXE_BIN64='lib/linux-x86_64/contractdemon'
-APP_MAIN_ICON='contractdemon-1.7.1-pc/contractdemon.exe'
+APP_MAIN_ICON='contractdemon-1.8.0-pc/contractdemon.exe'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -72,6 +77,14 @@ PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+
+# Provide support for old archives
+
+ARCHIVE_GAME_BIN32_PATH_0='contractdemon-1.7.1-pc'
+ARCHIVE_GAME_BIN64_PATH_0='contractdemon-1.7.1-pc'
+ARCHIVE_GAME_DATA_PATH_0='contractdemon-1.7.1-pc'
+ARCHIVE_GAME_DATA_FILES_0="${ARCHIVE_GAME_DATA_FILES} lib/pythonlib2.7"
+APP_MAIN_ICON_0='contractdemon-1.7.1-pc/contractdemon.exe'
 
 # Load common functions
 
