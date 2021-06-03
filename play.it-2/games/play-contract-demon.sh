@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210603.2
+script_version=20210603.13
 
 # Set game-specific variables
 
@@ -56,8 +56,6 @@ ARCHIVE_GAME_BIN64_FILES='lib/linux-x86_64'
 
 ARCHIVE_GAME_DATA_PATH='contractdemon-1.7.1-pc'
 ARCHIVE_GAME_DATA_FILES='lib/pythonlib2.7 game contractdemon.py renpy'
-
-DATA_DIRS='game/saves'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE='contractdemon.sh'
