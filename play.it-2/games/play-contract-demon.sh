@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,22 +35,18 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201006.1
+script_version=20210603.2
 
 # Set game-specific variables
 
 GAME_ID='contract-demon'
 GAME_NAME='Contract Demon'
 
-ARCHIVES_LIST='
-ARCHIVE_ITCH_0'
-
-ARCHIVE_ITCH_0='contractdemon-1.7.1-pc.zip'
-ARCHIVE_ITCH_0_URL='https://nomnomnami.itch.io/contract-demon'
-ARCHIVE_ITCH_0_MD5='81de84b69550eae7ae13e019a4aec3bf'
-ARCHIVE_ITCH_0_SIZE='150000'
-ARCHIVE_ITCH_0_VERSION='1.7.1-itch'
-ARCHIVE_ITCH_0_TYPE='zip'
+ARCHIVE_BASE_0='contractdemon-1.7.1-pc.zip'
+ARCHIVE_BASE_0_MD5='81de84b69550eae7ae13e019a4aec3bf'
+ARCHIVE_BASE_0_SIZE='150000'
+ARCHIVE_BASE_0_VERSION='1.7.1-itch'
+ARCHIVE_BASE_0_URL='https://nomnomnami.itch.io/contract-demon'
 
 ARCHIVE_GAME_BIN32_PATH='contractdemon-1.7.1-pc'
 ARCHIVE_GAME_BIN32_FILES='lib/linux-i686 contractdemon.sh'
@@ -73,27 +69,26 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -113,8 +108,8 @@ prepare_package_layout
 
 # Copy launching script between the binaries packages
 
-LAUNCHER_SOURCE="${PKG_BIN32_PATH}${PATH_GAME}/$APP_MAIN_EXE"
-LAUNCHER_DESTINATION="${PKG_BIN64_PATH}${PATH_GAME}/$APP_MAIN_EXE"
+LAUNCHER_SOURCE="${PKG_BIN32_PATH}${PATH_GAME}/${APP_MAIN_EXE}"
+LAUNCHER_DESTINATION="${PKG_BIN64_PATH}${PATH_GAME}/${APP_MAIN_EXE}"
 mkdir --parents "$(dirname "$LAUNCHER_DESTINATION")"
 cp "$LAUNCHER_SOURCE" "$LAUNCHER_DESTINATION"
 
@@ -125,7 +120,7 @@ icons_get_from_workdir 'APP_MAIN'
 
 # Clean up temporary directories
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
