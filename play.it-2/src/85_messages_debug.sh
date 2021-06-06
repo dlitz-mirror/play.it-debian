@@ -126,6 +126,27 @@ debug_creating_directory() {
 	fi
 }
 
+# print the name of an used directory
+# USAGE: debug_using_directory $dir_path
+debug_using_directory() {
+	if [ "$DEBUG" -eq 0 ]; then
+		return 0
+	fi
+
+	# shecllcheck disable=SC2039
+	local dir_path
+	dir_path="$1"
+
+	if [ -z "$dir_path" ]; then
+		error_empty_string 'debug_using_directory' 'dir_path'
+		return 1
+	fi
+
+	print_debug >/dev/stderr
+	printf 'Using existing directory %s\n' "$dir_path" >/dev/stderr
+	return 0
+}
+
 # print the name of a source file found
 # USAGE: debug_source_file $filename $source_path $inner_path
 debug_source_file() {
@@ -234,3 +255,65 @@ debug_external_command() {
 	fi
 }
 
+# print the path of a non-existant temporary directory
+# USAGE: debug_temp_dir_nonexistant $directory
+debug_temp_dir_nonexistant() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_nonexistant' 'directory'
+		return 1
+	fi
+
+	print_debug >/dev/stderr
+	printf 'Skipping non-existant directory: %s\n' "$directory" >/dev/stderr
+	return 0
+}
+
+# print the path of a non-writable temporary directory
+# USAGE: debug_temp_dir_nonwritable $directory
+debug_temp_dir_nonwritable() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_nonwritable' 'directory'
+		return 1
+	fi
+
+	print_debug >/dev/stderr
+	printf 'Skipping non-writable directory: %s\n' "$directory" >/dev/stderr
+	return 0
+}
+
+# print the path of a too small temporary directory
+# USAGE: debug_temp_dir_not_enough_space $directory
+debug_temp_dir_not_enough_space() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_not_enough_space' 'directory'
+		return 1
+	fi
+
+	print_debug >/dev/stderr
+	printf 'Skipping too small directory: %s\n' "$directory" >/dev/stderr
+	return 0
+}
