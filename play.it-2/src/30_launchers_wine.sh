@@ -114,14 +114,16 @@ launcher_write_script_wine_prefix_build() {
 
 	cat >> "$file" <<- 'EOF'
 	fi
+
+	mkdir --parents \
+	    "$PATH_PREFIX" \
+	    "$PATH_CONFIG" \
+	    "$PATH_DATA"
 	EOF
 
+	launcher_write_script_prefix_prepare "$file"
+
 	cat >> "$file" <<- 'EOF'
-	for dir in "$PATH_PREFIX" "$PATH_CONFIG" "$PATH_DATA"; do
-	    if [ ! -e "$dir" ]; then
-	        mkdir --parents "$dir"
-	    fi
-	done
 	(
 	    cd "$PATH_GAME"
 	    find . -type d | while read -r dir; do
