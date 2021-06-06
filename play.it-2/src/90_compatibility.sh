@@ -180,7 +180,8 @@ icon_path_empty_error() {
 }
 
 set_temp_directories_error_not_enough_space() {
-	error_not_enough_free_space "$XDG_RUNTIME_DIR" "$(get_tmp_dir)" "$XDG_CACHE_HOME" "$PWD"
+	# shellcheck disable=SC2046
+	error_not_enough_free_space $(temporary_directories_list_candidates)
 }
 
 archive_extraction_innosetup_error_version() {
@@ -238,22 +239,23 @@ write_launcher() {
 # Keep compatibility with 2.8 and older
 
 icon_check_file_existence_pre_2_8() {
+	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
 
-	if [ ! -f "$directory/$file" ]; then
-		if \
-			[ -z "${file##* *}" ] || \
-			[ ! -f "$directory"/$file ]
-		then
-			error_icon_file_not_found "$directory/$file"
-		else
-			# get the real file name from its globbed one
-			local file_path
-			file_path=$(eval printf '%s' "$directory"/$file)
-			file="${file_path#${directory}/}"
-		fi
+	if \
+		[ -z "${file##* *}" ] || \
+		[ ! -f "$directory"/$file ]
+	then
+		error_icon_file_not_found "$directory/$file"
+		return 1
+	else
+		# get the real file name from its globbed one
+		# shellcheck disable=SC2039
+		local file_path
+		file_path=$(eval printf '%s' "$directory/$file")
+		file="${file_path#${directory}/}"
 	fi
 
 	printf '%s' "$file"

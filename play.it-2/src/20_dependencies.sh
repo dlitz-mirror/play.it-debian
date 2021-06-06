@@ -79,8 +79,8 @@ check_deps() {
 		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot dpkg"
 	fi
 	if [ "$OPTION_PACKAGE" = 'gentoo' ]; then
-		# fakeroot doesn't work for me, only fakeroot-ng does
-		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot-ng ebuild"
+		# fakeroot-ng doesn't work anymore, fakeroot >=1.25.1 does
+		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot:>=1.25.1 ebuild"
 	fi
 	if [ "$OPTION_PACKAGE" = 'arch' ]; then
 		# bsdtar and gzip are required for .MTREE
@@ -99,6 +99,9 @@ check_deps() {
 			;;
 			('debian')
 				check_deps_debian
+			;;
+			('fakeroot'*)
+				check_deps_fakeroot "$dep"
 			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
@@ -200,6 +203,37 @@ check_deps_innoextract() {
 	case "$keyword" in
 		('innoextract1.7')
 			if ! version_is_at_least '1.7' "$innoextract_version"; then
+				error_dependency_not_found "$name"
+			fi
+		;;
+	esac
+
+	return 0
+}
+
+check_deps_fakeroot() {
+	local keyword
+	local name
+	keyword="$1"
+	case "$keyword" in
+		('fakeroot:>=1.25.1')
+			name='fakeroot (>=1.25.1)'
+		;;
+		(*)
+			name='fakeroot'
+		;;
+	esac
+	if ! command -v 'fakeroot' >/dev/null 2>&1; then
+		error_dependency_not_found "$name"
+	fi
+
+	# Check fakeroot version
+	# shellcheck disable=SC2039
+	local fakeroot_version
+	fakeroot_version="$(LANG=C fakeroot --version | cut --delimiter=' ' --fields=3)"
+	case "$keyword" in
+		('fakeroot:>=1.25.1')
+			if ! version_is_at_least '1.25.1' "$fakeroot_version"; then
 				error_dependency_not_found "$name"
 			fi
 		;;

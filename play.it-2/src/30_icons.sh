@@ -1,5 +1,7 @@
 # update dependencies list with commands needed for icons extraction
 # USAGE: icons_list_dependencies
+# RETURNS: nothing
+# SIDE EFFECT: export $ICONS_DEPS, a variable including a space-separated list of required commands to handle the icons of the current game
 icons_list_dependencies() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	[ $SKIP_ICONS -eq 1 ] && return 0
@@ -37,8 +39,10 @@ icons_list_dependencies() {
 
 # get .png file(s) from various icon sources in current package
 # USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_GAME PATH_ICON_BASE PLAYIT_WORKDIR
-# CALLS: icons_get_from_path
+# RETURNS: nothing
+# SIDE EFFECT: get original icon files from the current package,
+#              convert them to standard icon formats,
+#              and include the standard icons in the current package
 icons_get_from_package() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	[ $SKIP_ICONS -eq 1 ] && return 0
@@ -53,9 +57,11 @@ icons_get_from_package() {
 }
 
 # get .png file(s) from various icon sources in temporary work directory
-# USAGE: icons_get_from_package $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
-# CALLS: icons_get_from_path
+# USAGE: icons_get_from_workdir $app[…]
+# RETURNS: nothing
+# SIDE EFFECT: get original icon files from ./play.it temporary directory,
+#              convert them to standard icon formats,
+#              and include the standard icons in the current package
 icons_get_from_workdir() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	[ $SKIP_ICONS -eq 1 ] && return 0
@@ -67,8 +73,10 @@ icons_get_from_workdir() {
 
 # get .png file(s) from various icon sources
 # USAGE: icons_get_from_path $directory $app[…]
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE PLAYIT_WORKDIR
-# CALLS: icon_extract_png_from_file icons_include_png_from_directory testvar
+# RETURNS: nothing
+# SIDE EFFECT: get original icon files from the given directory,
+#              convert them to standard icon formats,
+#              and include the standard icons in the current package
 icons_get_from_path() {
 	local app
 	local destination
@@ -112,6 +120,7 @@ icons_get_from_path() {
 # USAGE: icon_check_file_existence $directory $file
 # RETURNS: $file or throws an error
 icon_check_file_existence() {
+	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
@@ -124,10 +133,12 @@ icon_check_file_existence() {
 
 	if [ ! -f "$directory/$file" ]; then
 		# pre-2.8 scripts could use globbing in file path
-		if version_target_is_older_than '2.8'; then
-			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
-		else
+		# shellcheck disable=SC2154
+		if version_is_at_least '2.8' "$target_version"; then
 			error_icon_file_not_found "$directory/$file"
+			return 1
+		else
+			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
 		fi
 	fi
 
@@ -137,8 +148,8 @@ icon_check_file_existence() {
 
 # extract .png file(s) from target file
 # USAGE: icon_extract_png_from_file $file $destination
-# CALLS: icon_convert_bmp_to_png icon_extract_png_from_exe icon_extract_png_from_ico icon_copy_png
-# CALLED BY: icons_get_from_path
+# RETURNS: nothing
+# SIDE EFFECT: convert the given file to .png icons, the .png files are created in the given directory
 icon_extract_png_from_file() {
 	local destination
 	local extension
@@ -168,8 +179,8 @@ icon_extract_png_from_file() {
 
 # extract .png file(s) for .exe
 # USAGE: icon_extract_png_from_exe $file $destination
-# CALLS: icon_extract_ico_from_exe icon_extract_png_from_ico
-# CALLED BY: icon_extract_png_from_file
+# RETURNS: nothing
+# SIDE EFFECT: extract .png icons from the given .exe file, the .png files are created in the given directory
 icon_extract_png_from_exe() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
@@ -185,7 +196,8 @@ icon_extract_png_from_exe() {
 
 # extract .ico file(s) from .exe
 # USAGE: icon_extract_ico_from_exe $file $destination
-# CALLED BY: icon_extract_png_from_exe
+# RETURNS: nothing
+# SIDE EFFECT: extract .ico icons from the given .exe file, the .ico files are created in the given directory
 icon_extract_ico_from_exe() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
@@ -200,17 +212,20 @@ icon_extract_ico_from_exe() {
 
 # convert .bmp file to .png
 # USAGE: icon_convert_bmp_to_png $file $destination
-# CALLED BY: icon_extract_png_from_file
+# RETURNS: nothing
+# SIDE EFFECT: convert the given .bmp file to .png, the .png file is created in the given directory
 icon_convert_bmp_to_png() { icon_convert_to_png "$@"; }
 
 # extract .png file(s) from .ico
 # USAGE: icon_extract_png_from_ico $file $destination
-# CALLED BY: icon_extract_png_from_file icon_extract_png_from_exe
+# RETURNS: nothing
+# SIDE EFFECT: convert the given .ico file to .png, the .png files are created in the given directory
 icon_extract_png_from_ico() { icon_convert_to_png "$@"; }
 
 # convert multiple icon formats to .png
 # USAGE: icon_convert_to_png $file $destination
-# CALLED BY: icon_extract_png_from_bmp icon_extract_png_from_ico
+# RETURNS: nothing
+# SIDE EFFECT: convert the given image file to .png, the .png files are created in the given directory
 icon_convert_to_png() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
@@ -225,7 +240,8 @@ icon_convert_to_png() {
 
 # copy .png file to directory
 # USAGE: icon_copy_png $file $destination
-# CALLED BY: icon_extract_png_from_file
+# RETURNS: nothing
+# SIDE EFFECT: copy the given .png file to the given directory
 icon_copy_png() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
@@ -237,9 +253,8 @@ icon_copy_png() {
 
 # get .png file(s) from target directory and put them in current package
 # USAGE: icons_include_png_from_directory $app $directory
-# NEEDED VARS: APP_ID|GAME_ID PATH_ICON_BASE
-# CALLS: icon_get_resolution_from_file
-# CALLED BY: icons_get_from_path
+# RETURNS: nothing
+# SIDE EFFECT: take the icons from the given directory, move them to standard paths into the current package
 icons_include_png_from_directory() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
 	local app
@@ -265,7 +280,11 @@ icons_include_png_from_directory() {
 		mv "$file" "$path/$name.png"
 	done
 }
-# comaptibility alias
+# compatibility alias
+###
+# TODO
+# This function should be moved to the compatibility aliases source file
+###
 sort_icons() {
 	local app
 	local directory
@@ -277,7 +296,8 @@ sort_icons() {
 
 # get image resolution for target file, exported as $resolution
 # USAGE: icon_get_resolution_from_file $file
-# CALLED BY: icons_include_png_from_directory
+# RETURNS: nothing
+# SIDE EFFECT: export the resolution of the given file as $resolution, using the format "${width}x${height}"
 icon_get_resolution_from_file() {
 	local file
 	file="$1"
@@ -308,6 +328,8 @@ icon_get_resolution_from_file() {
 
 # move icons to the target package
 # USAGE: icons_move_to $pkg
+# RETURNS: nothing
+# SIDE EFFECT: move the icons from the current package to the given package
 icons_move_to() {
 	###
 	# TODO
