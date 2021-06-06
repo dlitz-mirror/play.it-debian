@@ -44,6 +44,9 @@ check_deps() {
 			('tar.gz')
 				SCRIPT_DEPS="$SCRIPT_DEPS gzip tar"
 			;;
+			('tar.xz')
+				SCRIPT_DEPS="$SCRIPT_DEPS xz tar"
+			;;
 			('zip'|'zip_unclean'|'mojosetup_unzip')
 				SCRIPT_DEPS="$SCRIPT_DEPS unzip"
 			;;
