@@ -120,6 +120,7 @@ icons_get_from_path() {
 # USAGE: icon_check_file_existence $directory $file
 # RETURNS: $file or throws an error
 icon_check_file_existence() {
+	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
@@ -132,10 +133,12 @@ icon_check_file_existence() {
 
 	if [ ! -f "$directory/$file" ]; then
 		# pre-2.8 scripts could use globbing in file path
-		if version_target_is_older_than '2.8'; then
-			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
-		else
+		# shellcheck disable=SC2154
+		if version_is_at_least '2.8' "$target_version"; then
 			error_icon_file_not_found "$directory/$file"
+			return 1
+		else
+			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
 		fi
 	fi
 
