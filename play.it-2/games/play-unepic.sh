@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210610.1
+script_version=20210610.2
 
 # Set game-specific variables
 
@@ -67,11 +67,11 @@ ARCHIVE_DOC_DATA_FILES='*'
 
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='data'
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='unepic32 lib32/libSDL2_mixer-2.0.so.0'
+ARCHIVE_GAME_BIN32_FILES='unepic32'
 
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='data'
 ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='unepic64 lib64/libSDL2_mixer-2.0.so.0'
+ARCHIVE_GAME_BIN64_FILES='unepic64'
 
 ARCHIVE_GAME_DATA_PATH_HUMBLE='data'
 ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
@@ -88,10 +88,22 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="${PKG_DATA_ID} sdl2 sdl2_mixer glx libstdc++"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc libstdc++ glx libSDL2-2.0.so.0 libz.so.1"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+
+# Include shipped libSDL2_mixer-2.0.so.0 library
+
+###
+# TODO
+# Check if we can drop this library in favour of a system-provided one
+###
+
+ARCHIVE_GAME_BIN32_FILES="${ARCHIVE_GAME_BIN32_FILES} lib32/libSDL2_mixer-2.0.so.0"
+ARCHIVE_GAME_BIN64_FILES="${ARCHIVE_GAME_BIN64_FILES} lib64/libSDL2_mixer-2.0.so.0"
+APP_MAIN_LIBS_BIN32='lib32'
+APP_MAIN_LIBS_BIN64='lib64'
 
 # Load common functions
 
