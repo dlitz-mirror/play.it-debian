@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210610.2
+script_version=20210610.3
 
 # Set game-specific variables
 
@@ -80,7 +80,8 @@ ARCHIVE_GAME_DATA_FILES='data image sound voices unepic.png omaps dictios_pc'
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='unepic32'
 APP_MAIN_EXE_BIN64='unepic64'
-APP_MAIN_ICON='unepic.png'
+APP_MAIN_ICON_HUMBLE='unepic.png'
+APP_MAIN_ICON_GOG='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -140,7 +141,15 @@ prepare_package_layout
 # Include game icon
 
 PKG='PKG_DATA'
-icons_get_from_package 'APP_MAIN'
+use_archive_specific_value 'APP_MAIN_ICON'
+case "$ARCHIVE" in
+	('ARCHIVE_BASE_HUMBLE_'*)
+		icons_get_from_package 'APP_MAIN'
+	;;
+	('ARCHIVE_BASE_GOG_'*)
+		icons_get_from_workdir 'APP_MAIN'
+	;;
+esac
 
 # Delete temporary files
 
