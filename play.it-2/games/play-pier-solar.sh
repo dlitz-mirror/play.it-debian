@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.3
+script_version=20210612.4
 
 # Set game-specific variables
 
@@ -53,6 +53,14 @@ ARCHIVE_BASE_HUMBLE_0='PierSolar_linux.zip'
 ARCHIVE_BASE_HUMBLE_0_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
 ARCHIVE_BASE_HUMBLE_0_VERSION='1.3.2-humble1'
 ARCHIVE_BASE_HUMBLE_0_SIZE='2400000'
+
+###
+# TODO
+# Check that the documentation files are provided by the Humble archive
+###
+ARCHIVE_GAME_DOC_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DOC_PATH_HUMBLE='PierSolar_linux'
+ARCHIVE_GAME_DOC_FILES='README.txt'
 
 ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='PierSolar_linux'
