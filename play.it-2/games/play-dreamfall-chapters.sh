@@ -35,27 +35,35 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.2
+script_version=20210612.3
 
 # Set game-specific variables
 
 GAME_ID='dreamfall-chapters'
 GAME_NAME='Dreamfall Chapters'
 
+ARCHIVE_BASE_GOG_0='gog_dreamfall_chapters_2.19.0.23.sh'
+ARCHIVE_BASE_GOG_0_MD5='3f05c530a0e07b7227e3fb7b6601e19a'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_VERSION='5.3.0-gog2.19.0.23'
+ARCHIVE_BASE_GOG_0_SIZE='21000000'
+
 ###
 # TODO
 # Update version string based on the actual game version
 ###
-ARCHIVE_BASE_0='Dreamfall_Chapters_Linux_2017_08_25.zip'
-ARCHIVE_BASE_0_MD5='22bee7bee25920e5cf7febc4b3c12e21'
-ARCHIVE_BASE_0_VERSION='20170825-humble'
-ARCHIVE_BASE_0_SIZE='21000000'
-ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/dreamfall-chapters'
+ARCHIVE_BASE_HUMBLE_0='Dreamfall_Chapters_Linux_2017_08_25.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='22bee7bee25920e5cf7febc4b3c12e21'
+ARCHIVE_BASE_HUMBLE_0_VERSION='20170825-humble'
+ARCHIVE_BASE_HUMBLE_0_SIZE='21000000'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/dreamfall-chapters'
 
-ARCHIVE_GAME_BIN_PATH='.'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN_PATH_HUMBLE='.'
 ARCHIVE_GAME_BIN_FILES='Dreamfall?Chapters Dreamfall?Chapters_Data/Mono Dreamfall?Chapters_Data/Plugins'
 
-ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
 ARCHIVE_GAME_DATA_FILES='Dreamfall?Chapters_Data'
 
 APP_MAIN_TYPE='native'
