@@ -35,25 +35,35 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.2
+script_version=20210612.3
 
 # Set game-specific variables
 
 GAME_ID='pier-solar'
 GAME_NAME='Pier Solar and the Great Architects'
 
-ARCHIVE_BASE_0='PierSolar_linux.zip'
-ARCHIVE_BASE_0_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
-ARCHIVE_BASE_0_VERSION='1.3.2-humble1'
-ARCHIVE_BASE_0_SIZE='2400000'
+ARCHIVE_BASE_GOG_0='gog_pier_solar_and_the_great_architects_2.1.0.4.sh'
+ARCHIVE_BASE_GOG_0_MD5='2de03fb6d69944e3f204d5ae45147a3e'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_VERSION='1.3.2-gog2.1.0.4'
+ARCHIVE_BASE_GOG_0_SIZE='2400000'
+ARCHIVE_BASE_GOG_0_URL='https://www.gog.com/game/pier_solar_and_the_great_architects'
 
-ARCHIVE_GAME_BIN32_PATH='PierSolar_linux'
+ARCHIVE_BASE_HUMBLE_0='PierSolar_linux.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.3.2-humble1'
+ARCHIVE_BASE_HUMBLE_0_SIZE='2400000'
+
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_BIN32_FILES='pshd.linux32'
 
-ARCHIVE_GAME_BIN64_PATH='PierSolar_linux'
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_BIN64_FILES='pshd.linux64'
 
-ARCHIVE_GAME_DATA_PATH='PierSolar_linux'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_DATA_FILES='data icon.png'
 
 APP_MAIN_TYPE='native'
