@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.1
+script_version=20210612.2
 
 # Set game-specific variables
 
@@ -53,7 +53,7 @@ ARCHIVE_BASE_0_SIZE='21000000'
 ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/dreamfall-chapters'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='Dreamfall?Chapters'
+ARCHIVE_GAME_BIN_FILES='Dreamfall?Chapters Dreamfall?Chapters_Data/Mono Dreamfall?Chapters_Data/Plugins'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='Dreamfall?Chapters_Data'
