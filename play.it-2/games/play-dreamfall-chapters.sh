@@ -35,12 +35,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.3
+script_version=20210612.4
 
 # Set game-specific variables
 
 GAME_ID='dreamfall-chapters'
 GAME_NAME='Dreamfall Chapters'
+
+ARCHIVE_BASE_GOG_1='dreamfall_chapters_the_final_cut_5_7_8_26845.sh'
+ARCHIVE_BASE_GOG_1_MD5='4971fdb8148d661b4a23119ed289b14e'
+ARCHIVE_BASE_GOG_1_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_1_VERSION='5.7.8-gog26845'
+ARCHIVE_BASE_GOG_1_SIZE='21000000'
+ARCHIVE_BASE_GOG_1_URL='https://www.gog.com/game/dreamfall_chapters_season_pass'
 
 ARCHIVE_BASE_GOG_0='gog_dreamfall_chapters_2.19.0.23.sh'
 ARCHIVE_BASE_GOG_0_MD5='3f05c530a0e07b7227e3fb7b6601e19a'
