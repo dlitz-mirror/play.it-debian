@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.1
+script_version=20210612.2
 
 # Set game-specific variables
 
@@ -46,7 +46,6 @@ ARCHIVE_BASE_0='PierSolar_linux.zip'
 ARCHIVE_BASE_0_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
 ARCHIVE_BASE_0_VERSION='1.3.2-humble1'
 ARCHIVE_BASE_0_SIZE='2400000'
-ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/pier-solar-and-the-great-architects'
 
 ARCHIVE_GAME_BIN32_PATH='PierSolar_linux'
 ARCHIVE_GAME_BIN32_FILES='pshd.linux32'
