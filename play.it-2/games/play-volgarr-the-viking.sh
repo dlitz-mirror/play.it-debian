@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.2
+script_version=20210612.3
 
 # Set game-specific variables
 
@@ -54,6 +54,14 @@ ARCHIVE_BASE_HUMBLE_0_MD5='c3652629edb019838d8e1c7873f0716b'
 ARCHIVE_BASE_HUMBLE_0_VERSION='1.36c-humble'
 ARCHIVE_BASE_HUMBLE_0_SIZE='180000'
 ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/volgarr-the-viking'
+
+###
+# TODO
+# Check that the documentation files are provided by the Humble archive
+###
+ARCHIVE_GAME_DOC_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DOC_PATH_HUMBLE='Volgarr'
+ARCHIVE_GAME_DOC_FILES='Readme.txt'
 
 ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='Volgarr'
