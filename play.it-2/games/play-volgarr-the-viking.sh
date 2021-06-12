@@ -35,23 +35,32 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210612.1
+script_version=20210612.2
 
 # Set game-specific variables
 
 GAME_ID='volgarr-the-viking'
 GAME_NAME='Volgarr the Viking'
 
-ARCHIVE_BASE_0='VolgarrTheViking_v1.36c_Linux32.tar.gz'
-ARCHIVE_BASE_0_MD5='c3652629edb019838d8e1c7873f0716b'
-ARCHIVE_BASE_0_VERSION='1.36c-humble'
-ARCHIVE_BASE_0_SIZE='180000'
-ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/volgarr-the-viking'
+ARCHIVE_BASE_GOG_0='gog_volgarr_the_viking_2.1.0.3.sh'
+ARCHIVE_BASE_GOG_0_MD5='8593287f13c3104aa45b9c91264b4260'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_VERSION='1.36c-gog2.1.0.3'
+ARCHIVE_BASE_GOG_0_SIZE='200000'
+ARCHIVE_BASE_GOG_0_URL='https://www.gog.com/game/volgarr_the_viking'
 
-ARCHIVE_GAME_BIN_PATH='Volgarr'
+ARCHIVE_BASE_HUMBLE_0='VolgarrTheViking_v1.36c_Linux32.tar.gz'
+ARCHIVE_BASE_HUMBLE_0_MD5='c3652629edb019838d8e1c7873f0716b'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.36c-humble'
+ARCHIVE_BASE_HUMBLE_0_SIZE='180000'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/volgarr-the-viking'
+
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_BIN_PATH_HUMBLE='Volgarr'
 ARCHIVE_GAME_BIN_FILES='Volgarr'
 
-ARCHIVE_GAME_DATA_PATH='Volgarr'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='Volgarr'
 ARCHIVE_GAME_DATA_FILES='Data.pk icon.png'
 
 APP_MAIN_TYPE='native'
