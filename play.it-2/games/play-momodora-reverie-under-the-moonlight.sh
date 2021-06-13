@@ -35,19 +35,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210613.6
+script_version=20210613.7
 
 # Set game-specific variables
 
 GAME_ID='momodora-reverie-under-the-moonlight'
 GAME_NAME='Momodora: Reverie Under the Moonlight'
 
+ARCHIVE_BASE_2='momodora_reverie_under_the_moonlight_1_063_43451.sh'
+ARCHIVE_BASE_2_MD5='b10b3d929d6ccac6249581cefcc43285'
+ARCHIVE_BASE_2_TYPE='mojosetup'
+ARCHIVE_BASE_2_SIZE='330000'
+ARCHIVE_BASE_2_VERSION='1.063-gog43451'
+ARCHIVE_BASE_2_URL='https://www.gog.com/game/momodora_reverie_under_the_moonlight'
+
 ARCHIVE_BASE_1='momodora_reverie_under_the_moonlight_1_062_24682.sh'
 ARCHIVE_BASE_1_MD5='9da233f084d0a86e4068ca90c89e4f05'
 ARCHIVE_BASE_1_TYPE='mojosetup'
 ARCHIVE_BASE_1_SIZE='330000'
 ARCHIVE_BASE_1_VERSION='1.062-gog24682'
-ARCHIVE_BASE_1_URL='https://www.gog.com/game/momodora_reverie_under_the_moonlight'
 
 ARCHIVE_BASE_0='momodora_reverie_under_the_moonlight_en_20180418_20149.sh'
 ARCHIVE_BASE_0_MD5='5ec0d0e8475ced69fbaf3881652d78c1'
