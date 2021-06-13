@@ -1,7 +1,7 @@
 # print DEBUG
 # USAGE: print_debug
 print_debug() {
-	printf '\033[1;32mDEBUG:\033[0m '
+	printf '\033[1;32mDEBUG:\033[0m ' >> /dev/stderr
 	return 0
 }
 
@@ -25,7 +25,7 @@ debug_option_value() {
 			option_value=$(get_value "$option_name")
 
 			print_debug
-			printf '%s: %s\n' "$option_name" "$option_value"
+			printf '%s: %s\n' "$option_name" "$option_value" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -61,7 +61,7 @@ debug_entering_function() {
 
 		else
 			print_debug
-			printf 'Entering %s\n' "$function_name"
+			printf 'Entering %s\n' "$function_name" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -97,7 +97,7 @@ debug_leaving_function() {
 
 		else
 			print_debug
-			printf 'Leaving %s\n' "$function_name"
+			printf 'Leaving %s\n' "$function_name" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -120,7 +120,7 @@ debug_creating_directory() {
 
 		else
 			print_debug
-			printf 'Creating directory %s\n' "$dir_path"
+			printf 'Creating directory %s\n' "$dir_path" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -142,8 +142,8 @@ debug_using_directory() {
 		return 1
 	fi
 
-	print_debug >/dev/stderr
-	printf 'Using existing directory %s\n' "$dir_path" >/dev/stderr
+	print_debug
+	printf 'Using existing directory %s\n' "$dir_path" >> /dev/stderr
 	return 0
 }
 
@@ -175,7 +175,7 @@ debug_source_file() {
 
 		else
 			print_debug
-			printf '%s file: %s\n' "$found_status" "${filename}"
+			printf '%s file: %s\n' "$found_status" "${filename}" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -199,7 +199,7 @@ debug_file_to_package() {
 
 		else
 			print_debug
-			printf 'Moving file to: %s\n' "$package_id"
+			printf 'Moving file to: %s\n' "$package_id" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -224,9 +224,9 @@ debug_write_launcher() {
 		else
 			print_debug
 			if [ -z "$binary_file" ]; then
-				printf 'Writing launcher: %s\n' "$launcher_type"
+				printf 'Writing launcher: %s\n' "$launcher_type" >> /dev/stderr
 			else
-				printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file"
+				printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file" >> /dev/stderr
 			fi
 			return 0
 		fi
@@ -249,7 +249,7 @@ debug_external_command() {
 			return 1
 		else
 			print_debug
-			printf 'Running: %s\n' "$external_command"
+			printf 'Running: %s\n' "$external_command" >> /dev/stderr
 			return 0
 		fi
 	fi
@@ -271,8 +271,8 @@ debug_temp_dir_nonexistant() {
 		return 1
 	fi
 
-	print_debug >/dev/stderr
-	printf 'Skipping non-existant directory: %s\n' "$directory" >/dev/stderr
+	print_debug
+	printf 'Skipping non-existant directory: %s\n' "$directory" >> /dev/stderr
 	return 0
 }
 
@@ -292,8 +292,8 @@ debug_temp_dir_nonwritable() {
 		return 1
 	fi
 
-	print_debug >/dev/stderr
-	printf 'Skipping non-writable directory: %s\n' "$directory" >/dev/stderr
+	print_debug
+	printf 'Skipping non-writable directory: %s\n' "$directory" >> /dev/stderr
 	return 0
 }
 
@@ -313,7 +313,7 @@ debug_temp_dir_not_enough_space() {
 		return 1
 	fi
 
-	print_debug >/dev/stderr
-	printf 'Skipping too small directory: %s\n' "$directory" >/dev/stderr
+	print_debug
+	printf 'Skipping too small directory: %s\n' "$directory" >> /dev/stderr
 	return 0
 }
