@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210529.8
+script_version=20210613.1
 
 # Set game-specific variables
 
@@ -256,16 +256,57 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
+# Load the optional icons pack if it is provided
+# cf. https://forge.dotslashplay.it/play.it/games/-/issues/408
+
+ARCHIVE_OPTIONAL_ICONS='stellaris_icons.tar.gz'
+ARCHIVE_OPTIONAL_ICONS_MD5='9bc49bdb82248f374ead8e321bd26b3a'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/games/stellaris/'
+
+ARCHIVE_ICONS_PATH='stellaris_icons'
+ARCHIVE_ICONS_FILES='*'
+
+archive_initialize_optional \
+	'ARCHIVE_ICONS' \
+	'ARCHIVE_OPTIONAL_ICONS'
+if [ -z "$ARCHIVE_ICONS" ]; then
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼarchive suivante nʼayant pas été fournie, lʼicône spécifique à GOG sera utilisée au lieu de lʼicône originale : %s\n'
+			message="$message"'Cette archive peut être téléchargée depuis %s\n'
+		;;
+		('en'|*)
+			message='Due to the following archive missing, the GOG-specific icon will be used instead of the original one: %s\n'
+			message="$message"'This archive can be downloaded from %s\n'
+		;;
+	esac
+	print_warning
+	printf "$message" "$ARCHIVE_OPTIONAL_ICONS" "$ARCHIVE_OPTIONAL_ICONS_URL"
+	printf '\n'
+fi
+
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
 
-# Get icon
+# Use original game icon if provided,
+# falls back on GOG-provided icon.
 
 PKG='PKG_DATA'
-icons_get_from_workdir 'APP_MAIN'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+if [ -n "$ARCHIVE_ICONS" ]; then
+	(
+		ARCHIVE='ARCHIVE_ICONS'
+		extract_data_from "$ARCHIVE_ICONS"
+	)
+	organize_data 'ICONS' "$PATH_ICON_BASE"
+else
+	icons_get_from_workdir 'APP_MAIN'
+fi
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
