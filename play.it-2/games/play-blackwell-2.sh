@@ -35,22 +35,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210317.4
+script_version=20210522.2
 
 # Set game-specific variables
 
 GAME_ID='blackwell-2'
 GAME_NAME='Blackwell 2: Blackwell Unbound'
 
-ARCHIVES_LIST='
-ARCHIVE_GOG_0'
-
-ARCHIVE_GOG_0='gog_blackwell_unbound_2.0.0.2.sh'
-ARCHIVE_GOG_0_MD5='e694b6638f49535224ed474d3c8ce128'
-ARCHIVE_GOG_0_TYPE='mojosetup'
-ARCHIVE_GOG_0_SIZE='220000'
-ARCHIVE_GOG_0_VERSION='1.0-gog2.0.0.2'
-ARCHIVE_GOG_0_URL='https://www.gog.com/game/blackwell_bundle'
+ARCHIVE_BASE_0='gog_blackwell_unbound_2.0.0.2.sh'
+ARCHIVE_BASE_0_MD5='e694b6638f49535224ed474d3c8ce128'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='220000'
+ARCHIVE_BASE_0_VERSION='1.0-gog2.0.0.2'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/blackwell_bundle'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -92,7 +89,7 @@ PKG_DATA_PROVIDE='blackwell-2-blackwell-unbound-data'
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -103,8 +100,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -130,6 +127,27 @@ icons_get_from_package 'APP_MAIN'
 # Clean up temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Switch French keyboard layout to us-azerty to provide direct access to digits
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Switch French keyboard layout to us-azerty to provide direct access to digits
+KEYBOARD_LAYOUT=$(LANG=C setxkbmap -query | awk "/layout:/ {print \$2}")
+RESTORE_VARIANT=0
+if [ $KEYBOARD_LAYOUT = "fr" ]; then
+	KEYBOARD_VARIANT=$(LANG=C setxkbmap -query | awk "/variant:/ {print \$2}")
+	if [ $KEYBOARD_VARIANT != "us-azerty" ]; then
+		setxkbmap -variant us-azerty
+		RESTORE_VARIANT=1
+	fi
+fi'
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+
+# Restore the keyboard variant
+if [ $RESTORE_VARIANT -eq 1 ]; then
+	setxkbmap -variant "$KEYBOARD_VARIANT"
+fi'
 
 # Write launchers
 
