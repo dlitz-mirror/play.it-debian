@@ -46,19 +46,19 @@ pkg_write_egentoo() {
 		('zstd')
 			package_filename="${package_filename}.zst"
 			build_deps="$build_deps app-arch/zstd"
-			unpack_f="unzstd --force \$DISTDIR/$package_filename -o \$T/${package_filename%.zst}
+			unpack_f="unzstd --force --quiet \$DISTDIR/$package_filename -o \$T/${package_filename%.zst} || die
 	unpack \$T/${package_filename%.zst}"
 		;;
 		('lzip')
 			package_filename="${package_filename}.lz"
 			build_deps="$build_deps app-arch/lzip"
-			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz}
+			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz} || die
 	unpack \$T/${package_filename%.lz}"
 		;;
 		('lzop')
 			package_filename="${package_filename}.lzo"
 			build_deps="$build_deps app-arch/lzop"
-			unpack_f="lzop --decompress --path=\$T \$DISTDIR/$package_filename
+			unpack_f="lzop --decompress --path=\$T \$DISTDIR/$package_filename || die
 	unpack \$T/${package_filename%.lzo}"
 		;;
 		('none') ;;
@@ -109,7 +109,7 @@ src_unpack() {
 }
 
 src_install() {
-	cp --recursive --link \$S/* \$D
+	cp --recursive --link --verbose \$S/* \$D || die
 }
 EOF
 
