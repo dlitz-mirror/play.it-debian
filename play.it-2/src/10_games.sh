@@ -58,3 +58,16 @@ games_find_scripts_for_archive() {
 	return 0
 }
 
+# Returns the first game script with support with the given archive name
+# USAGE: games_find_script_for_archive $archive_name
+# RETURNS: A single game script
+games_find_script_for_archive() {
+	# shellcheck disable=SC2039
+	local archive_name
+	archive_name="$1"
+
+	games_find_scripts_for_archive "$archive_name" | head --lines=1
+
+	return 0
+}
+
