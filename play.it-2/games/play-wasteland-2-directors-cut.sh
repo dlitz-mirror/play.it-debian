@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,17 +29,17 @@ set -o errexit
 ###
 
 ###
-# Wasteland 2
+# Wasteland 2 - Directorʼs Cut
 # build native packages from the original installers
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20181016.1
+script_version=20210628.1
 
 # Set game-specific variables
 
-GAME_ID='wasteland-2'
-GAME_NAME='Wasteland 2'
+GAME_ID='wasteland-2-directors-cut'
+GAME_NAME='Wasteland 2 - Directorʼs Cut'
 
 ARCHIVE_GOG='gog_wasteland_2_director_s_cut_2.3.0.5.sh'
 ARCHIVE_GOG_TYPE='mojosetup_unzip'
@@ -91,6 +91,12 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="$PKG_DATA_ID glu xcursor libxrandr alsa"
+
+# Ensure easy upgrade from packages generated with pre-20210620.1 game script
+
+PKG_BIN_PROVIDE='wasteland-2'
+PKG_DATA_PROVIDE='wasteland-2-data'
+PKG_RESOURCES_PROVIDE='wasteland-2-resources'
 
 # Load common functions
 
