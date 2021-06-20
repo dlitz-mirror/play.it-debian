@@ -34,19 +34,19 @@ set -o errexit
 # send your bug reports to vv221@dotslashplay.it
 ###
 
-script_version=20210628.1
+script_version=20210628.2
 
 # Set game-specific variables
 
 GAME_ID='wasteland-2-directors-cut'
 GAME_NAME='Wasteland 2 - Directorʼs Cut'
 
-ARCHIVE_GOG='gog_wasteland_2_director_s_cut_2.3.0.5.sh'
-ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_URL='https://www.gog.com/game/wasteland_2_directors_cut_digital_classic_edition'
-ARCHIVE_GOG_MD5='dc697b13e1f08de606add7684b5b3f78'
-ARCHIVE_GOG_VERSION='1.1.92788-gog2.3.0.5'
-ARCHIVE_GOG_SIZE='16000000'
+ARCHIVE_BASE_0='gog_wasteland_2_director_s_cut_2.3.0.5.sh'
+ARCHIVE_BASE_0_MD5='dc697b13e1f08de606add7684b5b3f78'
+ARCHIVE_BASE_0_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_0_VERSION='1.1.92788-gog2.3.0.5'
+ARCHIVE_BASE_0_SIZE='16000000'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/wasteland_2_directors_cut_digital_classic_edition'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -60,25 +60,8 @@ ARCHIVE_GAME_RESOURCES_FILES='WL2_Data/*.resource'
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='WL2_Data'
 
-DATA_DIRS='./logs'
-
 APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='if ! command -v pulseaudio >/dev/null 2>&1; then
-	mkdir --parents libs
-	ln --force --symbolic /dev/null libs/libpulse-simple.so.0
-	export LD_LIBRARY_PATH="libs:$LD_LIBRARY_PATH"
-else
-	if [ -e "libs/libpulse-simple.so.0" ]; then
-		rm libs/libpulse-simple.so.0
-		rmdir --ignore-fail-on-non-empty libs
-	fi
-	pulseaudio --start
-fi
-ulimit -n $(($(ulimit -Hn)/2))'
 APP_MAIN_EXE='WL2'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
 APP_MAIN_ICON='WL2_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN PKG_RESOURCES PKG_DATA'
@@ -90,7 +73,64 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glu xcursor libxrandr alsa"
+PKG_BIN_DEPS="${PKG_DATA_ID} glu xcursor libxrandr alsa"
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
+
+# Work around Unity3D poor support for non-PulseAudio audio systems
+
+# shellcheck disable=SC1004
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Start pulseaudio if it is available
+if command -v pulseaudio >/dev/null 2>&1; then
+	PULSEAUDIO_IS_AVAILABLE=1
+	if pulseaudio --check; then
+		KEEP_PULSEAUDIO_RUNNING=1
+	else
+		KEEP_PULSEAUDIO_RUNNING=0
+	fi
+	pulseaudio --start
+else
+	PULSEAUDIO_IS_AVAILABLE=0
+fi
+
+# Work around crash on launch related to libpulse
+# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+if [ $PULSEAUDIO_IS_AVAILABLE -eq 0 ]; then
+	mkdir --parents "${APP_LIBS:=libs}"
+	ln --force --symbolic /dev/null "$APP_LIBS/libpulse-simple.so.0"
+else
+	if \
+		[ -h "${APP_LIBS:=libs}/libpulse-simple.so.0" ] && \
+		[ "$(realpath "$APP_LIBS/libpulse-simple.so.0")" = "/dev/null" ]
+	then
+		rm "$APP_LIBS/libpulse-simple.so.0"
+		rmdir --ignore-fail-on-non-empty --parents "$APP_LIBS"
+	fi
+fi'
+# shellcheck disable=SC1004
+APP_MAIN_POSTRUN="$APP_MAIN_POSTRUN"'
+# Stop pulseaudio if it has specifically been started for the game
+if \
+	[ $PULSEAUDIO_IS_AVAILABLE -eq 1 ] && \
+	[ $KEEP_PULSEAUDIO_RUNNING -eq 0 ]
+then
+	pulseaudio --kill
+fi'
+
+# Work around engine overuse of file descriptors
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Work around engine overuse of file descriptors
+ulimit -n $(($(ulimit -Hn)/2))'
 
 # Ensure easy upgrade from packages generated with pre-20210620.1 game script
 
@@ -100,20 +140,19 @@ PKG_RESOURCES_PROVIDE='wasteland-2-resources'
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -123,26 +162,31 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Get game icon
+
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
-PKG='PKG_DATA'
-icons_linking_postinst 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_RESOURCES' 'PKG_BIN'
+write_metadata
 build_pkg
 
 # Clean up
