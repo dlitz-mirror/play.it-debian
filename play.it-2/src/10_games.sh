@@ -37,3 +37,24 @@ games_list_sources() {
 	return 0
 }
 
+# Return a list of game scripts providing support for the given archive name
+# USAGE: games_find_scripts_for_archive $archive_name
+# RETURNS: A list of game scripts, separated by line breaks
+games_find_scripts_for_archive() {
+	# shellcheck disable=SC2039
+	local archive_name
+	archive_name="$1"
+
+	# shellcheck disable=SC2039
+	local regexp
+	regexp="^ARCHIVE_[0-9A-Z_]\\+=['\"]${archive_name}['\"]"
+	while read -r games_collection; do
+		find "$games_collection" -name play-\*.sh -exec \
+			grep --files-with-matches --regexp="$regexp" {} + | sort
+	done <<- EOF
+	$(games_list_sources)
+	EOF
+
+	return 0
+}
+
