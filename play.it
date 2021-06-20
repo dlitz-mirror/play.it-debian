@@ -47,15 +47,7 @@ fi
 
 # Locate script by file name
 FILE_NAME="$(basename "$INPUT_FILE" | sed 's/\[/\\\[/g;s/\]/\\\]/g')"
-SCRIPT="$(find \
-	"$(dirname "$0")/play.it-2/games" \
-	"$XDG_DATA_HOME/play.it/games" \
-	'/usr/local/share/games/play.it/games' \
-	'/usr/local/share/play.it/games' \
-	'/usr/share/games/play.it/games' \
-	'/usr/share/play.it/games' \
-	-mindepth 2 -maxdepth 2 -type f -name '*.sh' -exec \
-	grep --regexp="ARCHIVE_.\\+=['\"]${FILE_NAME}['\"]" --files-with-matches '{}' + 2>/dev/null | head --lines=1)"
+SCRIPT=$(games_find_script_for_archive "$FILE_NAME")
 
 # Exit with an error if the given archive is not supported
 if [ -z "$SCRIPT" ]; then
