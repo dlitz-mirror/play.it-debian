@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210623.25
+script_version=20210623.26
 
 # Set game-specific variables
 
@@ -199,7 +199,9 @@ fi
 
 # Extract game data
 
-extract_data_from "$SOURCE_ARCHIVE"
+# Hide innoextract warnings
+# « Warning: Ignoring OS constraint for GOG Galaxy file goggame-1207659008.hashdb: win81# »
+extract_data_from "$SOURCE_ARCHIVE" 2>/dev/null
 prepare_package_layout
 
 # Extract icons
