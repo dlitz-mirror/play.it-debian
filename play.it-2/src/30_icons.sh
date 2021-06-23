@@ -171,6 +171,9 @@ icon_extract_png_from_file() {
 		('png')
 			icon_copy_png "$file" "$destination"
 		;;
+		('xpm')
+			icon_copy_xpm "$file" "$destination"
+		;;
 		(*)
 			error_invalid_argument 'extension' 'icon_extract_png_from_file'
 		;;
@@ -251,79 +254,95 @@ icon_copy_png() {
 	cp "$file" "$destination"
 }
 
-# get .png file(s) from target directory and put them in current package
-# USAGE: icons_include_png_from_directory $app $directory
+# copy .xpm file to directory
+# USAGE: icon_copy_xpm $file $destination
+# RETURNS: nothing
+# SIDE EFFECT: copy the given .png file to the given directory
+icon_copy_xpm() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local destination file
+	file="$1"
+	destination="$2"
+	cp "$file" "$destination"
+
+	return 0
+}
+
+# Get icon files from the given directory and put them in the current package
+# USAGE: icons_include_from_directory $app $directory
 # RETURNS: nothing
 # SIDE EFFECT: take the icons from the given directory, move them to standard paths into the current package
-icons_include_png_from_directory() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local app
-	local directory
-	local file
-	local path
-	local path_icon
-	local resolution
+icons_include_from_directory() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
 
-	# get the current package
-	local package
-	package=$(package_get_current)
+	# Get the application name, falls back on the game name
+	# shellcheck disable=SC2039
+	local application application_name
+	application="$1"
+	application_name=$(get_value "${application}_ID")
+	: "${application_name:=$GAME_ID}"
 
-	app="$1"
-	directory="$2"
-	name="$(get_value "${app}_ID")"
-	[ -n "$name" ] || name="$GAME_ID"
-	for file in "$directory"/*.png; do
-		icon_get_resolution_from_file "$file"
-		path_icon="$PATH_ICON_BASE/$resolution/apps"
-		path="$(package_get_path "$package")${path_icon}"
-		mkdir --parents "$path"
-		mv "$file" "$path/$name.png"
+	# Get the icons from the given source directory,
+	# then move them to the current package
+	# shellcheck disable=SC2039
+	local source_directory source_file destination_name destination_directory destination_file
+	source_directory="$2"
+	for source_file in \
+		"$source_directory"/*.png \
+		"$source_directory"/*.xpm
+	do
+		# Skip the current pattern if it matched no file
+		if [ ! -e "$source_file" ]; then
+			continue
+		fi
+
+		# Compute icon file name
+		destination_name="${application_name}.${source_file##*.}"
+
+		# Compute icon path
+		destination_directory="$(package_get_path "$(package_get_current)")${PATH_ICON_BASE}/$(icon_get_resolution "$source_file")/apps"
+
+		# Move current icon file to its destination
+		destination_file="${destination_directory}/${destination_name}"
+		mkdir --parents "$destination_directory"
+		mv "$source_file" "$destination_file"
 	done
 }
-# compatibility alias
-###
-# TODO
-# This function should be moved to the compatibility aliases source file
-###
-sort_icons() {
-	local app
-	local directory
-	directory="$PLAYIT_WORKDIR/icons"
-	for app in "$@"; do
-		icons_include_png_from_directory "$app" "$directory"
-	done
-}
 
-# get image resolution for target file, exported as $resolution
-# USAGE: icon_get_resolution_from_file $file
-# RETURNS: nothing
-# SIDE EFFECT: export the resolution of the given file as $resolution, using the format "${width}x${height}"
-icon_get_resolution_from_file() {
-	local file
-	file="$1"
+# Return the resolution of the given image file
+# USAGE: icon_get_resolution $file
+# RETURNS: image resolution, using the format ${width}x${height}
+icon_get_resolution() {
+	# shellcheck disable=SC2039
+	local image_file
+	image_file="$1"
 
 	# `identify` should be available when this function is called.
 	# Exits with an explicit error if it is missing
 	if ! command -v 'identify' >/dev/null 2>&1; then
-		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
+		error_unavailable_command 'icon_get_resolution' 'identify'
 	fi
 
-	if ! version_is_at_least '2.8' "$target_version" && [ -n "${file##* *}" ]; then
-		field=2
-		unset resolution
-		while
-			[ -z "$resolution" ] || \
-			[ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]
-		do
-			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
-			resolution="${resolution%+0+0}"
-			field=$((field + 1))
-		done
+	# shellcheck disable=SC2039
+	local image_resolution_string image_resolution
+	# shellcheck disable=SC2154
+	if version_is_at_least '2.8' "$target_version"; then
+		image_resolution_string=$(identify "$image_file" | sed "s;^${image_file} ;;" | cut --delimiter=' ' --fields=2)
+		image_resolution="${image_resolution_string%+0+0}"
 	else
-		resolution="$(identify "$file" | sed "s;^$file ;;" | cut --delimiter=' ' --fields=2)"
-		resolution="${resolution%+0+0}"
+		image_resolution=$(icon_get_resolution_pre_2_8 "$image_file")
 	fi
-	export resolution
+
+	printf '%s' "$image_resolution"
+	return 0
 }
 
 # move icons to the target package
