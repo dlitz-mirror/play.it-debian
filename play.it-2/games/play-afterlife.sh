@@ -2,8 +2,9 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
+# Copyright (c)      2021, Anna Lea
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,29 +33,29 @@ set -o errexit
 ###
 # Afterlife
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20190310.4
+script_version=20210625.7
 
 # Set game-specific variables
 
 GAME_ID='afterlife'
 GAME_NAME='Afterlife'
 
-ARCHIVES_LIST='ARCHIVE_GOG_EN ARCHIVE_GOG_FR'
+ARCHIVE_BASE_EN_0='gog_afterlife_2.2.0.8.sh'
+ARCHIVE_BASE_EN_0_MD5='3aca0fac1b93adec5aff39d395d995ab'
+ARCHIVE_BASE_EN_0_TYPE='mojosetup'
+ARCHIVE_BASE_EN_0_SIZE='260000'
+ARCHIVE_BASE_EN_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_EN_0_URL='https://www.gog.com/game/afterlife'
 
-ARCHIVE_GOG_EN='gog_afterlife_2.2.0.8.sh'
-ARCHIVE_GOG_EN_URL='https://www.gog.com/game/afterlife'
-ARCHIVE_GOG_EN_MD5='3aca0fac1b93adec5aff39d395d995ab'
-ARCHIVE_GOG_EN_VERSION='1.0-gog2.2.0.8'
-ARCHIVE_GOG_EN_SIZE='250000'
-
-ARCHIVE_GOG_FR='gog_afterlife_french_2.2.0.8.sh'
-ARCHIVE_GOG_FR_URL='https://www.gog.com/game/afterlife'
-ARCHIVE_GOG_FR_MD5='56b3efee60bc490c68f8040587fc1878'
-ARCHIVE_GOG_FR_VERSION='1.1-gog2.2.0.8'
-ARCHIVE_GOG_FR_SIZE='250000'
+ARCHIVE_BASE_FR_0='gog_afterlife_french_2.2.0.8.sh'
+ARCHIVE_BASE_FR_0_MD5='56b3efee60bc490c68f8040587fc1878'
+ARCHIVE_BASE_FR_0_TYPE='mojosetup'
+ARCHIVE_BASE_FR_0_SIZE='250000'
+ARCHIVE_BASE_FR_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_FR_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
 ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
@@ -76,27 +77,29 @@ APP_MAIN_ICON='data/noarch/support/icon.png'
 PACKAGES_LIST='PKG_MAIN'
 
 PKG_MAIN_ID="$GAME_ID"
-PKG_MAIN_ID_GOG_EN="${PKG_MAIN_ID}-en"
-PKG_MAIN_ID_GOG_FR="${PKG_MAIN_ID}-fr"
 PKG_MAIN_PROVIDE="$PKG_MAIN_ID"
 PKG_MAIN_DEPS='dosbox'
 
+# Localizations
+
+PKG_MAIN_ID_EN="${PKG_MAIN_ID}-en"
+PKG_MAIN_ID_FR="${PKG_MAIN_ID}-fr"
+
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -115,10 +118,14 @@ extract_data_from "$SOURCE_ARCHIVE"
 tolower "$PLAYIT_WORKDIR/gamedata"
 prepare_package_layout
 
-# Get icon
+# Get game icon
 
+PKG='PKG_MAIN'
 icons_get_from_workdir 'APP_MAIN'
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
