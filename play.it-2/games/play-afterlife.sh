@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210625.7
+script_version=20210625.8
 
 # Set game-specific variables
 
@@ -70,8 +70,7 @@ CONFIG_FILES='./*.ini */*.ini'
 DATA_DIRS='./save'
 
 APP_MAIN_TYPE='dosbox'
-APP_MAIN_PRERUN='cd alife'
-APP_MAIN_EXE='afterdos.bat'
+APP_MAIN_EXE='alife/afterdos.bat'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST='PKG_MAIN'
@@ -126,6 +125,31 @@ icons_get_from_workdir 'APP_MAIN'
 # Delete temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Run the game binary from its parent directory
+
+###
+# TODO
+# This function override could be avoided by fixing the special behaviour of APP_xxx_PRERUN with DOSBox games
+###
+launcher_write_script_dosbox_run() {
+	# shellcheck disable=SC2039
+	local application file
+	application="$1"
+	file="$2"
+	cat >> "$file" <<- 'EOF'
+	# Run the game
+
+	cd "$PATH_PREFIX"
+	APP_EXE=$(basename "$APP_EXE")
+	"${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "mount c .
+	c:
+	cd alife
+	$APP_EXE $APP_OPTIONS $@
+	exit"
+	EOF
+	return 0
+}
 
 # Write launchers
 
