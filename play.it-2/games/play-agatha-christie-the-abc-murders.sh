@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210628.5
+script_version=20210628.6
 
 # Set game-specific variables
 
@@ -66,7 +66,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glu alsa xcursor libxrandr libudev1"
+PKG_BIN_DEPS="$PKG_DATA_ID alsa glibc glu glx gtk2 libX11.so.6 libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0 libstdc++ libudev1 libxrandr xcursor"
 
 # Use a per-session dedicated file for logs
 
