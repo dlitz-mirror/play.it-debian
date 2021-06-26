@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210626.3
+script_version=20210626.4
 
 # Set game-specific variables
 
@@ -65,7 +65,7 @@ ARCHIVE_DOC_MAIN_PATH='data/noarch/game'
 ARCHIVE_DOC_MAIN_FILES='Linux.README'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
-ARCHIVE_GAME_MAIN_FILES='Content *.bmp *.cfg *.pdb *.xml *.txt monoconfig monomachineconfig Transistor.exe Transistor.exe.config Engine.dll Engine.dll.config Engine.SDL2.dll Engine.SDL2.dll.config HostessProtocol.dll KeraLua.dll MonoGame.Framework.SDL2.dll NLua.dll SDL2-CS.dll SDL2-CS.dll.config'
+ARCHIVE_GAME_MAIN_FILES='Content *.bmp *.cfg *.pdb *.xml *.txt monoconfig monomachineconfig Transistor.exe Transistor.exe.config Engine.dll Engine.dll.config Engine.SDL2.dll Engine.SDL2.dll.config HostessProtocol.dll KeraLua.dll MonoGame.Framework.SDL2.dll NLua.dll SDL2-CS.dll SDL2-CS.dll.config Newtonsoft.Json.dll Newtonsoft.Json.pdb Newtonsoft.Json.xml'
 
 APP_MAIN_TYPE='mono'
 APP_MAIN_EXE='Transistor.exe'
@@ -74,7 +74,7 @@ APP_MAIN_ICON='Transistor.bmp'
 PACKAGES_LIST='PKG_MAIN'
 
 PKG_MAIN_DEPS='glibc libstdc++ mono alsa glx libSDL2-2.0.so.0'
-PKG_MAIN_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libnewtonsoft-json5.0-cil, libmono-system4.0-cil, libmono-system-core4.0-cil, libmono-system-configuration4.0-cil, libmono-system-data4.0-cil, libmono-system-design4.0-cil, libmono-system-drawing4.0-cil, libmono-system-management4.0-cil, libmono-system-numerics4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-transactions4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil'
+PKG_MAIN_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-core4.0-cil, libmono-system-configuration4.0-cil, libmono-system-data4.0-cil, libmono-system-design4.0-cil, libmono-system-drawing4.0-cil, libmono-system-management4.0-cil, libmono-system-numerics4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-transactions4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil'
 
 # Include shipped libraries that can not be replaced by system ones
 
