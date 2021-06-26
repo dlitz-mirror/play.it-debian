@@ -1,9 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -32,36 +32,37 @@ set -o errexit
 ###
 # Transistor
 # build native packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20180930.3
+script_version=20210626.1
 
 # Set game-specific variables
 
 GAME_ID='transistor'
 GAME_NAME='Transistor'
 
-ARCHIVE_GOG='transistor_1_50440_8123_23365.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/transistor'
-ARCHIVE_GOG_MD5='dc89c175267dc1a1f3434a9d4f903cce'
-ARCHIVE_GOG_SIZE='3600000'
-ARCHIVE_GOG_VERSION='1.50440.8123-gog23365'
-ARCHIVE_GOG_TYPE='mojosetup'
+ARCHIVE_BASE_2='transistor_1_50440_8123_23365.sh'
+ARCHIVE_BASE_2_MD5='dc89c175267dc1a1f3434a9d4f903cce'
+ARCHIVE_BASE_2_TYPE='mojosetup'
+ARCHIVE_BASE_2_SIZE='3600000'
+ARCHIVE_BASE_2_VERSION='1.50440.8123-gog23365'
+ARCHIVE_BASE_2_URL='https://www.gog.com/game/transistor'
 
-ARCHIVE_GOG_OLD1='transistor_en_v1_50423_21516.sh'
-ARCHIVE_GOG_OLD1_MD5='52d0df1d959b333b17ede106f8e53062'
-ARCHIVE_GOG_OLD1_SIZE='3600000'
-ARCHIVE_GOG_OLD1_VERSION='1.50423-gog21516'
-ARCHIVE_GOG_OLD1_TYPE='mojosetup'
+ARCHIVE_BASE_1='transistor_en_v1_50423_21516.sh'
+ARCHIVE_BASE_1_MD5='52d0df1d959b333b17ede106f8e53062'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='3600000'
+ARCHIVE_BASE_1_VERSION='1.50423-gog21516'
 
-ARCHIVE_GOG_OLD0='gog_transistor_2.0.0.3.sh'
-ARCHIVE_GOG_OLD0_MD5='53dbaf643471f3b8494548261584dd13'
-ARCHIVE_GOG_OLD0_SIZE='3200000'
-ARCHIVE_GOG_OLD0_VERSION='1.20140310-gog2.0.0.3'
+ARCHIVE_BASE_0='gog_transistor_2.0.0.3.sh'
+ARCHIVE_BASE_0_MD5='53dbaf643471f3b8494548261584dd13'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_SIZE='3200000'
+ARCHIVE_BASE_0_VERSION='1.20140310-gog2.0.0.3'
 
-ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
-ARCHIVE_DOC_DATA_FILES='*'
+ARCHIVE_DOC_DATA_PATH='data/noarch/game'
+ARCHIVE_DOC_DATA_FILES='Linux.README'
 
 ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN32_FILES='lib Transistor.bin.x86'
@@ -70,9 +71,7 @@ ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='lib64 Transistor.bin.x86_64'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='*'
-
-DATA_DIRS='./logs'
+ARCHIVE_GAME_DATA_FILES='Content *.bmp *.cfg *.dll *.dll.config *.exe *.exe.config *.pdb *.xml *.txt monoconfig monomachineconfig'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Transistor.bin.x86'
@@ -85,27 +84,26 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 alsa glx"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ alsa glx libSDL2-2.0.so.0"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.10'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -115,24 +113,27 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get icon
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
