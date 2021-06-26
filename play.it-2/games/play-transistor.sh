@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210626.4
+script_version=20210626.6
 
 # Set game-specific variables
 
@@ -144,6 +144,25 @@ icons_get_from_package 'APP_MAIN'
 # Delete temporary files
 
 rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Do not use a local user prefix
+
+launcher_write_script_user_files() { true; }
+launcher_write_script_prefix_variables() { true; }
+launcher_write_script_prefix_functions() { true; }
+launcher_write_script_prefix_build() {
+	# shellcheck disable=SC2039
+	local file
+	file="$1"
+	cat >> "$file" <<- 'EOF'
+	# Do not use a local user prefix
+
+	export PATH_PREFIX="$PATH_GAME"
+
+	EOF
+	sed --in-place 's/    /\t/g' "$file"
+	return 0
+}
 
 # Write launchers
 
