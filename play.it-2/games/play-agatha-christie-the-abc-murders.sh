@@ -36,19 +36,33 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210628.6
+script_version=20210628.7
 
 # Set game-specific variables
 
 GAME_ID='agatha-christie-the-abc-murders'
 GAME_NAME='Agatha Christie: The ABC Murders'
 
-ARCHIVE_BASE_0='gog_agatha_christie_the_abc_murders_2.2.0.4.sh'
-ARCHIVE_BASE_0_MD5='271dab525be57f2783622bbbeb30c7c1'
-ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='2700000'
-ARCHIVE_BASE_0_VERSION='1.0-gog2.2.0.4'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
+ARCHIVE_BASE_EN_0='gog_agatha_christie_the_abc_murders_2.2.0.4.sh'
+ARCHIVE_BASE_EN_0_MD5='271dab525be57f2783622bbbeb30c7c1'
+ARCHIVE_BASE_EN_0_TYPE='mojosetup'
+ARCHIVE_BASE_EN_0_SIZE='2700000'
+ARCHIVE_BASE_EN_0_VERSION='1.0-gog2.2.0.4'
+ARCHIVE_BASE_EN_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
+
+ARCHIVE_BASE_PL_0='gog_agatha_christie_the_abc_murders_polish_2.2.0.4.sh'
+ARCHIVE_BASE_PL_0_MD5='a9e8e3dcc65e651302e06abbd1446fe6'
+ARCHIVE_BASE_PL_0_TYPE='mojosetup'
+ARCHIVE_BASE_PL_0_SIZE='2700000'
+ARCHIVE_BASE_PL_0_VERSION='1.0-gog2.2.0.4'
+ARCHIVE_BASE_PL_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
+
+ARCHIVE_BASE_RU_0='gog_agatha_christie_the_abc_murders_russian_2.2.0.4.sh'
+ARCHIVE_BASE_RU_0_MD5='0becf882ba0e8ae4609c3e771236670c'
+ARCHIVE_BASE_RU_0_TYPE='mojosetup'
+ARCHIVE_BASE_RU_0_SIZE='2700000'
+ARCHIVE_BASE_RU_0_VERSION='1.0-gog2.2.0.4'
+ARCHIVE_BASE_RU_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='The?ABC?Murders.x86 The?ABC?Murders_Data/Mono The?ABC?Murders_Data/Plugins'
@@ -63,10 +77,23 @@ APP_MAIN_ICON='The ABC Murders_Data/Resources/UnityPlayer.png'
 PACKAGES_LIST='PKG_BIN PKG_DATA'
 
 PKG_DATA_ID="${GAME_ID}-data"
+PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
 
+PKG_BIN_ID="$GAME_ID"
+PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID alsa glibc glu glx gtk2 libX11.so.6 libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0 libstdc++ libudev1 libxrandr xcursor"
+
+# Localizations
+
+PKG_DATA_ID_EN="${PKG_DATA_ID}-en"
+PKG_DATA_ID_PL="${PKG_DATA_ID}-pl"
+PKG_DATA_ID_RU="${PKG_DATA_ID}-ru"
+
+PKG_BIN_ID_EN="${PKG_BIN_ID}-en"
+PKG_BIN_ID_PL="${PKG_BIN_ID}-pl"
+PKG_BIN_ID_RU="${PKG_BIN_ID}-ru"
 
 # Use a per-session dedicated file for logs
 
