@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210628.7
+script_version=20210628.8
 
 # Set game-specific variables
 
@@ -67,6 +67,9 @@ ARCHIVE_BASE_RU_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='The?ABC?Murders.x86 The?ABC?Murders_Data/Mono The?ABC?Murders_Data/Plugins'
 
+ARCHIVE_GAME_L10N_PATH='data/noarch/game'
+ARCHIVE_GAME_L10N_FILES='The?ABC?Murders_Data/Managed The?ABC?Murders_Data/level* The?ABC?Murders_Data/mainData The?ABC?Murders_Data/resources.assets'
+
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='The?ABC?Murders_Data'
 
@@ -74,26 +77,26 @@ APP_MAIN_TYPE='native'
 APP_MAIN_EXE='The ABC Murders.x86'
 APP_MAIN_ICON='The ABC Murders_Data/Resources/UnityPlayer.png'
 
-PACKAGES_LIST='PKG_BIN PKG_DATA'
+PACKAGES_LIST='PKG_BIN PKG_L10N PKG_DATA'
+
+PKG_L10N_ID="${GAME_ID}-l10n"
+PKG_L10N_PROVIDE="$PKG_L10N_ID"
 
 PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_PROVIDE="$PKG_DATA_ID"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ID="$GAME_ID"
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID alsa glibc glu glx gtk2 libX11.so.6 libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0 libstdc++ libudev1 libxrandr xcursor"
+PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID alsa glibc glu glx gtk2 libX11.so.6 libgdk_pixbuf-2.0.so.0 libglib-2.0.so.0 libstdc++ libudev1 libxrandr xcursor"
 
 # Localizations
 
-PKG_DATA_ID_EN="${PKG_DATA_ID}-en"
-PKG_DATA_ID_PL="${PKG_DATA_ID}-pl"
-PKG_DATA_ID_RU="${PKG_DATA_ID}-ru"
+PKG_L10N_ID_EN="${PKG_L10N_ID}-en"
+PKG_L10N_ID_PL="${PKG_L10N_ID}-pl"
+PKG_L10N_ID_RU="${PKG_L10N_ID}-ru"
 
-PKG_BIN_ID_EN="${PKG_BIN_ID}-en"
-PKG_BIN_ID_PL="${PKG_BIN_ID}-pl"
-PKG_BIN_ID_RU="${PKG_BIN_ID}-ru"
+PKG_L10N_DESCRIPTION_EN='English localization'
+PKG_L10N_DESCRIPTION_PL='Polish localization'
+PKG_L10N_DESCRIPTION_RU='Russian localization'
 
 # Use a per-session dedicated file for logs
 
