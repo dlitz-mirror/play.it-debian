@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210628.1
+script_version=20210725.1
 
 # Set game-specific variables
 
@@ -65,6 +65,12 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine"
+
+# Use persistent storage for saved progression
+
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+userdata:users/${USER}/Application Data/Gomo'
+DATA_FILES="$DATA_FILES userdata/Local?Store/saves.dat"
 
 # Load common functions
 
