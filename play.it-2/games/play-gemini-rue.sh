@@ -34,15 +34,12 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210419.2
+script_version=20210628.1
 
 # Set game-specific variables
 
 GAME_ID='gemini-rue'
 GAME_NAME='Gemini Rue'
-
-ARCHIVES_LIST='
-ARCHIVE_BASE_0'
 
 ARCHIVE_BASE_0='gog_gemini_rue_2.0.0.3.sh'
 ARCHIVE_BASE_0_MD5='49541b9881a0bd51a5b04d3a6691c78a'
@@ -95,12 +92,12 @@ PKG_BIN64_DEPS_GENTOO='media-libs/allegro media-libs/libogg media-libs/libvorbis
 ARCHIVE_GAME_BIN32_FILES="${ARCHIVE_GAME_BIN32_FILES} lib/liballeg.so.4.4"
 ARCHIVE_GAME_BIN64_FILES="${ARCHIVE_GAME_BIN64_FILES} lib64/liballeg.so.4.4"
 
-: ${APP_MAIN_LIBS_BIN32:=lib}
-: ${APP_MAIN_LIBS_BIN64:=lib64}
+: "${APP_MAIN_LIBS_BIN32:=lib}"
+: "${APP_MAIN_LIBS_BIN64:=lib64}"
 
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -111,8 +108,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
