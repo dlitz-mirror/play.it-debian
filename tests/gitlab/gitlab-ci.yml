@@ -4,6 +4,7 @@ stages:
 
 build_library:
   stage: build
+  interruptible: true
   only:
     - master@play.it/scripts
     - /^staging-.*$/@play.it/scripts
@@ -16,6 +17,7 @@ build_library:
 
 build_game_syntax_config:
   stage: build
+  interruptible: true
   only:
     - master@play.it/scripts
     - /^staging-.*$/@play.it/scripts
@@ -28,6 +30,7 @@ build_game_syntax_config:
 
 syntax_library:
   stage: syntax
+  interruptible: true
   only:
     - master@play.it/scripts
     - /^staging-.*$/@play.it/scripts
@@ -37,6 +40,7 @@ syntax_library:
 
 syntax_wrapper:
   stage: syntax
+  interruptible: true
   only:
     - master@play.it/scripts
     - /^staging-.*$/@play.it/scripts
