@@ -36,19 +36,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210628.8
+script_version=20210628.9
 
 # Set game-specific variables
 
 GAME_ID='agatha-christie-the-abc-murders'
 GAME_NAME='Agatha Christie: The ABC Murders'
 
-ARCHIVE_BASE_EN_0='gog_agatha_christie_the_abc_murders_2.2.0.4.sh'
-ARCHIVE_BASE_EN_0_MD5='271dab525be57f2783622bbbeb30c7c1'
-ARCHIVE_BASE_EN_0_TYPE='mojosetup'
-ARCHIVE_BASE_EN_0_SIZE='2700000'
-ARCHIVE_BASE_EN_0_VERSION='1.0-gog2.2.0.4'
-ARCHIVE_BASE_EN_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
+ARCHIVE_BASE_INTL_0='gog_agatha_christie_the_abc_murders_2.2.0.4.sh'
+ARCHIVE_BASE_INTL_0_MD5='271dab525be57f2783622bbbeb30c7c1'
+ARCHIVE_BASE_INTL_0_TYPE='mojosetup'
+ARCHIVE_BASE_INTL_0_SIZE='2700000'
+ARCHIVE_BASE_INTL_0_VERSION='1.0-gog2.2.0.4'
+ARCHIVE_BASE_INTL_0_URL='https://www.gog.com/game/agatha_christie_the_abc_murders'
 
 ARCHIVE_BASE_PL_0='gog_agatha_christie_the_abc_murders_polish_2.2.0.4.sh'
 ARCHIVE_BASE_PL_0_MD5='a9e8e3dcc65e651302e06abbd1446fe6'
@@ -90,11 +90,11 @@ PKG_BIN_DEPS="$PKG_L10N_ID $PKG_DATA_ID alsa glibc glu glx gtk2 libX11.so.6 libg
 
 # Localizations
 
-PKG_L10N_ID_EN="${PKG_L10N_ID}-en"
+PKG_L10N_ID_INTL="${PKG_L10N_ID}-intl"
 PKG_L10N_ID_PL="${PKG_L10N_ID}-pl"
 PKG_L10N_ID_RU="${PKG_L10N_ID}-ru"
 
-PKG_L10N_DESCRIPTION_EN='English localization'
+PKG_L10N_DESCRIPTION_INTL='English, French, German, Spanish, Italian and Portuguese localizations'
 PKG_L10N_DESCRIPTION_PL='Polish localization'
 PKG_L10N_DESCRIPTION_RU='Russian localization'
 
