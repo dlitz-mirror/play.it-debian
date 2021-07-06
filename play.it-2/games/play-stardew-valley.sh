@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210706.6
+script_version=20210706.7
 
 # Set game-specific variables
 
@@ -112,6 +112,23 @@ PKG_BIN64_ARCH='64'
 PKG_BIN64_DESCRIPTION="$PKG_BIN_DESCRIPTION"
 
 PKG_MAIN_DEPS="$PKG_MAIN_DEPS $PKG_BIN_ID"
+
+# The game fails to load libraries if they are not inside some hardcoded path
+
+# shellcheck disable=SC1004
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# The game fails to load libraries if they are not inside some hardcoded path
+mkdir --parents lib
+ln --force --no-target-directory --symbolic lib lib64
+library_file=$(/sbin/ldconfig --print-cache | \
+	awk -F " => " "/libSDL2-2\.0\.so\.0/ {print \$2}" | \
+	head --lines=1)
+ln --force --symbolic "$library_file" lib
+library_file=$(/sbin/ldconfig --print-cache | \
+	awk -F " => " "/libopenal\.so\.1/ {print \$2}" | \
+	head --lines=1)
+ln --force --symbolic "$library_file" lib'
 
 # Load common functions
 
