@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210706.5
+script_version=20210706.6
 
 # Set game-specific variables
 
@@ -78,33 +78,40 @@ ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='490000'
 ARCHIVE_BASE_0_VERSION='1.2.33-gog2.8.0.10'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='lib mcs.bin.x86'
-
-ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='lib64 mcs.bin.x86_64'
-
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
-ARCHIVE_GAME_DATA_FILES='Content mono monoconfig StardewValley.exe BmFont.dll GalaxyCSharp.dll GalaxyCSharp.dll.config libSkiaSharp.dll Lidgren.Network.dll MonoGame.Framework.dll MonoGame.Framework.dll.config SkiaSharp.dll StardewValley.GameData.dll xTile.dll xTilePipeline.dll'
+ARCHIVE_GAME_MAIN_PATH='data/noarch/game'
+ARCHIVE_GAME_MAIN_FILES='Content mono monoconfig StardewValley.exe BmFont.dll GalaxyCSharp.dll GalaxyCSharp.dll.config libSkiaSharp.dll Lidgren.Network.dll MonoGame.Framework.dll MonoGame.Framework.dll.config SkiaSharp.dll StardewValley.GameData.dll xTile.dll xTilePipeline.dll'
 
 APP_MAIN_TYPE='mono'
-APP_MAIN_LIBS_BIN32='lib'
-APP_MAIN_LIBS_BIN64='lib64'
 APP_MAIN_EXE='StardewValley.exe'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
-PACKAGES_LIST='PKG_DATA PKG_BIN32 PKG_BIN64'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_MAIN_DEPS='mono glx alsa libopenal.so.1 libSDL2-2.0.so.0'
+PKG_MAIN_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil, libmono-windowsbase4.0-cil'
 
+# The game manager is provided as an ELF binary
+
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='mcs.bin.x86'
+
+ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN64_FILES='mcs.bin.x86_64'
+
+PACKAGES_LIST="$PACKAGES_LIST PKG_BIN32 PKG_BIN64"
+
+PKG_BIN_ID="${GAME_ID}-bin"
+PKG_BIN_DESCRIPTION='game manager binary'
+
+PKG_BIN32_ID="$PKG_BIN_ID"
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID mono glx alsa libopenal.so.1 libSDL2-2.0.so.0"
-PKG_BIN32_DEPS_DEB='libmono-corlib4.5-cil, libmono-posix4.0-cil, libmono-security4.0-cil, libmono-system4.0-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system-drawing4.0-cil, libmono-system-runtime-serialization4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil, libmono-system-xml-linq4.0-cil, libmono-windowsbase4.0-cil'
+PKG_BIN32_DESCRIPTION="$PKG_BIN_DESCRIPTION"
 
+PKG_BIN64_ID="$PKG_BIN_ID"
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DESCRIPTION="$PKG_BIN_DESCRIPTION"
+
+PKG_MAIN_DEPS="$PKG_MAIN_DEPS $PKG_BIN_ID"
 
 # Load common functions
 
@@ -140,7 +147,7 @@ prepare_package_layout
 
 # Get game icon
 
-PKG='PKG_DATA'
+PKG='PKG_MAIN'
 icons_get_from_workdir 'APP_MAIN'
 
 # Delete temporary files
@@ -156,9 +163,8 @@ fi
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+PKG='PKG_MAIN'
+launchers_write 'APP_MAIN'
 
 # Build package
 
