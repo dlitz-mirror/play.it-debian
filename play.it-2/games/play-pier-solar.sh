@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c)      2020, HS-157
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2020-2021, HS-157
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,26 +35,42 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200725.1
+script_version=20210612.4
 
 # Set game-specific variables
 
 GAME_ID='pier-solar'
-GAME_NAME="Pier Solar and the Great Architects"
+GAME_NAME='Pier Solar and the Great Architects'
 
-ARCHIVE_HUMBLE='PierSolar_linux.zip'
-ARCHIVE_HUMBLE_TYPE='zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/pier-solar-and-the-great-architects'
-ARCHIVE_HUMBLE_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
-ARCHIVE_HUMBLE_VERSION='1.3.2-humble1'
-ARCHIVE_HUMBLE_SIZE='2400000'
+ARCHIVE_BASE_GOG_0='gog_pier_solar_and_the_great_architects_2.1.0.4.sh'
+ARCHIVE_BASE_GOG_0_MD5='2de03fb6d69944e3f204d5ae45147a3e'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_VERSION='1.3.2-gog2.1.0.4'
+ARCHIVE_BASE_GOG_0_SIZE='2400000'
+ARCHIVE_BASE_GOG_0_URL='https://www.gog.com/game/pier_solar_and_the_great_architects'
 
+ARCHIVE_BASE_HUMBLE_0='PierSolar_linux.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='e5ceda3a75cab3fe9b1ad1cbaf2d4a1d'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.3.2-humble1'
+ARCHIVE_BASE_HUMBLE_0_SIZE='2400000'
+
+###
+# TODO
+# Check that the documentation files are provided by the Humble archive
+###
+ARCHIVE_GAME_DOC_PATH_GOG='data/noarch/game'
+ARCHIVE_GAME_DOC_PATH_HUMBLE='PierSolar_linux'
+ARCHIVE_GAME_DOC_FILES='README.txt'
+
+ARCHIVE_GAME_BIN32_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN32_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_BIN32_FILES='pshd.linux32'
 
+ARCHIVE_GAME_BIN64_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN64_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_BIN64_FILES='pshd.linux64'
 
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='PierSolar_linux'
 ARCHIVE_GAME_DATA_FILES='data icon.png'
 
@@ -69,27 +85,26 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc glx"
+PKG_BIN32_DEPS="${PKG_DATA_ID} glibc glx"
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -106,14 +121,18 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Extract icon
 
 PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
 
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
 # Write launchers
+
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	launchers_write 'APP_MAIN'
 done
