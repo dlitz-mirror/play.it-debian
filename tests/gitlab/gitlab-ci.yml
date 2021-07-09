@@ -19,9 +19,12 @@ build_game_syntax_config:
   stage: build
   interruptible: true
   only:
-    - master@play.it/scripts
-    - /^staging-.*$/@play.it/scripts
-    - tags@play.it/scripts
+    refs:
+      - master@play.it/scripts
+      - /^staging-.*$/@play.it/scripts
+      - tags@play.it/scripts
+    changes:
+      - "play.it-2/games/*"
   script:
     - tests/gitlab/generate-syntax-game-configuration.sh
   artifacts:
@@ -51,9 +54,12 @@ syntax_wrapper:
 syntax_games:
   stage: syntax
   only:
-    - master@play.it/scripts
-    - /^staging-.*$/@play.it/scripts
-    - tags@play.it/scripts
+    refs:
+      - master@play.it/scripts
+      - /^staging-.*$/@play.it/scripts
+      - tags@play.it/scripts
+    changes:
+      - "play.it-2/games/*"
   trigger:
     include:
       - artifact: tests/gitlab/syntax-game.yml
