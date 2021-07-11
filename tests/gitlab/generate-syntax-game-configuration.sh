@@ -15,14 +15,26 @@ modified_games() {
 list_games() {
 	# shellcheck disable=SC2039
 	local script script_basename game_name
-	while read -r script; do
-		[ -e "$script" ] || continue
-		script_basename=$(basename "$script" .sh)
-		game_name="${script_basename#play-}"
-		printf '%s\n' "$game_name"
-	done <<- EOF
-	$(modified_games)
-	EOF
+	# If modified games are listed, we are not on master
+	# Check only the game scripts modified since last master update
+	if [ "$(modified_games | wc --lines)" -gt 0 ]; then
+		while read -r script; do
+			[ -e "$script" ] || continue
+			script_basename=$(basename "$script" .sh)
+			game_name="${script_basename#play-}"
+			printf '%s\n' "$game_name"
+		done <<- EOF
+		$(modified_games)
+		EOF
+	# If no modified game is listed, we are on master
+	# Check all game scripts
+	else
+		for script in play.it-2/games/play-*.sh; do
+			script_basename=$(basename "$script" .sh)
+			game_name="${script_basename#play-}"
+			printf '%s\n' "$game_name"
+		done
+	fi
 }
 
 generate_configuration() {
