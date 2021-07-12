@@ -35,24 +35,32 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210712.4
+script_version=20210712.6
 
 # Set game-specific variables
 
 GAME_ID='a-boy-and-his-blob'
 GAME_NAME='A Boy and His Blob'
 
-ARCHIVE_BASE_0='gog_a_boy_and_his_blob_2.1.0.2.sh'
-ARCHIVE_BASE_0_MD5='7025963a3a26f838877374f72ce3760d'
-ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='1300000'
-ARCHIVE_BASE_0_VERSION='2016.04.21-gog2.1.0.2'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/a_boy_and_his_blob'
+ARCHIVE_BASE_ZOOM_0='A Boy and His Blob.tar.gz'
+ARCHIVE_BASE_ZOOM_0_MD5='4e56d18404f82a2c6f6489661df807c8'
+ARCHIVE_BASE_ZOOM_0_SIZE='1300000'
+ARCHIVE_BASE_ZOOM_0_VERSION='2016.04.21-zoom1'
+ARCHIVE_BASE_ZOOM_0_URL='https://www.zoom-platform.com/product/a-boy-and-his-blob'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_BASE_GOG_0='gog_a_boy_and_his_blob_2.1.0.2.sh'
+ARCHIVE_BASE_GOG_0_MD5='7025963a3a26f838877374f72ce3760d'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_SIZE='1300000'
+ARCHIVE_BASE_GOG_0_VERSION='2016.04.21-gog2.1.0.2'
+ARCHIVE_BASE_GOG_0_URL='https://www.gog.com/game/a_boy_and_his_blob'
+
+ARCHIVE_GAME_BIN_PATH_ZOOM='A Boy And His Blob/game'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='Blob libfmod.so.7 libGLEW.so.1.10'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_ZOOM='A Boy And His Blob/game'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='content'
 
 APP_MAIN_TYPE='native'
@@ -107,25 +115,36 @@ archive_initialize_optional \
 	'ARCHIVE_ICONS' \
 	'ARCHIVE_OPTIONAL_ICONS'
 if [ -z "$ARCHIVE_ICONS" ]; then
+	case "$ARCHIVE" in
+		('ARCHIVE_BASE_GOG_'*)
+			APP_MAIN_ICON='data/noarch/support/icon.png'
+			message_fr='Lʼarchive suivante nʼayant pas été fournie, lʼicône spécifique à GOG sera utilisée au lieu de lʼicône originale : %s\n'
+			message_en='Due to the following archive missing, the GOG-specific icon will be used instead of the original one: %s\n'
+		;;
+		(*)
+			message_fr='Lʼarchive suivante nʼayant pas été fournie, lʼentrée de menu utilisera une icône générique : %s\n'
+			message_en='Due to the following archive missing, the menu entry will use a generic icon: %s\n'
+		;;
+	esac
+	message_fr="$message_fr"'Cette archive peut être téléchargée depuis %s\n'
+	message_en="$message_en"'This archive can be downloaded from %s\n'
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼarchive suivante nʼayant pas été fournie, lʼicône spécifique à GOG sera utilisée au lieu de lʼicône originale : %s\n'
-			message="$message"'Cette archive peut être téléchargée depuis %s\n'
+			message="$message_fr"
 		;;
 		('en'|*)
-			message='Due to the following archive missing, the GOG-specific icon will be used instead of the original one: %s\n'
-			message="$message"'This archive can be downloaded from %s\n'
+			message="$message_en"
 		;;
 	esac
 	print_warning
 	printf "$message" "$ARCHIVE_OPTIONAL_ICONS" "$ARCHIVE_OPTIONAL_ICONS_URL"
 	printf '\n'
-	APP_MAIN_ICON='data/noarch/support/icon.png'
 fi
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "${PLAYIT_WORKDIR}/gamedata"
 prepare_package_layout
 
 # Get game icon
@@ -137,7 +156,7 @@ if [ -n "$ARCHIVE_ICONS" ]; then
 		extract_data_from "$ARCHIVE_ICONS"
 	)
 	organize_data 'ICONS' "$PATH_ICON_BASE"
-else
+elif [ -n "$APP_MAIN_ICON" ]; then
 	icons_get_from_workdir 'APP_MAIN'
 fi
 
