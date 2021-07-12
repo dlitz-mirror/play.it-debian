@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210712.1
+script_version=20210712.4
 
 # Set game-specific variables
 
@@ -50,7 +50,7 @@ ARCHIVE_BASE_0_VERSION='2016.04.21-gog2.1.0.2'
 ARCHIVE_BASE_0_URL='https://www.gog.com/game/a_boy_and_his_blob'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN_FILES='Blob libfmod.so.7 libGLEW.so.1.10 libSDL2-2.0.so.0'
+ARCHIVE_GAME_BIN_FILES='Blob libfmod.so.7 libGLEW.so.1.10'
 
 ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='content'
