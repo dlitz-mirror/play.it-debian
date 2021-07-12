@@ -35,18 +35,25 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210712.5
+script_version=20210712.7
 
 # Set game-specific variables
 
 GAME_ID='dead-synchronicity'
 GAME_NAME='Dead Synchronicity: Tomorrow Comes Today'
 
-ARCHIVE_BASE_0='Dead_Synchronicity_1.0.7_Linux_Full_EN_FR_IT_DE_ES_KO_JA_Daedalic_noDRM.tar.gz'
-ARCHIVE_BASE_0_MD5='0aee9cc5d5c256f47ce61b313115a601'
-ARCHIVE_BASE_0_SIZE='3200000'
-ARCHIVE_BASE_0_VERSION='1.0.7-humble1'
-ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/dead-synchronicity-tomorrow-comes-today'
+ARCHIVE_BASE_ZOOM_0='Dead-Synchronicity-1.1.tar.xz'
+ARCHIVE_BASE_ZOOM_0_MD5='625ab4fc87c1b8744de35a5c9b86bdf4'
+ARCHIVE_BASE_ZOOM_0_TYPE='tar' # The type declaration should be dropped with ./play.it 2.14 release
+ARCHIVE_BASE_ZOOM_0_SIZE='3200000'
+ARCHIVE_BASE_ZOOM_0_VERSION='1.0.7-zoom1.1'
+ARCHIVE_BASE_ZOOM_0_URL='https://www.zoom-platform.com/product/dead-synchronicity'
+
+ARCHIVE_BASE_HUMBLE_0='Dead_Synchronicity_1.0.7_Linux_Full_EN_FR_IT_DE_ES_KO_JA_Daedalic_noDRM.tar.gz'
+ARCHIVE_BASE_HUMBLE_0_MD5='0aee9cc5d5c256f47ce61b313115a601'
+ARCHIVE_BASE_HUMBLE_0_SIZE='3200000'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.0.7-humble1'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/dead-synchronicity-tomorrow-comes-today'
 
 ARCHIVE_GAME_BIN32_PATH='Dead Synchronicity'
 ARCHIVE_GAME_BIN32_FILES='Dead?Synchronicity.x86 Dead?Synchronicity_Data/Mono/x86 Dead?Synchronicity_Data/Plugins/x86'
@@ -117,6 +124,7 @@ fi
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+set_standard_permissions "${PLAYIT_WORKDIR}/gamedata"
 prepare_package_layout
 
 # Get game icon
