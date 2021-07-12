@@ -35,26 +35,36 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210712.4
+script_version=20210712.5
 
 # Set game-specific variables
 
 GAME_ID='fire'
 GAME_NAME='Fire!'
 
-ARCHIVE_BASE_0='LIN_ESD_1.0.6756_REL.zip'
-ARCHIVE_BASE_0_MD5='eb990e8465afbca210009b1fca76adcb'
-ARCHIVE_BASE_0_SIZE='4200000'
-ARCHIVE_BASE_0_VERSION='1.0.6756-humble1'
-ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/fire'
+ARCHIVE_BASE_ZOOM_0='Puzzleventure-FIRE-1.1.tar.xz'
+ARCHIVE_BASE_ZOOM_0_MD5='3a51cae77402316fff25fae65aebf865'
+ARCHIVE_BASE_ZOOM_0_TYPE='tar' # The type declaration should be dropped with ./play.it 2.14 release
+ARCHIVE_BASE_ZOOM_0_SIZE='4200000'
+ARCHIVE_BASE_ZOOM_0_VERSION='1.0.6756-zoom1.1'
+ARCHIVE_BASE_ZOOM_0_URL='https://www.zoom-platform.com/product/puzzleventure-fire'
 
-ARCHIVE_GAME_BIN32_PATH='.'
+ARCHIVE_BASE_HUMBLE_0='LIN_ESD_1.0.6756_REL.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='eb990e8465afbca210009b1fca76adcb'
+ARCHIVE_BASE_HUMBLE_0_SIZE='4200000'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.0.6756-humble1'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/fire'
+
+ARCHIVE_GAME_BIN32_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
 ARCHIVE_GAME_BIN32_FILES='Fire.x86 Fire_Data/Mono/x86 Fire_Data/Plugins/x86'
 
-ARCHIVE_GAME_BIN64_PATH='.'
+ARCHIVE_GAME_BIN64_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='.'
 ARCHIVE_GAME_BIN64_FILES='Fire.x86_64 Fire_Data/Mono/x86_64 Fire_Data/Plugins/x86_64'
 
-ARCHIVE_GAME_DATA_PATH='.'
+ARCHIVE_GAME_DATA_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
 ARCHIVE_GAME_DATA_FILES='Fire_Data'
 
 APP_MAIN_TYPE='native'
