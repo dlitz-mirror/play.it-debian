@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210712.1
+script_version=20210712.5
 
 # Set game-specific variables
 
@@ -68,10 +68,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ xcursor libxrandr libGLU.so.1"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr gtk2 freetype libGLU.so.1 libX11.so.6 libgdk-x11-2.0.so.0 libgdk_pixbuf-2.0.so.0 libgobject-2.0.so.0 libglib-2.0.so.0"
+PKG_BIN32_DEPS_ARCH='lib32-libxext lib32-atk lib32-glib2 lib32-pango lib32-cairo lib32-fontconfig'
+PKG_BIN32_DEPS_DEB='libxext6, libatk1.0-0, libglib2.0-0, libpangoft2-1.0-0, libpangocairo-1.0-0, libcairo2, libpango-1.0-0, libfontconfig1'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libXext[abi_x86_32] dev-libs/atk[abi_x86_32] dev-libs/glib[abi_x86_32] x11-libs/pango[abi_x86_32] x11-libs/cairo[abi_x86_32] media-libs/fontconfig[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libxext atk glib2 pango cairo fontconfig'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libXext dev-libs/atk dev-libs/glib x11-libs/pango x11-libs/cairo media-libs/fontconfig'
 
 # Use a per-session dedicated file for logs
 
