@@ -36,11 +36,11 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210716.4
+script_version=20210716.5
 
 # Set game-specific variables
 
-GAME_ID='syberia'
+GAME_ID='syberia-1'
 GAME_NAME='Syberia'
 
 ARCHIVE_BASE_RU_1='setup_syberia_russian_1.0.0_hotfix3_(18946).exe'
@@ -123,6 +123,11 @@ PKG_L10N_DESCRIPTION_FR='French localization'
 
 PKG_L10N_ID_RU="${PKG_L10N_ID}-ru"
 PKG_L10N_DESCRIPTION_RU='Russian localization'
+
+# Clean upgrade from packages generated with pre-20210716.5 game script
+
+PKG_BIN_PROVIDE='syberia'
+PKG_DATA_PROVIDE='syberia-data'
 
 # Load common functions
 
