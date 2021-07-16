@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210716.3
+script_version=20210716.4
 
 # Set game-specific variables
 
@@ -99,9 +99,7 @@ PACKAGES_LIST='PKG_BIN PKG_DATA'
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
-PKG_BIN_ID="$GAME_ID"
 PKG_BIN_ARCH='32'
-PKG_BIN_PROVIDE="$PKG_BIN_ID"
 PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
 
 # Localization
@@ -113,19 +111,16 @@ PKG_BIN_DEPS="$PKG_BIN_DEPS $PKG_L10N_ID"
 
 ## English
 
-PKG_BIN_ID_EN="${PKG_BIN_ID}-en"
 PKG_L10N_ID_EN="${PKG_L10N_ID}-en"
 PKG_L10N_DESCRIPTION_EN='English localization'
 
 ## French
 
-PKG_BIN_ID_FR="${PKG_BIN_ID}-fr"
 PKG_L10N_ID_FR="${PKG_L10N_ID}-fr"
 PKG_L10N_DESCRIPTION_FR='French localization'
 
 ## Russian
 
-PKG_BIN_ID_RU="${PKG_BIN_ID}-ru"
 PKG_L10N_ID_RU="${PKG_L10N_ID}-ru"
 PKG_L10N_DESCRIPTION_RU='Russian localization'
 
