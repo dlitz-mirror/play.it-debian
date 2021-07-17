@@ -30,17 +30,17 @@ set -o errexit
 ###
 
 ###
-# Wallace and Gromit’s Episode 1 Fright of the Bumblebees
+# Wallace and Gromit: Episode 1 - Fright of the Bumblebees
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210713.3
+script_version=20210717.1
 
 # Set game-specific variables
 
 GAME_ID='wallace-and-gromit-1'
-GAME_NAME='Wallace and Gromit’s Episode 1 Fright of the Bumblebees'
+GAME_NAME='Wallace and Gromit: Episode 1 - Fright of the Bumblebees'
 
 ARCHIVE_BASE_0='setup_wallace_and_gromits_episode_1_-_fright_of_the_bumblebees_1.0_(43021).exe'
 ARCHIVE_BASE_0_MD5='386ad98408eb197081e9b45217759bed'
