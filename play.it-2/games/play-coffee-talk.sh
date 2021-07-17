@@ -35,15 +35,12 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210427.4
+script_version=20210717.1
 
 # Set game-specific variables
 
 GAME_ID='coffee-talk'
 GAME_NAME='Coffee Talk'
-
-ARCHIVES_LIST='
-ARCHIVE_BASE_0'
 
 ARCHIVE_BASE_0='setup_coffee_talk_1.0.39_(41435).exe'
 ARCHIVE_BASE_0_MD5='fd9a907261fce1069e1ffc37938e42d5'
@@ -70,9 +67,16 @@ PKG_DATA_DESCRIPTION='data'
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID wine"
 
+# Use persistent storage for user data and settings
+
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+userdata:drive_c/users/${USER}/AppData/LocalLow/Toge Productions/CoffeeTalk/Data'
+CONFIG_FILES="$CONFIG_FILES userdata/SettingsData"
+DATA_DIRS="$DATA_DIRS userdata/GOG"
+
 # Load common functions
 
-target_version='2.12'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in \
@@ -83,8 +87,8 @@ if [ -z "$PLAYIT_LIB2" ]; then
 		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -107,30 +111,9 @@ prepare_package_layout
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 
-# Clean up temporary directories
+# Delete temporary files
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
-
-# Use persistent storage for user data and settings
-
-CONFIG_FILES="${CONFIG_FILES} ./userdata/SettingsData"
-DATA_DIRS="${DATA_DIRS} ./userdata/GOG"
-APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
-
-# Use persistent storage for user data and settings
-userdata_path_prefix="$WINEPREFIX/drive_c/users/$USER/AppData/LocalLow/Toge Productions/CoffeeTalk/Data"
-userdata_path_persistent="$PATH_PREFIX/userdata"
-mkdir --parents "$userdata_path_persistent"
-if [ ! -h "$userdata_path_prefix" ]; then
-	if [ -d "$userdata_path_prefix" ]; then
-		# Migrate existing user data to the persistent path
-		mv "$userdata_path_prefix"/* "$userdata_path_persistent"
-		rmdir "$userdata_path_prefix"
-	fi
-	# Create link from prefix to persistent path
-	mkdir --parents "$(dirname "$userdata_path_prefix")"
-	ln --symbolic "$userdata_path_persistent" "$userdata_path_prefix"
-fi'
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
