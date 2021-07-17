@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210728.2
+script_version=20210728.3
 
 # Set game-specific variables
 
@@ -66,6 +66,9 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
 PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
+PKG_BIN_DEPS_ARCH='lib32-gst-plugins-good lib32-gst-libav'
+PKG_BIN_DEPS_DEB='gstreamer1.0-plugins-good, gstreamer1.0-libav'
+PKG_BIN_DEPS_GENTOO='media-plugins/gst-plugins-good[abi_x86_32] media-plugins/gst-plugins-libav[abi_x86_32]'
 
 # Use persistent storage for user data and settings
 
