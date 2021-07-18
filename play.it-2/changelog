@@ -1,3 +1,9 @@
+2.13.3
+
+  * Redirect all debug messages to /dev/stderr
+  * Gentoo: Stop emerge on errors
+  * Arch Linux: Drop generation of .MTREE metadata file
+
 2.13.2
 
   * Fix getting icon path for pre-2.8 game scripts with globs expanding to spaces

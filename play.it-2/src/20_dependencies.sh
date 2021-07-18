@@ -82,10 +82,6 @@ check_deps() {
 		# fakeroot-ng doesn't work anymore, fakeroot >=1.25.1 does
 		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot:>=1.25.1 ebuild"
 	fi
-	if [ "$OPTION_PACKAGE" = 'arch' ]; then
-		# bsdtar and gzip are required for .MTREE
-		SCRIPT_DEPS="$SCRIPT_DEPS bsdtar gzip"
-	fi
 	for dep in $SCRIPT_DEPS; do
 		case $dep in
 			('7z')
