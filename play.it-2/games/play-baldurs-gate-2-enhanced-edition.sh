@@ -35,19 +35,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210722.1
+script_version=20210722.2
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-2-enhanced-edition'
 GAME_NAME='Baldurʼs Gate Ⅱ - Enhanced Edition'
 
-ARCHIVE_BASE_0='baldur_s_gate_2_enhanced_edition_en_2_5_21851.sh'
-ARCHIVE_BASE_0_MD5='4508edf93d6b138a7e91aa0f2f82605a'
+ARCHIVE_BASE_1='baldur_s_gate_ii_enhanced_edition_2_6_6_0_47292.sh'
+ARCHIVE_BASE_1_MD5='43b37a554ffb712176ea8709fc98ed84'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='380000'
+ARCHIVE_BASE_1_VERSION='2.6.6.0-gog47292'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
+
+ARCHIVE_BASE_0='baldur_s_gate_ii_enhanced_edition_2_6_5_0_46477.sh'
+ARCHIVE_BASE_0_MD5='aa62efd4b1c69f074a784e637234e7c4'
 ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='3700000'
-ARCHIVE_BASE_0_VERSION='2.5.16.6-gog21851'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/baldurs_gate_2_enhanced_edition'
+ARCHIVE_BASE_0_SIZE='3800000'
+ARCHIVE_BASE_0_VERSION='2.6.5.0-gog46477'
+
+ARCHIVE_BASE_MULTIARCH_0='baldur_s_gate_2_enhanced_edition_en_2_5_21851.sh'
+ARCHIVE_BASE_MULTIARCH_0_MD5='4508edf93d6b138a7e91aa0f2f82605a'
+ARCHIVE_BASE_MULTIARCH_0_TYPE='mojosetup'
+ARCHIVE_BASE_MULTIARCH_0_SIZE='3700000'
+ARCHIVE_BASE_MULTIARCH_0_VERSION='2.5.16.6-gog21851'
 
 ARCHIVE_BASE_32BIT_0='gog_baldur_s_gate_2_enhanced_edition_2.6.0.11.sh'
 ARCHIVE_BASE_32BIT_0_MD5='b9ee856a29238d4aec65367377d88ac4'
@@ -56,7 +68,7 @@ ARCHIVE_BASE_32BIT_0_SIZE='2700000'
 ARCHIVE_BASE_32BIT_0_VERSION='2.3.67.3-gog2.6.0.11'
 
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN64_FILES='BaldursGateII64'
+ARCHIVE_GAME_BIN64_FILES='BaldursGateII'
 
 ARCHIVE_GAME_L10N_DE_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_DE_FILES='lang/de_DE'
@@ -83,11 +95,11 @@ ARCHIVE_GAME_DATA_PATH='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='chitin.key engine.lua Manuals movies music scripts data lang/en_US'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE='BaldursGateII64'
+APP_MAIN_EXE='BaldursGateII'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST_COMMON='PKG_L10N_DE PKG_L10N_ES PKG_L10N_IT PKG_L10N_KO PKG_L10N_PL PKG_L10N_RU PKG_L10N_ZH PKG_DATA'
-PACKAGES_LIST="PKG_BIN32 PKG_BIN64 $PACKAGES_LIST_COMMON"
+PACKAGES_LIST="PKG_BIN64 $PACKAGES_LIST_COMMON"
 
 PKG_L10N_ID="${GAME_ID}-l10n-extra"
 
@@ -130,7 +142,7 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr xcursor libopenal.so.1 libasound.so.2 libX11.so.6"
+PKG_BIN64_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr xcursor libopenal.so.1 libasound.so.2"
 PKG_BIN64_DEPS_ARCH='expat'
 PKG_BIN64_DEPS_DEB='libexpat1'
 PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
@@ -148,7 +160,22 @@ PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
 
 APP_MAIN_EXE_BIN32='BaldursGateII'
 
-PACKAGES_LIST_32BIT="PKG_BIN32 ${PACKAGES_LIST_COMMON}"
+## 64-bit + 32-bit
+
+ARCHIVE_GAME_BIN64_FILES_MULTIARCH='BaldursGateII64'
+
+APP_MAIN_EXE_BIN64_MULTIARCH='BaldursGateII64'
+
+PACKAGES_LIST_MULTIARCH="PKG_BIN32 PKG_BIN64 $PACKAGES_LIST_COMMON"
+
+PKG_BIN32_DEPS_MULTIARCH="$PKG_BIN32_DEPS libX11.so.6"
+PKG_BIN64_DEPS_MULTIARCH="$PKG_BIN64_DEPS libX11.so.6"
+
+## 32-bit only
+
+PACKAGES_LIST_32BIT="PKG_BIN32 $PACKAGES_LIST_COMMON"
+
+PKG_BIN32_DEPS_32BIT="$PKG_BIN32_DEPS libX11.so.6"
 
 # Easier upgrade from packages generated with pre-20180801.3 scripts
 
@@ -257,12 +284,9 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-# Work around side-effect of use_package_specific_value
-# cf. https://forge.dotslashplay.it/play.it/scripts/-/issues/294
-APP_MAIN_EXE_BIN64="$APP_MAIN_EXE"
-
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	if packages_get_list | grep --quiet "$PKG"; then
+		use_archive_specific_value "APP_MAIN_EXE_${PKG#PKG_}"
 		launchers_write 'APP_MAIN'
 	fi
 done
@@ -331,7 +355,8 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-COMMON_PACKAGES='PKG_DATA PKG_BIN32 PKG_BIN64'
+COMMON_PACKAGES='PKG_DATA PKG_BIN64'
+COMMON_PACKAGES_MULTIARCH='PKG_DATA PKG_BIN32 PKG_BIN64'
 COMMON_PACKAGES_32BIT='PKG_DATA PKG_BIN32'
 use_archive_specific_value 'COMMON_PACKAGES'
 case "${LANG%_*}" in
