@@ -67,3 +67,27 @@ application_type() {
 	esac
 }
 
+# print the id of the given application
+# USAGE: application_id $application
+# RETURN: the application id, limited to the characters set [-_0-9a-z]
+#         the id can not start nor end with a character from the set [-_]
+application_id() {
+	# Get the application type from its identifier
+	# shellcheck disable=SC2039
+	local application_id
+	application_id=$(get_value "${1}_ID")
+
+	# If no id is explicitely set, fall back on GAME_ID
+	: "${application_id:=$GAME_ID}"
+
+	# Check that the id fits the format restrictions
+	if ! printf '%s' "$application_id" | \
+		grep --quiet --regexp='^[0-9a-z][-_0-9a-z]\+[0-9a-z]$'
+	then
+		error_application_id_invalid "$application" "$application_id"
+		return 1
+	fi
+
+	printf '%s' "$application_id"
+}
+
