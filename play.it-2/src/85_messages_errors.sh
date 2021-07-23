@@ -648,7 +648,6 @@ error_case_insensitive_filesystem_is_not_supported() {
 	return 1
 }
 
-
 # display an error when trying to use a filesystem without support for UNIX permissions
 # USAGE: error_unix_permissions_support_is_required $directory
 error_unix_permissions_support_is_required() {
@@ -674,6 +673,59 @@ error_unix_permissions_support_is_required() {
 	# shellcheck disable=SC2059
 	printf "$message" "$directory"
 
+	return 1
+}
+
+# display an error when trying to get the current archive but none is set
+# USAGE: error_archive_unset
+error_archive_unset() {
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Aucune archive nʼest définie, mais une est attendue à ce point de lʼexécution.\n'
+		;;
+		('en'|*)
+			message='No archive is set, but one is expected at this step.\n'
+		;;
+	esac
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message"
+	return 1
+}
+
+# display an error when trying to use an unkown type of context
+# valid context types are:
+# - archive
+# - package
+# USAGE: error_context_invalid $context
+error_context_invalid() {
+	# shellcheck disable=SC2039
+	local context
+	context="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Un type de contexte inattendu a été demandé : %s\n'
+			message="$message"'Seuls les types suivants sont valides :\n'
+			message="$message"'\t- archive\n'
+			message="$message"'\t- package\n'
+		;;
+		('en'|*)
+			message='An unexpected context type has been required: %s\n'
+			message="$message"'Only the following types are valid:\n'
+			message="$message"'\t- archive\n'
+			message="$message"'\t- package\n'
+		;;
+	esac
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$context"
 	return 1
 }
 
