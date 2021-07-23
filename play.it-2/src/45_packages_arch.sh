@@ -3,16 +3,21 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_ARCH
 # CALLED BY: write_metadata
 pkg_write_arch() {
-	local pkg_deps
-	use_archive_specific_value "${pkg}_DEPS"
-	if [ "$(get_value "${pkg}_DEPS")" ]; then
+	# shellcheck disable=SC2039
+	local pkg_deps dependencies_string
+	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
+	if [ -n "$dependencies_string" ]; then
 		# shellcheck disable=SC2046
-		pkg_set_deps_arch $(get_value "${pkg}_DEPS")
+		pkg_set_deps_arch $dependencies_string
 	fi
-	use_archive_specific_value "${pkg}_DEPS_ARCH"
-	if [ "$(get_value "${pkg}_DEPS_ARCH")" ]; then
-		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_ARCH")"
+
+	# shellcheck disable=SC2039
+	local dependencies_string_arch
+	dependencies_string_arch=$(get_context_specific_value 'archive' "${pkg}_DEPS_ARCH")
+	if [ -n "$dependencies_string_arch" ]; then
+		pkg_deps="$pkg_deps $dependencies_string_arch"
 	fi
+
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
 	local target

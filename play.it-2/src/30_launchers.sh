@@ -43,15 +43,19 @@ launcher_write_script() {
 	target_file="$(package_get_path "$package")${PATH_BIN}/$application_id"
 
 	# Check that the launcher target exists
-	local binary_file binary_path binary_found tested_package
+	local binary_path binary_found tested_package
+
+	# Get the name of the binary file
+	# shellcheck disable=SC2039
+	local binary_file
+	binary_file=$(get_context_specific_value 'package' "${application}_EXE")
+
 	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
-			use_package_specific_value "${application}_EXE"
-			binary_file=$(get_value "${application}_EXE")
 
 			# Check that the name of the binary file is not empty
 			if [ -z "$binary_file" ]; then
@@ -75,9 +79,6 @@ launcher_write_script() {
 			fi
 		;;
 		('wine')
-			use_package_specific_value "${application}_EXE"
-			binary_file=$(get_value "${application}_EXE")
-
 			# Check that the name of the binary file is not empty
 			if [ -z "$binary_file" ]; then
 				error_empty_variable "${application}_EXE"
@@ -94,9 +95,6 @@ launcher_write_script() {
 			fi
 		;;
 		(*)
-			use_package_specific_value "${application}_EXE"
-			binary_file=$(get_value "${application}_EXE")
-
 			# Check that the name of the binary file is not empty
 			if [ -z "$binary_file" ]; then
 				error_empty_variable "${application}_EXE"
@@ -209,10 +207,7 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'*)
-			local application_exe
-			use_package_specific_value "${application}_EXE"
-			application_exe="$(get_value "${application}_EXE")"
-			chmod +x "$(package_get_path "$package")${PATH_GAME}/$application_exe"
+			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(get_context_specific_value 'package' "${application}_EXE")"
 		;;
 	esac
 

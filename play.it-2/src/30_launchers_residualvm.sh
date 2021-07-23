@@ -8,15 +8,10 @@ launcher_write_script_residualvm_application_variables() {
 	application="$1"
 	file="$2"
 
-	# compute application-specific variables values
-	local application_residualid
-	use_package_specific_value "${application}_RESIDUALID"
-	application_residualid="$(get_value "${application}_RESIDUALID")"
-
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	RESIDUALVM_ID='$application_residualid'
+	RESIDUALVM_ID='$(get_context_specific_value 'package' "${application}_RESIDUALID")'
 
 	EOF
 	return 0
