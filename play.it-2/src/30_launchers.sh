@@ -710,35 +710,38 @@ launcher_write() {
 	return 0
 }
 
-# write both launcher script and menu entry for a list of applications
-# USAGE: launchers_write $application[…]
-# NEEDED VARS: OPTION_ARCHITECTURE
-# CALLS: launcher_write
+# write both a launcher script and a menu entry for each application from a list
+# USAGE: launchers_write [$application…]
+# RETURN: nothing
 launchers_write() {
-
 	debug_entering_function 'launchers_write' 2
 
-	# get the current package
-	local package
-	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
-		warning_skip_package 'launcher_write_script' "$package"
+	# Skip any action if called for a package excluded for target architectures
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& \
+		! packages_get_list | grep --quiet "$(package_get_current)"
+	then
+		warning_skip_package 'launcher_write_script' "$(package_get_current)"
+		debug_leaving_function 'launchers_write' 2
 		return 0
 	fi
 
+	# If called with no argument, default to handling the full list of applications
+	if [ $# -eq 0 ]; then
+		# shellcheck disable=SC2046
+		launchers_write $(applications_list)
+		debug_leaving_function 'launchers_write' 2
+		return 0
+	fi
+
+	# Write a launcher script and a menu entry for each application
+	# shellcheck disable=SC2039
 	local application
 	for application in "$@"; do
 		launcher_write "$application"
 	done
 
 	debug_leaving_function 'launchers_write' 2
-
-	return 0
 }
 
