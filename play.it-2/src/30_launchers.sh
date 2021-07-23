@@ -29,14 +29,10 @@ launcher_write_script() {
 		error_invalid_argument 'application' 'launcher_write_script'
 	fi
 
-	# compute file name and path
-	local application_id
+	# compute file path
+	# shellcheck disable=SC2039
 	local target_file
-	application_id="$(get_value "${application}_ID")"
-	if [ -z "$application_id" ]; then
-		application_id="$GAME_ID"
-	fi
-	target_file="$(package_get_path "$package")${PATH_BIN}/$application_id"
+	target_file="$(package_get_path "$package")${PATH_BIN}/$(application_id "$application")"
 
 	# Check that the launcher target exists
 	local binary_path binary_found tested_package
@@ -169,7 +165,7 @@ launcher_write_script() {
 			launcher_write_script_residualvm_run "$application" "$target_file"
 		;;
 		('wine')
-			if [ "$application_id" != "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" != "${GAME_ID}_winecfg" ]; then
 				launcher_write_script_wine_application_variables "$application" "$target_file"
 			fi
 			launcher_write_script_game_variables "$target_file"
@@ -177,7 +173,7 @@ launcher_write_script() {
 			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_wine_prefix_build "$target_file"
-			if [ "$application_id" = "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" = "${GAME_ID}_winecfg" ]; then
 				launcher_write_script_winecfg_run "$target_file"
 			else
 				launcher_write_script_wine_run "$application" "$target_file"
@@ -604,41 +600,37 @@ launcher_write_desktop() {
 	fi
 
 	# get application-specific values
-	local application_id
 	local application_name
 	local application_category
 	if [ "$application" = 'APP_WINECFG' ]; then
-		application_id="${GAME_ID}_winecfg"
 		# shellcheck disable=SC2153
 		application_name="$GAME_NAME - WINE configuration"
 		application_category='Settings'
 		application_icon='winecfg'
 	else
-		application_id="$(get_value "${application}_ID")"
 		application_name="$(get_value "${application}_NAME")"
 		application_category="$(get_value "${application}_CAT")"
-		: "${application_id:=$GAME_ID}"
 		: "${application_name:=$GAME_NAME}"
 		: "${application_category:=Game}"
-		application_icon="$application_id"
+		application_icon=$(application_id "$application")
 	fi
 
 	# compute file name and path
 	local target_file
-	target_file="$(package_get_path "$package")${PATH_DESK}/${application_id}.desktop"
+	target_file="$(package_get_path "$package")${PATH_DESK}/$(application_id "$application").desktop"
 
 	# include full binary path in Exec field if using non-standard installation prefix
 	local exec_field
 	case "$OPTION_PREFIX" in
 		('/usr'|'/usr/local')
-			exec_field="$application_id"
+			exec_field=$(application_id "$application")
 		;;
 		(*' '*)
 			# enclose the path in single quotes if it includes spaces
-			exec_field="'$PATH_BIN/$application_id'"
+			exec_field="'$PATH_BIN/$(application_id "$application")'"
 		;;
 		(*)
-			exec_field="$PATH_BIN/$application_id"
+			exec_field="$PATH_BIN/$(application_id "$application")"
 		;;
 	esac
 
@@ -666,6 +658,7 @@ launcher_write_desktop() {
 				local winecfg_desktop
 				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
+					APP_WINECFG_ID="${GAME_ID}_winecfg"
 					launcher_write_desktop 'APP_WINECFG'
 				fi
 			;;
