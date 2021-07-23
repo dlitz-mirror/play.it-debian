@@ -27,3 +27,43 @@ applications_list() {
 	EOF
 }
 
+# print the type of the given application
+# USAGE: application_type $application
+# RETURN: the application type keyword, from the supported values:
+#         - dosbox
+#         - java
+#         - mono
+#         - native
+#         - native_no-prefix
+#         - renpy
+#         - residualvm
+#         - scummvm
+#         - wine
+application_type() {
+	# Get the application type from its identifier
+	# shellcheck disable=SC2039
+	local application_type
+	application_type=$(get_value "${1}_TYPE")
+
+	# Check that a supported type has been fetched
+	case "$application_type" in
+		( \
+			'dosbox' | \
+			'java' | \
+			'mono' | \
+			'native' | \
+			'native_no-prefix' | \
+			'renpy' | \
+			'residualvm' | \
+			'scummvm' | \
+			'wine' \
+		)
+			printf '%s' "$application_type"
+			return 0
+		;;
+		(*)
+			error_unknown_application_type "$application_type"
+		;;
+	esac
+}
+
