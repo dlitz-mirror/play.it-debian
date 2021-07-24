@@ -502,46 +502,40 @@ launcher_write_script_prefix_build() {
 
 # write launcher script pre-run actions
 # USAGE: launcher_write_script_prerun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_prerun() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
-	local application_prerun
-	application_prerun="$(get_value "${application}_PRERUN")"
-	if [ "$application_prerun" ]; then
-		cat >> "$file" <<- EOF
-		$application_prerun
-
-		EOF
+	# Return early if there are no pre-run actions for the given application
+	if [ -z "$(application_prerun "$application")" ]; then
+		return 0
 	fi
 
-	return 0
+	cat >> "$file" <<- EOF
+	$(application_prerun "$application")
+
+	EOF
 }
 
 # write launcher script post-run actions
 # USAGE: launcher_write_script_postrun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_postrun() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
-	local application_postrun
-	application_postrun="$(get_value "${application}_POSTRUN")"
-	if [ "$application_postrun" ]; then
-		cat >> "$file" <<- EOF
-		$application_postrun
-
-		EOF
+	# Return early if there are no post-run actions for the given application
+	if [ -z "$(application_postrun "$application")" ]; then
+		return 0
 	fi
 
-	return 0
+	cat >> "$file" <<- EOF
+	$(application_postrun "$application")
+
+	EOF
 }
 
 # write menu entry
