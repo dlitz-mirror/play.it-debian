@@ -36,27 +36,15 @@ launcher_write_script() {
 
 	# Check that the launcher target exists
 	local binary_path binary_found tested_package
-
-	# Get the name of the binary file
-	# shellcheck disable=SC2039
-	local binary_file
-	binary_file=$(get_context_specific_value 'package' "${application}_EXE")
-
 	case "$(application_type "$application")" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
-
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
 			binary_found=0
 			for tested_package in $packages_list; do
-				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$(application_exe "$application")"
 				if [ -f "$binary_path" ]; then
 					binary_found=1
 					break;
@@ -66,18 +54,13 @@ launcher_write_script() {
 				[ $DRY_RUN -eq 0 ] && \
 				[ $binary_found -eq 0 ]
 			then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				error_launcher_missing_binary "$binary_path"
 			fi
 		;;
 		('wine')
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
-			if [ "$binary_file" != 'winecfg' ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+			if [ "$(application_exe "$application")" != 'winecfg' ]; then
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				if \
 					[ $DRY_RUN -eq 0 ] && \
 					[ ! -f "$binary_path" ]
@@ -87,12 +70,7 @@ launcher_write_script() {
 			fi
 		;;
 		(*)
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
-			binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+			binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 			if \
 				[ $DRY_RUN -eq 0 ] && \
 				[ ! -f "$binary_path" ]
@@ -196,7 +174,7 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$(application_type "$application")" in
 		('native'*)
-			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(get_context_specific_value 'package' "${application}_EXE")"
+			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 		;;
 	esac
 

@@ -11,7 +11,7 @@ launcher_write_script_java_application_variables() {
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(get_context_specific_value 'package' "${application}_EXE")'
+	APP_EXE='$(application_exe "$application")'
 	APP_LIBS='$(get_context_specific_value 'package' "${application}_JAVA_OPTIONS")'
 	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_LIBS")"
 	JAVA_OPTIONS='$(get_context_specific_value 'package' "${application}_OPTIONS")'
