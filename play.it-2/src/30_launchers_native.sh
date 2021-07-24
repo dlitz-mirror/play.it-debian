@@ -2,9 +2,8 @@
 # USAGE: launcher_write_script_native_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_native_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
@@ -12,7 +11,7 @@ launcher_write_script_native_application_variables() {
 	# Set application-specific values
 
 	APP_EXE='$(application_exe "$application")'
-	APP_LIBS='$(get_context_specific_value 'package' "${application}_LIBS")'
+	APP_LIBS='$(application_libs "$application")'
 	APP_OPTIONS="$(application_options "$application")"
 
 	EOF
@@ -109,24 +108,39 @@ launcher_write_script_native_run_common() {
 
 	launcher_write_script_prerun "$application" "$file"
 
+	# Set path to extra libraries
+	case "$OPTION_PACKAGE" in
+		('gentoo'|'egentoo')
+			cat >> "$file" <<- 'EOF'
+			library_path=
+			if [ -n "$APP_LIBS" ]; then
+			    library_path="$APP_LIBS:"
+			fi
+			EOF
+			local extra_library_path
+			extra_library_path="$(launcher_native_get_extra_library_path)"
+			if [ -n "$extra_library_path" ]; then
+				cat >> "$file" <<- EOF
+				library_path="\${library_path}$extra_library_path"
+				EOF
+			fi
+			cat >> "$file" <<- 'EOF'
+			if [ -n "$library_path" ]; then
+			    LD_LIBRARY_PATH="${library_path}$LD_LIBRARY_PATH"
+			    export LD_LIBRARY_PATH
+			fi
+			EOF
+		;;
+		(*)
+			cat >> "$file" <<- 'EOF'
+			if [ -n "$APP_LIBS" ]; then
+			    export LD_LIBRARY_PATH="${APP_LIBS}:${LD_LIBRARY_PATH}"
+			fi
+			EOF
+		;;
+	esac
+
 	cat >> "$file" <<- 'EOF'
-	library_path=
-	if [ -n "$APP_LIBS" ]; then
-	    library_path="$APP_LIBS:"
-	fi
-	EOF
-	local extra_library_path
-	extra_library_path="$(launcher_native_get_extra_library_path)"
-	if [ -n "$extra_library_path" ]; then
-		cat >> "$file" <<- EOF
-		library_path="\${library_path}$extra_library_path"
-		EOF
-	fi
-	cat >> "$file" <<- 'EOF'
-	if [ -n "$library_path" ]; then
-	    LD_LIBRARY_PATH="${library_path}$LD_LIBRARY_PATH"
-	    export LD_LIBRARY_PATH
-	fi
 	"./$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
