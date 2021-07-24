@@ -2,16 +2,15 @@
 # USAGE: launcher_write_script_residualvm_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_residualvm_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	RESIDUALVM_ID='$(get_context_specific_value 'package' "${application}_RESIDUALID")'
+	RESIDUALVM_ID='$(application_residualvm_residualid "$application")'
 
 	EOF
 	return 0
@@ -36,7 +35,7 @@ launcher_write_script_residualvm_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	residualvm -p "$PATH_GAME" "$@" $RESIDUALVM_ID
+	residualvm -p "$PATH_GAME" "$@" "$RESIDUALVM_ID"
 
 	EOF
 
