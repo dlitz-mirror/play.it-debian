@@ -91,3 +91,22 @@ application_id() {
 	printf '%s' "$application_id"
 }
 
+# print the file name of the given application
+# USAGE: application_exe $application
+# RETURN: the application file name
+application_exe() {
+	# Use the package-specific value if it is available,
+	# falls back on the default value
+	# shellcheck disable=SC2039
+	local application application_exe
+	application="$1"
+	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+
+	# Check that the file name is not empty
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application" "$(application_type "$application")"
+	fi
+
+	printf '%s' "$application_exe"
+}
+
