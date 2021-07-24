@@ -110,3 +110,36 @@ application_exe() {
 	printf '%s' "$application_exe"
 }
 
+# print the name of the given application, for display in menus
+# USAGE: application_name $application
+# RETURN: the pretty version of the application name
+application_name() {
+	# Get the application name from its identifier
+	# shellcheck disable=SC2039
+	local application_name
+	application_name=$(get_value "${1}_NAME")
+
+	# If no name is explicitely set, fall back on GAME_NAME
+	: "${application_name:=$GAME_NAME}"
+
+	printf '%s' "$application_name"
+}
+
+# print the category of the given application, for sorting in menus with categories support
+# USAGE: application_category $application
+# RETURN: the application XDG menu category
+application_category() {
+	# Get the application category from its identifier
+	# shellcheck disable=SC2039
+	local application_category
+	application_category=$(get_value "${1}_CAT")
+
+	# If no category is explicitely set, fall back on "Game"
+	: "${application_category:=Game}"
+
+	# TODO - We could check that the category is part of the 1.0 XDG spec:
+	# https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html#category-registry
+
+	printf '%s' "$application_category"
+}
+
