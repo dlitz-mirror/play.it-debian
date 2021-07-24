@@ -36,7 +36,7 @@ launcher_write_script_scummvm_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	scummvm -p "$PATH_GAME" $APP_OPTIONS $@ $SCUMMVM_ID
+	scummvm -p "$PATH_GAME" "$@" $SCUMMVM_ID
 
 	EOF
 

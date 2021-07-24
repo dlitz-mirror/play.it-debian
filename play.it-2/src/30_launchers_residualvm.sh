@@ -36,7 +36,7 @@ launcher_write_script_residualvm_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	residualvm -p "$PATH_GAME" $APP_OPTIONS $@ $RESIDUALVM_ID
+	residualvm -p "$PATH_GAME" "$@" $RESIDUALVM_ID
 
 	EOF
 

@@ -2,9 +2,8 @@
 # USAGE: launcher_write_script_mono_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_mono_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
@@ -13,8 +12,8 @@ launcher_write_script_mono_application_variables() {
 
 	APP_EXE='$(application_exe "$application")'
 	APP_LIBS='$(get_context_specific_value 'package' "${application}_MONO_OPTIONS")'
-	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_LIBS")"
-	MONO_OPTIONS='$(get_context_specific_value 'package' "${application}_OPTIONS")'
+	APP_OPTIONS="$(application_options "$application")"
+	MONO_OPTIONS='$(application_mono_options "$application")'
 
 	EOF
 	return 0

@@ -13,7 +13,7 @@ launcher_write_script_native_application_variables() {
 
 	APP_EXE='$(application_exe "$application")'
 	APP_LIBS='$(get_context_specific_value 'package' "${application}_LIBS")'
-	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_OPTIONS")"
+	APP_OPTIONS="$(application_options "$application")"
 
 	EOF
 	return 0
@@ -127,7 +127,7 @@ launcher_write_script_native_run_common() {
 	    LD_LIBRARY_PATH="${library_path}$LD_LIBRARY_PATH"
 	    export LD_LIBRARY_PATH
 	fi
-	"./$APP_EXE" $APP_OPTIONS $@
+	"./$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
 
