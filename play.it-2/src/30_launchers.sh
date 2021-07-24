@@ -577,25 +577,18 @@ launcher_write_desktop() {
 		error_invalid_argument 'application' 'launcher_write_desktop'
 	fi
 
-	# get application-specific values
-	local application_name
-	local application_category
-	if [ "$application" = 'APP_WINECFG' ]; then
-		# shellcheck disable=SC2153
-		application_name="$GAME_NAME - WINE configuration"
-		application_category='Settings'
-		application_icon='winecfg'
-	else
-		application_name="$(get_value "${application}_NAME")"
-		application_category="$(get_value "${application}_CAT")"
-		: "${application_name:=$GAME_NAME}"
-		: "${application_category:=Game}"
-		application_icon=$(application_id "$application")
-	fi
-
 	# compute file name and path
 	local target_file
 	target_file="$(package_get_path "$package")${PATH_DESK}/$(application_id "$application").desktop"
+
+	# get icon name
+	# shellcheck disable=SC2039
+	local application_icon
+	if [ "$application" = 'APP_WINECFG' ]; then
+		application_icon='winecfg'
+	else
+		application_icon=$(application_id "$application")
+	fi
 
 	# include full binary path in Exec field if using non-standard installation prefix
 	local exec_field
@@ -623,10 +616,10 @@ launcher_write_desktop() {
 	[Desktop Entry]
 	Version=1.0
 	Type=Application
-	Name=$application_name
+	Name=$(application_name "$application")
 	Icon=$application_icon
 	Exec=$exec_field
-	Categories=$application_category
+	Categories=$(application_category "$application")
 	EOF
 
 	# for WINE applications, write desktop file for winecfg
@@ -636,7 +629,9 @@ launcher_write_desktop() {
 				local winecfg_desktop
 				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
-					APP_WINECFG_ID="${GAME_ID}_winecfg"
+					export APP_WINECFG_ID="${GAME_ID}_winecfg"
+					export APP_WINECFG_NAME="$GAME_NAME - WINE configuration"
+					export APP_WINECFG_CAT='Settings'
 					launcher_write_desktop 'APP_WINECFG'
 				fi
 			;;
