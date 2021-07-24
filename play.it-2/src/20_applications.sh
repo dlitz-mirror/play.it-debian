@@ -179,3 +179,13 @@ application_options() {
 	printf '%s' "$application_options"
 }
 
+# print the application libraries path, relative to the game root
+# USAGE: application_libs $application
+# RETURN: the application libraries path relative to the game root,
+#         or an empty string if none is set
+application_libs() {
+	# Use the package-specific value if it is available,
+	# falls back on the default value
+	get_context_specific_value 'package' "${1}_LIBS"
+}
+
