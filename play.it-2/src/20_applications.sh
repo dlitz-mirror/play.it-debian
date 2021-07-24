@@ -143,3 +143,19 @@ application_category() {
 	printf '%s' "$application_category"
 }
 
+# print the pre-run actions for the given application
+# USAGE: application_prerun $application
+# RETURN: the pre-run actions, can span over multiple lines,
+#         or an empty string if there are none
+application_prerun() {
+	get_value "${1}_PRERUN"
+}
+
+# print the post-run actions for the given application
+# USAGE: application_postrun $application
+# RETURN: the post-run actions, can span over multiple lines,
+#         or an empty string if there are none
+application_postrun() {
+	get_value "${1}_POSTRUN"
+}
+
