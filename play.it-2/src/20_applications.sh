@@ -159,3 +159,23 @@ application_postrun() {
 	get_value "${1}_POSTRUN"
 }
 
+# print the options string for the given application
+# USAGE: application_options $application
+# RETURN: the options string on a single line,
+#         or an empty string if no options are set
+application_options() {
+	# Get the application options string from its identifier
+	# shellcheck disable=SC2039
+	local application application_options
+	application="$1"
+	application_options=$(get_value "${application}_OPTIONS")
+
+	# Check that the options string does not span multiple lines
+	if [ "$(printf '%s' "$application_options" | wc --lines)" -gt 1 ]; then
+		error_variable_multiline "${application}_OPTIONS"
+		return 1
+	fi
+
+	printf '%s' "$application_options"
+}
+
