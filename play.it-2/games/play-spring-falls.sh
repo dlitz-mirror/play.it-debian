@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210725.1
+script_version=20210725.2
 
 # Set game-specific variables
 
@@ -49,7 +49,7 @@ ARCHIVE_BASE_0_VERSION='1.22-itch1'
 ARCHIVE_BASE_0_URL='https://sparsegamedev.itch.io/spring-falls'
 
 ARCHIVE_GAME_BIN_PATH='.'
-ARCHIVE_GAME_BIN_FILES='SpringFalls.x86_64 SpringFalls_Data/Plugins SpringFalls_Data/MonoBleedingEdge/x86_64 SpringFalls_Data/Managed'
+ARCHIVE_GAME_BIN_FILES='SpringFalls.x86_64 SpringFalls_Data/Plugins SpringFalls_Data/MonoBleedingEdge'
 
 ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='SpringFalls_Data'
