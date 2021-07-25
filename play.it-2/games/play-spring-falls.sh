@@ -35,18 +35,23 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210725.2
+script_version=20210725.3
 
 # Set game-specific variables
 
 GAME_ID='spring-falls'
 GAME_NAME='Spring Falls'
 
+ARCHIVE_BASE_1='Spring Falls v1.23 Linux.zip'
+ARCHIVE_BASE_1_MD5='67bdbc6f8aca62d13de738ed126a9d30'
+ARCHIVE_BASE_1_SIZE='140000'
+ARCHIVE_BASE_1_VERSION='1.23-itch.2021.02.16'
+ARCHIVE_BASE_1_URL='https://sparsegamedev.itch.io/spring-falls'
+
 ARCHIVE_BASE_0='Spring Falls v1.22 Linux.zip'
 ARCHIVE_BASE_0_MD5='4dfc2f3dde0d1f2abac252157413047c'
 ARCHIVE_BASE_0_SIZE='140000'
 ARCHIVE_BASE_0_VERSION='1.22-itch1'
-ARCHIVE_BASE_0_URL='https://sparsegamedev.itch.io/spring-falls'
 
 ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='SpringFalls.x86_64 SpringFalls_Data/Plugins SpringFalls_Data/MonoBleedingEdge'
