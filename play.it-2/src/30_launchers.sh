@@ -620,6 +620,39 @@ launcher_write_desktop() {
 	return 0
 }
 
+# print the content of the XDG desktop file for the given application
+# USAGE: launcher_desktop $application
+# RETURN: the full content of the XDG desktop file
+launcher_desktop() {
+	# shellcheck disable=SC2039
+	local application
+	application="$1"
+
+	###
+	# TODO
+	# This should be moved to a dedicated function,
+	# probably in a 20_icons.sh source file
+	###
+	# get icon name
+	# shellcheck disable=SC2039
+	local application_icon
+	if [ "$application" = 'APP_WINECFG' ]; then
+		application_icon='winecfg'
+	else
+		application_icon=$(application_id "$application")
+	fi
+
+	cat <<- EOF
+	[Desktop Entry]
+	Version=1.0
+	Type=Application
+	Name=$(application_name "$application")
+	Icon=$application_icon
+	$(launcher_desktop_exec "$application")
+	Categories=$(application_category "$application")
+	EOF
+}
+
 # print the XDG desktop "Exec" field for the given application
 # USAGE: launcher_desktop_exec $application
 # RETURN: the "Exec" field string, including escaping if required
