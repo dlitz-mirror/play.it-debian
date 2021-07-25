@@ -34,19 +34,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210725.4
+script_version=20210725.5
 
 # Set game-specific variables
 
 GAME_ID='tonight-we-riot'
 GAME_NAME='Tonight We Riot'
 
+ARCHIVE_BASE_2='tonight_we_riot_linuxrelease_c_38381.sh'
+ARCHIVE_BASE_2_MD5='7afc74aefbccaa58627d934e63c16247'
+ARCHIVE_BASE_2_TYPE='mojosetup'
+ARCHIVE_BASE_2_SIZE='690000'
+ARCHIVE_BASE_2_VERSION='1.0.c-gog38381'
+ARCHIVE_BASE_2_URL='https://www.gog.com/game/tonight_we_riot'
+
+ARCHIVE_BASE_1='tonight_we_riot_linuxrelease_b_38278.sh'
+ARCHIVE_BASE_1_MD5='7ca6aedccb70bcd027b9e79d5cfb8585'
+ARCHIVE_BASE_1_TYPE='mojosetup'
+ARCHIVE_BASE_1_SIZE='690000'
+ARCHIVE_BASE_1_VERSION='1.0.b-gog38278'
+
 ARCHIVE_BASE_0='tonight_we_riot_linuxrelease_a_38076.sh'
 ARCHIVE_BASE_0_MD5='38b03db54a7d80895d2abe0d9f153ae7'
 ARCHIVE_BASE_0_TYPE='mojosetup'
 ARCHIVE_BASE_0_SIZE='690000'
 ARCHIVE_BASE_0_VERSION='1.0.a-gog38076'
-ARCHIVE_BASE_0_URL='https://www.gog.com/game/tonight_we_riot'
 
 ARCHIVE_GAME_BIN_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='TonightWeRiot_Linux.x86_64 TonightWeRiot_Linux_Data/Mono TonightWeRiot_Linux_Data/Plugins'
