@@ -34,36 +34,44 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210725.5
+script_version=20210725.6
 
 # Set game-specific variables
 
 GAME_ID='tonight-we-riot'
 GAME_NAME='Tonight We Riot'
 
-ARCHIVE_BASE_2='tonight_we_riot_linuxrelease_c_38381.sh'
-ARCHIVE_BASE_2_MD5='7afc74aefbccaa58627d934e63c16247'
-ARCHIVE_BASE_2_TYPE='mojosetup'
-ARCHIVE_BASE_2_SIZE='690000'
-ARCHIVE_BASE_2_VERSION='1.0.c-gog38381'
-ARCHIVE_BASE_2_URL='https://www.gog.com/game/tonight_we_riot'
+ARCHIVE_BASE_ITCH_0='TonightWeRiot_Linux.zip'
+ARCHIVE_BASE_ITCH_0_MD5='293a595ea44b5e80a0ca0eeb7b5a925a'
+ARCHIVE_BASE_ITCH_0_SIZE='690000'
+ARCHIVE_BASE_ITCH_0_VERSION='1.0-itch.2020.06.08'
+ARCHIVE_BASE_ITCH_0_URL='https://meansinteractive.itch.io/tonight-we-riot'
 
-ARCHIVE_BASE_1='tonight_we_riot_linuxrelease_b_38278.sh'
-ARCHIVE_BASE_1_MD5='7ca6aedccb70bcd027b9e79d5cfb8585'
-ARCHIVE_BASE_1_TYPE='mojosetup'
-ARCHIVE_BASE_1_SIZE='690000'
-ARCHIVE_BASE_1_VERSION='1.0.b-gog38278'
+ARCHIVE_BASE_GOG_2='tonight_we_riot_linuxrelease_c_38381.sh'
+ARCHIVE_BASE_GOG_2_MD5='7afc74aefbccaa58627d934e63c16247'
+ARCHIVE_BASE_GOG_2_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_2_SIZE='690000'
+ARCHIVE_BASE_GOG_2_VERSION='1.0.c-gog38381'
+ARCHIVE_BASE_GOG_2_URL='https://www.gog.com/game/tonight_we_riot'
 
-ARCHIVE_BASE_0='tonight_we_riot_linuxrelease_a_38076.sh'
-ARCHIVE_BASE_0_MD5='38b03db54a7d80895d2abe0d9f153ae7'
-ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='690000'
-ARCHIVE_BASE_0_VERSION='1.0.a-gog38076'
+ARCHIVE_BASE_GOG_1='tonight_we_riot_linuxrelease_b_38278.sh'
+ARCHIVE_BASE_GOG_1_MD5='7ca6aedccb70bcd027b9e79d5cfb8585'
+ARCHIVE_BASE_GOG_1_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_1_SIZE='690000'
+ARCHIVE_BASE_GOG_1_VERSION='1.0.b-gog38278'
 
-ARCHIVE_GAME_BIN_PATH='data/noarch/game'
+ARCHIVE_BASE_GOG_0='tonight_we_riot_linuxrelease_a_38076.sh'
+ARCHIVE_BASE_GOG_0_MD5='38b03db54a7d80895d2abe0d9f153ae7'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_SIZE='690000'
+ARCHIVE_BASE_GOG_0_VERSION='1.0.a-gog38076'
+
+ARCHIVE_GAME_BIN_PATH_ITCH='TonightWeRiot_Linux'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_FILES='TonightWeRiot_Linux.x86_64 TonightWeRiot_Linux_Data/Mono TonightWeRiot_Linux_Data/Plugins'
 
-ARCHIVE_GAME_DATA_PATH='data/noarch/game'
+ARCHIVE_GAME_DATA_PATH_ITCH='TonightWeRiot_Linux'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_FILES='TonightWeRiot_Linux_Data'
 
 APP_MAIN_TYPE='native'
