@@ -180,8 +180,7 @@ package_get_id() {
 	# get package ID from its name
 	# shellcheck disable=SC2039
 	local package_id
-	use_archive_specific_value "${package}_ID"
-	package_id=$(get_value "${package}_ID")
+	package_id=$(get_context_specific_value 'archive' "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
@@ -227,8 +226,7 @@ package_get_architecture() {
 	# get package architecture from its name
 	# shellcheck disable=SC2039
 	local package_architecture
-	use_archive_specific_value "${package}_ARCH"
-	package_architecture=$(get_value "${package}_ARCH")
+	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 
 	# if no package-specific architecture is set, fall back to "all"
 	if [ -z "$package_architecture" ]; then
@@ -324,8 +322,7 @@ package_get_description() {
 	# get package description from its name
 	# shellcheck disable=SC2039
 	local package_description
-	use_archive_specific_value "${package}_DESCRIPTION"
-	package_description=$(get_value "${package}_DESCRIPTION")
+	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
 
 	###
 	# TODO
@@ -382,8 +379,7 @@ package_get_provide() {
 	# get provided package ID from its name
 	# shellcheck disable=SC2039
 	local package_provide
-	use_archive_specific_value "${package}_PROVIDE"
-	package_provide=$(get_value "${package}_PROVIDE")
+	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
 
 	# if no package is provided, return early
 	if [ -z "$package_provide" ]; then

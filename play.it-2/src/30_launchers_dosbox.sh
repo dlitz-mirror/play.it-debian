@@ -8,19 +8,11 @@ launcher_write_script_dosbox_application_variables() {
 	application="$1"
 	file="$2"
 
-	# compute application-specific variables values
-	local application_exe
-	local application_options
-	use_package_specific_value "${application}_EXE"
-	use_package_specific_value "${application}_OPTIONS"
-	application_exe="$(get_value "${application}_EXE")"
-	application_options="$(get_value "${application}_OPTIONS")"
-
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$application_exe'
-	APP_OPTIONS="$application_options"
+	APP_EXE='$(get_context_specific_value 'package' "${application}_EXE")'
+	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_OPTIONS")"
 
 	EOF
 	return 0

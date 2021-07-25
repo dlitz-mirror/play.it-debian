@@ -81,7 +81,6 @@ icons_get_from_path() {
 	local app
 	local destination
 	local directory
-	local file
 	local icon
 	local list
 	local wrestool_id
@@ -100,8 +99,10 @@ icons_get_from_path() {
 		list="$(get_value "${app}_ICONS_LIST")"
 		[ -n "$list" ] || list="${app}_ICON"
 		for icon in $list; do
-			use_archive_specific_value "$icon"
-			file="$(get_value "$icon")"
+			# shellcheck disable=SC2039
+			local file
+			file=$(get_context_specific_value 'archive' "$icon")
+
 			if [ -z "$file" ]; then
 				error_variable_not_set 'icons_get_from_path' '$'"$icon"
 			fi

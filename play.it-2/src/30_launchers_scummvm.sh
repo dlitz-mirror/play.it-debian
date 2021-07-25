@@ -8,15 +8,10 @@ launcher_write_script_scummvm_application_variables() {
 	application="$1"
 	file="$2"
 
-	# compute application-specific variables values
-	local application_scummid
-	use_package_specific_value "${application}_SCUMMID"
-	application_scummid="$(get_value "${application}_SCUMMID")"
-
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	SCUMMVM_ID='$application_scummid'
+	SCUMMVM_ID='$(get_context_specific_value 'package' "${application}_SCUMMID")'
 
 	EOF
 	return 0

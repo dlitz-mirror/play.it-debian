@@ -15,6 +15,14 @@ icon_get_resolution_from_file() {
 	export resolution
 }
 
+use_archive_specific_value() {
+	export "$1=$(get_context_specific_value 'archive' "$1")"
+}
+
+use_package_specific_value() {
+	export "$1=$(get_context_specific_value 'package' "$1")"
+}
+
 # Keep compatibility with 2.12 and older
 
 archives_get_list() {

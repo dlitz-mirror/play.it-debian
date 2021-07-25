@@ -3,16 +3,20 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
 # CALLED BY: write_metadata
 pkg_write_gentoo() {
-	local pkg_deps
-	use_archive_specific_value "${pkg}_DEPS"
-	if [ "$(get_value "${pkg}_DEPS")" ]; then
+	# shellcheck disable=SC2039
+	local pkg_deps dependencies_string
+	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
+	if [ -n "$dependencies_string" ]; then
 		# shellcheck disable=SC2046
-		pkg_set_deps_gentoo $(get_value "${pkg}_DEPS")
+		pkg_set_deps_gentoo $dependencies_string
 		export GENTOO_OVERLAYS
 	fi
-	use_archive_specific_value "${pkg}_DEPS_GENTOO"
-	if [ "$(get_value "${pkg}_DEPS_GENTOO")" ]; then
-		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_GENTOO")"
+
+	# shellcheck disable=SC2039
+	local dependencies_string_gentoo
+	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${pkg}_DEPS_GENTOO")
+	if [ -n "$dependencies_string_gentoo" ]; then
+		pkg_deps="$pkg_deps $dependencies_string_gentoo"
 	fi
 
 	if [ -n "$(package_get_provide "$pkg")" ]; then

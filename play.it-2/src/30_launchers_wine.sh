@@ -8,19 +8,11 @@ launcher_write_script_wine_application_variables() {
 	application="$1"
 	file="$2"
 
-	# compute application-specific variables values
-	local application_exe
-	local application_options
-	use_package_specific_value "${application}_EXE"
-	use_package_specific_value "${application}_OPTIONS"
-	application_exe="$(get_value "${application}_EXE")"
-	application_options="$(get_value "${application}_OPTIONS")"
-
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$application_exe'
-	APP_OPTIONS="$application_options"
+	APP_EXE='$(get_context_specific_value 'package' "${application}_EXE")'
+	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_OPTIONS")"
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
@@ -40,10 +32,9 @@ launcher_write_script_wine_prefix_build() {
 	package=$(package_get_current)
 
 	# compute WINE prefix architecture
-	local architecture
-	local winearch
-	use_archive_specific_value "${package}_ARCH"
-	architecture="$(get_value "${package}_ARCH")"
+	# shellcheck disable=SC2039
+	local architecture winearch
+	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 	case "$architecture" in
 		('32') winearch='win32' ;;
 		('64') winearch='win64' ;;
