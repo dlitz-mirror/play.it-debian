@@ -1,8 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,44 +31,46 @@ set -o errexit
 
 ###
 # Fire
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210712.5
 
 # Set game-specific variables
 
 GAME_ID='fire'
 GAME_NAME='Fire!'
 
-ARCHIVES_LIST='ARCHIVE_HUMBLE'
+ARCHIVE_BASE_ZOOM_0='Puzzleventure-FIRE-1.1.tar.xz'
+ARCHIVE_BASE_ZOOM_0_MD5='3a51cae77402316fff25fae65aebf865'
+ARCHIVE_BASE_ZOOM_0_TYPE='tar' # The type declaration should be dropped with ./play.it 2.14 release
+ARCHIVE_BASE_ZOOM_0_SIZE='4200000'
+ARCHIVE_BASE_ZOOM_0_VERSION='1.0.6756-zoom1.1'
+ARCHIVE_BASE_ZOOM_0_URL='https://www.zoom-platform.com/product/puzzleventure-fire'
 
-ARCHIVE_HUMBLE='LIN_ESD_1.0.6756_REL.zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/fire'
-ARCHIVE_HUMBLE_MD5='eb990e8465afbca210009b1fca76adcb'
-ARCHIVE_HUMBLE_SIZE='4200000'
-ARCHIVE_HUMBLE_VERSION='1.0.6756-humble1'
+ARCHIVE_BASE_HUMBLE_0='LIN_ESD_1.0.6756_REL.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='eb990e8465afbca210009b1fca76adcb'
+ARCHIVE_BASE_HUMBLE_0_SIZE='4200000'
+ARCHIVE_BASE_HUMBLE_0_VERSION='1.0.6756-humble1'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/fire'
 
-ARCHIVE_GAME_BIN32_PATH='.'
-ARCHIVE_GAME_BIN32_FILES='./*.x86 ./*_Data/*/x86'
+ARCHIVE_GAME_BIN32_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_BIN32_PATH_HUMBLE='.'
+ARCHIVE_GAME_BIN32_FILES='Fire.x86 Fire_Data/Mono/x86 Fire_Data/Plugins/x86'
 
-ARCHIVE_GAME_BIN64_PATH='.'
-ARCHIVE_GAME_BIN64_FILES='./*.x86_64 ./*_Data/*/x86_64'
+ARCHIVE_GAME_BIN64_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_BIN64_PATH_HUMBLE='.'
+ARCHIVE_GAME_BIN64_FILES='Fire.x86_64 Fire_Data/Mono/x86_64 Fire_Data/Plugins/x86_64'
 
-ARCHIVE_GAME_DATA_PATH='.'
-ARCHIVE_GAME_DATA_FILES='./*_Data/*.assets ./*_Data/*.resS ./*_Data/level* ./*_Data/Mono/etc ./*_Data/Managed ./*_Data/Resources ./*_Data/ScreenSelector.png ./*_Data/Configs ./*_Data/GameData ./*_Data/mainData ./*_Data/Plugins'
-
-DATA_DIRS='./logs'
+ARCHIVE_GAME_DATA_PATH_ZOOM='Puzzleventure - FIRE'
+ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
+ARCHIVE_GAME_DATA_FILES='Fire_Data'
 
 APP_MAIN_TYPE='native'
 APP_MAIN_EXE_BIN32='Fire.x86'
 APP_MAIN_EXE_BIN64='Fire.x86_64'
-# shellcheck disable=SC2016
-APP_MAIN_OPTIONS='-logFile ./logs/$(date +%F-%R).log'
-APP_MAIN_ICONS_LIST='APP_MAIN_ICON'
-APP_MAIN_ICON='*_Data/Resources/UnityPlayer.png'
-APP_MAIN_ICON_RES='128'
+APP_MAIN_ICON='Fire_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
 
@@ -75,27 +78,40 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glu xcursor libxrandr"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr gtk2 freetype libGLU.so.1 libX11.so.6 libgdk-x11-2.0.so.0 libgdk_pixbuf-2.0.so.0 libgobject-2.0.so.0 libglib-2.0.so.0"
+PKG_BIN32_DEPS_ARCH='lib32-libxext lib32-atk lib32-glib2 lib32-pango lib32-cairo lib32-fontconfig'
+PKG_BIN32_DEPS_DEB='libxext6, libatk1.0-0, libglib2.0-0, libpangoft2-1.0-0, libpangocairo-1.0-0, libcairo2, libpango-1.0-0, libfontconfig1'
+PKG_BIN32_DEPS_GENTOO='x11-libs/libXext[abi_x86_32] dev-libs/atk[abi_x86_32] dev-libs/glib[abi_x86_32] x11-libs/pango[abi_x86_32] x11-libs/cairo[abi_x86_32] media-libs/fontconfig[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='libxext atk glib2 pango cairo fontconfig'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='x11-libs/libXext dev-libs/atk dev-libs/glib x11-libs/pango x11-libs/cairo media-libs/fontconfig'
+
+# Use a per-session dedicated file for logs
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Use a per-session dedicated file for logs
+mkdir --parents logs
+APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"'
 
 # Load common functions
 
-target_version='2.4'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -105,30 +121,32 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Get game icon
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+PKG='PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	write_launcher 'APP_MAIN'
+	launchers_write 'APP_MAIN'
 done
 
 # Build package
 
-postinst_icons_linking 'APP_MAIN'
-write_metadata 'PKG_DATA'
-write_metadata 'PKG_BIN32' 'PKG_BIN64'
+write_metadata
 build_pkg
 
 # Clean up
@@ -137,10 +155,6 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-printf '\n'
-printf '32-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN32'
-printf '64-bit:'
-print_instructions 'PKG_DATA' 'PKG_BIN64'
+print_instructions
 
 exit 0
