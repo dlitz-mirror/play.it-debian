@@ -653,6 +653,19 @@ launcher_desktop() {
 	EOF
 }
 
+# print the full path to the XDG desktop file for the given application
+# USAGE: launcher_desktop_filepath $application
+# RETURN: an absolute file path
+launcher_desktop_filepath() {
+	# shellcheck disable=SC2039
+	local application
+	application="$1"
+
+	printf '%s/%s.desktop' \
+		"$(package_get_path "$package")${PATH_DESK}" \
+		"$(application_id "$application")"
+}
+
 # print the XDG desktop "Exec" field for the given application
 # USAGE: launcher_desktop_exec $application
 # RETURN: the "Exec" field string, including escaping if required
