@@ -584,21 +584,6 @@ launcher_write_desktop() {
 		application_icon=$(application_id "$application")
 	fi
 
-	# include full binary path in Exec field if using non-standard installation prefix
-	local exec_field
-	case "$OPTION_PREFIX" in
-		('/usr'|'/usr/local')
-			exec_field=$(application_id "$application")
-		;;
-		(*' '*)
-			# enclose the path in single quotes if it includes spaces
-			exec_field="'$PATH_BIN/$(application_id "$application")'"
-		;;
-		(*)
-			exec_field="$PATH_BIN/$(application_id "$application")"
-		;;
-	esac
-
 	# if called in dry run mode, return before writing anything
 	if [ "$DRY_RUN" -eq 1 ]; then
 		return 0
@@ -633,6 +618,42 @@ launcher_write_desktop() {
 	fi
 
 	return 0
+}
+
+# print the XDG desktop "Exec" field for the given application
+# USAGE: launcher_desktop_exec $application
+# RETURN: the "Exec" field string, including escaping if required
+launcher_desktop_exec() {
+	# shellcheck disable=SC2039
+	local application
+	application="$1"
+
+	# Enclose the path in single quotes if it includes spaces
+	# shellcheck disable=SC2039
+	local field_format
+	case "$OPTION_PREFIX" in
+		(*' '*)
+			field_format="Exec='%s'"
+		;;
+		(*)
+			field_format='Exec=%s'
+		;;
+	esac
+
+	# Use the full path for non-standard prefixes
+	# shellcheck disable=SC2039
+	local field_value
+	case "$OPTION_PREFIX" in
+		('/usr'|'/usr/local')
+			field_value=$(application_id "$application")
+		;;
+		(*)
+			field_value="$PATH_BIN/$(application_id "$application")"
+		;;
+	esac
+
+	# shellcheck disable=SC2059
+	printf "$field_format" "$field_value"
 }
 
 # write both launcher script and menu entry for a single application
