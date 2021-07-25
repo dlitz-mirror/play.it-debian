@@ -538,50 +538,21 @@ launcher_write_script_postrun() {
 	EOF
 }
 
-# write menu entry
-# USAGE: launcher_write_desktop $app
-# NEEDED VARS: OPTION_ARCHITECTURE GAME_ID GAME_NAME PATH_DESK PATH_BIN
-# CALLS: error_missing_argument error_extra_arguments
+# write the XDG desktop file for the given application
+# USAGE: launcher_write_desktop $application
 launcher_write_desktop() {
-	# check that this has been called with exactly one argument
-	if [ "$#" -eq 0 ]; then
-		error_missing_argument 'launcher_write_desktop'
-	elif [ "$#" -gt 1 ]; then
-		error_extra_arguments 'launcher_write_desktop'
-	fi
-
-	# get the current package
-	local package
-	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
-		warning_skip_package 'launcher_write_desktop' "$package"
-		return 0
-	fi
-
-	# parse argument
+	# shellcheck disable=SC2039
 	local application
 	application="$1"
-	if ! testvar "$application" 'APP'; then
-		error_invalid_argument 'application' 'launcher_write_desktop'
-	fi
 
-	# compute file name and path
-	local target_file
-	target_file="$(package_get_path "$package")${PATH_DESK}/$(application_id "$application").desktop"
-
-	# get icon name
-	# shellcheck disable=SC2039
-	local application_icon
-	if [ "$application" = 'APP_WINECFG' ]; then
-		application_icon='winecfg'
-	else
-		application_icon=$(application_id "$application")
+	# Skip any action if called for a package excluded for target architectures
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& \
+		! packages_get_list | grep --quiet "$(package_get_current)"
+	then
+		warning_skip_package 'launcher_write_desktop' "$(package_get_current)"
+		return 0
 	fi
 
 	# if called in dry run mode, return before writing anything
@@ -590,21 +561,14 @@ launcher_write_desktop() {
 	fi
 
 	# write desktop file
-	mkdir --parents "$(dirname "$target_file")"
-	cat >> "$target_file" <<- EOF
-	[Desktop Entry]
-	Version=1.0
-	Type=Application
-	Name=$(application_name "$application")
-	Icon=$application_icon
-	Exec=$exec_field
-	Categories=$(application_category "$application")
-	EOF
+	mkdir --parents "$(dirname "$(launcher_desktop_filepath "$application")")"
+	launcher_desktop "$application" > "$(launcher_desktop_filepath "$application")"
 
 	# for WINE applications, write desktop file for winecfg
 	if [ "$application" != 'APP_WINECFG' ]; then
 		case "$(application_type "$application")" in
 			('wine')
+				# shellcheck disable=SC2039
 				local winecfg_desktop
 				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
