@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210625.9
+script_version=20210728.1
 
 # Set game-specific variables
 
@@ -47,35 +47,35 @@ ARCHIVE_BASE_EN_0='gog_afterlife_2.2.0.8.sh'
 ARCHIVE_BASE_EN_0_MD5='3aca0fac1b93adec5aff39d395d995ab'
 ARCHIVE_BASE_EN_0_TYPE='mojosetup'
 ARCHIVE_BASE_EN_0_SIZE='260000'
-ARCHIVE_BASE_EN_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_EN_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_EN_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_BASE_FR_0='gog_afterlife_french_2.2.0.8.sh'
 ARCHIVE_BASE_FR_0_MD5='56b3efee60bc490c68f8040587fc1878'
 ARCHIVE_BASE_FR_0_TYPE='mojosetup'
 ARCHIVE_BASE_FR_0_SIZE='250000'
-ARCHIVE_BASE_FR_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_FR_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_FR_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_BASE_DE_0='gog_afterlife_german_2.2.0.8.sh'
 ARCHIVE_BASE_DE_0_MD5='441b57901235584ff851da8fe316f0b3'
 ARCHIVE_BASE_DE_0_TYPE='mojosetup'
 ARCHIVE_BASE_DE_0_SIZE='310000'
-ARCHIVE_BASE_DE_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_DE_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_DE_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_BASE_ES_0='gog_afterlife_spanish_2.2.0.8.sh'
 ARCHIVE_BASE_ES_0_MD5='43deb4aeeaa3b9ede542f1a0718b15ee'
 ARCHIVE_BASE_ES_0_TYPE='mojosetup'
 ARCHIVE_BASE_ES_0_SIZE='250000'
-ARCHIVE_BASE_ES_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_ES_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_ES_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_BASE_IT_0='gog_afterlife_italian_2.2.0.8.sh'
 ARCHIVE_BASE_IT_0_MD5='cb60193a32d29babfc203412df00b21e'
 ARCHIVE_BASE_IT_0_TYPE='mojosetup'
 ARCHIVE_BASE_IT_0_SIZE='250000'
-ARCHIVE_BASE_IT_0_VERSION='1.0-gog2.2.0.8'
+ARCHIVE_BASE_IT_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_IT_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
