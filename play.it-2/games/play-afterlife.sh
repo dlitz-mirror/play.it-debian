@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210728.1
+script_version=20210728.2
 
 # Set game-specific variables
 
@@ -79,10 +79,10 @@ ARCHIVE_BASE_IT_0_VERSION='1.1-gog2.2.0.8'
 ARCHIVE_BASE_IT_0_URL='https://www.gog.com/game/afterlife'
 
 ARCHIVE_DOC0_MAIN_PATH='data/noarch/docs'
-ARCHIVE_DOC0_MAIN_FILES='*.pdf *.txt'
+ARCHIVE_DOC0_MAIN_FILES='afterlife?-?reference?guide.pdf'
 
 ARCHIVE_DOC1_MAIN_PATH='data/noarch/data'
-ARCHIVE_DOC1_DATA_FILES='*.txt'
+ARCHIVE_DOC1_DATA_FILES='readme.txt'
 
 ARCHIVE_GAME_MAIN_PATH='data/noarch/data'
 ARCHIVE_GAME_MAIN_FILES='*.asc *.exe *.ini alife.* alife'
