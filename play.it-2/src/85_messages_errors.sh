@@ -729,3 +729,178 @@ error_context_invalid() {
 	return 1
 }
 
+# display an error when using an invalid format for an application id
+# USAGE: error_application_id_invalid $application $application_id
+error_application_id_invalid() {
+	# shellcheck disable=SC2039
+	local application application_id
+	application="$1"
+	application_id="$2"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼid fourni pour lʼapplication %s ne correspond pas au format attendu : "%s"\n'
+			message="$message"'Cette valeur ne peut utiliser que des caractères du set [-a-z0-9],'
+			message="$message"' et ne peut ni débuter ni sʼachever par un tiret.\n'
+		;;
+		('en')
+			message='The id provided for application %s is not using the expected format: "%s"\n'
+			message="$message"'The value should only include characters from the set [-a-z0-9],'
+			message="$message"' and can not begin nor end with an hyphen.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$application" "$application_id"
+
+	return 1
+}
+
+# display an error when using an invalid format for an application ScummVM id
+# USAGE: error_application_scummid_invalid $application $application_scummid
+error_application_scummid_invalid() {
+	# shellcheck disable=SC2039
+	local application application_scummid
+	application="$1"
+	application_scummid="$2"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼid ScummVM fourni pour lʼapplication %s ne semble pas correct : "%s"\n'
+			message="$message"'Une liste de valeurs acceptées peut se trouver sur le site Web de ScummVM : \n%s\n'
+		;;
+		('en')
+			message='The ScummVM id provided for application %s does not seem correct: "%s"\n'
+			message="$message"'A list of valid values can be found on ScummVM website: \n%s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" \
+		"$application" \
+		"$application_scummid" \
+		'https://www.scummvm.org/compatibility/'
+
+	return 1
+}
+
+# display an error when using an invalid format for an application ResidualVM id
+# USAGE: error_application_residualid_invalid $application $application_residualid
+error_application_residualid_invalid() {
+	# shellcheck disable=SC2039
+	local application application_residualid
+	application="$1"
+	application_residualid="$2"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼid ResidualVM fourni pour lʼapplication %s ne semble pas correct : "%s"\n'
+			message="$message"'Une liste de valeurs acceptées peut se trouver sur le site Web de ResidualVM : \n%s\n'
+		;;
+		('en')
+			message='The ResidualVM id provided for application %s does not seem correct: "%s"\n'
+			message="$message"'A list of valid values can be found on ResidualVM website: \n%s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" \
+		"$application" \
+		"$application_residualid" \
+		'https://www.residualvm.org/compatibility/'
+
+	return 1
+}
+
+# display an error when APP_xxx_EXE is unset but the application requires it
+# USAGE: error_application_exe_empty $application $application_type
+error_application_exe_empty() {
+	# shellcheck disable=SC2039
+	local application application_type
+	application="$1"
+	application_type="$2"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='%s nʼest pas défini, mais cette valeur est requise pour les applications utilisant le type "%s".\n'
+		;;
+		('en')
+			message='%s is not set, but is required for applications using "%" type.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "${application}_EXE" "$application_type"
+
+	return 1
+}
+
+# display an error when a variable is spanning multiple lines
+# USAGE: error_variable_multiline $variable_name
+error_variable_multiline() {
+	# shellcheck disable=SC2039
+	local variable_name
+	variable_name="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La valeur %s sʼétend sur plusieurs lignes, ce qui nʼest pas autorisé.\n'
+		;;
+		('en')
+			message='%s value is spanning multiple lines, but this is not allowed.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$variable_name"
+
+	return 1
+}
+
+# display an error when calling a type-restricted function on the wrong application type
+# USAGE: error_application_wrong_type $function_name $application_type
+error_application_wrong_type() {
+	# shellcheck disable=SC2039
+	local function_name application_type
+	function_name="$1"
+	application_type="$2"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='%s ne peut pas être appelée sur les applications utilisant le type "%s".\n'
+		;;
+		('en')
+			message='%s can not be called on applications using "%s" type.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$function_name" "$application_type"
+
+	return 1
+}
+
