@@ -2,16 +2,15 @@
 # USAGE: launcher_write_script_scummvm_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_scummvm_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	SCUMMVM_ID='$(get_context_specific_value 'package' "${application}_SCUMMID")'
+	SCUMMVM_ID='$(application_scummvm_scummid "$application")'
 
 	EOF
 	return 0
@@ -36,7 +35,7 @@ launcher_write_script_scummvm_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	scummvm -p "$PATH_GAME" $APP_OPTIONS $@ $SCUMMVM_ID
+	scummvm -p "$PATH_GAME" "$@" "$SCUMMVM_ID"
 
 	EOF
 

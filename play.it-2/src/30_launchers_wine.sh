@@ -2,17 +2,16 @@
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_wine_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(get_context_specific_value 'package' "${application}_EXE")'
-	APP_OPTIONS="$(get_context_specific_value 'package' "${application}_OPTIONS")"
+	APP_EXE='$(application_exe "$application")'
+	APP_OPTIONS="$(application_options "$application")"
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
@@ -206,7 +205,7 @@ launcher_write_script_wine_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	wine "$APP_EXE" $APP_OPTIONS $@
+	wine "$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
 

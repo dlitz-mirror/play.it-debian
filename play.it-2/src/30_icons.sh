@@ -78,41 +78,33 @@ icons_get_from_workdir() {
 #              convert them to standard icon formats,
 #              and include the standard icons in the current package
 icons_get_from_path() {
-	local app
-	local destination
-	local directory
-	local icon
-	local list
-	local wrestool_id
-
-	# get the current package
-	local package
-	package=$(package_get_current)
-
+	# shellcheck disable=SC2039
+	local application icon icon_file destination directory
+	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
 	shift 1
-	destination="$PLAYIT_WORKDIR/icons"
-	for app in "$@"; do
-		if ! testvar "$app" 'APP'; then
-			error_invalid_argument 'app' 'icons_get_from_package'
-		fi
-		list="$(get_value "${app}_ICONS_LIST")"
-		[ -n "$list" ] || list="${app}_ICON"
-		for icon in $list; do
-			# shellcheck disable=SC2039
-			local file
-			file=$(get_context_specific_value 'archive' "$icon")
-
-			if [ -z "$file" ]; then
-				error_variable_not_set 'icons_get_from_path' '$'"$icon"
+	for application in "$@"; do
+		for icon in $(application_icons_list "$application"); do
+			icon_file=$(get_context_specific_value 'archive' "$icon")
+			if [ -z "$icon_file" ]; then
+				error_variable_not_set 'icons_get_from_path' "$icon"
 			fi
 
 			# Check icon file existence
-			file=$(icon_check_file_existence "$directory" "$file")
+			icon_file=$(icon_check_file_existence "$directory" "$icon_file")
 
-			wrestool_id="$(get_value "${icon}_ID")"
-			icon_extract_png_from_file "$directory/$file" "$destination"
-			icons_include_png_from_directory "$app" "$destination"
+			###
+			# TODO
+			# wrestool_id is shared with children functions.
+			# It should instead either be fetched by these functions,
+			# or passed to them.
+			###
+			# shellcheck disable=SC2039
+			local wrestool_id
+			wrestool_id=$(get_value "${icon}_ID")
+
+			icon_extract_png_from_file "$directory/$icon_file" "$destination"
+			icons_include_png_from_directory "$application" "$destination"
 		done
 	done
 }

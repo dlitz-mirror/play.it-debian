@@ -29,42 +29,22 @@ launcher_write_script() {
 		error_invalid_argument 'application' 'launcher_write_script'
 	fi
 
-	# get application type
-	local application_type
-	application_type="$(get_value "${application}_TYPE")"
-
-	# compute file name and path
-	local application_id
+	# compute file path
+	# shellcheck disable=SC2039
 	local target_file
-	application_id="$(get_value "${application}_ID")"
-	if [ -z "$application_id" ]; then
-		application_id="$GAME_ID"
-	fi
-	target_file="$(package_get_path "$package")${PATH_BIN}/$application_id"
+	target_file="$(package_get_path "$package")${PATH_BIN}/$(application_id "$application")"
 
 	# Check that the launcher target exists
 	local binary_path binary_found tested_package
-
-	# Get the name of the binary file
-	# shellcheck disable=SC2039
-	local binary_file
-	binary_file=$(get_context_specific_value 'package' "${application}_EXE")
-
-	case "$application_type" in
+	case "$(application_type "$application")" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
-
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
 			binary_found=0
 			for tested_package in $packages_list; do
-				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$(application_exe "$application")"
 				if [ -f "$binary_path" ]; then
 					binary_found=1
 					break;
@@ -74,18 +54,13 @@ launcher_write_script() {
 				[ $DRY_RUN -eq 0 ] && \
 				[ $binary_found -eq 0 ]
 			then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				error_launcher_missing_binary "$binary_path"
 			fi
 		;;
 		('wine')
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
-			if [ "$binary_file" != 'winecfg' ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+			if [ "$(application_exe "$application")" != 'winecfg' ]; then
+				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				if \
 					[ $DRY_RUN -eq 0 ] && \
 					[ ! -f "$binary_path" ]
@@ -95,12 +70,7 @@ launcher_write_script() {
 			fi
 		;;
 		(*)
-			# Check that the name of the binary file is not empty
-			if [ -z "$binary_file" ]; then
-				error_empty_variable "${application}_EXE"
-			fi
-
-			binary_path="$(package_get_path "$package")${PATH_GAME}/$binary_file"
+			binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 			if \
 				[ $DRY_RUN -eq 0 ] && \
 				[ ! -f "$binary_path" ]
@@ -116,12 +86,12 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
-	debug_write_launcher "$application_type" "$binary_file"
+	debug_write_launcher "$(application_type "$application")" "$binary_file"
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
 	launcher_write_script_headers "$target_file"
-	case "$application_type" in
+	case "$(application_type "$application")" in
 		('dosbox')
 			launcher_write_script_dosbox_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
@@ -173,7 +143,7 @@ launcher_write_script() {
 			launcher_write_script_residualvm_run "$application" "$target_file"
 		;;
 		('wine')
-			if [ "$application_id" != "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" != "${GAME_ID}_winecfg" ]; then
 				launcher_write_script_wine_application_variables "$application" "$target_file"
 			fi
 			launcher_write_script_game_variables "$target_file"
@@ -181,7 +151,7 @@ launcher_write_script() {
 			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_wine_prefix_build "$target_file"
-			if [ "$application_id" = "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" = "${GAME_ID}_winecfg" ]; then
 				launcher_write_script_winecfg_run "$target_file"
 			else
 				launcher_write_script_wine_run "$application" "$target_file"
@@ -196,23 +166,20 @@ launcher_write_script() {
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_mono_run "$application" "$target_file"
 		;;
-		(*)
-			error_unknown_application_type "$application_type"
-		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'
 	exit 0
 	EOF
 
 	# for native applications, add execution permissions to the game binary file
-	case "$application_type" in
+	case "$(application_type "$application")" in
 		('native'*)
-			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(get_context_specific_value 'package' "${application}_EXE")"
+			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 		;;
 	esac
 
 	# for WINE applications, write launcher script for winecfg
-	case "$application_type" in
+	case "$(application_type "$application")" in
 		('wine')
 			local winecfg_file
 			winecfg_file="$(package_get_path "$package")${PATH_BIN}/${GAME_ID}_winecfg"
@@ -535,46 +502,40 @@ launcher_write_script_prefix_build() {
 
 # write launcher script pre-run actions
 # USAGE: launcher_write_script_prerun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_prerun() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
-	local application_prerun
-	application_prerun="$(get_value "${application}_PRERUN")"
-	if [ "$application_prerun" ]; then
-		cat >> "$file" <<- EOF
-		$application_prerun
-
-		EOF
+	# Return early if there are no pre-run actions for the given application
+	if [ -z "$(application_prerun "$application")" ]; then
+		return 0
 	fi
 
-	return 0
+	cat >> "$file" <<- EOF
+	$(application_prerun "$application")
+
+	EOF
 }
 
 # write launcher script post-run actions
 # USAGE: launcher_write_script_postrun $application $file
-# CALLED BY: launcher_write_script_dosbox_run launcher_write_script_native_run launcher_write_script_nativenoprefix_run launcher_write_script_scummvm_run launcher_write_script_residualvm_run launcher_write_script_wine_run
 launcher_write_script_postrun() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
 
-	local application_postrun
-	application_postrun="$(get_value "${application}_POSTRUN")"
-	if [ "$application_postrun" ]; then
-		cat >> "$file" <<- EOF
-		$application_postrun
-
-		EOF
+	# Return early if there are no post-run actions for the given application
+	if [ -z "$(application_postrun "$application")" ]; then
+		return 0
 	fi
 
-	return 0
+	cat >> "$file" <<- EOF
+	$(application_postrun "$application")
+
+	EOF
 }
 
 # write menu entry
@@ -610,45 +571,31 @@ launcher_write_desktop() {
 		error_invalid_argument 'application' 'launcher_write_desktop'
 	fi
 
-	# get application-specific values
-	local application_id
-	local application_name
-	local application_category
-	local application_type
-	if [ "$application" = 'APP_WINECFG' ]; then
-		application_id="${GAME_ID}_winecfg"
-		# shellcheck disable=SC2153
-		application_name="$GAME_NAME - WINE configuration"
-		application_category='Settings'
-		application_type='wine'
-		application_icon='winecfg'
-	else
-		application_id="$(get_value "${application}_ID")"
-		application_name="$(get_value "${application}_NAME")"
-		application_category="$(get_value "${application}_CAT")"
-		application_type="$(get_value "${application}_TYPE")"
-		: "${application_id:=$GAME_ID}"
-		: "${application_name:=$GAME_NAME}"
-		: "${application_category:=Game}"
-		application_icon="$application_id"
-	fi
-
 	# compute file name and path
 	local target_file
-	target_file="$(package_get_path "$package")${PATH_DESK}/${application_id}.desktop"
+	target_file="$(package_get_path "$package")${PATH_DESK}/$(application_id "$application").desktop"
+
+	# get icon name
+	# shellcheck disable=SC2039
+	local application_icon
+	if [ "$application" = 'APP_WINECFG' ]; then
+		application_icon='winecfg'
+	else
+		application_icon=$(application_id "$application")
+	fi
 
 	# include full binary path in Exec field if using non-standard installation prefix
 	local exec_field
 	case "$OPTION_PREFIX" in
 		('/usr'|'/usr/local')
-			exec_field="$application_id"
+			exec_field=$(application_id "$application")
 		;;
 		(*' '*)
 			# enclose the path in single quotes if it includes spaces
-			exec_field="'$PATH_BIN/$application_id'"
+			exec_field="'$PATH_BIN/$(application_id "$application")'"
 		;;
 		(*)
-			exec_field="$PATH_BIN/$application_id"
+			exec_field="$PATH_BIN/$(application_id "$application")"
 		;;
 	esac
 
@@ -663,22 +610,27 @@ launcher_write_desktop() {
 	[Desktop Entry]
 	Version=1.0
 	Type=Application
-	Name=$application_name
+	Name=$(application_name "$application")
 	Icon=$application_icon
 	Exec=$exec_field
-	Categories=$application_category
+	Categories=$(application_category "$application")
 	EOF
 
 	# for WINE applications, write desktop file for winecfg
-	case "$application_type" in
-		('wine')
-			local winecfg_desktop
-			winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
-			if [ ! -e "$winecfg_desktop" ]; then
-				launcher_write_desktop 'APP_WINECFG'
-			fi
-		;;
-	esac
+	if [ "$application" != 'APP_WINECFG' ]; then
+		case "$(application_type "$application")" in
+			('wine')
+				local winecfg_desktop
+				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
+				if [ ! -e "$winecfg_desktop" ]; then
+					export APP_WINECFG_ID="${GAME_ID}_winecfg"
+					export APP_WINECFG_NAME="$GAME_NAME - WINE configuration"
+					export APP_WINECFG_CAT='Settings'
+					launcher_write_desktop 'APP_WINECFG'
+				fi
+			;;
+		esac
+	fi
 
 	return 0
 }
@@ -710,35 +662,38 @@ launcher_write() {
 	return 0
 }
 
-# write both launcher script and menu entry for a list of applications
-# USAGE: launchers_write $application[…]
-# NEEDED VARS: OPTION_ARCHITECTURE
-# CALLS: launcher_write
+# write both a launcher script and a menu entry for each application from a list
+# USAGE: launchers_write [$application…]
+# RETURN: nothing
 launchers_write() {
-
 	debug_entering_function 'launchers_write' 2
 
-	# get the current package
-	local package
-	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
-		warning_skip_package 'launcher_write_script' "$package"
+	# Skip any action if called for a package excluded for target architectures
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& \
+		! packages_get_list | grep --quiet "$(package_get_current)"
+	then
+		warning_skip_package 'launcher_write_script' "$(package_get_current)"
+		debug_leaving_function 'launchers_write' 2
 		return 0
 	fi
 
+	# If called with no argument, default to handling the full list of applications
+	if [ $# -eq 0 ]; then
+		# shellcheck disable=SC2046
+		launchers_write $(applications_list)
+		debug_leaving_function 'launchers_write' 2
+		return 0
+	fi
+
+	# Write a launcher script and a menu entry for each application
+	# shellcheck disable=SC2039
 	local application
 	for application in "$@"; do
 		launcher_write "$application"
 	done
 
 	debug_leaving_function 'launchers_write' 2
-
-	return 0
 }
 
