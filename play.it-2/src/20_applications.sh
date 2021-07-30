@@ -189,3 +189,33 @@ application_libs() {
 	get_context_specific_value 'package' "${1}_LIBS"
 }
 
+# print the list of icon identifiers for the given application
+# USAGE: application_icons_list $application
+# RETURN: a space-separated list of icons identifiers,
+#         or an empty string if no icon seems to be set
+application_icons_list() {
+	# shellcheck disable=SC2039
+	local application
+	application="$1"
+
+	# Use the value of APP_xxx_ICONS_LIST if it is set
+	# shellcheck disable=SC2039
+	local icons_list
+	icons_list=$(get_value "${application}_ICONS_LIST")
+	if [ -n "$icons_list" ]; then
+		printf '%s' "$icons_list"
+		return 0
+	fi
+
+	# Fall back on the default value of a single APP_xxx_ICON icon
+	# shellcheck disable=SC2039
+	local default_icon
+	default_icon="${application}_ICON"
+	if [ -n "$(get_value "$default_icon")" ]; then
+		printf '%s' "$default_icon"
+	fi
+
+	# If no icon has been found, there is nothing to print
+	return 0
+}
+
