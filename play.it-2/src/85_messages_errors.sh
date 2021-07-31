@@ -904,3 +904,29 @@ error_application_wrong_type() {
 	return 1
 }
 
+# displays an error when no valid candidates for ./play.it temporary directory
+# has been found
+# USAGE: error_no_valid_temp_dir_found $directory[…]
+error_no_valid_temp_dir_found() {
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Aucun réportoire testé ne peut servir de répertoire
+			temporaire pour ./play.it :\n'
+		;;
+		('en'|*)
+			message='No tested repository can be used as ./play.it temporary
+			directory:\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message"
+	printf '%s\n' "$@"
+
+	return 1
+}
+
