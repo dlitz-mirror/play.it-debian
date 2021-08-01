@@ -18,6 +18,10 @@ launcher_write_script_unity3d_run() {
 	# Start pulseaudio if it is available
 	launcher_unity3d_pulseaudio_start >> "$launcher_file"
 
+	# Work around crash on launch related to libpulse
+	# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+	launcher_unity3d_pulseaudio_hide_libpulse >> "$launcher_file"
+
 	# Set path to extra libraries
 	case "$OPTION_PACKAGE" in
 		###
@@ -97,6 +101,24 @@ launcher_unity3d_pulseaudio_stop() {
 	if [ -e .stop_pulseaudio_on_exit ]; then
 	    pulseaudio --kill
 	    rm .stop_pulseaudio_on_exit
+	fi
+
+	EOF
+}
+
+# print the snippet hiding libpulse-simple.so.0 if pulseaudio is not available
+# USAGE: launcher_unity3d_pulseaudio_hide_libpulse
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_unity3d_pulseaudio_hide_libpulse() {
+	cat <<- 'EOF'
+	# Work around crash on launch related to libpulse
+	# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+	LIBPULSE_NULL_LINK="${APP_LIBS:=libs}/libpulse-simple.so.0"
+	if pulseaudio_is_available; then
+	    rm --force "$LIBPULSE_NULL_LINK"
+	else
+	    mkdir --parents "$(dirname "$LIBPULSE_NULL_LINK")"
+	    ln --force --symbolic /dev/null "$LIBPULSE_NULL_LINK"
 	fi
 
 	EOF
