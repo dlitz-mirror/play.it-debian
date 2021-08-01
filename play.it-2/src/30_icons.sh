@@ -79,19 +79,14 @@ icons_get_from_workdir() {
 #              and include the standard icons in the current package
 icons_get_from_path() {
 	# shellcheck disable=SC2039
-	local application icon icon_file destination directory
+	local application icon icon_path destination directory
 	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
 	shift 1
 	for application in "$@"; do
 		for icon in $(application_icons_list "$application"); do
-			icon_file=$(get_context_specific_value 'archive' "$icon")
-			if [ -z "$icon_file" ]; then
-				error_variable_not_set 'icons_get_from_path' "$icon"
-			fi
-
 			# Check icon file existence
-			icon_file=$(icon_check_file_existence "$directory" "$icon_file")
+			icon_path=$(icon_check_file_existence "$directory" "$(icon_path "$icon")")
 
 			###
 			# TODO
@@ -103,7 +98,7 @@ icons_get_from_path() {
 			local wrestool_id
 			wrestool_id=$(get_value "${icon}_ID")
 
-			icon_extract_png_from_file "$directory/$icon_file" "$destination"
+			icon_extract_png_from_file "$directory/$icon_path" "$destination"
 			icons_include_png_from_directory "$application" "$destination"
 		done
 	done
