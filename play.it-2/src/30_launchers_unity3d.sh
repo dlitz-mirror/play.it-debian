@@ -26,6 +26,9 @@ launcher_write_script_unity3d_run() {
 
 		# Use a dedicated log file for the current game session
 		launcher_unity3d_dedicated_log
+
+		# Work around Unity3D poor support for non-US locales
+		launcher_unity3d_force_locale
 	} >> "$launcher_file"
 
 	# Set path to extra libraries
@@ -138,6 +141,17 @@ launcher_unity3d_dedicated_log() {
 	# Use a dedicated log file for the current game session
 	mkdir --parents logs
 	APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"
+
+	EOF
+}
+
+# print the snippet setting forcing the use of a US-like locale
+# USAGE: launcher_unity3d_force_locale
+# RETURN: the code snippet, a multi-lines string
+launcher_unity3d_force_locale() {
+	cat <<- 'EOF'
+	# Work around Unity3D poor support for non-US locales
+	export LANG=C
 
 	EOF
 }
