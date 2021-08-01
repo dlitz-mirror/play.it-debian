@@ -15,6 +15,9 @@ launcher_write_script_unity3d_run() {
 
 	launcher_write_script_prerun "$application" "$launcher_file"
 
+	# Start pulseaudio if it is available
+	launcher_unity3d_pulseaudio_start >> "$launcher_file"
+
 	# Set path to extra libraries
 	case "$OPTION_PACKAGE" in
 		###
@@ -57,9 +60,45 @@ launcher_write_script_unity3d_run() {
 
 	EOF
 
+	# Stop pulseaudio if it has been started for this game session
+	launcher_unity3d_pulseaudio_stop >> "$launcher_file"
+
 	launcher_write_script_postrun "$application" "$launcher_file"
 
 	sed --in-place 's/    /\t/g' "$launcher_file"
 	return 0
+}
+
+# print the snippet starting pulseaudio if it is available
+# USAGE: launcher_unity3d_pulseaudio_start
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_unity3d_pulseaudio_start() {
+	cat <<- 'EOF'
+	# Start pulseaudio if it is available
+	pulseaudio_is_available() {
+	    command -v pulseaudio >/dev/null 2>&1
+	}
+	if pulseaudio_is_available; then
+	    if ! pulseaudio --check; then
+	        touch .stop_pulseaudio_on_exit
+	    fi
+	    pulseaudio --start
+	fi
+
+	EOF
+}
+
+# print the snippet stopping pulseaudio if it has been started for this game session
+# USAGE: launcher_unity3d_pulseaudio_stop
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_unity3d_pulseaudio_stop() {
+	cat <<- 'EOF'
+	# Stop pulseaudio if it has been started for this game session
+	if [ -e .stop_pulseaudio_on_exit ]; then
+	    pulseaudio --kill
+	    rm .stop_pulseaudio_on_exit
+	fi
+
+	EOF
 }
 
