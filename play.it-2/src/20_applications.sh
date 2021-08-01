@@ -56,6 +56,7 @@ application_type() {
 			'renpy' | \
 			'residualvm' | \
 			'scummvm' | \
+			'unity3d' | \
 			'wine' \
 		)
 			printf '%s' "$application_type"
