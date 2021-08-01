@@ -15,12 +15,18 @@ launcher_write_script_unity3d_run() {
 
 	launcher_write_script_prerun "$application" "$launcher_file"
 
-	# Start pulseaudio if it is available
-	launcher_unity3d_pulseaudio_start >> "$launcher_file"
+	# Include common pre-run tweaks
+	{
+		# Start pulseaudio if it is available
+		launcher_unity3d_pulseaudio_start
 
-	# Work around crash on launch related to libpulse
-	# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
-	launcher_unity3d_pulseaudio_hide_libpulse >> "$launcher_file"
+		# Work around crash on launch related to libpulse
+		# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+		launcher_unity3d_pulseaudio_hide_libpulse
+
+		# Use a dedicated log file for the current game session
+		launcher_unity3d_dedicated_log
+	} >> "$launcher_file"
 
 	# Set path to extra libraries
 	case "$OPTION_PACKAGE" in
@@ -120,6 +126,18 @@ launcher_unity3d_pulseaudio_hide_libpulse() {
 	    mkdir --parents "$(dirname "$LIBPULSE_NULL_LINK")"
 	    ln --force --symbolic /dev/null "$LIBPULSE_NULL_LINK"
 	fi
+
+	EOF
+}
+
+# print the snippet setting a dedicated log file for the current game session
+# USAGE: launcher_unity3d_dedicated_log
+# RETURN: the code snippet, a multi-lines string
+launcher_unity3d_dedicated_log() {
+	cat <<- 'EOF'
+	# Use a dedicated log file for the current game session
+	mkdir --parents logs
+	APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"
 
 	EOF
 }
