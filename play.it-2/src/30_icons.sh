@@ -79,32 +79,29 @@ icons_get_from_workdir() {
 #              and include the standard icons in the current package
 icons_get_from_path() {
 	# shellcheck disable=SC2039
-	local application icon icon_file destination directory
+	local application icon icon_path destination directory
 	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
 	shift 1
 	for application in "$@"; do
 		for icon in $(application_icons_list "$application"); do
-			icon_file=$(get_context_specific_value 'archive' "$icon")
-			if [ -z "$icon_file" ]; then
-				error_variable_not_set 'icons_get_from_path' "$icon"
-			fi
-
 			# Check icon file existence
-			icon_file=$(icon_check_file_existence "$directory" "$icon_file")
+			icon_path=$(icon_check_file_existence "$directory" "$(icon_path "$icon")")
 
 			###
 			# TODO
-			# wrestool_id is shared with children functions.
-			# It should instead either be fetched by these functions,
-			# or passed to them.
+			# wrestool options string is passed as a global variable,
+			# there is probably a better way to handle that.
 			###
-			# shellcheck disable=SC2039
-			local wrestool_id
-			wrestool_id=$(get_value "${icon}_ID")
+			if icon_path "$icon" | grep --quiet '\.exe$'; then
+				WRESTOOL_OPTIONS=$(icon_wrestool_options "$icon")
+				export WRESTOOL_OPTIONS
+			fi
 
-			icon_extract_png_from_file "$directory/$icon_file" "$destination"
+			icon_extract_png_from_file "$directory/$icon_path" "$destination"
 			icons_include_png_from_directory "$application" "$destination"
+
+			unset WRESTOOL_OPTIONS
 		done
 	done
 }
@@ -190,20 +187,27 @@ icon_extract_png_from_exe() {
 	done
 }
 
-# extract .ico file(s) from .exe
-# USAGE: icon_extract_ico_from_exe $file $destination
-# RETURNS: nothing
-# SIDE EFFECT: extract .ico icons from the given .exe file, the .ico files are created in the given directory
+# extract .ico file(s) from given .exe file
+# USAGE: icon_extract_ico_from_exe $icon_file $destination
 icon_extract_ico_from_exe() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local destination
-	local file
-	local options
-	file="$1"
+	# shellcheck disable=SC2039
+	local destination icon_file
+	icon_file="$1"
 	destination="$2"
-	[ "$wrestool_id" ] && options="--name=$wrestool_id"
-	debug_external_command "wrestool --extract --type=14 $options --output=\"$destination\" \"$file\" 2>/dev/null"
-	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null
+
+	###
+	# TODO
+	# This function relies on a globally set WRESTOOL_OPTIONS variable,
+	# there is probably a better way to handle that.
+	###
+
+	debug_external_command "wrestool $WRESTOOL_OPTIONS --extract --output=\"$destination\" \"$icon_file\" 2>/dev/null"
+
+	# Return early if run in dry-run mode
+	[ "$DRY_RUN" -eq 1 ] && return 0
+
+	# shellcheck disable=SC2086
+	wrestool $WRESTOOL_OPTIONS --extract --output="$destination" "$icon_file" 2>/dev/null
 }
 
 # convert .bmp file to .png

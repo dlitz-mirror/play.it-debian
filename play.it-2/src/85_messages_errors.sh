@@ -930,3 +930,29 @@ error_no_valid_temp_dir_found() {
 	return 1
 }
 
+# display an error when the path to a given icon is unset but we try to use it
+# USAGE: error_icon_path_empty $icon
+error_icon_path_empty() {
+	# shellcheck disable=SC2039
+	local icon
+	icon="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='%s nʼest pas défini, mais il y a eu une tentative de récupérer le chemin de cette icône.\n'
+		;;
+		('en')
+			message='%s is not set, but there has been a request for this icon path.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$icon"
+
+	return 1
+}
+
