@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210807.2
+script_version=20210807.5
 
 # Set game-specific variables
 
@@ -178,10 +178,16 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libopenal.so.1"
+PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libopenal.so.1 libX11.so.6"
+PKG_BIN32_DEPS_ARCH='lib32-expat'
+PKG_BIN32_DEPS_DEB='libexpat1'
+PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
 
 PKG_BIN64_ARCH='64'
 PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_BIN64_DEPS_ARCH='expat'
+PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
+PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
 
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 
