@@ -34,25 +34,37 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210807.5
+script_version=20210807.9
 
 # Set game-specific variables
 
 GAME_ID='icewind-dale-1-enhanced-edition'
 GAME_NAME='Icewind Dale - Enhanced Edition'
 
-ARCHIVE_BASE_1='icewind_dale_enhanced_edition_en_2_5_17_23121.sh'
-ARCHIVE_BASE_1_MD5='bdfcd244568916123c243fb95de1d08b'
+ARCHIVE_BASE_1='icewind_dale_enhanced_edition_2_6_6_0_47290.sh'
+ARCHIVE_BASE_1_MD5='fd7721f10a6d39c545ef46c58d80e2cc'
 ARCHIVE_BASE_1_TYPE='mojosetup'
-ARCHIVE_BASE_1_SIZE='2900000'
-ARCHIVE_BASE_1_VERSION='2.5.17.0-gog23121'
+ARCHIVE_BASE_1_SIZE='3000000'
+ARCHIVE_BASE_1_VERSION='2.6.6.0-gog47290'
 ARCHIVE_BASE_1_URL='https://www.gog.com/game/icewind_dale_enhanced_edition'
 
-ARCHIVE_BASE_0='icewind_dale_enhanced_edition_en_2_5_16_3_20626.sh'
-ARCHIVE_BASE_0_MD5='f237e9506f046862e8d1c2d21c8fd588'
+ARCHIVE_BASE_0='icewind_dale_enhanced_edition_2_6_5_0_46474.sh'
+ARCHIVE_BASE_0_MD5='7fa481705b5d5b7f5d714a6a19c856e0'
 ARCHIVE_BASE_0_TYPE='mojosetup'
-ARCHIVE_BASE_0_SIZE='2900000'
-ARCHIVE_BASE_0_VERSION='2.5.16.3-gog20626'
+ARCHIVE_BASE_0_SIZE='3000000'
+ARCHIVE_BASE_0_VERSION='2.6.5.0-gog46474'
+
+ARCHIVE_BASE_MULTIARCH_1='icewind_dale_enhanced_edition_en_2_5_17_23121.sh'
+ARCHIVE_BASE_MULTIARCH_1_MD5='bdfcd244568916123c243fb95de1d08b'
+ARCHIVE_BASE_MULTIARCH_1_TYPE='mojosetup'
+ARCHIVE_BASE_MULTIARCH_1_SIZE='2900000'
+ARCHIVE_BASE_MULTIARCH_1_VERSION='2.5.17.0-gog23121'
+
+ARCHIVE_BASE_MULTIARCH_0='icewind_dale_enhanced_edition_en_2_5_16_3_20626.sh'
+ARCHIVE_BASE_MULTIARCH_0_MD5='f237e9506f046862e8d1c2d21c8fd588'
+ARCHIVE_BASE_MULTIARCH_0_TYPE='mojosetup'
+ARCHIVE_BASE_MULTIARCH_0_SIZE='2900000'
+ARCHIVE_BASE_MULTIARCH_0_VERSION='2.5.16.3-gog20626'
 
 ARCHIVE_BASE_32BIT_0='gog_icewind_dale_enhanced_edition_2.1.0.5.sh'
 ARCHIVE_BASE_32BIT_0_MD5='fc7244f4793eec365b8ac41d91a4edbb'
@@ -64,13 +76,9 @@ ARCHIVE_DOC_PATH='data/noarch/docs'
 ARCHIVE_DOC_FILES='
 *.pdf'
 
-ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
-ARCHIVE_GAME_BIN32_FILES='
-IcewindDale'
-
 ARCHIVE_GAME_BIN64_PATH='data/noarch/game'
 ARCHIVE_GAME_BIN64_FILES='
-IcewindDale64'
+IcewindDale'
 
 ARCHIVE_GAME_L10N_CS_PATH='data/noarch/game'
 ARCHIVE_GAME_L10N_CS_FILES='
@@ -119,13 +127,11 @@ scripts
 lang/en_US'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN32='IcewindDale'
-APP_MAIN_EXE_BIN64='IcewindDale64'
+APP_MAIN_EXE='IcewindDale'
 APP_MAIN_ICON='data/noarch/support/icon.png'
 
 PACKAGES_LIST_COMMON='PKG_L10N_CS PKG_L10N_DE PKG_L10N_ES PKG_L10N_FR PKG_L10N_IT PKG_L10N_KO PKG_L10N_PL PKG_L10N_RU PKG_L10N_TR PKG_DATA'
-PACKAGES_LIST="PKG_BIN32 PKG_BIN64 $PACKAGES_LIST_COMMON"
-PACKAGES_LIST_32BIT="PKG_BIN32 $PACKAGES_LIST_COMMON"
+PACKAGES_LIST="PKG_BIN64 $PACKAGES_LIST_COMMON"
 
 PKG_L10N_ID="${GAME_ID}-l10n-extra"
 
@@ -177,17 +183,43 @@ PKG_L10N_TR_DEPS="$GAME_ID"
 PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
+PKG_BIN64_ARCH='64'
+PKG_BIN64_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libopenal.so.1"
+PKG_BIN64_DEPS_ARCH='expat'
+PKG_BIN64_DEPS_DEB='libexpat1'
+PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
+
+# Keep compatibility with old archives
+
+ARCHIVE_GAME_BIN32_PATH='data/noarch/game'
+ARCHIVE_GAME_BIN32_FILES='
+IcewindDale'
+
 PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glibc libstdc++ glx libxrandr libopenal.so.1 libX11.so.6"
+PKG_BIN32_DEPS="$PKG_BIN64_DEPS"
 PKG_BIN32_DEPS_ARCH='lib32-expat'
-PKG_BIN32_DEPS_DEB='libexpat1'
+PKG_BIN32_DEPS_DEB="$PKG_BIN64_DEPS_DEB"
 PKG_BIN32_DEPS_GENTOO='dev-libs/expat[abi_x86_32]'
 
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
-PKG_BIN64_DEPS_ARCH='expat'
-PKG_BIN64_DEPS_DEB="$PKG_BIN32_DEPS_DEB"
-PKG_BIN64_DEPS_GENTOO='dev-libs/expat'
+APP_MAIN_EXE_BIN32='IcewindDale'
+
+## 64-bit + 32-bit
+
+ARCHIVE_GAME_BIN64_FILES_MULTIARCH='
+IcewindDale64'
+
+APP_MAIN_EXE_BIN64_MULTIARCH='IcewindDale64'
+
+PACKAGES_LIST_MULTIARCH="PKG_BIN32 PKG_BIN64 $PACKAGES_LIST_COMMON"
+
+PKG_BIN32_DEPS_MULTIARCH="$PKG_BIN32_DEPS libX11.so.6"
+PKG_BIN64_DEPS_MULTIARCH="$PKG_BIN64_DEPS libX11.so.6"
+
+## 32-bit only
+
+PACKAGES_LIST_32BIT="PKG_BIN32 $PACKAGES_LIST_COMMON"
+
+PKG_BIN32_DEPS_32BIT="$PKG_BIN32_DEPS libX11.so.6"
 
 # Easier upgrade from packages generated with pre-20180926.2 scripts
 
@@ -337,6 +369,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
 	if packages_get_list | grep --quiet "$PKG"; then
+		use_archive_specific_value "APP_MAIN_EXE_${PKG#PKG_}"
 		launchers_write 'APP_MAIN'
 	fi
 done
@@ -405,7 +438,8 @@ rm --recursive "$PLAYIT_WORKDIR"
 
 # Print instructions
 
-COMMON_PACKAGES='PKG_DATA PKG_BIN32 PKG_BIN64'
+COMMON_PACKAGES='PKG_DATA PKG_BIN64'
+COMMON_PACKAGES_MULTIARCH='PKG_DATA PKG_BIN32 PKG_BIN64'
 COMMON_PACKAGES_32BIT='PKG_DATA PKG_BIN32'
 use_archive_specific_value 'COMMON_PACKAGES'
 case "${LANG%_*}" in
