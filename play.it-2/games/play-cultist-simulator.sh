@@ -34,19 +34,31 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210807.1
+script_version=20210808.1
 
 # Set game-specific variables
 
 GAME_ID='cultist-simulator'
 GAME_NAME='Cultist Simulator'
 
+ARCHIVE_BASE_9='cultist_simulator_2021_1_b_2_44604.sh'
+ARCHIVE_BASE_9_MD5='cbe92b1dee271416ffa4ad29ef4b9123'
+ARCHIVE_BASE_9_TYPE='mojosetup'
+ARCHIVE_BASE_9_SIZE='540000'
+ARCHIVE_BASE_9_VERSION='2021.1.b.2-gog44604'
+ARCHIVE_BASE_9_URL='https://www.gog.com/game/cultist_simulator'
+
+ARCHIVE_BASE_8='cultist_simulator_2020_11_a_1_42424.sh'
+ARCHIVE_BASE_8_MD5='76781c87835954da4a97ec7e0efccfe2'
+ARCHIVE_BASE_8_TYPE='mojosetup'
+ARCHIVE_BASE_8_SIZE='540000'
+ARCHIVE_BASE_8_VERSION='2020.11.a.1-gog42424'
+
 ARCHIVE_BASE_7='cultist_simulator_2020_10_e_2_42258.sh'
 ARCHIVE_BASE_7_MD5='a2a2de8222b9993fc0ae5ef0eaed2b66'
 ARCHIVE_BASE_7_TYPE='mojosetup'
 ARCHIVE_BASE_7_SIZE='540000'
 ARCHIVE_BASE_7_VERSION='2020.10.e.2-gog42258'
-ARCHIVE_BASE_7_URL='https://www.gog.com/game/cultist_simulator'
 
 ARCHIVE_BASE_6='cultist_simulator_2020_10_e_1_42177.sh'
 ARCHIVE_BASE_6_MD5='1a16264b6ce868c0f741b6614d84d684'
