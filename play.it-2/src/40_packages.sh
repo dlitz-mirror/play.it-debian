@@ -149,18 +149,22 @@ package_get_current() {
 
 # get the full list of packages to generate
 # USAGE: packages_get_list
+# RETURN: a list of package identifiers
 packages_get_list() {
+	# shellcheck disable=SC2039
 	local packages_list
-	packages_list="$PACKAGES_LIST"
+	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
 
-	# Fall back on a default list if $PACKAGES_LIST is not set
-	if [ -z "$packages_list" ]; then
-		packages_list='PKG_MAIN'
-	fi
+	# If PACKAGES_LIST is not set,
+	# falls back on a list of a single "PKG_MAIN" package
+	: "${packages_list:=PKG_MAIN}"
+
+	###
+	# TODO
+	# Check that the string is a space-separated list of valid package identifiers
+	###
 
 	printf '%s' "$packages_list"
-
-	return 0
 }
 
 # get ID of given package
