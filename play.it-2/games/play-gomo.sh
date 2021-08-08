@@ -35,12 +35,19 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210725.1
+script_version=20210725.2
 
 # Set game-specific variables
 
 GAME_ID='gomo'
 GAME_NAME='Gomo'
+
+ARCHIVE_BASE_1='setup_gomo_1.0_(20774).exe'
+ARCHIVE_BASE_1_MD5='7679c55aaafe8308518aa4940929fbb0'
+ARCHIVE_BASE_1_TYPE='innosetup'
+ARCHIVE_BASE_1_SIZE='290000'
+ARCHIVE_BASE_1_VERSION='1.0-gog20774'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/gomo'
 
 ARCHIVE_BASE_0='setup_gomo_2.1.0.4.exe'
 ARCHIVE_BASE_0_MD5='5ee422dff6f00976e170296103dd29e6'
@@ -48,10 +55,10 @@ ARCHIVE_BASE_0_TYPE='innosetup'
 ARCHIVE_BASE_0_SIZE='560000'
 ARCHIVE_BASE_0_VERSION='1.0-gog2.1.0.4'
 
-ARCHIVE_GAME_BIN_PATH='app'
+ARCHIVE_GAME_BIN_PATH='.'
 ARCHIVE_GAME_BIN_FILES='gomo.exe adobe?air gomo.swf'
 
-ARCHIVE_GAME_DATA_PATH='app'
+ARCHIVE_GAME_DATA_PATH='.'
 ARCHIVE_GAME_DATA_FILES='meta-inf movies music world'
 
 APP_MAIN_TYPE='wine'
@@ -71,6 +78,11 @@ PKG_BIN_DEPS="${PKG_DATA_ID} wine"
 APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
 userdata:users/${USER}/Application Data/Gomo'
 DATA_FILES="$DATA_FILES userdata/Local?Store/saves.dat"
+
+# Keep compatibility with old archives
+
+ARCHIVE_GAME_BIN_PATH_0='app'
+ARCHIVE_GAME_DATA_PATH_0='app'
 
 # Load common functions
 
