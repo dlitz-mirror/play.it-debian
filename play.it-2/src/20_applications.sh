@@ -8,11 +8,19 @@ applications_list() {
 		return 0
 	fi
 
-	# If APPLICATIONS_LIST is not set, try to guess a list by parsing the game script
+	# If no value is set, try to guess one
+
+	## Unity3D game
+	if [ -n "$(unity3d_name)" ]; then
+		# Unity3D games are expected to provide a single application
+		printf '%s' 'APP_MAIN'
+		return 0
+	fi
+
+	## Fallback, parse the game script
 	# shellcheck disable=SC2039
 	local game_script
 	game_script="$0"
-
 	# Try to generate a list from the following variables:
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
