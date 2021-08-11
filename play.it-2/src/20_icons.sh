@@ -1,3 +1,24 @@
+# print the application identifier for a given icon
+# USAGE: icon_application $icon
+# RETURN: the application identifier
+icon_application() {
+	# We assume here that the icon identifier is built from the application identifier,
+	# with a suffix appended.
+	# shellcheck disable=SC2039
+	local application icon
+	icon="$1"
+	for application in $(applications_list); do
+		if printf '%s' "$icon" | grep --quiet "^${application}"; then
+			printf '%s' "$application"
+			return 0
+		fi
+	done
+
+	# If we reached this point, no application has been found for the current icon.
+	# This should not happen.
+	return 1
+}
+
 # print the path of the given icon
 # USAGE: icon_path $icon
 # RETURN: the icon path, it can include spaces
