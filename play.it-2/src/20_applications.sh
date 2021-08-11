@@ -219,9 +219,21 @@ application_icons_list() {
 	# shellcheck disable=SC2039
 	local default_icon
 	default_icon="${application}_ICON"
-	if [ -n "$(get_value "$default_icon")" ]; then
-		printf '%s' "$default_icon"
-	fi
+	case "$(application_type "$application")" in
+		('unity3d')
+			# It is expected that Unity3D games always come with a single icon
+			printf '%s' "$default_icon"
+			return 0
+		;;
+		(*)
+			# If a value is explicitely set for APP_xxx_ICON,
+			# we assume this is the only icon for the current application
+			if [ -n "$(get_value "$default_icon")" ]; then
+				printf '%s' "$default_icon"
+				return 0
+			fi
+		;;
+	esac
 
 	# If no icon has been found, there is nothing to print
 	return 0
