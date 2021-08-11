@@ -25,8 +25,18 @@ icon_application() {
 icon_path() {
 	# Get the icon path from its identifier
 	# shellcheck disable=SC2039
-	local icon_path
-	icon_path=$(get_context_specific_value 'archive' "$1")
+	local icon icon_path
+	icon="$1"
+	icon_path=$(get_context_specific_value 'archive' "$icon")
+
+	# If no value is set, try to find one based on the application type
+	if [ -z "$icon_path" ]; then
+		case "$(application_type "$(icon_application "$icon")")" in
+			('unity3d')
+				icon_path=$(icon_unity3d_path "$icon")
+			;;
+		esac
+	fi
 
 	# Check that the path to the icon is not empty
 	if [ -z "$icon_path" ]; then
