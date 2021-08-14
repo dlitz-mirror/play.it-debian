@@ -1,3 +1,10 @@
+play.it (2.13.3-2) unstable; urgency=medium
+
+  * Update debian/watch
+    fix fetching upstream-provided tarball signatures
+
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 14 Aug 2021 20:29:52 +0200
+
 play.it (2.13.3-1) unstable; urgency=medium
 
   * New upstream release.

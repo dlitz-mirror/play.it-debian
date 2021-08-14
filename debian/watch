@@ -5,6 +5,6 @@ opts="pgpmode=next" \
   (?:.*/)scripts@ANY_VERSION@@ARCHIVE_EXT@
 
 opts="pgpmode=previous" \
-  https://forge.dotslashplay.it/play.it/scripts/-/tags \
+  https://downloads.dotslashplay.it/releases/ \
   (?:.*/)scripts@ANY_VERSION@@SIGNATURE_EXT@ \
   previous
