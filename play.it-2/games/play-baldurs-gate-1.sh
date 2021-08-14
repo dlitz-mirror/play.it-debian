@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200803.5
+script_version=20210510.1
 
 # Set game-specific variables
 
@@ -194,8 +194,8 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 ###
 
 ini_file="${PKG_BIN_PATH}${PATH_GAME}/baldur.ini"
-path_game='C:\\'"$GAME_ID"'\\'
-path_data='C:\\'"$GAME_ID"'\\data\\'
+path_game="C:\\\\${GAME_ID}\\\\"
+path_data="C:\\\\${GAME_ID}\\\\data\\\\"
 pattern="s/HD0:=.\\+/HD0:=$path_game/"
 pattern="$pattern;s/CD1:=.*/CD1:=$path_data/"
 pattern="$pattern;s/CD2:=.*/CD2:=$path_data/"

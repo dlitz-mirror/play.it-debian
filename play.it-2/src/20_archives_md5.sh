@@ -70,14 +70,12 @@ archive_integrity_check_md5() {
 	if ! archive_has_md5sum_cached "$name"; then
 		info_archive_hash_computation "$file"
 		archive_get_md5sum_computed "$name" "$file"
-		print_ok
+		info_archive_hash_computation_done
 	fi
-	archive_sum="$(get_value "${ARCHIVE}_MD5")"
+	archive_sum="$(get_value "${archive}_MD5")"
 	file_sum="$(archive_get_md5sum_cached "$name")"
-	info_archive_integrity_check "$file"
 	if [ "$file_sum" != "$archive_sum" ]; then
 		error_hashsum_mismatch "$file"
 	fi
-	print_ok
 }
 

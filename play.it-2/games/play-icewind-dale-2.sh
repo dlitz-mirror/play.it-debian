@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200503.5
+script_version=20210510.1
 
 # Set game-specific variables
 
@@ -152,11 +152,11 @@ icons_move_to 'PKG_DATA'
 
 config_file="${PKG_BIN_PATH}${PATH_GAME}/icewind2.ini"
 pattern1='HD0:=.\+'
-replacement1='HD0:=C:\\'"${GAME_ID}"'\\'
+replacement1="HD0:=C:\\\\${GAME_ID}\\\\"
 pattern2='CD1:=.\+'
-replacement2='CD1:=C:\\'"${GAME_ID}"'\\data\\'
+replacement2="CD1:=C:\\\\${GAME_ID}\\\\data\\\\"
 pattern3='CD2:=.\+'
-replacement3='CD2:=C:\\'"${GAME_ID}"'\\cd2\\'
+replacement3="CD2:=C:\\\\${GAME_ID}\\\\cd2\\\\"
 if [ $DRY_RUN -eq 0 ]; then
 	sed --in-place \
 		"s/${pattern1}/${replacement1}/;s/${pattern2}/${replacement2}/;s/${pattern3}/${replacement3}/" \

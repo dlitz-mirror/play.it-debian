@@ -1,15 +1,16 @@
 ###
-# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
-# Copyright (c) 2016-2020, Mopi
-# Copyright (c) 2017-2020, Phil Morrell
-# Copyright (c) 2017-2020, Jacek Szafarkiewicz
-# Copyright (c) 2018-2020, VA
-# Copyright (c) 2018-2020, Janeene "dawnmist" Beeforth
-# Copyright (c) 2018-2020, BetaRays
-# Copyright (c) 2018-2020, Andrey
-# Copyright (c) 2019-2020, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-# Copyright (c)      2020, macaron
-# Copyright (c)      2020, Hoël Bézier
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
+# Copyright (c) 2017-2021, Phil Morrell
+# Copyright (c) 2017-2021, Jacek Szafarkiewicz
+# Copyright (c) 2018-2021, VA
+# Copyright (c) 2018-2021, Janeene "dawnmist" Beeforth
+# Copyright (c) 2018-2021, BetaRays
+# Copyright (c) 2018-2021, Andrey
+# Copyright (c) 2019-2021, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+# Copyright (c) 2020-2021, macaron
+# Copyright (c) 2020-2021, Hoël Bézier
+# Copyright (c) 2020-2021, quinao
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -40,7 +41,7 @@
 # send your bug reports to contact@dotslashplay.it
 ###
 
-library_version=2.12.1
+LIBRARY_VERSION=2.13.3
 # shellcheck disable=SC2034
-library_revision=20201125.1
+library_revision=20210706.1
 

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,17 +34,22 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200210.2
+script_version=20210510.1
 
 # Set game-specific variables
 
 GAME_ID='startopia'
 GAME_NAME='Startopia'
 
-ARCHIVE_GOG='setup_startopia_2.0.0.17.exe'
-ARCHIVE_GOG_MD5='4fe8d194afc1012e136ed3e82f1de171'
-ARCHIVE_GOG_VERSION='1.01b-gog2.0.0.17'
-ARCHIVE_GOG_SIZE='600000'
+ARCHIVES_LIST='
+ARCHIVE_BASE_0'
+
+ARCHIVE_BASE_0='setup_startopia_2.0.0.17.exe'
+ARCHIVE_BASE_0_MD5='4fe8d194afc1012e136ed3e82f1de171'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_VERSION='1.01b-gog2.0.0.17'
+ARCHIVE_BASE_0_SIZE='600000'
+ARCHIVE_BASE_0_URL='https://www.gog.com/game/startopia'
 
 ARCHIVE_DOC_DATA_PATH='app'
 ARCHIVE_DOC_DATA_FILES='eula weblinks *.html *.pdf *.rtf *.txt'
@@ -74,16 +79,15 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -111,6 +115,48 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 PKG='PKG_BIN'
 icons_get_from_package 'APP_MAIN'
 icons_move_to 'PKG_DATA'
+
+# Tweak default configuration file
+# This is required for the introduction movie to play
+
+###
+# TODO
+# Some function dedicated to ini files edition would be useful here
+###
+
+ini_file="${PKG_BIN_PATH}${PATH_GAME}/startopia.ini"
+
+ini_field='IntroPath'
+ini_value="C:\\\\${GAME_ID}\\\\intro\\\\"
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="s/${pattern}/${replacement}/"
+
+ini_field='DrivePathMusic'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+ini_field='DrivePathSound'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+ini_field='SoundPathVoice'
+ini_value="C:\\\\${GAME_ID}\\\\data\\\\"
+
+pattern="^${ini_field}=.*"
+replacement="${ini_field}=${ini_value}"
+expression="${expression};s/${pattern}/${replacement}/"
+
+dos2unix --quiet "$ini_file"
+sed --in-place --expression="$expression" "$ini_file"
+unix2dos --quiet "$ini_file"
 
 # Write launchers
 

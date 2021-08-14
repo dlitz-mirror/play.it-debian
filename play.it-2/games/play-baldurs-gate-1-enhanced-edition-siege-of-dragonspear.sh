@@ -2,7 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c)      2021, Anna Lea
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,25 +35,37 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200202.1
+script_version=20210615.1
 
 # Set game-specific variables
 
 GAME_ID='baldurs-gate-1-enhanced-edition'
 GAME_NAME='Baldurʼs Gate - Enhanced Edition - Siege of Dragonspear'
 
-ARCHIVE_GOG='baldur_s_gate_siege_of_dragonspear_en_2_5_23121.sh'
-ARCHIVE_GOG_URL='https://www.gog.com/game/baldurs_gate_siege_of_dragonspear'
-ARCHIVE_GOG_MD5='f0581c46e9d31a7ef53be88cf85eccc8'
-ARCHIVE_GOG_VERSION='2.5.17.0-gog23121'
-ARCHIVE_GOG_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_SIZE='1900000'
+ARCHIVE_BASE_3='baldur_s_gate_siege_of_dragonspear_2_6_6_0_47291.sh'
+ARCHIVE_BASE_3_MD5='36d275f6822b3cd2946ca606c0ebdb67'
+ARCHIVE_BASE_3_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_3_SIZE='1900000'
+ARCHIVE_BASE_3_VERSION='2.6.6.0-gog47291'
+ARCHIVE_BASE_3_URL='https://www.gog.com/game/baldurs_gate_siege_of_dragonspear'
 
-ARCHIVE_GOG_OLD0='baldur_s_gate_siege_of_dragonspear_en_2_3_0_4_20148.sh'
-ARCHIVE_GOG_OLD0_MD5='152225ec02c87e70bfb59970ac33b755'
-ARCHIVE_GOG_OLD0_VERSION='2.3.0.4-gog20148'
-ARCHIVE_GOG_OLD0_TYPE='mojosetup_unzip'
-ARCHIVE_GOG_OLD0_SIZE='1900000'
+ARCHIVE_BASE_2='baldur_s_gate_siege_of_dragonspear_2_6_5_0_46477.sh'
+ARCHIVE_BASE_2_MD5='27970876d9252fcb3174df8201db3ca3'
+ARCHIVE_BASE_2_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_2_SIZE='1900000'
+ARCHIVE_BASE_2_VERSION='2.6.5.0-gog46477'
+
+ARCHIVE_BASE_1='baldur_s_gate_siege_of_dragonspear_en_2_5_23121.sh'
+ARCHIVE_BASE_1_MD5='f0581c46e9d31a7ef53be88cf85eccc8'
+ARCHIVE_BASE_1_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_1_SIZE='1900000'
+ARCHIVE_BASE_1_VERSION='2.5.17.0-gog23121'
+
+ARCHIVE_BASE_0='baldur_s_gate_siege_of_dragonspear_en_2_3_0_4_20148.sh'
+ARCHIVE_BASE_0_MD5='152225ec02c87e70bfb59970ac33b755'
+ARCHIVE_BASE_0_TYPE='mojosetup_unzip'
+ARCHIVE_BASE_0_SIZE='1900000'
+ARCHIVE_BASE_0_VERSION='2.3.0.4-gog20148'
 
 ARCHIVE_DOC_DATA_PATH='data/noarch/docs'
 ARCHIVE_DOC_DATA_FILES='*'
@@ -67,20 +80,19 @@ PKG_MAIN_DEPS="$GAME_ID"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -97,7 +109,10 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Build package
 
@@ -106,7 +121,7 @@ build_pkg
 
 # Clean up
 
-rm --recursive "$PLAYIT_WORKDIR"
+rm --recursive "${PLAYIT_WORKDIR}"
 
 # Print instructions
 

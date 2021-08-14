@@ -1,50 +1,3 @@
-# set package distribution-specific architecture
-# USAGE: set_architecture $pkg
-# CALLS: set_architecture_arch set_architecture_deb set_architecture_gentoo
-# NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) (PKG_ARCH)
-# CALLED BY: set_temp_directories write_metadata
-set_architecture() {
-	use_archive_specific_value "${1}_ARCH"
-	local architecture
-	architecture="$(get_value "${1}_ARCH")"
-	case $OPTION_PACKAGE in
-		('arch')
-			set_architecture_arch "$architecture"
-		;;
-		('deb')
-			set_architecture_deb "$architecture"
-		;;
-		('gentoo')
-			set_architecture_gentoo "$architecture"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'set_architecture'
-		;;
-	esac
-}
-
-# set package distribution-specific architectures
-# USAGE: set_supported_architectures $pkg
-# CALLS: set_architecture set_architecture_gentoo
-# NEEDED VARS: (ARCHIVE) (OPTION_PACKAGE) (PKG_ARCH)
-# CALLED BY: write_bin write_bin_set_native_noprefix write_metadata_gentoo
-set_supported_architectures() {
-	case $OPTION_PACKAGE in
-		('arch'|'deb')
-			set_architecture "$1"
-		;;
-		('gentoo')
-			use_archive_specific_value "${1}_ARCH"
-			local architecture
-			architecture="$(get_value "${1}_ARCH")"
-			set_supported_architectures_gentoo "$architecture"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'set_supported_architectures'
-		;;
-	esac
-}
-
 # test the validity of the argument given to parent function
 # USAGE: testvar $var_name $pattern
 testvar() {
@@ -78,12 +31,26 @@ tolower() {
 }
 
 # convert files name to lower case using convmv
-# USAGE: tolower_convmv $dir
-# CALLED BY: tolower
+# USAGE: tolower_convmv $directory
+# RETURN: nothing
+# SIDE EFFECT: convert all file names in a given path to lowercase
 tolower_convmv() {
-	local dir="$1"
-	find "$dir" -mindepth 1 -maxdepth 1 -exec \
-		convmv --notest --lower -r {} + >/dev/null 2>&1
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	###
+	# TODO
+	# Check that $directory is a writable directory
+	###
+
+	# shellcheck disable=SC2039
+	local convmv_options
+	convmv_options='-f utf8 --notest --lower -r'
+
+	# shellcheck disable=SC2086
+	find "$directory" -mindepth 1 -maxdepth 1 -exec \
+		convmv $convmv_options {} + >/dev/null 2>&1
 }
 
 # convert files name to lower case using pure shell
@@ -114,12 +81,26 @@ toupper() {
 }
 
 # convert files name to upper case using convmv
-# USAGE: toupper_convmv $dir
-# CALLED BY: toupper
+# USAGE: toupper_convmv $directory
+# RETURN: nothing
+# SIDE EFFECT: convert all file names in a given path to uppercase
 toupper_convmv() {
-	local dir="$1"
-	find "$dir" -mindepth 1 -maxdepth 1 -exec \
-		convmv --notest --upper -r {} + >/dev/null 2>&1
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	###
+	# TODO
+	# Check that $directory is a writable directory
+	###
+
+	# shellcheck disable=SC2039
+	local convmv_options
+	convmv_options='-f utf8 --notest --upper -r'
+
+	# shellcheck disable=SC2086
+	find "$directory" -mindepth 1 -maxdepth 1 -exec \
+		convmv $convmv_options {} + >/dev/null 2>&1
 }
 
 # convert files name to upper case using pure shell
@@ -135,38 +116,94 @@ toupper_shell() {
 }
 
 # get archive-specific value for a given variable name, or use default value
-# USAGE: use_archive_specific_value $var_name
+# USAGE: use_archive_specific_value $variable_name
+# RETURN: nothing
+# SIDE EFFECT: update the value of the variables using the given name
 use_archive_specific_value() {
-	[ -n "$ARCHIVE" ] || return 0
-	if ! testvar "$ARCHIVE" 'ARCHIVE'; then
-		error_invalid_argument 'ARCHIVE' 'use_archive_specific_value'
+	###
+	# TODO
+	# We should check that a valid shell variable name has been passed
+	###
+	# shellcheck disable=SC2039
+	local variable_name variable_value
+	variable_name="$1"
+
+	# Try to get an archive-specific value for the given variable
+	variable_value=$(get_archive_specific_value "$variable_name")
+
+	# If no archive-specific value exists, fall back on the default value
+	if [ -z "$variable_value" ]; then
+		variable_value=$(get_value "$variable_name")
 	fi
-	local name_real
-	name_real="$1"
-	local name
-	name="${name_real}_${ARCHIVE#ARCHIVE_}"
-	local value
-	while [ "$name" != "$name_real" ]; do
-		value="$(get_value "$name")"
-		if [ -n "$value" ]; then
-			export ${name_real?}="$value"
-			return 0
-		fi
-		name="${name%_*}"
-	done
+
+	# Update the variable value
+	export "$variable_name"="$variable_value"
+	return 0
+}
+
+# return an archive-specific value for a given variable name, if one exists
+# USAGE: get_archive_specific_value $variable_name
+# RETURN: an archive-specific value, or nothing
+get_archive_specific_value() {
+	# If $ARCHIVE is not set, return early
+	if [ -z "$ARCHIVE" ]; then
+		return 0
+	fi
+
+	# Try to find a variable using the base name + the current archive identifier suffix
+	# shellcheck disable=SC2039
+	local variable_base_name variable_name_with_suffix archive_suffix variable_value
+	variable_base_name="$1"
+
+	# Try first with "ARCHIVE_BASE_" as the base archive identifier
+	# This step should be skipped with game scripts targeting a library version older than 2.13
+	if \
+		# shellcheck disable=SC2154
+		version_is_at_least '2.13' "$target_version" && \
+		[ "${ARCHIVE#ARCHIVE_BASE_}" != "$ARCHIVE" ]
+	then
+		archive_suffix="${ARCHIVE#ARCHIVE_BASE_}"
+		variable_name_with_suffix="${variable_base_name}_${archive_suffix}"
+		while [ "$variable_name_with_suffix" != "$variable_base_name" ]; do
+			variable_value=$(get_value "$variable_name_with_suffix")
+			if [ -n "$variable_value" ]; then
+				printf '%s' "$variable_value"
+				return 0
+			fi
+			variable_name_with_suffix="${variable_name_with_suffix%_*}"
+		done
+	fi
+
+	# If no value has been found using "ARCHIVE_BASE_" as the base archive identifier, try again using "ARCHIVE_"
+	if [ "${ARCHIVE#ARCHIVE_}" != "$ARCHIVE" ]; then
+		archive_suffix="${ARCHIVE#ARCHIVE_}"
+		variable_name_with_suffix="${variable_base_name}_${archive_suffix}"
+		while [ "$variable_name_with_suffix" != "$variable_base_name" ]; do
+			variable_value=$(get_value "$variable_name_with_suffix")
+			if [ -n "$variable_value" ]; then
+				printf '%s' "$variable_value"
+				return 0
+			fi
+			variable_name_with_suffix="${variable_name_with_suffix%_*}"
+		done
+	fi
+
+	# No archive-specific value has been found
+	# This should not trigger an error
+	return 0
 }
 
 # get package-specific value for a given variable name, or use default value
 # USAGE: use_package_specific_value $var_name
 use_package_specific_value() {
-	[ -n "$PKG" ] || return 0
-	if ! testvar "$PKG" 'PKG'; then
-		error_invalid_argument 'PKG' 'use_package_specific_value'
-	fi
+	# get the current package
+	local package
+	package=$(package_get_current)
+
 	local name_real
 	name_real="$1"
 	local name
-	name="${name_real}_${PKG#PKG_}"
+	name="${name_real}_${package#PKG_}"
 	local value
 	while [ "$name" != "$name_real" ]; do
 		value="$(get_value "$name")"
@@ -204,7 +241,11 @@ check_option_validity() {
 	done
 	# if we did not leave the function before this point, the tested value is not valid
 	option_name=$(printf '%s' "$option_name" | tr '[:upper:]' '[:lower:]')
-	error_option_invalid "$option_name" "$option_value"
+	if [ "$option_name" = 'compression' ]; then
+		error_compression_invalid
+	else
+		error_option_invalid "$option_name" "$option_value"
+	fi
 }
 
 # try to guess the tar implementation used for `tar` on the current system
@@ -221,16 +262,5 @@ guess_tar_implementation() {
 			error_unknown_tar_implementation
 		;;
 	esac
-}
-
-# Check if the script target version is older than the one given as an argument
-# USAGE: version_target_is_older_than $version
-version_target_is_older_than() {
-	local version version_major version_minor
-	version="$1"
-	version_major=$(printf '%s' "$version" | cut --delimiter='.' --fields=1)
-	version_minor=$(printf '%s' "$version" | cut --delimiter='.' --fields=2)
-	test $VERSION_MAJOR_TARGET -lt $version_major || \
-		test $VERSION_MINOR_TARGET -lt $version_minor
 }
 

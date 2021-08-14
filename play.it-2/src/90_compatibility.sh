@@ -1,3 +1,52 @@
+# Keep compatibility with 2.12 and older
+
+archives_get_list() {
+	ARCHIVES_LIST=$(archives_return_list)
+	export ARCHIVES_LIST
+}
+
+get_package_version() {
+	PKG_VERSION=$(packages_get_version "$ARCHIVE")
+	export PKG_VERSION
+}
+
+set_architecture() {
+	pkg_architecture=$(package_get_architecture_string "$1")
+	export pkg_architecture
+}
+
+icons_linking_postinst() {
+	if \
+		! version_is_at_least '2.8' "$target_version" && \
+		[ -z "${PACKAGES_LIST##*PKG_DATA*}" ]
+	then
+		(
+			PKG='PKG_DATA'
+			icons_get_from_package "$@"
+		)
+	else
+		icons_get_from_package "$@"
+	fi
+}
+
+archive_set() {
+	archive_initialize_optional "$@"
+	# shellcheck disable=SC2039
+	local archive
+	archive=$(archive_find_from_candidates "$@")
+	if [ -n "$archive" ]; then
+		ARCHIVE="$archive"
+		export ARCHIVE
+	fi
+}
+
+version_target_is_older_than() {
+	if [ "$1" = "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" ]; then
+		return 1
+	fi
+	version_is_at_least "${VERSION_MAJOR_TARGET}.${VERSION_MINOR_TARGET}" "$1"
+}
+
 # Keep compatibility with 2.11 and older
 
 compat_pkg_write_arch_postinst() {
@@ -131,7 +180,8 @@ icon_path_empty_error() {
 }
 
 set_temp_directories_error_not_enough_space() {
-	error_not_enough_free_space "$XDG_RUNTIME_DIR" "$(get_tmp_dir)" "$XDG_CACHE_HOME" "$PWD"
+	# shellcheck disable=SC2046
+	error_not_enough_free_space $(temporary_directories_list_candidates)
 }
 
 archive_extraction_innosetup_error_version() {
@@ -184,6 +234,32 @@ write_desktop_winecfg() {
 
 write_launcher() {
 	launchers_write "$@"
+}
+
+# Keep compatibility with 2.8 and older
+
+icon_check_file_existence_pre_2_8() {
+	# shellcheck disable=SC2039
+	local directory file
+	directory="$1"
+	file="$2"
+
+	if \
+		[ -z "${file##* *}" ] || \
+		[ ! -f "$directory"/$file ]
+	then
+		error_icon_file_not_found "$directory/$file"
+		return 1
+	else
+		# get the real file name from its globbed one
+		# shellcheck disable=SC2039
+		local file_path
+		file_path=$(eval printf '%s' "$directory/$file")
+		file="${file_path#${directory}/}"
+	fi
+
+	printf '%s' "$file"
+	return 0
 }
 
 # Keep compatibility with 2.7 and older

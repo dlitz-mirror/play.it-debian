@@ -1,3 +1,93 @@
+2.13.3
+
+  * Redirect all debug messages to /dev/stderr
+  * Gentoo: Stop emerge on errors
+  * Arch Linux: Drop generation of .MTREE metadata file
+
+2.13.2
+
+  * Fix getting icon path for pre-2.8 game scripts with globs expanding to spaces
+  * Improve the search for a proper working directory
+  * Improve function descriptions in the icons source file
+  * Gentoo: Use fakeroot (≥1.25.1) instead of fakeroot-ng
+
+2.13.1
+
+  * Fix data migration from volatile prefix to persistent paths
+  * Fix filenames case conversion failure on non-ascii characters
+  * Fix wrapper installation path
+  * Gentoo: Ensure sdl2-image is built with png and jpeg support
+
+2.13.0
+
+  * New features:
+    * New option --version (or -v), displaying the library version
+    * Debug notices, disabled by default, enabled with --debug
+    * Archives: Add support for InstallShield installers
+    * Engines: Add ability to use system-provided Ren'Py
+    * Packages: Add support for extra compression methods: lz4, lzip, lzop and zstd
+    * Packages: Add an alternative output format targeting Gentoo
+
+  * The installation process GNU Make has been improved to allow targeted actions:
+    install-library, install-games, install-wrapper and install-manpage
+
+  * Archive-related fixes and improvements:
+    * Use a new archives naming convention, more robust, see our documentation for details:
+      https://forge.dotslashplay.it/play.it/doc/-/wikis/dev/scripts/variables#base-archives
+    * Rewrite functions related to archives initialization
+    * .deb archives: Extract data without relying on dpkg-deb only
+    * Fix the error shown when an archive type is not set and could not be guessed
+    * Fix the error shown when an unknown archive type is used
+
+  * WINE-specific improvements:
+    * Do not override WINEDEBUG if it is already set by the user
+    * Provide a standard method to divert arbitrary files from the WINE prefix
+      to persistent user-writable paths
+
+  * Packages-related changes:
+    * Provide wrapper functions to get package-related informations, including
+      packages metadata
+    * New generic dependency keywords
+    * Improve handling of supported compression methods based on the target
+      package format
+    * Debian: Update dependency on libgdk_pixbuf-2.0.so.0
+    * Gentoo: Change default installation prefix to /usr from /usr/local
+
+  * Environment checks:
+    * Run early filesystem checks, allowing to detect failure that would
+      happen only at the packages building step
+    * New function version_is_at_least comparing two version strings using
+      the "x.y.z" format
+
+  * Deprecation notices:
+    * icons_linking_postinst is now a compatibility wrapper around standard
+      icons extraction functions
+
+2.12.2
+
+  * Archives-related improvements:
+    * Improve compatibility check for InnoSetup archives
+
+  * Icons-related fixes:
+    * Avoid a potential infinite loop in the icons resolution guessing
+      function
+    * Fix compatibility with GraphicksMagic compatibility wrapper for
+      ImageMagick
+
+  * Package-related fixes and improvements:
+    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
+    * Fix getting hostname on systems without /etc/hostname
+
+  * Errors handling:
+    * Fix error message displayed when passing an invalid value to a supported
+      option
+    * Improve handling of error cases related to empty variables
+    * Fix error message shown when there was not enough disk space in tested
+      temporary directory candidates
+
+  * Codebase improvements:
+    * Use grep --quiet instead of output redirection
+
 2.12.1
 
   * Wrapper fixes:

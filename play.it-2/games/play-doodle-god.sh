@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201003.2
+script_version=20210125.1
 
 # Set game-specific variables
 
@@ -44,7 +44,6 @@ GAME_NAME='Doodle God'
 
 ARCHIVE_INDIEGALA='doodle-god_win.zip'
 ARCHIVE_INDIEGALA_MD5='cdba1abf1c909c7145da975dac82945d'
-ARCHIVE_INDIEGALA_URL='https://freebies.indiegala.com/doodle-god/'
 ARCHIVE_INDIEGALA_VERSION='3.1.64-indiegala1'
 ARCHIVE_INDIEGALA_SIZE='160000'
 ARCHIVE_INDIEGALA_TYPE='rar'
@@ -75,13 +74,12 @@ PKG_BIN_DEPS="$PKG_DATA_ID wine glx"
 target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

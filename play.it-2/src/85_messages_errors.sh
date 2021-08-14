@@ -209,6 +209,8 @@ error_launcher_missing_binary() {
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {
 	local message option_name option_value
+	option_name="$1"
+	option_value="$2"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
@@ -222,6 +224,36 @@ error_option_invalid() {
 	esac
 	print_error
 	printf "$message" "$option_value" "$option_name" "$option_name"
+	return 1
+}
+
+# display an error when the compression method is not compatible with the
+# package format
+# USAGE: error_compression_invalid
+error_compression_invalid() {
+	# shellcheck disable=SC2039
+	local compression_method allowed_values package_format message
+
+	compression_method="$OPTION_COMPRESSION"
+	allowed_values="$ALLOWED_VALUES_COMPRESSION"
+	package_format="$OPTION_PACKAGE"
+
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
+			message="$message"'Seules les méthodes suivantes sont acceptées :\n'
+			message="$message"'\t%s\n'
+			;;
+		('en'|*)
+			message='"%s" compression method is not compatible with "%s" package format.\n'
+			message="$message"'Only the following options are accepted:\n'
+			message="$message"'\t%s\n'
+			;;
+	esac
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$compression_method" "$package_format" "$allowed_values"
 	return 1
 }
 
@@ -363,13 +395,21 @@ error_innoextract_version_too_old() {
 	case "${LANG%_*}" in
 		('fr')
 			message='La version de innoextract disponible sur ce système est trop ancienne pour extraire les données de lʼarchive suivante : %s\n'
+			message="$message"'Des instructions de mise-à-jour sont proposées :\n'
+			message="$message"'- pour Debian : %s\n'
+			message="$message"'- pour Ubuntu : %s\n'
 		;;
 		('en'|*)
 			message='Available innoextract version is too old to extract data from the following archive: %s\n'
+			message="$message"'Update instructions are proposed:\n'
+			message="$message"'- for Debian: %s\n'
+			message="$message"'- for Ubuntu: %s\n'
 		;;
 	esac
 	print_error
-	printf "$message" "$archive"
+	printf "$message" "$archive" \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/debian#available-innoextract-version-is-too-old' \
+		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/ubuntu#innoextract-version-is-too-old'
 	return 1
 }
 
@@ -410,26 +450,6 @@ error_option_unknown() {
 	esac
 	print_error
 	printf "$message" "$option_name"
-	return 1
-}
-
-# display an error whent trying to set a compression method not compatible with the target package format
-# USAGE: error_compression_method_not_compatible $compression_method $package_format
-error_compression_method_not_compatible() {
-	local message compression_method package_format
-	compression_method="$1"
-	package_format="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
-		;;
-		('en'|*)
-			message='"%s" compression method is not compatible with "%s" package format.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$compression_method" "$package_format"
 	return 1
 }
 
@@ -576,6 +596,84 @@ error_no_script_found_for_archive() {
 	esac
 	print_error
 	printf "$message" "$archive"
+	return 1
+}
+
+# display an error when a variable is empty
+# USAGE: error_empty_variable $variable
+error_empty_variable() {
+	local message variable
+	variable="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La variable "%s" nʼest pas définie, mais elle requise.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			message='Variable "%s" is not set, but it is required.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$variable" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	return 1
+}
+
+# display an error when trying to use a case-insensitive filesystem
+# USAGE: error_case_insensitive_filesystem_is_not_supported $directory
+error_case_insensitive_filesystem_is_not_supported() {
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Ce répertoire se trouve sur un système de fichiers insensible à la casse : %s\n'
+			message="$message"'Ce type de système de fichiers nʼest pas géré pour lʼopération demandée.\n'
+		;;
+		('en'|*)
+			message='The following directory is on a case-insensitive filesystem: %s\n'
+			message="$message"'Such filesystems are not supported for the current operation.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$directory"
+
+	return 1
+}
+
+
+# display an error when trying to use a filesystem without support for UNIX permissions
+# USAGE: error_unix_permissions_support_is_required $directory
+error_unix_permissions_support_is_required() {
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	# shellcheck disable=SC2039
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Ce répertoire se trouve sur un système de fichiers ne gérant pas les permissions UNIX : %s\n'
+			message="$message"'Ce type de système de fichiers nʼest pas géré pour lʼopération demandée.\n'
+		;;
+		('en'|*)
+			message='The following directory is on filesystem with no support for UNIX permissions: %s\n'
+			message="$message"'Such filesystems are not supported for the current operation.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$directory"
+
 	return 1
 }
 

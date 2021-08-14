@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2020, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200616.3
+script_version=20210227.1
 
 # Set game-specific variables
 
@@ -44,6 +44,7 @@ GAME_NAME='Into the Breach'
 ARCHIVES_LIST='
 ARCHIVE_HUMBLE_1
 ARCHIVE_HUMBLE_0
+ARCHIVE_GOG_1
 '
 
 ARCHIVE_HUMBLE_1='Into_the_Breach_Linux.1.2.23.zip'
@@ -57,20 +58,30 @@ ARCHIVE_HUMBLE_0_MD5='5a8b33e1ccbc2953c99aacf0ad38ca37'
 ARCHIVE_HUMBLE_0_SIZE='320000'
 ARCHIVE_HUMBLE_0_VERSION='1.2.20-humble200420'
 
+ARCHIVE_GOG_1='into_the_breach_1_2_24_38624.sh'
+ARCHIVE_GOG_1_MD5='dbc8142ec1da82284b7959a48b50d512'
+ARCHIVE_GOG_1_URL='https://www.gog.com/game/into_the_breach'
+ARCHIVE_GOG_1_SIZE='320000'
+ARCHIVE_GOG_1_VERSION='1.2.24-gog38624'
+ARCHIVE_GOG_1_TYPE='mojosetup'
+
 ARCHIVE_DOC_DATA_PATH='Into the Breach'
 ARCHIVE_DOC_DATA_FILES='licenses'
 # Keep compatibility with old archives
 ARCHIVE_DOC_DATA_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_DOC_DATA_PATH_GOG='data/noarch/game'
 
 ARCHIVE_GAME_BIN_PATH='Into the Breach'
 ARCHIVE_GAME_BIN_FILES='Breach linux_x64/libfmod.so.10 linux_x64/libfmodstudio.so.10'
 # Keep compatibility with old archives
 ARCHIVE_GAME_BIN_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 
 ARCHIVE_GAME_DATA_PATH='Into the Breach'
 ARCHIVE_GAME_DATA_FILES='data maps resources scripts shadersOGL'
 # Keep compatibility with old archives
 ARCHIVE_GAME_DATA_PATH_HUMBLE_0='Into the Breach Linux'
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 
 # Optional icons pack, downloadable from ./play.it server
 
@@ -91,20 +102,19 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA glibc libstdc++ sdl2 glx"
+PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ sdl2 glx"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then

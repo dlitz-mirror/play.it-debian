@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2016-2020, Mopi
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2016-2021, Mopi
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200215.1
+script_version=20210127.1
 
 # Set game-specific variables
 
@@ -49,7 +49,6 @@ ARCHIVE_GOG_SIZE='3200000'
 ARCHIVE_GOG_VERSION='3.3.2351-gog2.1.0.3'
 
 ARCHIVE_HUMBLE='Deponia2_DEB_Full_3.2.2342_Multi_Daedalic_ESD.tar.gz'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/chaos-on-deponia'
 ARCHIVE_HUMBLE_MD5='e7a71d5b8a83b2c2393095256b03553b'
 ARCHIVE_HUMBLE_SIZE='3100000'
 ARCHIVE_HUMBLE_VERSION='3.2.2342-humble'

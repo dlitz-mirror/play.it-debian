@@ -1,8 +1,8 @@
-#!/bin/sh -e
+#!/bin/sh
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,39 +29,39 @@ set -o errexit
 ###
 
 ###
-# GHost Master
-# build native Linux packages from the original installers
-# send your bug reports to vv221@dotslashplay.it
+# Ghost Master
+# build native packages from the original installers
+# send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200918.1
+script_version=20210529.6
 
 # Set game-specific variables
 
 GAME_ID='ghost-master'
 GAME_NAME='Ghost Master'
 
-ARCHIVES_LIST='ARCHIVE_GOG ARCHIVE_GOG_OLD'
+ARCHIVE_BASE_1='setup_ghost_master_20171020_(15806).exe'
+ARCHIVE_BASE_1_MD5='bbc7b8d6ed9b08c54cba6f2b1048a0fd'
+ARCHIVE_BASE_1_TYPE='innosetup'
+ARCHIVE_BASE_1_SIZE='680000'
+ARCHIVE_BASE_1_VERSION='1.1-gog15806'
+ARCHIVE_BASE_1_URL='https://www.gog.com/game/ghost_master'
 
-ARCHIVE_GOG='setup_ghost_master_20171020_(15806).exe'
-ARCHIVE_GOG_URL='https://www.gog.com/game/ghost_master'
-ARCHIVE_GOG_MD5='bbc7b8d6ed9b08c54cba6f2b1048a0fd'
-ARCHIVE_GOG_SIZE='680000'
-ARCHIVE_GOG_VERSION='1.1-gog15806'
-
-ARCHIVE_GOG_OLD='setup_ghost_master_2.0.0.3.exe'
-ARCHIVE_GOG_OLD_MD5='f581e0e08d7d9dfc89838c3ac892611a'
-ARCHIVE_GOG_OLD_SIZE='650000'
-ARCHIVE_GOG_OLD_VERSION='1.1-gog2.0.0.3'
+ARCHIVE_BASE_0='setup_ghost_master_2.0.0.3.exe'
+ARCHIVE_BASE_0_MD5='f581e0e08d7d9dfc89838c3ac892611a'
+ARCHIVE_BASE_0_TYPE='innosetup'
+ARCHIVE_BASE_0_SIZE='650000'
+ARCHIVE_BASE_0_VERSION='1.1-gog2.0.0.3'
 
 ARCHIVE_DOC_DATA_PATH='app'
-ARCHIVE_DOC_DATA_FILES='./*.pdf ./*.txt'
+ARCHIVE_DOC_DATA_FILES='*.pdf *.txt'
 
 ARCHIVE_GAME_BIN_PATH='app/ghostdata'
-ARCHIVE_GAME_BIN_FILES='./*.cfg ./*.dll ./*.exe'
+ARCHIVE_GAME_BIN_FILES='*.cfg *.dll *.exe'
 
 ARCHIVE_GAME_DATA_PATH='app/ghostdata'
-ARCHIVE_GAME_DATA_FILES='./*.txt ./characters ./cursors ./fonts ./icons ./levels ./movies ./music ./new_animations ./otherobjects ./psparams ./pstextures ./scenarios ./screenshots ./scripts ./sound ./text ./ui ./voice'
+ARCHIVE_GAME_DATA_FILES='*.txt characters cursors fonts icons levels movies music new_animations otherobjects psparams pstextures scenarios screenshots scripts sound text ui voice'
 
 CONFIG_FILES='./*.cfg'
 DATA_DIRS='./screenshots'
@@ -70,7 +70,6 @@ DATA_FILES='./*.log'
 APP_MAIN_TYPE='wine'
 APP_MAIN_EXE='ghost.exe'
 APP_MAIN_ICON='ghost.exe'
-APP_MAIN_ICON_RES='16 32 48'
 
 PACKAGES_LIST='PKG_DATA PKG_BIN'
 
@@ -78,24 +77,43 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='32'
-PKG_BIN_DEPS="$PKG_DATA_ID wine"
+PKG_BIN_DEPS="${PKG_DATA_ID} wine glx"
+
+# Force software rendering to work around a failure to render anything, including splash screen and menus
+# cf. https://forge.dotslashplay.it/play.it/games/-/issues/334
+
+APP_MAIN_PRERUN="$APP_MAIN_PRERUN"'
+
+# Force software rendering to work around a failure to render anything, including splash screen and menus
+
+# Any alternative not requiring software rendering would be welcome,
+# please suggest them on the following page:
+# https://forge.dotslashplay.it/play.it/games/-/issues/334
+# or by e-mail to:
+# contact@dotslashplay.it
+
+# To bypass this workaround, export the following environment variable prior to running the game:
+# export LIBGL_ALWAYS_SOFTWARE=false
+
+: ${LIBGL_ALWAYS_SOFTWARE:=true}
+export LIBGL_ALWAYS_SOFTWARE'
+
 
 # Load common functions
 
-target_version='2.2'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -105,35 +123,34 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-#shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 # Extract game data
 
 extract_data_from "$SOURCE_ARCHIVE"
+prepare_package_layout
 
-for PKG in $PACKAGES_LIST; do
-	organize_data "DOC_${PKG#PKG_}"  "$PATH_DOC"
-	organize_data "GAME_${PKG#PKG_}" "$PATH_GAME"
-done
+# Get game icon
 
 PKG='PKG_BIN'
-extract_and_sort_icons_from 'APP_MAIN'
-move_icons_to 'PKG_DATA'
+icons_get_from_package 'APP_MAIN'
+icons_move_to 'PKG_DATA'
 
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
+
+# Use persistent storage for saved games
+
+APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"'
+savegames:users/Public/Documents/Ghost Master/SaveGames'
+DATA_DIRS="${DATA_DIRS} ./savegames"
 
 # Write launchers
 
 PKG='PKG_BIN'
-write_launcher 'APP_MAIN'
-
-# Store saved games outside of WINE prefix
-
-for file in "${PKG_BIN_PATH}${PATH_BIN}"/*; do
-	# shellcheck disable=SC2016
-	sed --in-place 's#cp --force --recursive --symbolic-link --update "$PATH_GAME"/\* "$PATH_PREFIX"#&\n\tmkdir --parents "$WINEPREFIX/drive_c/users/Public/Documents/Ghost Master/SaveGames/"\n\tmkdir --parents "$PATH_DATA/savegames"\n\tln --symbolic "$PATH_DATA/savegames" "$WINEPREFIX/drive_c/users/Public/Documents/Ghost Master/SaveGames/"#' "$file"
-done
+launchers_write 'APP_MAIN'
 
 # Build package
 

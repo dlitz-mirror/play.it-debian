@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20201005.1
+script_version=20201122.1
 
 # Set game-specific variables
 
@@ -52,15 +52,15 @@ ARCHIVE_HUMBLE_VERSION='1.0-humble160601'
 
 ARCHIVE_REQUIRED_LIB_PATCHES='melodys-escape_lib-patches.tar.gz'
 ARCHIVE_REQUIRED_LIB_PATCHES_MD5='6aee21776f44df0d927babcddfa3c386'
-ARCHIVE_REQUIRED_LIB_PATCHES_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
+ARCHIVE_REQUIRED_LIB_PATCHES_URL='https://downloads.dotslashplay.it/games/melodys-escape/'
 
 ARCHIVE_OPTIONAL_ICONS='melodys-escape_icons.tar.gz'
 ARCHIVE_OPTIONAL_ICONS_MD5='656fce13728d399e557fd72c3a6bc244'
-ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
+ARCHIVE_OPTIONAL_ICONS_URL='https://downloads.dotslashplay.it/games/melodys-escape/'
 
 ARCHIVE_OPTIONAL_LIB64='melodys-escape_lib64.tar.gz'
 ARCHIVE_OPTIONAL_LIB64_MD5='a77c6b3acd5910bd874a1ca4b7d0c53c'
-ARCHIVE_OPTIONAL_LIB64_URL='https://downloads.dotslashplay.it/resources/melodys-escape/'
+ARCHIVE_OPTIONAL_LIB64_URL='https://downloads.dotslashplay.it/games/melodys-escape/'
 
 ARCHIVE_DOC_DATA_PATH="Melody's Escape"
 ARCHIVE_DOC_DATA_FILES='Licenses README.txt'
@@ -141,6 +141,7 @@ set_archive 'ARCHIVE_LIB64' 'ARCHIVE_OPTIONAL_LIB64'
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_LIB64" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_LIB64"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 

@@ -2,7 +2,7 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,12 +29,12 @@ set -o errexit
 ###
 
 ###
-# Cæsar Ⅲ
+# Caesar 3
 # build native packages from the original installers
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200616.1
+script_version=20210213.1
 
 # Set game-specific variables
 
@@ -46,6 +46,24 @@ ARCHIVE_GOG_URL='https://www.gog.com/game/caesar_3'
 ARCHIVE_GOG_MD5='2ee16fab54493e1c2a69122fd2e56635'
 ARCHIVE_GOG_SIZE='550000'
 ARCHIVE_GOG_VERSION='1.1-gog2.0.0.9'
+
+# Julius 1.6.0 release
+ARCHIVE_OPTIONAL_JULIUS_4='julius-1.6.0-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_4_URL='https://github.com/bvschaik/julius/releases/tag/v1.6.0'
+ARCHIVE_OPTIONAL_JULIUS_4_MD5='2ea82121f9752c0c7624b3a70bbf5bac'
+ARCHIVE_OPTIONAL_JULIUS_4_SIZE=2400
+
+# Julius 1.5.1 release
+ARCHIVE_OPTIONAL_JULIUS_3='julius-1.5.1-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_3_URL='https://github.com/bvschaik/julius/releases/tag/v1.5.1'
+ARCHIVE_OPTIONAL_JULIUS_3_MD5='ff01fea442f0d68de5f705411be84ae7'
+ARCHIVE_OPTIONAL_JULIUS_3_SIZE=2300
+
+# Julius 1.5.0 release
+ARCHIVE_OPTIONAL_JULIUS_2='julius-1.5.0-linux-x86_64.zip'
+ARCHIVE_OPTIONAL_JULIUS_2_URL='https://github.com/bvschaik/julius/releases/tag/v1.5.0'
+ARCHIVE_OPTIONAL_JULIUS_2_MD5='57392aab52e820149a0416c31f02cd17'
+ARCHIVE_OPTIONAL_JULIUS_2_SIZE=2300
 
 # Julius 1.4.1 release
 ARCHIVE_OPTIONAL_JULIUS_1='julius-1.4.1-linux-x86_64.zip'
@@ -105,16 +123,15 @@ PKG_BIN_JULIUS_DEPS="$PKG_DATA_ID glibc sdl2 sdl2_mixer"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.12'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
 		if [ -e "$path/libplayit2.sh" ]; then
@@ -140,11 +157,15 @@ fi
 ###
 ARCHIVE_MAIN="$ARCHIVE"
 set_archive 'ARCHIVE_JULIUS' \
+	'ARCHIVE_OPTIONAL_JULIUS_4' \
+	'ARCHIVE_OPTIONAL_JULIUS_3' \
+	'ARCHIVE_OPTIONAL_JULIUS_2' \
 	'ARCHIVE_OPTIONAL_JULIUS_1' \
 	'ARCHIVE_OPTIONAL_JULIUS_0'
 ARCHIVE="$ARCHIVE_MAIN"
 if [ -n "$ARCHIVE_JULIUS" ]; then
 	PACKAGES_LIST="$PACKAGES_LIST_JULIUS"
+	# shellcheck disable=SC2086
 	set_temp_directories $PACKAGES_LIST
 fi
 
@@ -152,10 +173,12 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 if [ -n "$ARCHIVE_JULIUS" ]; then
-	ARCHIVE_MAIN="$ARCHIVE"
-	ARCHIVE='ARCHIVE_JULIUS'
-	extract_data_from "$ARCHIVE_JULIUS"
-	ARCHIVE="$ARCHIVE_MAIN"
+	(
+		ARCHIVE='ARCHIVE_JULIUS'
+		extract_data_from "$ARCHIVE_JULIUS"
+	)
+	# Enforce minimal permissions on Julius binary
+	chmod 755 "$PLAYIT_WORKDIR/gamedata/julius"
 fi
 prepare_package_layout
 rm --recursive "$PLAYIT_WORKDIR/gamedata"

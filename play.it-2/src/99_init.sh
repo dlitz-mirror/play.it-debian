@@ -28,9 +28,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	if [ -z "${target_version:=}" ]; then
 		error_missing_target_version
 	fi
-	VERSION_MAJOR_PROVIDED="${library_version%%.*}"
+	VERSION_MAJOR_PROVIDED="${LIBRARY_VERSION%%.*}"
 	VERSION_MAJOR_TARGET="${target_version%%.*}"
-	VERSION_MINOR_PROVIDED=$(printf '%s' "$library_version" | cut --delimiter='.' --fields=2)
+	VERSION_MINOR_PROVIDED=$(printf '%s' "$LIBRARY_VERSION" | cut --delimiter='.' --fields=2)
 	VERSION_MINOR_TARGET=$(printf '%s' "$target_version" | cut --delimiter='.' --fields=2)
 	if \
 		[ $VERSION_MAJOR_PROVIDED -ne $VERSION_MAJOR_TARGET ] || \
@@ -47,9 +47,15 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_CHECKSUM='none md5'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION='none gzip xz bzip2'
+	ALLOWED_VALUES_COMPRESSION_DEB='none gzip xz'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_PACKAGE='arch deb gentoo'
+	ALLOWED_VALUES_COMPRESSION_ARCH='none gzip xz bzip2 zstd'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION_GENTOO='gzip xz bzip2 zstd lz4 lzip lzop'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION_EGENTOO='none gzip xz bzip2 zstd lzip lzop'
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_PACKAGE='arch deb gentoo egentoo'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_ICONS='yes no auto'
 
@@ -60,17 +66,21 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_CHECKSUM='md5'
 	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION_ARCH='none'
+	DEFAULT_OPTION_COMPRESSION_ARCH='zstd'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION_DEB='none'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	# shellcheck disable=SC2034
+	DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
+	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PREFIX_DEB='/usr/local'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PREFIX_ARCH='/usr'
 	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX_GENTOO='/usr/local'
+	DEFAULT_OPTION_PREFIX_GENTOO='/usr'
+	# shellcheck disable=SC2034
+	DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_PACKAGE='deb'
 	# shellcheck disable=SC2034
@@ -84,6 +94,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	NO_FREE_SPACE_CHECK='0'
 	SKIP_ICONS=0
 	OVERWRITE_PACKAGES=0
+	DEBUG=0
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
@@ -137,6 +148,21 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 				OVERWRITE_PACKAGES=1
 				export OVERWRITE_PACKAGES
 			;;
+			('--debug'|'--debug='*)
+				if [ "${1%=*}" != "${1#*=}" ]; then
+					DEBUG="${1#*=}"
+				else
+					case "$2" in
+						([0-9])
+							DEBUG="$2"
+							shift 1
+							;;
+						(*)
+							DEBUG=1
+					esac
+				fi
+				export DEBUG
+			;;
 			('--'*)
 				error_option_unknown "$1"
 			;;
@@ -160,8 +186,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	check_option_validity 'PACKAGE'
 
-	# Set default value for compression and prefix depending on the chosen package format
+	# Set allowed and default values for compression and prefix depending on the chosen package format
 
+	# shellcheck disable=SC2034
+	ALLOWED_VALUES_COMPRESSION="$(get_value "ALLOWED_VALUES_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
@@ -191,6 +219,23 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		export SKIP_ICONS
 	fi
 
+	case "$DEBUG" in
+		([0-9]) ;;
+		(*)
+			error_option_invalid 'DEBUG' "$DEBUG"
+		;;
+	esac
+
+	# DEBUG: output all options value
+	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' \
+		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+		debug_option_value "$option"
+	done
+	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' \
+		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
+		debug_option_value "OPTION_$option"
+	done
+
 	# Make sure the output directory exists and is writable
 
 	OPTION_OUTPUT_DIR=$(printf '%s' "$OPTION_OUTPUT_DIR" | sed "s#^~#$HOME#")
@@ -201,24 +246,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		error_not_writable "$OPTION_OUTPUT_DIR"
 	fi
 	export OPTION_OUTPUT_DIR
-
-	# Do not allow bzip2 compression when building Debian packages
-
-	if
-		[ "$OPTION_PACKAGE" = 'deb' ] && \
-		[ "$OPTION_COMPRESSION" = 'bzip2' ]
-	then
-		error_compression_method_not_compatible 'bzip2' 'deb'
-	fi
-
-	# Do not allow none compression when building Gentoo packages
-
-	if
-		[ "$OPTION_PACKAGE" = 'gentoo' ] && \
-		[ "$OPTION_COMPRESSION" = 'none' ]
-	then
-		error_compression_method_not_compatible 'none' 'gentoo'
-	fi
 
 	# Restrict packages list to target architecture
 
@@ -231,7 +258,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set package paths
 
 	case $OPTION_PACKAGE in
-		('arch'|'gentoo')
+		('arch'|'gentoo'|'egentoo')
 			PATH_BIN="$OPTION_PREFIX/bin"
 			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
 			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
@@ -252,11 +279,15 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set main archive
 
-	archives_get_list
-	archive_set_main $ARCHIVES_LIST
+	# shellcheck disable=SC2046
+	archive_initialize_required 'SOURCE_ARCHIVE' $(archives_return_list)
+	# shellcheck disable=SC2046
+	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
+	export ARCHIVE
 
 	# Set working directories
 
-	set_temp_directories $PACKAGES_LIST
+	# shellcheck disable=SC2046
+	set_temp_directories $(packages_get_list)
 
 fi

@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c) 2018-2020, BetaRays
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2018-2021, BetaRays
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,67 +35,54 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200302.2
+script_version=20210513.4
 
 # Set game-specific variables
 
 GAME_ID='proteus'
 GAME_NAME='Proteus'
 
-ARCHIVE_HUMBLE='proteus-05162014-bin'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/proteus'
-ARCHIVE_HUMBLE_MD5='8a5911751382bcfb91483f52f781e283'
-ARCHIVE_HUMBLE_VERSION='1.0-humble140516'
-ARCHIVE_HUMBLE_SIZE='130000'
-ARCHIVE_HUMBLE_TYPE='mojosetup'
+ARCHIVE_BASE_0='proteus-05162014-bin'
+ARCHIVE_BASE_0_MD5='8a5911751382bcfb91483f52f781e283'
+ARCHIVE_BASE_0_TYPE='mojosetup'
+ARCHIVE_BASE_0_VERSION='1.0-humble140516'
+ARCHIVE_BASE_0_SIZE='130000'
+ARCHIVE_BASE_0_URL='https://www.humblebundle.com/store/proteus'
 
-ARCHIVE_DOC_DATA_PATH='data'
-ARCHIVE_DOC_DATA_FILES='Linux.README'
+ARCHIVE_DOC_MAIN_PATH='data'
+ARCHIVE_DOC_MAIN_FILES='Linux.README'
 
-ARCHIVE_GAME_BIN32_PATH='data'
-ARCHIVE_GAME_BIN32_FILES='Proteus.bin.x86 lib/libmono-2.0.so.1 lib/libSDL2_mixer-2.0.so.0'
+ARCHIVE_GAME_MAIN_PATH='data'
+ARCHIVE_GAME_MAIN_FILES='Proteus.exe Proteus.png KopiLua.dll KopiLuaDll.dll KopiLuaInterface.dll SDL2-CS.dll SDL2-CS.dll.config Tao.OpenGl.dll Tao.OpenGl.dll.config Tianxia.dll Wuwei.dll resources'
 
-ARCHIVE_GAME_BIN64_PATH='data'
-ARCHIVE_GAME_BIN64_FILES='Proteus.bin.x86_64 lib64/libmono-2.0.so.1 lib64/libSDL2_mixer-2.0.so.0'
-
-ARCHIVE_GAME_DATA_PATH='data'
-ARCHIVE_GAME_DATA_FILES='*.config *.dll *.exe resources Proteus.png mono'
-
-APP_MAIN_TYPE='native'
-# shellcheck disable=SC2016
-APP_MAIN_PRERUN='# Work around terminfo Mono bug, cf. https://github.com/mono/mono/issues/6752
-export TERM="${TERM%-256color}"'
-APP_MAIN_EXE_BIN32='Proteus.bin.x86'
-APP_MAIN_EXE_BIN64='Proteus.bin.x86_64'
+APP_MAIN_TYPE='mono'
+APP_MAIN_EXE='Proteus.exe'
 APP_MAIN_ICON='Proteus.png'
 
-PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+PACKAGES_LIST='PKG_MAIN'
 
-PKG_DATA_ID="${GAME_ID}-data"
-PKG_DATA_DESCRIPTION='data'
+PKG_MAIN_DEPS='mono glx xcursor libxrandr sdl2_image sdl2_mixer libSDL2-2.0.so.0'
+PKG_MAIN_DEPS_DEB='libmono-posix4.0-cil, libmono-security4.0-cil, libmono-corlib4.5-cil, libmono-system-configuration4.0-cil, libmono-system-core4.0-cil, libmono-system-data4.0-cil, libmono-system4.0-cil, libmono-system-drawing4.0-cil, libmono-system-security4.0-cil, libmono-system-xml4.0-cil'
 
-PKG_BIN32_ARCH='32'
-PKG_BIN32_DEPS="$PKG_DATA_ID glx xcursor glibc libstdc++ libxrandr sdl2 sdl2_image sdl2_mixer"
+# Ensure easy upgrade from packages built with pre-20210506.8 game script
 
-PKG_BIN64_ARCH='64'
-PKG_BIN64_DEPS="$PKG_BIN32_DEPS"
+PKG_MAIN_PROVIDE='proteus-data'
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -112,18 +99,18 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Get game icon
 
-PKG='PKG_DATA'
 icons_get_from_package 'APP_MAIN'
+
+# Clean up temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Write launchers
 
-for PKG in 'PKG_BIN32' 'PKG_BIN64'; do
-	launchers_write 'APP_MAIN'
-done
+launchers_write 'APP_MAIN'
 
 # Build package
 
