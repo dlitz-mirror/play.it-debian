@@ -2,7 +2,9 @@ Source: play.it
 Section: contrib/games
 Priority: optional
 Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
-Uploaders: Phil Morrell <debian@emorrp1.name>
+Uploaders:
+ Phil Morrell <debian@emorrp1.name>,
+ Antoine Le Gonidec <debian@dotslashplay.it>
 Build-Depends:
  debhelper-compat (= 13),
  pandoc,
