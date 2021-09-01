@@ -132,7 +132,7 @@ pkg_set_deps_arch32() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='lib32-gdk-pixbuf2'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='lib32-glibc'
 			;;
 			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
@@ -141,10 +141,10 @@ pkg_set_deps_arch32() {
 			('glu'|'libGLU.so.1')
 				pkg_dep='lib32-glu'
 			;;
-			('glx')
+			('libGL.so.1'|'glx')
 				pkg_dep='lib32-libgl'
 			;;
-			('libgdk-x11-2.0.so.0'|'gtk2')
+			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='lib32-gtk2'
 			;;
 			('java')
@@ -174,10 +174,10 @@ pkg_set_deps_arch32() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='lib32-libpulse'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep='lib32-systemd'
 			;;
 			('libX11.so.6')
@@ -281,7 +281,7 @@ pkg_set_deps_arch64() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='gdk-pixbuf2'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='glibc'
 			;;
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
@@ -290,10 +290,10 @@ pkg_set_deps_arch64() {
 			('glu'|'libGLU.so.1')
 				pkg_dep='glu'
 			;;
-			('glx')
+			('libGL.so.1'|'glx')
 				pkg_dep='libgl'
 			;;
-			('libgdk-x11-2.0.so.0'|'gtk2')
+			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='gtk2'
 			;;
 			('java')
@@ -323,11 +323,11 @@ pkg_set_deps_arch64() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='libpulse'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='gcc-libs'
 			;;
-			('libudev1')
-				pkg_dep='libsystemd'
+			('libudev1'|'libudev.so.1')
+				pkg_dep='libudev.so=1-64'
 			;;
 			('libX11.so.6')
 				pkg_dep='libx11'
