@@ -8,11 +8,19 @@ applications_list() {
 		return 0
 	fi
 
-	# If APPLICATIONS_LIST is not set, try to guess a list by parsing the game script
+	# If no value is set, try to guess one
+
+	## Unity3D game
+	if [ -n "$(unity3d_name)" ]; then
+		# Unity3D games are expected to provide a single application
+		printf '%s' 'APP_MAIN'
+		return 0
+	fi
+
+	## Fallback, parse the game script
 	# shellcheck disable=SC2039
 	local game_script
 	game_script="$0"
-
 	# Try to generate a list from the following variables:
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
@@ -45,6 +53,11 @@ application_type() {
 	local application_type
 	application_type=$(get_value "${1}_TYPE")
 
+	# If not type has been explicitely set, try to guess one
+	if [ -n "$(unity3d_name)" ]; then
+		application_type='unity3d'
+	fi
+
 	# Check that a supported type has been fetched
 	case "$application_type" in
 		( \
@@ -56,6 +69,7 @@ application_type() {
 			'renpy' | \
 			'residualvm' | \
 			'scummvm' | \
+			'unity3d' | \
 			'wine' \
 		)
 			printf '%s' "$application_type"
@@ -101,6 +115,13 @@ application_exe() {
 	local application application_exe
 	application="$1"
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+
+	# If no value is set, try to find one based on the application type
+	case "$(application_type "$application")" in
+		('unity3d')
+			application_exe=$(application_unity3d_exe "$application")
+		;;
+	esac
 
 	# Check that the file name is not empty
 	if [ -z "$application_exe" ]; then
@@ -211,9 +232,21 @@ application_icons_list() {
 	# shellcheck disable=SC2039
 	local default_icon
 	default_icon="${application}_ICON"
-	if [ -n "$(get_value "$default_icon")" ]; then
-		printf '%s' "$default_icon"
-	fi
+	case "$(application_type "$application")" in
+		('unity3d')
+			# It is expected that Unity3D games always come with a single icon
+			printf '%s' "$default_icon"
+			return 0
+		;;
+		(*)
+			# If a value is explicitely set for APP_xxx_ICON,
+			# we assume this is the only icon for the current application
+			if [ -n "$(get_value "$default_icon")" ]; then
+				printf '%s' "$default_icon"
+				return 0
+			fi
+		;;
+	esac
 
 	# If no icon has been found, there is nothing to print
 	return 0
