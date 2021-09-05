@@ -27,6 +27,10 @@ launcher_write_script_unity3d_run() {
 		# Use a dedicated log file for the current game session
 		launcher_unity3d_dedicated_log
 
+		# Make a hard copy of the game binary in the current prefix,
+		# otherwise the engine might follow the link and run the game from the system path.
+		launcher_unity3d_copy_binary
+
 		# Work around Unity3D poor support for non-US locales
 		launcher_unity3d_force_locale
 	} >> "$launcher_file"
@@ -141,6 +145,20 @@ launcher_unity3d_dedicated_log() {
 	# Use a dedicated log file for the current game session
 	mkdir --parents logs
 	APP_OPTIONS="${APP_OPTIONS} -logFile ./logs/$(date +%F-%R).log"
+
+	EOF
+}
+
+# print the snippet making a hard copy of the game binary in the prefix
+# USAGE: launcher_unity3d_copy_binary
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_unity3d_copy_binary() {
+	cat <<- 'EOF'
+	# Make a hard copy of the game binary in the current prefix,
+	# otherwise the engine might follow the link and run the game from the system path.
+	if [ -h "$APP_EXE" ]; then
+	    cp --remove-destination "$(realpath "$APP_EXE")" "$APP_EXE"
+	fi
 
 	EOF
 }
