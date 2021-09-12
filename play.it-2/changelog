@@ -1,3 +1,39 @@
+2.14.0
+
+  * New features:
+    * Archives: Add support for tar.xz archives
+    * Engines: Improve support for Unity3D games, with a new dedicated application type
+    * Launchers: Provide new functions used to display localized messages
+    * Launchers: Add a new hook for commands to run before the initialization of the game prefix
+    * Launchers: Provide a new function used to convert filenames case
+    * Icons: Add support for X PixMap icons (.xpm)
+
+  * General improvements:
+    * Improve the validity tests run when setting temporary directories
+
+  * Packages-related improvements:
+    * Always use the archive-specific list of packages when available
+    * Add several new dependency keywords
+
+  * Installation:
+    * The default path for installing the "play.it" command as a non root user
+      is now "$HOME/.local/bin", instead of "$HOME/bin"
+    * The path for installing game scripts is now $(datadir)/play.it/games/50_core,
+      where $(datadir) defaults to:
+      - /usr/local/share/games for installation as root
+      - $XDG_DATA_HOME for installation as a non-privileged user
+
+  * Code maintenance:
+    * A new source file is used for functions dedicated to variable manipulations
+    * A new function is provided for getting context-specific variable values
+    * Provide new helper functions easing the manipulation of applications and icons
+    * Launchers: Rework the generation of the XDG desktop files
+
+  * Deprecation notices:
+    * get_archive_specific_value is no longer available
+    * use_archive_specific_value and use_package_specific_value are now
+      compatibility aliases around the new function get_context_specific_value
+
 2.13.3
 
   * Redirect all debug messages to /dev/stderr

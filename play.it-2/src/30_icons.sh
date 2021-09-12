@@ -78,40 +78,30 @@ icons_get_from_workdir() {
 #              convert them to standard icon formats,
 #              and include the standard icons in the current package
 icons_get_from_path() {
-	local app
-	local destination
-	local directory
-	local file
-	local icon
-	local list
-	local wrestool_id
-
-	# get the current package
-	local package
-	package=$(package_get_current)
-
+	# shellcheck disable=SC2039
+	local application icon icon_path destination directory
+	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
 	shift 1
-	destination="$PLAYIT_WORKDIR/icons"
-	for app in "$@"; do
-		if ! testvar "$app" 'APP'; then
-			error_invalid_argument 'app' 'icons_get_from_package'
-		fi
-		list="$(get_value "${app}_ICONS_LIST")"
-		[ -n "$list" ] || list="${app}_ICON"
-		for icon in $list; do
-			use_archive_specific_value "$icon"
-			file="$(get_value "$icon")"
-			if [ -z "$file" ]; then
-				error_variable_not_set 'icons_get_from_path' '$'"$icon"
+	for application in "$@"; do
+		for icon in $(application_icons_list "$application"); do
+			# Check icon file existence
+			icon_path=$(icon_check_file_existence "$directory" "$(icon_path "$icon")")
+
+			###
+			# TODO
+			# wrestool options string is passed as a global variable,
+			# there is probably a better way to handle that.
+			###
+			if icon_path "$icon" | grep --quiet '\.exe$'; then
+				WRESTOOL_OPTIONS=$(icon_wrestool_options "$icon")
+				export WRESTOOL_OPTIONS
 			fi
 
-			# Check icon file existence
-			file=$(icon_check_file_existence "$directory" "$file")
+			icon_extract_png_from_file "$directory/$icon_path" "$destination"
+			icons_include_png_from_directory "$application" "$destination"
 
-			wrestool_id="$(get_value "${icon}_ID")"
-			icon_extract_png_from_file "$directory/$file" "$destination"
-			icons_include_png_from_directory "$app" "$destination"
+			unset WRESTOOL_OPTIONS
 		done
 	done
 }
@@ -171,6 +161,9 @@ icon_extract_png_from_file() {
 		('png')
 			icon_copy_png "$file" "$destination"
 		;;
+		('xpm')
+			icon_copy_xpm "$file" "$destination"
+		;;
 		(*)
 			error_invalid_argument 'extension' 'icon_extract_png_from_file'
 		;;
@@ -194,20 +187,27 @@ icon_extract_png_from_exe() {
 	done
 }
 
-# extract .ico file(s) from .exe
-# USAGE: icon_extract_ico_from_exe $file $destination
-# RETURNS: nothing
-# SIDE EFFECT: extract .ico icons from the given .exe file, the .ico files are created in the given directory
+# extract .ico file(s) from given .exe file
+# USAGE: icon_extract_ico_from_exe $icon_file $destination
 icon_extract_ico_from_exe() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local destination
-	local file
-	local options
-	file="$1"
+	# shellcheck disable=SC2039
+	local destination icon_file
+	icon_file="$1"
 	destination="$2"
-	[ "$wrestool_id" ] && options="--name=$wrestool_id"
-	debug_external_command "wrestool --extract --type=14 $options --output=\"$destination\" \"$file\" 2>/dev/null"
-	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null
+
+	###
+	# TODO
+	# This function relies on a globally set WRESTOOL_OPTIONS variable,
+	# there is probably a better way to handle that.
+	###
+
+	debug_external_command "wrestool $WRESTOOL_OPTIONS --extract --output=\"$destination\" \"$icon_file\" 2>/dev/null"
+
+	# Return early if run in dry-run mode
+	[ "$DRY_RUN" -eq 1 ] && return 0
+
+	# shellcheck disable=SC2086
+	wrestool $WRESTOOL_OPTIONS --extract --output="$destination" "$icon_file" 2>/dev/null
 }
 
 # convert .bmp file to .png
@@ -251,79 +251,95 @@ icon_copy_png() {
 	cp "$file" "$destination"
 }
 
-# get .png file(s) from target directory and put them in current package
-# USAGE: icons_include_png_from_directory $app $directory
+# copy .xpm file to directory
+# USAGE: icon_copy_xpm $file $destination
+# RETURNS: nothing
+# SIDE EFFECT: copy the given .png file to the given directory
+icon_copy_xpm() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local destination file
+	file="$1"
+	destination="$2"
+	cp "$file" "$destination"
+
+	return 0
+}
+
+# Get icon files from the given directory and put them in the current package
+# USAGE: icons_include_from_directory $app $directory
 # RETURNS: nothing
 # SIDE EFFECT: take the icons from the given directory, move them to standard paths into the current package
-icons_include_png_from_directory() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	local app
-	local directory
-	local file
-	local path
-	local path_icon
-	local resolution
+icons_include_from_directory() {
+	# Return early if called in dry-run mode
+	if [ $DRY_RUN -eq 1 ]; then
+		return 0
+	fi
 
-	# get the current package
-	local package
-	package=$(package_get_current)
+	# Get the application name, falls back on the game name
+	# shellcheck disable=SC2039
+	local application application_name
+	application="$1"
+	application_name=$(get_value "${application}_ID")
+	: "${application_name:=$GAME_ID}"
 
-	app="$1"
-	directory="$2"
-	name="$(get_value "${app}_ID")"
-	[ -n "$name" ] || name="$GAME_ID"
-	for file in "$directory"/*.png; do
-		icon_get_resolution_from_file "$file"
-		path_icon="$PATH_ICON_BASE/$resolution/apps"
-		path="$(package_get_path "$package")${path_icon}"
-		mkdir --parents "$path"
-		mv "$file" "$path/$name.png"
+	# Get the icons from the given source directory,
+	# then move them to the current package
+	# shellcheck disable=SC2039
+	local source_directory source_file destination_name destination_directory destination_file
+	source_directory="$2"
+	for source_file in \
+		"$source_directory"/*.png \
+		"$source_directory"/*.xpm
+	do
+		# Skip the current pattern if it matched no file
+		if [ ! -e "$source_file" ]; then
+			continue
+		fi
+
+		# Compute icon file name
+		destination_name="${application_name}.${source_file##*.}"
+
+		# Compute icon path
+		destination_directory="$(package_get_path "$(package_get_current)")${PATH_ICON_BASE}/$(icon_get_resolution "$source_file")/apps"
+
+		# Move current icon file to its destination
+		destination_file="${destination_directory}/${destination_name}"
+		mkdir --parents "$destination_directory"
+		mv "$source_file" "$destination_file"
 	done
 }
-# compatibility alias
-###
-# TODO
-# This function should be moved to the compatibility aliases source file
-###
-sort_icons() {
-	local app
-	local directory
-	directory="$PLAYIT_WORKDIR/icons"
-	for app in "$@"; do
-		icons_include_png_from_directory "$app" "$directory"
-	done
-}
 
-# get image resolution for target file, exported as $resolution
-# USAGE: icon_get_resolution_from_file $file
-# RETURNS: nothing
-# SIDE EFFECT: export the resolution of the given file as $resolution, using the format "${width}x${height}"
-icon_get_resolution_from_file() {
-	local file
-	file="$1"
+# Return the resolution of the given image file
+# USAGE: icon_get_resolution $file
+# RETURNS: image resolution, using the format ${width}x${height}
+icon_get_resolution() {
+	# shellcheck disable=SC2039
+	local image_file
+	image_file="$1"
 
 	# `identify` should be available when this function is called.
 	# Exits with an explicit error if it is missing
 	if ! command -v 'identify' >/dev/null 2>&1; then
-		error_unavailable_command 'icon_get_resolution_from_file' 'identify'
+		error_unavailable_command 'icon_get_resolution' 'identify'
 	fi
 
-	if ! version_is_at_least '2.8' "$target_version" && [ -n "${file##* *}" ]; then
-		field=2
-		unset resolution
-		while
-			[ -z "$resolution" ] || \
-			[ -n "$(printf '%s' "$resolution" | sed 's/[0-9]*x[0-9]*//')" ]
-		do
-			resolution="$(identify $file | sed "s;^$file ;;" | cut --delimiter=' ' --fields=$field)"
-			resolution="${resolution%+0+0}"
-			field=$((field + 1))
-		done
+	# shellcheck disable=SC2039
+	local image_resolution_string image_resolution
+	# shellcheck disable=SC2154
+	if version_is_at_least '2.8' "$target_version"; then
+		image_resolution_string=$(identify "$image_file" | sed "s;^${image_file} ;;" | cut --delimiter=' ' --fields=2)
+		image_resolution="${image_resolution_string%+0+0}"
 	else
-		resolution="$(identify "$file" | sed "s;^$file ;;" | cut --delimiter=' ' --fields=2)"
-		resolution="${resolution%+0+0}"
+		image_resolution=$(icon_get_resolution_pre_2_8 "$image_file")
 	fi
-	export resolution
+
+	printf '%s' "$image_resolution"
+	return 0
 }
 
 # move icons to the target package

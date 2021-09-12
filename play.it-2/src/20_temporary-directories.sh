@@ -16,18 +16,6 @@ set_temp_directories() {
 	# shellcheck disable=SC2039
 	base_directory=$(temporary_directories_find_base)
 
-	# Check that the candidate temporary directory is on a case-sensitive filesystem
-	if ! check_directory_is_case_sensitive "$base_directory"; then
-		error_case_insensitive_filesystem_is_not_supported "$base_directory"
-		return 1
-	fi
-
-	# Check that the candidate temporary directory is on a filesystem with support for UNIX permissions
-	if ! check_directory_supports_unix_permissions "$base_directory"; then
-		error_unix_permissions_support_is_required "$base_directory"
-		return 1
-	fi
-
 	# Generate a directory with a unique name for the current instance
 	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "${GAME_ID}.XXXXX")"
 	debug_option_value 'PLAYIT_WORKDIR'
@@ -76,15 +64,10 @@ temporary_directories_find_base() {
 	debug_entering_function 'temporary_directories_find_base' 2
 
 	# shellcheck disable=SC2039
-	local base_directory
-	if [ $NO_FREE_SPACE_CHECK -eq 1 ]; then
-		# If free space check has been explicitely disabled,
-		# use the first directory returned by temporary_directories_list_candidates
+	local base_directory candidate_directory
+	if [ "$NO_FREE_SPACE_CHECK" -eq 0 ]; then
 		# shellcheck disable=SC2039
-		local default_directory
-		default_directory="$(temporary_directories_list_candidates | head --lines=1)"
-		base_directory=$(temporary_directories_full_path "$default_directory")
-	else
+		local free_space_required free_space_available
 		###
 		# TODO
 		# The required free space should be returned by a dedicated function,
@@ -95,41 +78,54 @@ temporary_directories_find_base() {
 			error_variable_not_set 'temporary_directories_find_base' 'ARCHIVE_SIZE'
 			return 1
 		fi
-
-		# Scan candidate directories to find one with enough free space to use for storing temporary files
-		# shellcheck disable=SC2039
-		local free_space_required free_space_available candidate_directory
 		free_space_required=$((ARCHIVE_SIZE * 2))
-		while read -r candidate_directory
-		do
-			if [ ! -d "$candidate_directory" ]; then
-				debug_temp_dir_nonexistant "$candidate_directory"
-				continue
-			fi
-			if [ ! -w "$candidate_directory" ]; then
-				debug_temp_dir_nonwritable "$candidate_directory"
-				continue
-			fi
+	fi
+
+	# Scan candidate directories to find one with enough free space to use for storing temporary files
+	# shellcheck disable=SC2039
+	while read -r candidate_directory
+	do
+		if [ ! -d "$candidate_directory" ]; then
+			debug_temp_dir_nonexistant "$candidate_directory"
+			continue
+		fi
+		if [ ! -w "$candidate_directory" ]; then
+			debug_temp_dir_nonwritable "$candidate_directory"
+			continue
+		fi
+		# Check that the candidate temporary directory is on a case-sensitive filesystem
+		if ! check_directory_is_case_sensitive "$candidate_directory"; then
+			debug_temp_dir_case_insensitive_not_supported "$candidate_directory"
+			continue
+		fi
+		# Check that the candidate temporary directory is on a filesystem with
+		# support for UNIX permissions
+		if ! check_directory_supports_unix_permissions "$candidate_directory"; then
+			debug_temp_dir_no_unix_permissions "$candidate_directory"
+			continue
+		fi
+		if [ "$NO_FREE_SPACE_CHECK" -eq 0 ]; then
 			free_space_available=$(LANG=C df \
 				--block-size=1K \
 				--output=avail \
 				"$candidate_directory" 2>/dev/null | \
 				tail --lines=1)
-			if [ $free_space_available -ge $free_space_required ]; then
-				base_directory=$(temporary_directories_full_path "$candidate_directory")
-				break;
+			if [ "$free_space_available" -lt "$free_space_required" ]; then
+				debug_temp_dir_not_enough_space "$candidate_directory"
+				continue
 			fi
-			debug_temp_dir_not_enough_space "$candidate_directory"
-		done <<- EOF
-		$(temporary_directories_list_candidates)
-		EOF
-
-		# Fail with an explicit error if no valid candidate has been found
-		if [ -z "$base_directory" ]; then
-			# shellcheck disable=SC2046
-			error_not_enough_free_space $(temporary_directories_list_candidates)
-			return 1
 		fi
+		base_directory=$(temporary_directories_full_path "$candidate_directory")
+		break;
+	done <<- EOF
+	$(temporary_directories_list_candidates)
+	EOF
+
+	# Fail with an explicit error if no valid candidate has been found
+	if [ -z "$base_directory" ]; then
+		# shellcheck disable=SC2046
+		error_no_valid_temp_dir_found $(temporary_directories_list_candidates)
+		return 1
 	fi
 
 	debug_using_directory "$base_directory"
