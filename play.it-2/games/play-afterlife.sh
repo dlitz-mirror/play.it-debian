@@ -36,7 +36,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210728.2
+script_version=20210912.1
 
 # Set game-specific variables
 
@@ -157,11 +157,7 @@ rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 # This function override could be avoided by fixing the special behaviour of APP_xxx_PRERUN with DOSBox games
 ###
 launcher_write_script_dosbox_run() {
-	# shellcheck disable=SC2039
-	local application file
-	application="$1"
-	file="$2"
-	cat >> "$file" <<- 'EOF'
+	cat >> "$2" <<- 'EOF'
 	# Run the game
 
 	cd "$PATH_PREFIX"
@@ -172,7 +168,6 @@ launcher_write_script_dosbox_run() {
 	$APP_EXE $APP_OPTIONS $@
 	exit"
 	EOF
-	return 0
 }
 
 # Write launchers
