@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210326.1
+script_version=20210912.1
 
 # Set game-specific variables
 
@@ -145,23 +145,24 @@ launchers_write 'APP_CONFIG'
 # This function override could be avoided by fixing the special behaviour of APP_xxx_PRERUN with DOSBox games
 ###
 launcher_write_script_dosbox_run() {
-	# shellcheck disable=SC2039
-	local application file
-	application="$1"
-	file="$2"
-	cat >> "$file" <<- EOF
-	# Run the game
+	{
+		cat <<- 'EOF'
+		# Run the game
 
-	cd "\$PATH_PREFIX"
-	APP_EXE=\$(basename "\$APP_EXE")
-	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "mount c .
-	c:
-	mount d $GAME_IMAGE -t cdrom
-	d:
-	\$APP_EXE \$APP_OPTIONS \$@
-	exit"
-	EOF
-	return 0
+		cd "$PATH_PREFIX"
+		APP_EXE=$(basename "$APP_EXE")
+		"${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "mount c .
+		c:
+		EOF
+		cat <<- EOF
+		mount d $GAME_IMAGE -t cdrom
+		EOF
+		cat <<- 'EOF'
+		d:
+		$APP_EXE $APP_OPTIONS $@
+		exit"
+		EOF
+	} >> "$2"
 }
 
 launchers_write 'APP_MAIN'
