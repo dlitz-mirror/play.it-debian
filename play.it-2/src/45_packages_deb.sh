@@ -16,17 +16,23 @@ pkg_write_deb() {
 	prerm_script="$control_directory/prerm"
 
 	# Get package dependencies list
-	use_archive_specific_value "${pkg}_DEPS"
-	if [ "$(get_value "${pkg}_DEPS")" ]; then
+
+	# shellcheck disable=SC2039
+	local dependencies_string
+	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
+	if [ -n "$dependencies_string" ]; then
 		# shellcheck disable=SC2046
-		pkg_set_deps_deb $(get_value "${pkg}_DEPS")
+		pkg_set_deps_deb $dependencies_string
 	fi
-	use_archive_specific_value "${pkg}_DEPS_DEB"
-	if [ "$(get_value "${pkg}_DEPS_DEB")" ]; then
+
+	# shellcheck disable=SC2039
+	local dependencies_string_deb
+	dependencies_string_deb=$(get_context_specific_value 'archive' "${pkg}_DEPS_DEB")
+	if [ -n "$dependencies_string_deb" ]; then
 		if [ -n "$pkg_deps" ]; then
-			pkg_deps="$pkg_deps, $(get_value "${pkg}_DEPS_DEB")"
+			pkg_deps="$pkg_deps, $dependencies_string_deb"
 		else
-			pkg_deps="$(get_value "${pkg}_DEPS_DEB")"
+			pkg_deps="$dependencies_string_deb"
 		fi
 	fi
 
@@ -121,7 +127,7 @@ pkg_set_deps_deb() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep='libc6'
 			;;
 			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
@@ -130,10 +136,10 @@ pkg_set_deps_deb() {
 			('glu'|'libGLU.so.1')
 				pkg_dep='libglu1-mesa | libglu1'
 			;;
-			('glx')
-				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libgl1-mesa-glx'
+			('libGL.so.1'|'glx')
+				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
 			;;
-			('libgdk-x11-2.0.so.0'|'gtk2')
+			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
 				pkg_dep='libgtk2.0-0'
 			;;
 			('java')
@@ -163,10 +169,10 @@ pkg_set_deps_deb() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep='libpulse0'
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='libstdc++6'
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep='libudev1'
 			;;
 			('libX11.so.6')

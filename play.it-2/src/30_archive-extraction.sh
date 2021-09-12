@@ -75,7 +75,7 @@ extract_data_from() {
 				debug_external_command "unar -no-directory -output-directory \"$destination\" $UNAR_OPTIONS \"$file\" 1>/dev/null"
 				unar -no-directory -output-directory "$destination" $UNAR_OPTIONS "$file" 1>/dev/null
 			;;
-			('tar'|'tar.gz')
+			('tar'|'tar.gz'|'tar.xz')
 				debug_external_command "tar --extract --file \"$file\" --directory \"$destination\""
 				tar --extract --file "$file" --directory "$destination"
 			;;

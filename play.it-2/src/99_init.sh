@@ -247,10 +247,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	export OPTION_OUTPUT_DIR
 
-	# Restrict packages list to target architecture
-
-	select_package_architecture
-
 	# Check script dependencies
 
 	check_deps
@@ -284,6 +280,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2046
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
+
+	# Restrict packages list to target architecture
+
+	select_package_architecture
 
 	# Set working directories
 

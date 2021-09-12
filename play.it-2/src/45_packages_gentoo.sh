@@ -3,16 +3,20 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
 # CALLED BY: write_metadata
 pkg_write_gentoo() {
-	local pkg_deps
-	use_archive_specific_value "${pkg}_DEPS"
-	if [ "$(get_value "${pkg}_DEPS")" ]; then
+	# shellcheck disable=SC2039
+	local pkg_deps dependencies_string
+	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
+	if [ -n "$dependencies_string" ]; then
 		# shellcheck disable=SC2046
-		pkg_set_deps_gentoo $(get_value "${pkg}_DEPS")
+		pkg_set_deps_gentoo $dependencies_string
 		export GENTOO_OVERLAYS
 	fi
-	use_archive_specific_value "${pkg}_DEPS_GENTOO"
-	if [ "$(get_value "${pkg}_DEPS_GENTOO")" ]; then
-		pkg_deps="$pkg_deps $(get_value "${pkg}_DEPS_GENTOO")"
+
+	# shellcheck disable=SC2039
+	local dependencies_string_gentoo
+	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${pkg}_DEPS_GENTOO")
+	if [ -n "$dependencies_string_gentoo" ]; then
+		pkg_deps="$pkg_deps $dependencies_string_gentoo"
 	fi
 
 	if [ -n "$(package_get_provide "$pkg")" ]; then
@@ -125,7 +129,7 @@ pkg_set_deps_gentoo() {
 			('libgdk_pixbuf-2.0.so.0')
 				pkg_dep="x11-libs/gdk-pixbuf:2$architecture_suffix"
 			;;
-			('glibc')
+			('libc.so.6'|'glibc')
 				pkg_dep="sys-libs/glibc"
 				if [ "$(package_get_architecture "$pkg")" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
@@ -137,10 +141,10 @@ pkg_set_deps_gentoo() {
 			('glu'|'libGLU.so.1')
 				pkg_dep="virtual/glu$architecture_suffix"
 			;;
-			('glx')
+			('libGL.so.1'|'glx')
 				pkg_dep="virtual/opengl$architecture_suffix"
 			;;
-			('libgdk-x11-2.0.so.0'|'gtk2')
+			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
 				pkg_dep="x11-libs/gtk+:2$architecture_suffix"
 			;;
 			('java')
@@ -171,10 +175,10 @@ pkg_set_deps_gentoo() {
 			('libpulse.so.0'|'libpulse-simple.so.0')
 				pkg_dep="media-sound/pulseaudio${architecture_suffix}"
 			;;
-			('libstdc++')
+			('libstdc++.so.6'|'libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
-			('libudev1')
+			('libudev1'|'libudev.so.1')
 				pkg_dep="virtual/libudev$architecture_suffix"
 			;;
 			('libX11.so.6')

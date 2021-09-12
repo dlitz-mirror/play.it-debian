@@ -149,18 +149,22 @@ package_get_current() {
 
 # get the full list of packages to generate
 # USAGE: packages_get_list
+# RETURN: a list of package identifiers
 packages_get_list() {
+	# shellcheck disable=SC2039
 	local packages_list
-	packages_list="$PACKAGES_LIST"
+	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
 
-	# Fall back on a default list if $PACKAGES_LIST is not set
-	if [ -z "$packages_list" ]; then
-		packages_list='PKG_MAIN'
-	fi
+	# If PACKAGES_LIST is not set,
+	# falls back on a list of a single "PKG_MAIN" package
+	: "${packages_list:=PKG_MAIN}"
+
+	###
+	# TODO
+	# Check that the string is a space-separated list of valid package identifiers
+	###
 
 	printf '%s' "$packages_list"
-
-	return 0
 }
 
 # get ID of given package
@@ -180,8 +184,7 @@ package_get_id() {
 	# get package ID from its name
 	# shellcheck disable=SC2039
 	local package_id
-	use_archive_specific_value "${package}_ID"
-	package_id=$(get_value "${package}_ID")
+	package_id=$(get_context_specific_value 'archive' "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
@@ -227,8 +230,7 @@ package_get_architecture() {
 	# get package architecture from its name
 	# shellcheck disable=SC2039
 	local package_architecture
-	use_archive_specific_value "${package}_ARCH"
-	package_architecture=$(get_value "${package}_ARCH")
+	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 
 	# if no package-specific architecture is set, fall back to "all"
 	if [ -z "$package_architecture" ]; then
@@ -324,8 +326,7 @@ package_get_description() {
 	# get package description from its name
 	# shellcheck disable=SC2039
 	local package_description
-	use_archive_specific_value "${package}_DESCRIPTION"
-	package_description=$(get_value "${package}_DESCRIPTION")
+	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
 
 	###
 	# TODO
@@ -382,8 +383,7 @@ package_get_provide() {
 	# get provided package ID from its name
 	# shellcheck disable=SC2039
 	local package_provide
-	use_archive_specific_value "${package}_PROVIDE"
-	package_provide=$(get_value "${package}_PROVIDE")
+	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
 
 	# if no package is provided, return early
 	if [ -z "$package_provide" ]; then

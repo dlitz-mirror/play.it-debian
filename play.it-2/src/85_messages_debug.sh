@@ -317,3 +317,45 @@ debug_temp_dir_not_enough_space() {
 	printf 'Skipping too small directory: %s\n' "$directory" >> /dev/stderr
 	return 0
 }
+
+# print the path of a case-insensitive directory
+# USAGE: debug_temp_dir_case_insensitive_not_supported $directory
+debug_temp_dir_case_insensitive_not_supported() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_case_insensitive_not_supported' 'directory'
+		return 1
+	fi
+
+	print_debug
+	printf 'Skipping case-insensitive directory: %s\n' "$directory" >> /dev/stderr
+	return 0
+}
+
+# print the path of a directory without UNIX permissions
+# USAGE: debug_temp_dir_no_unix_permissions $directory
+debug_temp_dir_no_unix_permissions() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	# shellcheck disable=SC2039
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_no_unix_permissions' 'directory'
+		return 1
+	fi
+
+	print_debug
+	printf 'Skipping directory without UNIX permissions: %s\n' "$directory" >> /dev/stderr
+	return 0
+}

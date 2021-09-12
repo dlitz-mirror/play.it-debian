@@ -2,25 +2,16 @@
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_wine_application_variables() {
-	# parse arguments
-	local application
-	local file
+	# shellcheck disable=SC2039
+	local application file
 	application="$1"
 	file="$2"
-
-	# compute application-specific variables values
-	local application_exe
-	local application_options
-	use_package_specific_value "${application}_EXE"
-	use_package_specific_value "${application}_OPTIONS"
-	application_exe="$(get_value "${application}_EXE")"
-	application_options="$(get_value "${application}_OPTIONS")"
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$application_exe'
-	APP_OPTIONS="$application_options"
+	APP_EXE='$(application_exe "$application")'
+	APP_OPTIONS="$(application_options "$application")"
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
@@ -40,10 +31,9 @@ launcher_write_script_wine_prefix_build() {
 	package=$(package_get_current)
 
 	# compute WINE prefix architecture
-	local architecture
-	local winearch
-	use_archive_specific_value "${package}_ARCH"
-	architecture="$(get_value "${package}_ARCH")"
+	# shellcheck disable=SC2039
+	local architecture winearch
+	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 	case "$architecture" in
 		('32') winearch='win32' ;;
 		('64') winearch='win64' ;;
@@ -114,14 +104,16 @@ launcher_write_script_wine_prefix_build() {
 
 	cat >> "$file" <<- 'EOF'
 	fi
+
+	mkdir --parents \
+	    "$PATH_PREFIX" \
+	    "$PATH_CONFIG" \
+	    "$PATH_DATA"
 	EOF
 
+	launcher_write_script_prefix_prepare "$file"
+
 	cat >> "$file" <<- 'EOF'
-	for dir in "$PATH_PREFIX" "$PATH_CONFIG" "$PATH_DATA"; do
-	    if [ ! -e "$dir" ]; then
-	        mkdir --parents "$dir"
-	    fi
-	done
 	(
 	    cd "$PATH_GAME"
 	    find . -type d | while read -r dir; do
@@ -213,7 +205,7 @@ launcher_write_script_wine_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	wine "$APP_EXE" $APP_OPTIONS $@
+	wine "$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
 
