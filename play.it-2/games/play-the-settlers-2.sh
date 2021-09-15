@@ -34,7 +34,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210403.4
+script_version=20210912.1
 
 # Set game-specific variables
 
@@ -236,7 +236,7 @@ rm --recursive "$PLAYIT_WORKDIR/gamedata"
 ###
 
 launcher_write_script_dosbox_run() {
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC2039,SC3043
 	local application file
 	application="$1"
 	file="$2"
@@ -269,7 +269,6 @@ launcher_write_script_dosbox_run() {
 
 	EOF
 	sed --in-place 's/    /\t/g' "$file"
-	return 0
 }
 
 # Ensure case consistency in disk image table of contents

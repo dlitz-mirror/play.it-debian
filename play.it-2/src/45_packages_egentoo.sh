@@ -18,15 +18,21 @@ pkg_write_egentoo() {
 		return 1
 	fi
 
-	use_archive_specific_value "${package}_DEPS"
-	if [ "$(get_value "${package}_DEPS")" ]; then
-		#shellcheck disable=SC2046
-		pkg_set_deps_gentoo $(get_value "${package}_DEPS")
+	# shellcheck disable=SC2039
+	local dependencies_string
+	dependencies_string=$(get_context_specific_value 'archive' "${package}_DEPS")
+	if [ -n "$dependencies_string" ]; then
+		# shellcheck disable=SC2046
+		pkg_set_deps_gentoo $dependencies_string
 	fi
-	use_archive_specific_value "${package}_DEPS_GENTOO"
-	if [ "$(get_value "${package}_DEPS_GENTOO")" ]; then
-		pkg_deps="$pkg_deps $(get_value "${package}_DEPS_GENTOO")"
+
+	# shellcheck disable=SC2039
+	local dependencies_string_gentoo
+	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+	if [ -n "$dependencies_string_gentoo" ]; then
+		pkg_deps="$pkg_deps $dependencies_string_gentoo"
 	fi
+
 	if [ -n "$(package_get_provide "$package")" ]; then
 		pkg_deps="${pkg_deps} $(package_get_provide "$package")"
 	fi

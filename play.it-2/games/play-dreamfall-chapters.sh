@@ -2,8 +2,8 @@
 set -o errexit
 
 ###
-# Copyright (c) 2015-2020, Antoine "vv221/vv222" Le Gonidec
-# Copyright (c)      2020, HS-157
+# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright (c) 2020-2021, HS-157
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,28 +35,46 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20200927.4
+script_version=20210612.4
 
 # Set game-specific variables
 
 GAME_ID='dreamfall-chapters'
-GAME_NAME="Dreamfall Chapters"
+GAME_NAME='Dreamfall Chapters'
 
-ARCHIVE_HUMBLE='Dreamfall_Chapters_Linux_2017_08_25.zip'
-ARCHIVE_HUMBLE_TYPE='zip'
-ARCHIVE_HUMBLE_URL='https://www.humblebundle.com/store/dreamfall-chapters'
-ARCHIVE_HUMBLE_MD5='22bee7bee25920e5cf7febc4b3c12e21'
-ARCHIVE_HUMBLE_VERSION='20170825-humble'
-ARCHIVE_HUMBLE_SIZE='21000000'
+ARCHIVE_BASE_GOG_1='dreamfall_chapters_the_final_cut_5_7_8_26845.sh'
+ARCHIVE_BASE_GOG_1_MD5='4971fdb8148d661b4a23119ed289b14e'
+ARCHIVE_BASE_GOG_1_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_1_VERSION='5.7.8-gog26845'
+ARCHIVE_BASE_GOG_1_SIZE='21000000'
+ARCHIVE_BASE_GOG_1_URL='https://www.gog.com/game/dreamfall_chapters_season_pass'
 
+ARCHIVE_BASE_GOG_0='gog_dreamfall_chapters_2.19.0.23.sh'
+ARCHIVE_BASE_GOG_0_MD5='3f05c530a0e07b7227e3fb7b6601e19a'
+ARCHIVE_BASE_GOG_0_TYPE='mojosetup'
+ARCHIVE_BASE_GOG_0_VERSION='5.3.0-gog2.19.0.23'
+ARCHIVE_BASE_GOG_0_SIZE='21000000'
+
+###
+# TODO
+# Update version string based on the actual game version
+###
+ARCHIVE_BASE_HUMBLE_0='Dreamfall_Chapters_Linux_2017_08_25.zip'
+ARCHIVE_BASE_HUMBLE_0_MD5='22bee7bee25920e5cf7febc4b3c12e21'
+ARCHIVE_BASE_HUMBLE_0_VERSION='20170825-humble'
+ARCHIVE_BASE_HUMBLE_0_SIZE='21000000'
+ARCHIVE_BASE_HUMBLE_0_URL='https://www.humblebundle.com/store/dreamfall-chapters'
+
+ARCHIVE_GAME_BIN_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_BIN_PATH_HUMBLE='.'
-ARCHIVE_GAME_BIN_FILES='Dreamfall?Chapters'
+ARCHIVE_GAME_BIN_FILES='Dreamfall?Chapters Dreamfall?Chapters_Data/Mono Dreamfall?Chapters_Data/Plugins'
 
+ARCHIVE_GAME_DATA_PATH_GOG='data/noarch/game'
 ARCHIVE_GAME_DATA_PATH_HUMBLE='.'
 ARCHIVE_GAME_DATA_FILES='Dreamfall?Chapters_Data'
 
 APP_MAIN_TYPE='native'
-APP_MAIN_EXE_BIN='Dreamfall Chapters'
+APP_MAIN_EXE='Dreamfall Chapters'
 APP_MAIN_ICON='Dreamfall Chapters_Data/Resources/UnityPlayer.png'
 
 PACKAGES_LIST='PKG_BIN PKG_DATA'
@@ -65,27 +83,23 @@ PKG_DATA_ID="${GAME_ID}-data"
 PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
-PKG_BIN_DEPS="$PKG_DATA_ID glibc libstdc++ glx xcursor libxrandr"
-PKG_BIN_DEPS_ARCH='libx11'
-PKG_BIN_DEPS_DEB='libx11-6'
-PKG_BIN_DEPS_GENTOO='x11-libs/libX11'
+PKG_BIN_DEPS="${PKG_DATA_ID} glibc libstdc++ glx xcursor libxrandr libX11.so.6"
 
 # Load common functions
 
-target_version='2.11'
+target_version='2.13'
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	: "${XDG_DATA_HOME:="$HOME/.local/share"}"
-	for path in\
-		"$PWD"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
+	for path in \
+		"$PWD" \
+		"${XDG_DATA_HOME:="$HOME/.local/share"}/play.it" \
+		'/usr/local/share/games/play.it' \
+		'/usr/local/share/play.it' \
+		'/usr/share/games/play.it' \
 		'/usr/share/play.it'
 	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+		if [ -e "${path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -102,12 +116,15 @@ fi
 
 extract_data_from "$SOURCE_ARCHIVE"
 prepare_package_layout
-rm --recursive "$PLAYIT_WORKDIR/gamedata"
 
 # Write launchers
 
 PKG='PKG_BIN'
 launchers_write 'APP_MAIN'
+
+# Delete temporary files
+
+rm --recursive "${PLAYIT_WORKDIR}/gamedata"
 
 # Build package
 

@@ -308,6 +308,9 @@ archive_get_type() {
 		(*'.7z')
 			archive_type='7z'
 		;;
+		(*'.tar.xz'|*'.txz')
+			archive_type='tar.xz'
+		;;
 		(*)
 			error_archive_type_not_set "$archive_identifier"
 		;;

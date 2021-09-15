@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210607.3
+script_version=20210717.1
 
 # Set game-specific variables
 
@@ -66,9 +66,9 @@ PKG_DATA_DESCRIPTION='data'
 
 PKG_BIN_ARCH='64'
 PKG_BIN_DEPS="${PKG_DATA_ID} wine"
-PKG_BIN_DEPS_ARCH='gst-plugins-good'
-PKG_BIN_DEPS_DEB='gstreamer1.0-plugins-good'
-PKG_BIN_DEPS_GENTOO='media-libs/gst-plugins-good'
+PKG_BIN_DEPS_ARCH='gst-plugins-good gst-libav'
+PKG_BIN_DEPS_DEB='gstreamer1.0-plugins-good, gstreamer1.0-libav'
+PKG_BIN_DEPS_GENTOO='media-plugins/gst-plugins-good media-plugins/gst-plugins-libav'
 
 # Load common functions
 

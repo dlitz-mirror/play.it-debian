@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210411.1
+script_version=20210912.1
 
 # Set game-specific variables
 
@@ -140,11 +140,14 @@ prepare_package_layout
 ###
 icon_extract_ico_from_exe() {
 	[ "$DRY_RUN" -eq 1 ] && return 0
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC2039,SC3043
 	local destination file options
 	file="$1"
 	destination="$2"
-	[ "$wrestool_id" ] && options="--name=$wrestool_id"
+	# shellcheck disable=SC2154
+	if [ -n "$wrestool_id" ]; then
+		options="--name=$wrestool_id"
+	fi
 	options="${options} --language=0"
 	# shellcheck disable=SC2086
 	wrestool --extract --type=14 $options --output="$destination" "$file" 2>/dev/null

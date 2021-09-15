@@ -35,7 +35,7 @@ set -o errexit
 # send your bug reports to contact@dotslashplay.it
 ###
 
-script_version=20210313.4
+script_version=20210912.1
 
 # Set game-specific variables
 
@@ -235,29 +235,22 @@ unix2dos --quiet "$config_file"
 PKG_BIN_DEPS="${PKG_BIN_DEPS} winetricks"
 APP_WINETRICKS="${APP_WINETRICKS} csmt=off"
 launcher_write_script_wine_run() {
-	# parse arguments
-	# shellcheck disable=SC2039
+	# shellcheck disable=SC2039,SC3043
 	local application file
 	application="$1"
 	file="$2"
-
 	cat >> "$file" <<- 'EOF'
 	# Run the game
 
 	cd "$PATH_PREFIX"
 
 	EOF
-
 	launcher_write_script_prerun "$application" "$file"
-
 	cat >> "$file" <<- 'EOF'
 	taskset --cpu-list 0 wine "$APP_EXE" $APP_OPTIONS $@
 
 	EOF
-
 	launcher_write_script_postrun "$application" "$file"
-
-	return 0
 }
 
 # Write launchers
