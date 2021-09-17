@@ -1,3 +1,32 @@
+2.15.0
+
+  * New features:
+    * All command line options can now be set through a configuration file,
+      its path can be set with --config-file some_path and defaults to:
+      $XDG_CONFIG_HOME/play.it/config
+    * --show-game-script - display the path to the game script that would be
+      used for a given archive, but take no action
+
+  * General improvements:
+    * New functions used to fetch game-related values:
+      * game_id   - print the id of the current game
+      * game_name - print the display name of the current game
+    * Provide a new variable CONTENT_PATH_DEFAULT, used as a default value for
+      ARCHIVE_xxx_PATH
+    * Setting the current package to a value that is not included in the list
+      of packages to build triggers an error
+    * Rely on MIME type for icon type detection, instead of file extension
+    * application_type can now be passed a fallback value
+
+  * Changes specific to Debian:
+    * Improve handling of dependency to WINE
+
+  * Changes specific to Gentoo:
+    * Use unpacker eclass when using a non-standard compression option
+    * Drop support for lzop compression
+    * Replace spaces by tabulations and linefeeds in pkg_deps
+    * Refactor compression handling
+
 2.14.4
 
   * Fix ambiguous quoting when using prefix/suffix pattern removal
