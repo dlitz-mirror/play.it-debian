@@ -63,40 +63,26 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set default values for common options
 
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_ARCHITECTURE='all'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_CHECKSUM='md5'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION_ARCH='zstd'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION_DEB='none'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX_DEB='/usr/local'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX_ARCH='/usr'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX_GENTOO='/usr'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PACKAGE='deb'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_ICONS='yes'
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_OUTPUT_DIR="$PWD"
+	export DEFAULT_OPTION_ARCHITECTURE='all'
+	export DEFAULT_OPTION_CHECKSUM='md5'
+	export DEFAULT_OPTION_COMPRESSION_ARCH='zstd'
+	export DEFAULT_OPTION_COMPRESSION_DEB='none'
+	export DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
+	export DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
+	export DEFAULT_OPTION_PREFIX_DEB='/usr/local'
+	export DEFAULT_OPTION_PREFIX_ARCH='/usr'
+	export DEFAULT_OPTION_PREFIX_GENTOO='/usr'
+	export DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
+	export DEFAULT_OPTION_PACKAGE='deb'
+	export DEFAULT_OPTION_ICONS='yes'
+	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
+	export DEFAULT_DRY_RUN=0
+	export DEFAULT_NO_FREE_SPACE_CHECK=0
+	export DEFAULT_SKIP_ICONS=0
+	export DEFAULT_OVERWRITE_PACKAGES=0
+	export DEFAULT_DEBUG=0
 
 	# Parse arguments given to the script
-
-	DRY_RUN='0'
-	NO_FREE_SPACE_CHECK='0'
-	SKIP_ICONS=0
-	OVERWRITE_PACKAGES=0
-	DEBUG=0
 
 	parse_arguments "$@"
 
@@ -127,6 +113,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			# shellcheck disable=SC2046
 			eval OPTION_$option=\"$(get_value "DEFAULT_OPTION_$option")\"
 			export OPTION_$option
+		fi
+	done
+
+	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' 'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+		if
+			[ -z "$(get_value "$option")" ] && \
+			[ -n "$(get_value "DEFAULT_$option")" ]
+		then
+			# shellcheck disable=SC2046
+			eval $option=\"$(get_value "DEFAULT_$option")\"
+			export ${option?}
 		fi
 	done
 
