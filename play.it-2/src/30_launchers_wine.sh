@@ -170,17 +170,13 @@ launcher_write_script_wine_prefix_build() {
 
 # WINE - write launcher script for winecfg
 # USAGE: launcher_write_script_wine_winecfg $application
-# NEEDED VARS: GAME_ID
-# CALLED BY: launcher_write_script_wine_winecfg
 launcher_write_script_wine_winecfg() {
 	local application
 	application="$1"
-	# shellcheck disable=SC2034
-	APP_WINECFG_ID="${GAME_ID}_winecfg"
-	# shellcheck disable=SC2034
-	APP_WINECFG_TYPE='wine'
-	# shellcheck disable=SC2034
-	APP_WINECFG_EXE='winecfg'
+	APP_WINECFG_ID="$(game_id)_winecfg"
+	export APP_WINECFG_ID
+	export APP_WINECFG_TYPE='wine'
+	export APP_WINECFG_EXE='winecfg'
 	launcher_write_script 'APP_WINECFG'
 	return 0
 }

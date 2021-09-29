@@ -178,29 +178,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	check_deps
 
-	# Set package paths
-
-	case $OPTION_PACKAGE in
-		('arch'|'gentoo'|'egentoo')
-			PATH_BIN="$OPTION_PREFIX/bin"
-			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
-			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
-			PATH_GAME="$OPTION_PREFIX/share/$GAME_ID"
-			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
-		;;
-		('deb')
-			PATH_BIN="$OPTION_PREFIX/games"
-			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
-			PATH_DOC="$OPTION_PREFIX/share/doc/$GAME_ID"
-			PATH_GAME="$OPTION_PREFIX/share/games/$GAME_ID"
-			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' "$0"
-			exit 1
-		;;
-	esac
-
 	# Set main archive
 
 	# shellcheck disable=SC2046
@@ -208,6 +185,30 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2046
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
+
+	# Set package paths
+
+	case $OPTION_PACKAGE in
+		('arch'|'gentoo'|'egentoo')
+			PATH_BIN="$OPTION_PREFIX/bin"
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
+			PATH_DOC="$OPTION_PREFIX/share/doc/$(game_id)"
+			PATH_GAME="$OPTION_PREFIX/share/$(game_id)"
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
+		;;
+		('deb')
+			PATH_BIN="$OPTION_PREFIX/games"
+			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
+			PATH_DOC="$OPTION_PREFIX/share/doc/$(game_id)"
+			PATH_GAME="$OPTION_PREFIX/share/games/$(game_id)"
+			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' "$0"
+			exit 1
+		;;
+	esac
+	export PATH_BIN PATH_DESK PATH_DOC PATH_GAME PATH_ICON_BASE
 
 	# Restrict packages list to target architecture
 

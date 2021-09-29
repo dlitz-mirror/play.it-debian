@@ -202,7 +202,7 @@ package_get_id() {
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
-		package_id="$GAME_ID"
+		package_id=$(game_id)
 	fi
 
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages

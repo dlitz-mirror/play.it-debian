@@ -157,7 +157,7 @@ launcher_write_script() {
 			launcher_write_script_unity3d_run "$application" "$target_file"
 		;;
 		('wine')
-			if [ "$(application_id "$application")" != "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" != "$(game_id)_winecfg" ]; then
 				launcher_write_script_wine_application_variables "$application" "$target_file"
 			fi
 			launcher_write_script_game_variables "$target_file"
@@ -165,7 +165,7 @@ launcher_write_script() {
 			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_wine_prefix_build "$target_file"
-			if [ "$(application_id "$application")" = "${GAME_ID}_winecfg" ]; then
+			if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
 				launcher_write_script_winecfg_run "$target_file"
 			else
 				launcher_write_script_wine_run "$application" "$target_file"
@@ -198,7 +198,7 @@ launcher_write_script() {
 	case "$application_type" in
 		('wine')
 			local winecfg_file
-			winecfg_file="$(package_get_path "$package")${PATH_BIN}/${GAME_ID}_winecfg"
+			winecfg_file="$(package_get_path "$package")${PATH_BIN}/$(game_id)_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
 				launcher_write_script_wine_winecfg "$application"
 			fi
@@ -226,15 +226,13 @@ launcher_write_script_headers() {
 
 # write launcher script game-specific variables
 # USAGE: launcher_write_script_game_variables $file
-# NEEDED VARS: GAME_ID PATH_GAME
-# CALLED BY: launcher_write_script
 launcher_write_script_game_variables() {
 	local file
 	file="$1"
 	cat >> "$file" <<- EOF
 	# Set game-specific values
 
-	GAME_ID='$GAME_ID'
+	GAME_ID='$(game_id)'
 	PATH_GAME='$PATH_GAME'
 
 	EOF
@@ -587,9 +585,11 @@ launcher_write_desktop() {
 			('wine')
 				local package_path winecfg_desktop
 				package_path=$(package_get_path "$package")
-				winecfg_desktop="${package_path}${PATH_DESK}/${GAME_ID}_winecfg.desktop"
+				game_id=$(game_id)
+				winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
-					export APP_WINECFG_ID="${GAME_ID}_winecfg"
+					APP_WINECFG_ID="$(game_id)_winecfg"
+					export APP_WINECFG_ID
 					export APP_WINECFG_NAME="$GAME_NAME - WINE configuration"
 					export APP_WINECFG_CAT='Settings'
 					launcher_write_desktop 'APP_WINECFG'

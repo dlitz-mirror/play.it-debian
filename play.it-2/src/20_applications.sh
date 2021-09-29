@@ -90,8 +90,10 @@ application_id() {
 	local application_id
 	application_id=$(get_value "${1}_ID")
 
-	# If no id is explicitely set, fall back on GAME_ID
-	: "${application_id:=$GAME_ID}"
+	# If no id is explicitely set, fall back on the game id
+	if [ -z "$application_id" ]; then
+		application_id=$(game_id)
+	fi
 
 	# Check that the id fits the format restrictions
 	if ! printf '%s' "$application_id" | \
