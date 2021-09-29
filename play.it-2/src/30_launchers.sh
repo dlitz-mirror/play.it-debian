@@ -589,9 +589,9 @@ launcher_write_desktop() {
 				winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
 					APP_WINECFG_ID="$(game_id)_winecfg"
-					export APP_WINECFG_ID
-					export APP_WINECFG_NAME="$GAME_NAME - WINE configuration"
-					export APP_WINECFG_CAT='Settings'
+					APP_WINECFG_NAME="$(game_name) - WINE configuration"
+					APP_WINECFG_CAT='Settings'
+					export APP_WINECFG_ID APP_WINECFG_NAME APP_WINECFG_CAT
 					launcher_write_desktop 'APP_WINECFG'
 				fi
 			;;

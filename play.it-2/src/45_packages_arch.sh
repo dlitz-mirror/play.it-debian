@@ -1,7 +1,5 @@
 # write .pkg.tar package meta-data
 # USAGE: pkg_write_arch
-# NEEDED VARS: GAME_NAME PKG_DEPS_ARCH
-# CALLED BY: write_metadata
 pkg_write_arch() {
 	###
 	# TODO
