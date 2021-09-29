@@ -18,3 +18,14 @@ game_id() {
 	printf '%s' "$game_id"
 }
 
+# print the display name of the current game
+# USAGE: game_name
+# RETURN: the game name, for use in package description and menu entries
+game_name() {
+	# The game name might might be archive-specific
+	local game_name
+	game_name=$(get_context_specific_value 'archive' 'GAME_NAME')
+
+	printf '%s' "$game_name"
+}
+
