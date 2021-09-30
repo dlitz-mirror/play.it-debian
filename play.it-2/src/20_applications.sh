@@ -54,8 +54,10 @@ application_type() {
 	application_type=$(get_value "${1}_TYPE")
 
 	# If not type has been explicitely set, try to guess one
-	if [ -n "$(unity3d_name)" ]; then
-		application_type='unity3d'
+	if [ -z "$application_type" ]; then
+		if [ -n "$(unity3d_name)" ]; then
+			application_type='unity3d'
+		fi
 	fi
 
 	# Check that a supported type has been fetched
