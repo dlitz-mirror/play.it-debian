@@ -5,6 +5,7 @@
 application_mono_options() {
 	# Check that the application uses the mono type
 	local application application_type
+	application="$1"
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'mono' ]; then
 		error_application_wrong_type 'application_mono_options' "$application_type"

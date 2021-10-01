@@ -5,6 +5,7 @@
 application_unity3d_exe() {
 	# Check that the application uses the unity3d type
 	local application application_type
+	application="$1"
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'unity3d' ]; then
 		error_application_wrong_type 'application_unity3d_exe' "$application_type"

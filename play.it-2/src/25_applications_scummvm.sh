@@ -4,6 +4,7 @@
 application_scummvm_scummid() {
 	# Check that the application uses the scummvm type
 	local application application_type
+	application="$1"
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'scummvm' ]; then
 		error_application_wrong_type 'application_scummvm_scummid' "$application_type"
