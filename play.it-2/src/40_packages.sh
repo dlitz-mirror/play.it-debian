@@ -157,9 +157,14 @@ package_get_current() {
 		package='PKG_MAIN'
 	fi
 
-	printf '%s' "$package"
+	# If the current package is not part of the full list of packages,
+	# something went wrong
+	if ! packages_get_list | grep --quiet --fixed-strings --word-regexp "$package"; then
+		error_package_not_in_list "$package"
+		return 1
+	fi
 
-	return 0
+	printf '%s' "$package"
 }
 
 # get the full list of packages to generate

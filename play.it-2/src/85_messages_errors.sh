@@ -951,3 +951,23 @@ error_no_content_path_default() {
 	printf "$message" "$PLAYIT_GAMES_BUG_TRACKER_URL"
 }
 
+# the current package is not part of the full list of packages to generate
+# USAGE: error_package_not_in_list $package
+error_package_not_in_list() {
+	local message package
+	package="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Cet identifiant de paquet ne correspond pas à un paquet à construire : %s\n'
+		;;
+		('en'|*)
+			message='The following package identifier is not part of the list of packages to generate: %s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$package"
+}
+
