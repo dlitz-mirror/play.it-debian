@@ -29,7 +29,10 @@ icon_path() {
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$icon_path" ]; then
-		case "$(application_type "$(icon_application "$icon")")" in
+		local application application_type
+		application=$(icon_application "$icon")
+		application_type=$(application_type "$application")
+		case "$application_type" in
 			('unity3d')
 				icon_path=$(icon_unity3d_path "$icon")
 			;;

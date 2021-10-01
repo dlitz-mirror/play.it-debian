@@ -76,6 +76,7 @@ application_type() {
 		;;
 		(*)
 			error_unknown_application_type "$application_type"
+			return 1
 		;;
 	esac
 }
@@ -114,7 +115,9 @@ application_exe() {
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
 
 	# If no value is set, try to find one based on the application type
-	case "$(application_type "$application")" in
+	local application_type
+	application_type=$(application_type "$application")
+	case "$application_type" in
 		('unity3d')
 			application_exe=$(application_unity3d_exe "$application")
 		;;
@@ -122,7 +125,7 @@ application_exe() {
 
 	# Check that the file name is not empty
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application" "$(application_type "$application")"
+		error_application_exe_empty "$application" "$application_type"
 	fi
 
 	printf '%s' "$application_exe"
@@ -221,9 +224,10 @@ application_icons_list() {
 	fi
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
-	local default_icon
+	local default_icon application_type
 	default_icon="${application}_ICON"
-	case "$(application_type "$application")" in
+	application_type=$(application_type "$application")
+	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon
 			printf '%s' "$default_icon"

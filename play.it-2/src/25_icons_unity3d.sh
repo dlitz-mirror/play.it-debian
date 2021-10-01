@@ -4,9 +4,10 @@
 #         or an empty string
 icon_unity3d_path() {
 	# Check that the application uses the unity3d type
-	local application_type icon
+	local icon application application_type
 	icon="$1"
-	application_type="$(application_type "$(icon_application "$icon")")"
+	application=$(icon_application "$icon")
+	application_type=$(application_type "$application")
 	if [ "$application_type" != 'unity3d' ]; then
 		error_application_wrong_type 'icon_unity3d_path' "$application_type"
 		return 1

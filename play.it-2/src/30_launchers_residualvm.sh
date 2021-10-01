@@ -5,11 +5,13 @@ launcher_write_script_residualvm_application_variables() {
 	local application file
 	application="$1"
 	file="$2"
+	local application_residualvm_residualid
+	application_residualvm_residualid=$(application_residualvm_residualid "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	RESIDUALVM_ID='$(application_residualvm_residualid "$application")'
+	RESIDUALVM_ID='$application_residualvm_residualid'
 
 	EOF
 	return 0

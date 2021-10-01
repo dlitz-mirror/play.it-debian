@@ -5,14 +5,19 @@ launcher_write_script_java_application_variables() {
 	local application file
 	application="$1"
 	file="$2"
+	local application_exe application_libs application_options application_java_options
+	application_exe=$(application_exe "$application")
+	application_libs=$(application_libs "$application")
+	application_options=$(application_options "$application")
+	application_java_options=$(application_java_options "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(application_exe "$application")'
-	APP_LIBS='$(application_libs "$application")'
-	APP_OPTIONS="$(application_options "$application")"
-	JAVA_OPTIONS='$(application_java_options "$application")'
+	APP_EXE='$application_exe'
+	APP_LIBS='$application_libs'
+	APP_OPTIONS="$application_options"
+	JAVA_OPTIONS='$application_java_options'
 
 	EOF
 	return 0

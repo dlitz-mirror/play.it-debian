@@ -92,9 +92,10 @@ error_unknown_application_type() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
+
 	print_error
+	# shellcheck disable=SC2059
 	printf "$message" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when the available tar implementation is not supported

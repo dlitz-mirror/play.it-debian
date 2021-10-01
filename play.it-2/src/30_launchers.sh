@@ -34,8 +34,9 @@ launcher_write_script() {
 	target_file="$(package_get_path "$package")${PATH_BIN}/$(application_id "$application")"
 
 	# Check that the launcher target exists
-	local binary_path binary_found tested_package
-	case "$(application_type "$application")" in
+	local application_type binary_path binary_found tested_package
+	application_type=$(application_type "$application")
+	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
 		;;
@@ -85,12 +86,12 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
-	debug_write_launcher "$(application_type "$application")" "$binary_file"
+	debug_write_launcher "$application_type" "$binary_file"
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
 	launcher_write_script_headers "$target_file"
-	case "$(application_type "$application")" in
+	case "$application_type" in
 		('dosbox')
 			launcher_write_script_dosbox_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
@@ -180,14 +181,14 @@ launcher_write_script() {
 	EOF
 
 	# for native applications, add execution permissions to the game binary file
-	case "$(application_type "$application")" in
+	case "$application_type" in
 		('native'*|'unity3d')
 			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 		;;
 	esac
 
 	# for WINE applications, write launcher script for winecfg
-	case "$(application_type "$application")" in
+	case "$application_type" in
 		('wine')
 			local winecfg_file
 			winecfg_file="$(package_get_path "$package")${PATH_BIN}/${GAME_ID}_winecfg"
@@ -570,7 +571,9 @@ launcher_write_desktop() {
 
 	# for WINE applications, write desktop file for winecfg
 	if [ "$application" != 'APP_WINECFG' ]; then
-		case "$(application_type "$application")" in
+		local application_type
+		application_type=$(application_type "$application")
+		case "$application_type" in
 			('wine')
 				local winecfg_desktop
 				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"

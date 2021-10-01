@@ -78,12 +78,15 @@ icons_get_from_workdir() {
 #              convert them to standard icon formats,
 #              and include the standard icons in the current package
 icons_get_from_path() {
-	local application icon icon_path destination directory
+	local destination directory
 	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
 	shift 1
+
+	local application application_icons_list icon icon_path
 	for application in "$@"; do
-		for icon in $(application_icons_list "$application"); do
+		application_icons_list=$(application_icons_list "$application")
+		for icon in $application_icons_list; do
 			# Check icon file existence
 			icon_path=$(icon_check_file_existence "$directory" "$(icon_path "$icon")")
 

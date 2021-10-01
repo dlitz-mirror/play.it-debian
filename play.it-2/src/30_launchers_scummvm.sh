@@ -5,11 +5,13 @@ launcher_write_script_scummvm_application_variables() {
 	local application file
 	application="$1"
 	file="$2"
+	local application_scummvm_scummid
+	application_scummvm_scummid=$(application_scummvm_scummid "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	SCUMMVM_ID='$(application_scummvm_scummid "$application")'
+	SCUMMVM_ID='$application_scummvm_scummid'
 
 	EOF
 	return 0

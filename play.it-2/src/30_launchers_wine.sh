@@ -5,12 +5,15 @@ launcher_write_script_wine_application_variables() {
 	local application file
 	application="$1"
 	file="$2"
+	local application_exe application_options
+	application_exe=$(application_exe "$application")
+	application_options=$(application_options "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(application_exe "$application")'
-	APP_OPTIONS="$(application_options "$application")"
+	APP_EXE='$application_exe'
+	APP_OPTIONS="$application_options"
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
