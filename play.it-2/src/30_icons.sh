@@ -137,36 +137,41 @@ icon_check_file_existence() {
 	return 0
 }
 
+# Return the MIME type of a given icon file
+# USAGE: icon_file_type $icon_file
+# RETURNS: the MIME type, as a string
+icon_file_type() {
+	file --brief --mime-type "$1"
+}
+
 # extract .png file(s) from target file
 # USAGE: icon_extract_png_from_file $file $destination
 # RETURNS: nothing
 # SIDE EFFECT: convert the given file to .png icons, the .png files are created in the given directory
 icon_extract_png_from_file() {
-	local destination
-	local extension
-	local file
-	file="$1"
+	local icon_file destination icon_type
+	icon_file="$1"
 	destination="$2"
-	extension="${file##*.}"
+	icon_type=$(icon_file_type "$icon_file")
 	mkdir --parents "$destination"
-	case "$extension" in
-		('bmp')
-			icon_convert_bmp_to_png "$file" "$destination"
+	case "$icon_type" in
+		('application/x-dosexec')
+			icon_extract_png_from_exe "$icon_file" "$destination"
 		;;
-		('exe')
-			icon_extract_png_from_exe "$file" "$destination"
+		('image/png')
+			icon_copy_png "$icon_file" "$destination"
 		;;
-		('ico')
-			icon_extract_png_from_ico "$file" "$destination"
+		('image/vnd.microsoft.icon')
+			icon_extract_png_from_ico "$icon_file" "$destination"
 		;;
-		('png')
-			icon_copy_png "$file" "$destination"
+		('image/bmp'|'image/x-ms-bmp')
+			icon_convert_bmp_to_png "$icon_file" "$destination"
 		;;
-		('xpm')
-			icon_copy_xpm "$file" "$destination"
+		('image/x-xpmi')
+			icon_copy_xpm "$icon_file" "$destination"
 		;;
 		(*)
-			error_invalid_argument 'extension' 'icon_extract_png_from_file'
+			error_icon_unsupported_type "$icon_file" "$icon_type"
 			return 1
 		;;
 	esac

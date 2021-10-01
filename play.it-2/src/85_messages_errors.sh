@@ -971,3 +971,24 @@ error_package_not_in_list() {
 	printf "$message" "$package"
 }
 
+# An icon file with an unsupported MIME type has been passed
+# USAGE: error_icon_unsupported_type $icon_file $icon_type
+error_icon_unsupported_type() {
+	local icon_file icon_type message
+	icon_file="$1"
+	icon_type="$2"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Le fichier dʼicône suivant est du type MIME "%s", qui nʼest pas pris en charge : %s\n'
+		;;
+		('en'|*)
+			message='The following icon file is of the "%s" MIME type, that is not supported: %s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$icon_type" "$icon_file"
+}
+
