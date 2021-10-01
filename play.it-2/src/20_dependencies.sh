@@ -196,7 +196,6 @@ check_deps_innoextract() {
 	fi
 
 	# Check innoextract version
-	# shellcheck disable=SC2039
 	local innoextract_version
 	innoextract_version=$(LANG=C innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)
 	case "$keyword" in
@@ -227,7 +226,6 @@ check_deps_fakeroot() {
 	fi
 
 	# Check fakeroot version
-	# shellcheck disable=SC2039
 	local fakeroot_version
 	fakeroot_version="$(LANG=C fakeroot --version | cut --delimiter=' ' --fields=3)"
 	case "$keyword" in

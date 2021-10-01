@@ -17,7 +17,6 @@ pkg_write_deb() {
 
 	# Get package dependencies list
 
-	# shellcheck disable=SC2039
 	local dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -25,7 +24,6 @@ pkg_write_deb() {
 		pkg_set_deps_deb $dependencies_string
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string_deb
 	dependencies_string_deb=$(get_context_specific_value 'archive' "${pkg}_DEPS_DEB")
 	if [ -n "$dependencies_string_deb" ]; then

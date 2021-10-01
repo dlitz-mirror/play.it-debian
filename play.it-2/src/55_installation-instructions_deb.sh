@@ -3,7 +3,6 @@
 # CALLS: print_instructions_deb_apt print_instructions_deb_dpkg
 print_instructions_deb() {
 	if command -v apt >/dev/null 2>&1; then
-		# shellcheck disable=SC2039
 		local apt_version
 		apt_version=$(LANG=C apt --version 2>/dev/null | \
 			grep --extended-regexp --only-matching '[0-9]+(\.[0-9]+)+')

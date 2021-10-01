@@ -4,7 +4,6 @@
 #         or an empty string
 icon_unity3d_path() {
 	# Check that the application uses the unity3d type
-	# shellcheck disable=SC2039
 	local application_type icon
 	icon="$1"
 	application_type="$(application_type "$(icon_application "$icon")")"

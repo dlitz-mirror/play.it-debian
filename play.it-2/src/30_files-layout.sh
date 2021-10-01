@@ -46,7 +46,6 @@ organize_data() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local archive_path archive_files
 	archive_path=$(get_context_specific_value 'archive' "ARCHIVE_${1}_PATH")
 	archive_files=$(get_context_specific_value 'archive'  "ARCHIVE_${1}_FILES")

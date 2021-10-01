@@ -2,7 +2,6 @@
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_wine_application_variables() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
@@ -31,7 +30,6 @@ launcher_write_script_wine_prefix_build() {
 	package=$(package_get_current)
 
 	# compute WINE prefix architecture
-	# shellcheck disable=SC2039
 	local architecture winearch
 	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 	case "$architecture" in

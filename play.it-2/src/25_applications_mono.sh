@@ -4,7 +4,6 @@
 #         or an empty string if no options are set
 application_mono_options() {
 	# Check that the application uses the mono type
-	# shellcheck disable=SC2039
 	local application application_type
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'mono' ]; then
@@ -13,7 +12,6 @@ application_mono_options() {
 	fi
 
 	# Get the application Mono options string from its identifier
-	# shellcheck disable=SC2039
 	local application_mono_options
 	application_mono_options=$(get_value "${application}_MONO_OPTIONS")
 

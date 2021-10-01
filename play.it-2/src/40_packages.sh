@@ -151,7 +151,6 @@ package_get_current() {
 # USAGE: packages_get_list
 # RETURN: a list of package identifiers
 packages_get_list() {
-	# shellcheck disable=SC2039
 	local packages_list
 	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
 
@@ -172,7 +171,6 @@ packages_get_list() {
 # RETURNS: package ID, as a non-empty string
 package_get_id() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -182,7 +180,6 @@ package_get_id() {
 	fi
 
 	# get package ID from its name
-	# shellcheck disable=SC2039
 	local package_id
 	package_id=$(get_context_specific_value 'archive' "${package}_ID")
 
@@ -218,7 +215,6 @@ package_get_id() {
 # RETURNS: package architecture, as a non-empty string
 package_get_architecture() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -228,7 +224,6 @@ package_get_architecture() {
 	fi
 
 	# get package architecture from its name
-	# shellcheck disable=SC2039
 	local package_architecture
 	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 
@@ -246,7 +241,6 @@ package_get_architecture() {
 # RETURNS: package architecture, as a non-empty string, ready to include in package meta-data
 package_get_architecture_string() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -256,12 +250,10 @@ package_get_architecture_string() {
 	fi
 
 	# get package architecture
-	# shellcheck disable=SC2039
 	local package_architecture
 	package_architecture=$(package_get_architecture "$package")
 
 	# set package architecture string, based on its architecture and target package format
-	# shellcheck disable=SC2039
 	local package_architecture_string
 	case "$OPTION_PACKAGE" in
 		('arch')
@@ -314,7 +306,6 @@ package_get_architecture_string() {
 # RETURNS: package description, as a non-empty string
 package_get_description() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -324,7 +315,6 @@ package_get_description() {
 	fi
 
 	# get package description from its name
-	# shellcheck disable=SC2039
 	local package_description
 	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
 
@@ -335,7 +325,6 @@ package_get_description() {
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
-	# shellcheck disable=SC2039
 	local package_description_full
 	case "$OPTION_PACKAGE" in
 		('deb')
@@ -371,7 +360,6 @@ package_get_description() {
 # RETURNS: provided package ID as a non-empty string, or an empty string is none is provided
 package_get_provide() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -381,7 +369,6 @@ package_get_provide() {
 	fi
 
 	# get provided package ID from its name
-	# shellcheck disable=SC2039
 	local package_provide
 	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
 
@@ -408,7 +395,6 @@ package_get_provide() {
 # RETURNS: path to a directory, it is not checked that it exists or is writable
 package_get_path() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -432,7 +418,6 @@ package_get_path() {
 	fi
 
 	# compute the package path from its identifier
-	# shellcheck disable=SC2039
 	local package_path
 	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
 
@@ -445,7 +430,6 @@ package_get_path() {
 # RETURNS: filename, without any suffix
 package_get_name() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -462,7 +446,6 @@ package_get_name() {
 	fi
 
 	# compute the package path from its identifier
-	# shellcheck disable=SC2039
 	local package_name
 	case "$OPTION_PACKAGE" in
 		('arch'|'deb')
@@ -485,7 +468,6 @@ package_get_name() {
 # RETURNS: packages maintainer, as a non-empty string
 packages_get_maintainer() {
 	# get maintainer string from /etc/makepkg.conf
-	# shellcheck disable=SC2039
 	local maintainer
 	if \
 		[ -r '/etc/makepkg.conf' ] && \
@@ -508,7 +490,6 @@ packages_get_maintainer() {
 
 	# get current machine hostname
 	# falls back on using "localhost"
-	# shellcheck disable=SC2039
 	local hostname
 	if command -v 'hostname' >/dev/null 2>&1; then
 		hostname=$(hostname)
@@ -520,7 +501,6 @@ packages_get_maintainer() {
 
 	# get current user name
 	# falls back on "user"
-	# shellcheck disable=SC2039
 	local username
 	if [ -n "$USER" ]; then
 		username="$USER"
@@ -541,7 +521,6 @@ packages_get_maintainer() {
 # RETURNS: packages version, as a non-empty string
 packages_get_version() {
 	# single argument should be the archive name
-	# shellcheck disable=SC2039
 	local archive
 	archive="$1"
 	if [ -z "$archive" ]; then
@@ -558,7 +537,6 @@ packages_get_version() {
 
 	# get the version string for the current archive
 	# falls back on "1.0-1"
-	# shellcheck disable=SC2039
 	local packages_version
 	packages_version=$(get_value "${archive}_VERSION")
 	if [ -z "$packages_version" ]; then

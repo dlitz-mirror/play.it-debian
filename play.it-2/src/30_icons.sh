@@ -78,7 +78,6 @@ icons_get_from_workdir() {
 #              convert them to standard icon formats,
 #              and include the standard icons in the current package
 icons_get_from_path() {
-	# shellcheck disable=SC2039
 	local application icon icon_path destination directory
 	destination="$PLAYIT_WORKDIR/icons"
 	directory="$1"
@@ -110,7 +109,6 @@ icons_get_from_path() {
 # USAGE: icon_check_file_existence $directory $file
 # RETURNS: $file or throws an error
 icon_check_file_existence() {
-	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
@@ -190,7 +188,6 @@ icon_extract_png_from_exe() {
 # extract .ico file(s) from given .exe file
 # USAGE: icon_extract_ico_from_exe $icon_file $destination
 icon_extract_ico_from_exe() {
-	# shellcheck disable=SC2039
 	local destination icon_file
 	icon_file="$1"
 	destination="$2"
@@ -261,7 +258,6 @@ icon_copy_xpm() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local destination file
 	file="$1"
 	destination="$2"
@@ -281,7 +277,6 @@ icons_include_from_directory() {
 	fi
 
 	# Get the application name, falls back on the game name
-	# shellcheck disable=SC2039
 	local application application_name
 	application="$1"
 	application_name=$(get_value "${application}_ID")
@@ -289,7 +284,6 @@ icons_include_from_directory() {
 
 	# Get the icons from the given source directory,
 	# then move them to the current package
-	# shellcheck disable=SC2039
 	local source_directory source_file destination_name destination_directory destination_file
 	source_directory="$2"
 	for source_file in \
@@ -318,7 +312,6 @@ icons_include_from_directory() {
 # USAGE: icon_get_resolution $file
 # RETURNS: image resolution, using the format ${width}x${height}
 icon_get_resolution() {
-	# shellcheck disable=SC2039
 	local image_file
 	image_file="$1"
 
@@ -328,7 +321,6 @@ icon_get_resolution() {
 		error_unavailable_command 'icon_get_resolution' 'identify'
 	fi
 
-	# shellcheck disable=SC2039
 	local image_resolution_string image_resolution
 	# shellcheck disable=SC2154
 	if version_is_at_least '2.8' "$target_version"; then

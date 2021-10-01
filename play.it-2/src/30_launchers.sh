@@ -30,7 +30,6 @@ launcher_write_script() {
 	fi
 
 	# compute file path
-	# shellcheck disable=SC2039
 	local target_file
 	target_file="$(package_get_path "$package")${PATH_BIN}/$(application_id "$application")"
 
@@ -356,7 +355,6 @@ launcher_write_script_prefix_functions() {
 	}
 
 	init_prefix_dirs() {
-	    # shellcheck disable=SC2039
 	    local destination directories
 	    destination="$1"
 	    directories="$2"
@@ -512,7 +510,6 @@ launcher_write_script_prefix_build() {
 # write launcher script pre-run actions
 # USAGE: launcher_write_script_prerun $application $file
 launcher_write_script_prerun() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
@@ -531,7 +528,6 @@ launcher_write_script_prerun() {
 # write launcher script post-run actions
 # USAGE: launcher_write_script_postrun $application $file
 launcher_write_script_postrun() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
@@ -550,7 +546,6 @@ launcher_write_script_postrun() {
 # write the XDG desktop file for the given application
 # USAGE: launcher_write_desktop $application
 launcher_write_desktop() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
@@ -577,7 +572,6 @@ launcher_write_desktop() {
 	if [ "$application" != 'APP_WINECFG' ]; then
 		case "$(application_type "$application")" in
 			('wine')
-				# shellcheck disable=SC2039
 				local winecfg_desktop
 				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
@@ -597,7 +591,6 @@ launcher_write_desktop() {
 # USAGE: launcher_desktop $application
 # RETURN: the full content of the XDG desktop file
 launcher_desktop() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
@@ -607,7 +600,6 @@ launcher_desktop() {
 	# probably in a 20_icons.sh source file
 	###
 	# get icon name
-	# shellcheck disable=SC2039
 	local application_icon
 	if [ "$application" = 'APP_WINECFG' ]; then
 		application_icon='winecfg'
@@ -630,7 +622,6 @@ launcher_desktop() {
 # USAGE: launcher_desktop_filepath $application
 # RETURN: an absolute file path
 launcher_desktop_filepath() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
@@ -643,12 +634,10 @@ launcher_desktop_filepath() {
 # USAGE: launcher_desktop_exec $application
 # RETURN: the "Exec" field string, including escaping if required
 launcher_desktop_exec() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
 	# Enclose the path in single quotes if it includes spaces
-	# shellcheck disable=SC2039
 	local field_format
 	case "$OPTION_PREFIX" in
 		(*' '*)
@@ -660,7 +649,6 @@ launcher_desktop_exec() {
 	esac
 
 	# Use the full path for non-standard prefixes
-	# shellcheck disable=SC2039
 	local field_value
 	case "$OPTION_PREFIX" in
 		('/usr'|'/usr/local')
@@ -728,7 +716,6 @@ launchers_write() {
 	fi
 
 	# Write a launcher script and a menu entry for each application
-	# shellcheck disable=SC2039
 	local application
 	for application in "$@"; do
 		launcher_write "$application"

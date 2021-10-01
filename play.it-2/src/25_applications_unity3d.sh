@@ -4,7 +4,6 @@
 #         or an empty string
 application_unity3d_exe() {
 	# Check that the application uses the unity3d type
-	# shellcheck disable=SC2039
 	local application application_type
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'unity3d' ]; then
@@ -18,7 +17,6 @@ application_unity3d_exe() {
 	fi
 
 	# Compute the file name from the package architecture and UNITY3D_NAME
-	# shellcheck disable=SC2039
 	local architecture_suffix
 	case "$(package_get_architecture "$(package_get_current)")" in
 		('32')

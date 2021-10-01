@@ -2,7 +2,6 @@
 # USAGE: launcher_write_script_native_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_native_application_variables() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
@@ -87,7 +86,6 @@ launcher_native_get_extra_library_path() {
 
 	if [ "$OPTION_PACKAGE" = 'gentoo' ] && get_value "${package}_DEPS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet 'libcurl-gnutls'; then
 		# Get package architecture
-		# shellcheck disable=SC2039
 		local pkg_architecture
 		pkg_architecture=$(package_get_architecture_string "$PKG")
 

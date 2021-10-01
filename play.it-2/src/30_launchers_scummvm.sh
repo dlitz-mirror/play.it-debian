@@ -2,7 +2,6 @@
 # USAGE: launcher_write_script_scummvm_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_scummvm_application_variables() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"

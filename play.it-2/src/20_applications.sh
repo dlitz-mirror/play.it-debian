@@ -18,14 +18,12 @@ applications_list() {
 	fi
 
 	## Fallback, parse the game script
-	# shellcheck disable=SC2039
 	local game_script
 	game_script="$0"
 	# Try to generate a list from the following variables:
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
 	# - APP_xxx_RESIDUALID
-	# shellcheck disable=SC2039
 	local sed_expression application_id
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
@@ -49,7 +47,6 @@ applications_list() {
 #         - wine
 application_type() {
 	# Get the application type from its identifier
-	# shellcheck disable=SC2039
 	local application_type
 	application_type=$(get_value "${1}_TYPE")
 
@@ -89,7 +86,6 @@ application_type() {
 #         the id can not start nor end with a character from the set [-_]
 application_id() {
 	# Get the application type from its identifier
-	# shellcheck disable=SC2039
 	local application_id
 	application_id=$(get_value "${1}_ID")
 
@@ -113,7 +109,6 @@ application_id() {
 application_exe() {
 	# Use the package-specific value if it is available,
 	# falls back on the default value
-	# shellcheck disable=SC2039
 	local application application_exe
 	application="$1"
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
@@ -138,7 +133,6 @@ application_exe() {
 # RETURN: the pretty version of the application name
 application_name() {
 	# Get the application name from its identifier
-	# shellcheck disable=SC2039
 	local application_name
 	application_name=$(get_value "${1}_NAME")
 
@@ -153,7 +147,6 @@ application_name() {
 # RETURN: the application XDG menu category
 application_category() {
 	# Get the application category from its identifier
-	# shellcheck disable=SC2039
 	local application_category
 	application_category=$(get_value "${1}_CAT")
 
@@ -188,7 +181,6 @@ application_postrun() {
 #         or an empty string if no options are set
 application_options() {
 	# Get the application options string from its identifier
-	# shellcheck disable=SC2039
 	local application application_options
 	application="$1"
 	application_options=$(get_value "${application}_OPTIONS")
@@ -217,12 +209,10 @@ application_libs() {
 # RETURN: a space-separated list of icons identifiers,
 #         or an empty string if no icon seems to be set
 application_icons_list() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
 	# Use the value of APP_xxx_ICONS_LIST if it is set
-	# shellcheck disable=SC2039
 	local icons_list
 	icons_list=$(get_value "${application}_ICONS_LIST")
 	if [ -n "$icons_list" ]; then
@@ -231,7 +221,6 @@ application_icons_list() {
 	fi
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
-	# shellcheck disable=SC2039
 	local default_icon
 	default_icon="${application}_ICON"
 	case "$(application_type "$application")" in

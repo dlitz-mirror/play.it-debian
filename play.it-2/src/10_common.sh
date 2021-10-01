@@ -29,7 +29,6 @@ tolower() {
 # RETURN: nothing
 # SIDE EFFECT: convert all file names in a given path to lowercase
 tolower_convmv() {
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -38,7 +37,6 @@ tolower_convmv() {
 	# Check that $directory is a writable directory
 	###
 
-	# shellcheck disable=SC2039
 	local convmv_options
 	convmv_options='-f utf8 --notest --lower -r'
 
@@ -79,7 +77,6 @@ toupper() {
 # RETURN: nothing
 # SIDE EFFECT: convert all file names in a given path to uppercase
 toupper_convmv() {
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -88,7 +85,6 @@ toupper_convmv() {
 	# Check that $directory is a writable directory
 	###
 
-	# shellcheck disable=SC2039
 	local convmv_options
 	convmv_options='-f utf8 --notest --upper -r'
 

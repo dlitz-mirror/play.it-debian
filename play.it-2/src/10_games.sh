@@ -4,7 +4,6 @@
 games_list_sources() {
 	# If the "play.it" command has been called from a local git repository,
 	# includes its shipped game scripts collection
-	# shellcheck disable=SC2039
 	local shipped_collection
 	shipped_collection="$(dirname "$0")/play.it-2/games"
 	if [ -d "$shipped_collection" ]; then
@@ -12,7 +11,6 @@ games_list_sources() {
 	fi
 
 	# Include the current user game scripts collections
-	# shellcheck disable=SC2039
 	local user_collections_basedir
 	user_collections_basedir="${XDG_DATA_HOME:=$HOME/.local/share}/play.it/games"
 	if [ -d "$user_collections_basedir" ]; then
@@ -20,7 +18,6 @@ games_list_sources() {
 	fi
 
 	# Include the system-provided game scripts collections
-	# shellcheck disable=SC2039
 	local system_prefix system_collections_basedir
 	for system_prefix in \
 		'/usr/local/share/games' \
@@ -41,11 +38,9 @@ games_list_sources() {
 # USAGE: games_find_scripts_for_archive $archive_name
 # RETURNS: A list of game scripts, separated by line breaks
 games_find_scripts_for_archive() {
-	# shellcheck disable=SC2039
 	local archive_name
 	archive_name="$1"
 
-	# shellcheck disable=SC2039
 	local regexp
 	regexp="^ARCHIVE_[0-9A-Z_]\\+=['\"]${archive_name}['\"]"
 	while read -r games_collection; do
@@ -62,7 +57,6 @@ games_find_scripts_for_archive() {
 # USAGE: games_find_script_for_archive $archive_name
 # RETURNS: A single game script
 games_find_script_for_archive() {
-	# shellcheck disable=SC2039
 	local archive_name
 	archive_name="$1"
 

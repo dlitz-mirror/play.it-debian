@@ -231,7 +231,6 @@ error_option_invalid() {
 # package format
 # USAGE: error_compression_invalid
 error_compression_invalid() {
-	# shellcheck disable=SC2039
 	local compression_method allowed_values package_format message
 
 	compression_method="$OPTION_COMPRESSION"
@@ -623,11 +622,9 @@ error_empty_variable() {
 # display an error when trying to use a case-insensitive filesystem
 # USAGE: error_case_insensitive_filesystem_is_not_supported $directory
 error_case_insensitive_filesystem_is_not_supported() {
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -651,11 +648,9 @@ error_case_insensitive_filesystem_is_not_supported() {
 # display an error when trying to use a filesystem without support for UNIX permissions
 # USAGE: error_unix_permissions_support_is_required $directory
 error_unix_permissions_support_is_required() {
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -679,7 +674,6 @@ error_unix_permissions_support_is_required() {
 # display an error when trying to get the current archive but none is set
 # USAGE: error_archive_unset
 error_archive_unset() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -702,11 +696,9 @@ error_archive_unset() {
 # - package
 # USAGE: error_context_invalid $context
 error_context_invalid() {
-	# shellcheck disable=SC2039
 	local context
 	context="$1"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -732,12 +724,10 @@ error_context_invalid() {
 # display an error when using an invalid format for an application id
 # USAGE: error_application_id_invalid $application $application_id
 error_application_id_invalid() {
-	# shellcheck disable=SC2039
 	local application application_id
 	application="$1"
 	application_id="$2"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -763,12 +753,10 @@ error_application_id_invalid() {
 # display an error when using an invalid format for an application ScummVM id
 # USAGE: error_application_scummid_invalid $application $application_scummid
 error_application_scummid_invalid() {
-	# shellcheck disable=SC2039
 	local application application_scummid
 	application="$1"
 	application_scummid="$2"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -795,12 +783,10 @@ error_application_scummid_invalid() {
 # display an error when using an invalid format for an application ResidualVM id
 # USAGE: error_application_residualid_invalid $application $application_residualid
 error_application_residualid_invalid() {
-	# shellcheck disable=SC2039
 	local application application_residualid
 	application="$1"
 	application_residualid="$2"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -827,12 +813,10 @@ error_application_residualid_invalid() {
 # display an error when APP_xxx_EXE is unset but the application requires it
 # USAGE: error_application_exe_empty $application $application_type
 error_application_exe_empty() {
-	# shellcheck disable=SC2039
 	local application application_type
 	application="$1"
 	application_type="$2"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -854,11 +838,9 @@ error_application_exe_empty() {
 # display an error when a variable is spanning multiple lines
 # USAGE: error_variable_multiline $variable_name
 error_variable_multiline() {
-	# shellcheck disable=SC2039
 	local variable_name
 	variable_name="$1"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -880,12 +862,10 @@ error_variable_multiline() {
 # display an error when calling a type-restricted function on the wrong application type
 # USAGE: error_application_wrong_type $function_name $application_type
 error_application_wrong_type() {
-	# shellcheck disable=SC2039
 	local function_name application_type
 	function_name="$1"
 	application_type="$2"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -908,7 +888,6 @@ error_application_wrong_type() {
 # has been found
 # USAGE: error_no_valid_temp_dir_found $directory[…]
 error_no_valid_temp_dir_found() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -933,11 +912,9 @@ error_no_valid_temp_dir_found() {
 # display an error when the path to a given icon is unset but we try to use it
 # USAGE: error_icon_path_empty $icon
 error_icon_path_empty() {
-	# shellcheck disable=SC2039
 	local icon
 	icon="$1"
 
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in

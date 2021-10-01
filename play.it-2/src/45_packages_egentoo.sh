@@ -18,7 +18,6 @@ pkg_write_egentoo() {
 		return 1
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${package}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -26,7 +25,6 @@ pkg_write_egentoo() {
 		pkg_set_deps_gentoo $dependencies_string
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string_gentoo
 	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
 	if [ -n "$dependencies_string_gentoo" ]; then

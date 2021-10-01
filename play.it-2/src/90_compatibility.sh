@@ -56,7 +56,6 @@ icons_linking_postinst() {
 
 archive_set() {
 	archive_initialize_optional "$@"
-	# shellcheck disable=SC2039
 	local archive
 	archive=$(archive_find_from_candidates "$@")
 	if [ -n "$archive" ]; then
@@ -264,7 +263,6 @@ write_launcher() {
 # Keep compatibility with 2.8 and older
 
 icon_get_resolution_pre_2_8() {
-	# shellcheck disable=SC2039
 	local image_file image_resolution_string image_resolution string_field
 	image_file="$1"
 	string_field=2
@@ -286,7 +284,6 @@ icon_get_resolution_pre_2_8() {
 }
 
 icon_check_file_existence_pre_2_8() {
-	# shellcheck disable=SC2039
 	local directory file
 	directory="$1"
 	file="$2"
@@ -299,7 +296,6 @@ icon_check_file_existence_pre_2_8() {
 		return 1
 	else
 		# get the real file name from its globbed one
-		# shellcheck disable=SC2039
 		local file_path
 		file_path=$(eval printf '%s' "$directory/$file")
 		file="${file_path#${directory}/}"

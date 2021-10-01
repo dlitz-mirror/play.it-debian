@@ -3,7 +3,6 @@
 # RETURN: the ScummVM id
 application_scummvm_scummid() {
 	# Check that the application uses the scummvm type
-	# shellcheck disable=SC2039
 	local application application_type
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'scummvm' ]; then
@@ -12,7 +11,6 @@ application_scummvm_scummid() {
 	fi
 
 	# Get the application ScummVM id from its identifier
-	# shellcheck disable=SC2039
 	local application_scummid
 	application_scummid=$(get_value "${application}_SCUMMID")
 
