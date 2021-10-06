@@ -13,13 +13,20 @@ set_standard_permissions() {
 # USAGE: tolower $dir[…]
 # CALLS: tolower_convmv tolower_shell
 tolower() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
-	for dir in "$@"; do
-		[ -d "$dir" ] || return 1
+	if [ "$DRY_RUN" -eq 1 ]; then
+		return 0
+	fi
+
+	local directory
+	for directory in "$@"; do
+		if [ ! -d "$directory" ]; then
+			error_not_a_directory "$directory"
+			return 1
+		fi
 		if command -v convmv > /dev/null; then
-			tolower_convmv "$dir"
+			tolower_convmv "$directory"
 		else
-			tolower_shell "$dir"
+			tolower_shell "$directory"
 		fi
 	done
 }
@@ -66,13 +73,20 @@ tolower_shell() {
 # USAGE: toupper $dir[…]
 # CALLS: toupper_convmv toupper_shell
 toupper() {
-	[ "$DRY_RUN" = '1' ] && return 0
-	for dir in "$@"; do
-		[ -d "$dir" ] || return 1
+	if [ "$DRY_RUN" -eq 1 ]; then
+		return 0
+	fi
+
+	local directory
+	for directory in "$@"; do
+		if [ ! -d "$directory" ]; then
+			error_not_a_directory "$directory"
+			return 1
+		fi
 		if command -v convmv > /dev/null; then
-			toupper_convmv "$dir"
+			toupper_convmv "$directory"
 		else
-			toupper_shell "$dir"
+			toupper_shell "$directory"
 		fi
 	done
 }
