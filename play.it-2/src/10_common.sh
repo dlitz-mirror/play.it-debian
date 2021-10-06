@@ -29,20 +29,25 @@ tolower() {
 # RETURN: nothing
 # SIDE EFFECT: convert all file names in a given path to lowercase
 tolower_convmv() {
-	local directory
+	debug_entering_function 'tolower_convmv'
+
+	local directory convmv_options find_options
 	directory="$1"
-
-	###
-	# TODO
-	# Check that $directory is a writable directory
-	###
-
-	local convmv_options
 	convmv_options='-f utf8 --notest --lower -r'
+	find_options='-mindepth 1 -maxdepth 1'
 
-	# shellcheck disable=SC2086
-	find "$directory" -mindepth 1 -maxdepth 1 -exec \
-		convmv $convmv_options {} + >/dev/null 2>&1
+	# Hide convmv output unless $DEBUG is set to ≥ 1
+	if [ "$DEBUG" -ge 1 ]; then
+		# shellcheck disable=SC2086
+		find "$directory" $find_options -exec \
+			convmv $convmv_options {} +
+	else
+		# shellcheck disable=SC2086
+		find "$directory" $find_options -exec \
+			convmv $convmv_options {} + >/dev/null 2>&1
+	fi
+
+	debug_leaving_function 'tolower_convmv'
 }
 
 # convert files name to lower case using pure shell
@@ -77,20 +82,25 @@ toupper() {
 # RETURN: nothing
 # SIDE EFFECT: convert all file names in a given path to uppercase
 toupper_convmv() {
-	local directory
+	debug_entering_function 'toupper_convmv'
+
+	local convmv_options find_options directory
 	directory="$1"
-
-	###
-	# TODO
-	# Check that $directory is a writable directory
-	###
-
-	local convmv_options
 	convmv_options='-f utf8 --notest --upper -r'
+	find_options='-mindepth 1 -maxdepth 1'
 
-	# shellcheck disable=SC2086
-	find "$directory" -mindepth 1 -maxdepth 1 -exec \
-		convmv $convmv_options {} + >/dev/null 2>&1
+	# Hide convmv output unless $DEBUG is set to ≥ 1
+	if [ "$DEBUG" -ge 1 ]; then
+		# shellcheck disable=SC2086
+		find "$directory" $find_options -exec \
+			convmv $convmv_options {} +
+	else
+		# shellcheck disable=SC2086
+		find "$directory" $find_options -exec \
+			convmv $convmv_options {} + >/dev/null 2>&1
+	fi
+
+	debug_leaving_function 'toupper_convmv'
 }
 
 # convert files name to upper case using pure shell
