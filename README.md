@@ -42,19 +42,8 @@ of these distributions.
 If your distribution does not already have a package for ./play.it, you can
 install it from this git repository.
 
-#### Latest stable version
-
 ```
 git clone --branch 2.14.1 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
-cd play.it.git
-make
-make install
-```
-
-#### Current development version
-
-```
-git clone --branch master --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
 cd play.it.git
 make
 make install
