@@ -114,7 +114,6 @@ help_checksum() {
 # display --compression option usage
 # CALLED BY: help
 help_compression() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in

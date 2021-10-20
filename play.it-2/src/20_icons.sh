@@ -4,7 +4,6 @@
 icon_application() {
 	# We assume here that the icon identifier is built from the application identifier,
 	# with a suffix appended.
-	# shellcheck disable=SC2039
 	local application icon
 	icon="$1"
 	for application in $(applications_list); do
@@ -24,14 +23,16 @@ icon_application() {
 # RETURN: the icon path, it can include spaces
 icon_path() {
 	# Get the icon path from its identifier
-	# shellcheck disable=SC2039
 	local icon icon_path
 	icon="$1"
 	icon_path=$(get_context_specific_value 'archive' "$icon")
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$icon_path" ]; then
-		case "$(application_type "$(icon_application "$icon")")" in
+		local application application_type
+		application=$(icon_application "$icon")
+		application_type=$(application_type "$application")
+		case "$application_type" in
 			('unity3d')
 				icon_path=$(icon_unity3d_path "$icon")
 			;;
@@ -50,7 +51,6 @@ icon_path() {
 # USAGE: icon_wrestool_options $icon
 # RETURN: the options string to pass to wrestool
 icon_wrestool_options() {
-	# shellcheck disable=SC2039
 	local icon
 	icon="$1"
 
@@ -61,7 +61,6 @@ icon_wrestool_options() {
 	fi
 
 	# Fetch the custom options string
-	# shellcheck disable=SC2039
 	wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
 
 	# If no custom value is set, falls back to defaults

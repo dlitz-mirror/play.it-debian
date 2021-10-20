@@ -133,7 +133,6 @@ debug_using_directory() {
 		return 0
 	fi
 
-	# shecllcheck disable=SC2039
 	local dir_path
 	dir_path="$1"
 
@@ -262,7 +261,6 @@ debug_temp_dir_nonexistant() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -283,7 +281,6 @@ debug_temp_dir_nonwritable() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -304,7 +301,6 @@ debug_temp_dir_not_enough_space() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -325,7 +321,6 @@ debug_temp_dir_case_insensitive_not_supported() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -346,7 +341,6 @@ debug_temp_dir_no_unix_permissions() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 

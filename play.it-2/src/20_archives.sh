@@ -253,7 +253,6 @@ archive_add_size_to_total() {
 # RETURNS: an archive type
 archive_get_type() {
 	# Get the archive identifier, check that it is not empty
-	# shellcheck disable=SC2039
 	local archive_identifier
 	archive_identifier="$1"
 	if [ -z "$archive_identifier" ]; then
@@ -262,7 +261,6 @@ archive_get_type() {
 	fi
 
 	# Return archive type early if it is already set
-	# shellcheck disable=SC2039
 	local archive_type
 	archive_type=$(get_value "${archive_identifier}_TYPE")
 	if [ -n "$archive_type" ]; then
@@ -271,7 +269,6 @@ archive_get_type() {
 	fi
 
 	# Guess archive type from its file name
-	# shellcheck disable=SC2039
 	local archive_file
 	archive_file=$(get_value "$archive_identifier")
 	case "$archive_file" in
@@ -357,13 +354,11 @@ archives_return_list() {
 	fi
 
 	# Parse the calling script to guess the identifiers of the archives it supports
-	# shellcheck disable=SC2039
 	local script pattern
 	script="$0"
 
 	# Try to find archives using the ARCHIVE_BASE_xxx_[0-9]+ naming scheme
 	# Fall back to the older naming scheme for scripts targeting a library older than 2.13
-	# shellcheck disable=SC2039
 	local archives_list pattern
 	# shellcheck disable=SC2154
 	if version_is_at_least '2.13' "$target_version"; then

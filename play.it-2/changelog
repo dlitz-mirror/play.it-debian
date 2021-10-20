@@ -1,3 +1,11 @@
+2.14.1
+
+  * Only use application type guessing if none is explicitely set
+  * Drop ShellCheck "disable" directives for non-POSIX local usage
+  * Ensure invalid application type always throws blocking errors
+  * Fix fetching application type
+  * Show an explicit error when tolower/toupper is given an invalid target
+
 2.14.0
 
   * New features:

@@ -3,7 +3,6 @@
 # RETURNS: 0 if case-sensitive, 1 if case-insensitive
 check_directory_is_case_sensitive() {
 	# the first argument should be a writable directory
-	# shellcheck disable=SC2039
 	local tested_directory
 	tested_directory="$1"
 	if [ ! -d "$tested_directory" ]; then
@@ -17,12 +16,10 @@ check_directory_is_case_sensitive() {
 
 	# check if "a" and "A" are created as distinct files, or as a single one
 	# tests are done in an inner temporary directory to avoid messing up with existing files
-	# shellcheck disable=SC2039
 	local inner_temp_directory
 	inner_temp_directory=$(mktemp --directory --tmpdir="$tested_directory")
 	touch "${inner_temp_directory}/a"
 	touch "${inner_temp_directory}/A"
-	# shellcheck disable=SC2039
 	local files_count
 	files_count=$(find "$inner_temp_directory" -mindepth 1 -maxdepth 1 -iname a | wc --lines)
 	rm --recursive "$inner_temp_directory"
@@ -49,7 +46,6 @@ check_directory_is_case_sensitive() {
 # RETURNS: 0 if has support for UNIX permissions, 1 if has no support for UNIX permissions
 check_directory_supports_unix_permissions() {
 	# the first argument should be a writable directory
-	# shellcheck disable=SC2039
 	local tested_directory
 	tested_directory="$1"
 	if [ ! -d "$tested_directory" ]; then
@@ -63,12 +59,10 @@ check_directory_supports_unix_permissions() {
 
 	# change permissions on a file, and check it has an actual effect
 	# tests are done in an inner temporary directory to avoid messing up with existing files
-	# shellcheck disable=SC2039
 	local inner_temp_directory tested_temp_file
 	inner_temp_directory=$(mktemp --directory --tmpdir="$tested_directory")
 	tested_temp_file="${inner_temp_directory}/a"
 	touch "$tested_temp_file"
-	# shellcheck disable=SC2039
 	local file_permissions
 	for file_permissions in '600' '700'; do
 		set +o errexit
@@ -87,7 +81,6 @@ check_directory_supports_unix_permissions() {
 # USAGE: version_is_at_least $version_reference $version_tested
 # RETURNS: 0 if bigger or equal, 1 otherwise
 version_is_at_least() {
-	# shellcheck disable=SC2039
 	local version_reference version_tested
 	version_reference="$1"
 	version_tested="$2"
@@ -98,7 +91,6 @@ version_is_at_least() {
 	fi
 
 	# Compare version fields one at a time
-	# shellcheck disable=SC2039
 	local field field_reference field_tested
 	field=1
 	field_reference=$(printf '%s' "$version_reference" | cut --delimiter='.' --fields=$field)
