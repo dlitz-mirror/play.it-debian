@@ -629,9 +629,10 @@ launcher_desktop() {
 # USAGE: launcher_desktop_filepath $application
 # RETURN: an absolute file path
 launcher_desktop_filepath() {
-	local application application_id package_path
+	local application application_id package package_path
 	application="$1"
 	application_id=$(application_id "$application")
+	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
 
 	printf '%s/%s.desktop' \
