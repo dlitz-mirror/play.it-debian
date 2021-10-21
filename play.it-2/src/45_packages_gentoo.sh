@@ -3,6 +3,14 @@
 # NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
 # CALLED BY: write_metadata
 pkg_write_gentoo() {
+	###
+	# TODO
+	# $pkg should be passed as a function argument, not inherited from the calling function
+	###
+
+	local package_path
+	package_path=$(package_get_path "$pkg")
+
 	local pkg_deps dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -27,7 +35,7 @@ pkg_write_gentoo() {
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files"
 	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
 	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
-	ln --symbolic --force --no-target-directory "$(package_get_path "$pkg")" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files/install"
+	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files/install"
 	local target
 	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 

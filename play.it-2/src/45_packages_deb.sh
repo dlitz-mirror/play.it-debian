@@ -8,9 +8,12 @@ pkg_write_deb() {
 	# $pkg should be passed as a function argument, not inherited from the calling function
 	###
 
+	local package_path
+	package_path=$(package_get_path "$pkg")
+
 	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
 
-	control_directory="$(package_get_path "$pkg")/DEBIAN"
+	control_directory="${package_path}/DEBIAN"
 	control_file="$control_directory/control"
 	postinst_script="$control_directory/postinst"
 	prerm_script="$control_directory/prerm"
@@ -35,7 +38,7 @@ pkg_write_deb() {
 	fi
 
 	# Get package size
-	pkg_size=$(du --total --block-size=1K --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
+	pkg_size=$(du --total --block-size=1K --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 
 	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"

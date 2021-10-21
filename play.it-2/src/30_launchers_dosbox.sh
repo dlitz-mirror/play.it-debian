@@ -44,18 +44,24 @@ launcher_write_script_dosbox_run() {
 		case "$GAME_IMAGE_TYPE" in
 			('cdrom')
 				local image
-				local package
+				unset image
 
-				# Get packages list for the current game
-				local packages_list
+				# Loop over the list of packages, one should include the disk image
+				local package package_path packages_list
 				packages_list=$(packages_get_list)
-
 				for package in $packages_list; do
-					if [ -e "$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE" ]; then
-						image="$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE"
+					package_path=$(package_get_path "$package")
+					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
+						image="${package_path}$PATH_GAME/$GAME_IMAGE"
 						break;
 					fi
 				done
+
+				###
+				# TODO
+				# If the disk image has not been found, an explicit error should be thrown.
+				###
+
 				if [ -d "$image" ]; then
 					cat >> "$file" <<- EOF
 					mount d $GAME_IMAGE -t cdrom

@@ -63,29 +63,38 @@ build_pkg() {
 	debug_entering_function 'build_pkg'
 
 	# Get packages list for the current game
-	local packages_list
+	local packages_list package package_path
 	packages_list=$(packages_get_list)
 
-	for pkg in "$@"; do
-		if ! testvar "$pkg" 'PKG'; then
-			error_invalid_argument 'pkg' 'build_pkg'
+	for package in "$@"; do
+		if ! testvar "$package" 'PKG'; then
+			error_invalid_argument 'package' 'build_pkg'
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
-			warning_skip_package 'build_pkg' "$pkg"
+		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$package*}" ]; then
+			warning_skip_package 'build_pkg' "$package"
 			return 0
 		fi
+		package_path=$(package_get_path "$package")
+
+		###
+		# TODO
+		# pkg_build_xxx implicitely depends on the target package being set as $pkg
+		# It should instead be passed as a mandatory argument.
+		###
+		export pkg="$package"
+
 		case $OPTION_PACKAGE in
 			('arch')
-				pkg_build_arch "$(package_get_path "$pkg")"
+				pkg_build_arch "$package_path"
 			;;
 			('deb')
-				pkg_build_deb "$(package_get_path "$pkg")"
+				pkg_build_deb "$package_path"
 			;;
 			('gentoo')
-				pkg_build_gentoo "$(package_get_path "$pkg")"
+				pkg_build_gentoo "$package_path"
 			;;
 			('egentoo')
-				pkg_build_egentoo "$pkg"
+				pkg_build_egentoo "$package"
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
@@ -446,10 +455,11 @@ package_get_name() {
 	fi
 
 	# compute the package path from its identifier
-	local package_name
+	local package_name package_path
 	case "$OPTION_PACKAGE" in
 		('arch'|'deb')
-			package_name=$(basename "$(package_get_path "$package")")
+			package_path=$(package_get_path "$package")
+			package_name=$(basename "$package_path")
 		;;
 		('gentoo'|'egentoo')
 			package_name="$(package_get_id "$package")-$(packages_get_version "$ARCHIVE")"

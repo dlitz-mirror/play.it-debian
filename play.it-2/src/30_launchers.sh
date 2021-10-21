@@ -183,7 +183,9 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'*|'unity3d')
-			chmod +x "$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+			local binary_file
+			binary_file="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+			chmod +x "$binary_file"
 		;;
 	esac
 
@@ -566,8 +568,10 @@ launcher_write_desktop() {
 	fi
 
 	# write desktop file
-	mkdir --parents "$(dirname "$(launcher_desktop_filepath "$application")")"
-	launcher_desktop "$application" > "$(launcher_desktop_filepath "$application")"
+	local desktop_file
+	desktop_file=$(launcher_desktop_filepath "$application")
+	mkdir --parents "$(dirname "$desktop_file")"
+	launcher_desktop "$application" > "$desktop_file"
 
 	# for WINE applications, write desktop file for winecfg
 	if [ "$application" != 'APP_WINECFG' ]; then
@@ -625,12 +629,14 @@ launcher_desktop() {
 # USAGE: launcher_desktop_filepath $application
 # RETURN: an absolute file path
 launcher_desktop_filepath() {
-	local application
+	local application application_id package_path
 	application="$1"
+	application_id=$(application_id "$application")
+	package_path=$(package_get_path "$package")
 
 	printf '%s/%s.desktop' \
-		"$(package_get_path "$package")${PATH_DESK}" \
-		"$(application_id "$application")"
+		"${package_path}${PATH_DESK}" \
+		"$application_id"
 }
 
 # print the XDG desktop "Exec" field for the given application

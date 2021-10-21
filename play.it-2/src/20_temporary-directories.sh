@@ -31,10 +31,11 @@ set_temp_directories() {
 	# Export the path to the packages to build as PKG_xxx_PATH
 	# Some game scripts are expecting this variable to be set
 	# These should be updated to call `package_get_path` instead
-	local package
+	local package package_path
 	for package in "$@"; do
 		testvar "$package" 'PKG'
-		eval "${package}_PATH='$(package_get_path "$package")'"
+		package_path=$(package_get_path "$package")
+		eval "${package}_PATH='${package_path}'"
 		export "${package?}_PATH"
 	done
 
