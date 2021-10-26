@@ -68,6 +68,7 @@ pkg_write_egentoo() {
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
+			return 1
 		;;
 	esac
 
@@ -181,6 +182,7 @@ pkg_build_egentoo() {
 		;;
 		(*)
 			error_unknown_tar_implementation
+			return 1
 		;;
 	esac
 
@@ -213,6 +215,7 @@ pkg_build_egentoo() {
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
+			return 1
 		;;
 	esac
 

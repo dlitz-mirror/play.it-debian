@@ -92,6 +92,7 @@ extract_data_from() {
 			;;
 			(*)
 				error_invalid_argument "${ARCHIVE}_TYPE" 'extract_data_from'
+				return 1
 			;;
 		esac
 
@@ -120,6 +121,7 @@ archive_extraction_7z() {
 		unar -output-directory "$destination" -force-overwrite -no-directory "$file" 1>/dev/null
 	else
 		error_archive_no_extractor_found '7z'
+		return 1
 	fi
 }
 
@@ -141,6 +143,7 @@ archive_extraction_lha() {
 		set_standard_permissions "$destination"
 	else
 		error_archive_no_extractor_found 'lha'
+		return 1
 	fi
 }
 
@@ -189,9 +192,11 @@ archive_extraction_debian() {
 			rm --recursive --force "$tmpdir"
 		else
 			error_archive_no_extractor_found 'debian'
+			return 1
 		fi
 	else
 		error_archive_no_extractor_found 'debian'
+		return 1
 	fi
 }
 
@@ -211,6 +216,7 @@ archive_extraction_innosetup() {
 	fi
 	if ! archive_extraction_innosetup_is_supported "$archive"; then
 		error_innoextract_version_too_old "$archive"
+		return 1
 	fi
 	debug_external_command "innoextract $options --extract --output-dir \"$destination\" \"$file\" 2>/dev/null"
 	innoextract $options --extract --output-dir "$destination" "$file" 2>/dev/null

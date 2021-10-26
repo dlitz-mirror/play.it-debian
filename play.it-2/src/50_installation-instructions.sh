@@ -54,6 +54,7 @@ print_instructions() {
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
+				return 1
 			;;
 		esac
 	fi
@@ -83,6 +84,7 @@ print_instructions_architecture_specific() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
+			return 1
 		;;
 	esac
 }

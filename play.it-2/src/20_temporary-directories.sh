@@ -142,6 +142,7 @@ temporary_directories_full_path() {
 	parent_dir="$1"
 	if [ ! -d "$parent_dir" ]; then
 		error_not_a_directory "$parent_dir"
+		return 1
 	fi
 
 	if [ "$(stat -c '%u' "$parent_dir")" -eq "$(id -u)" ]; then

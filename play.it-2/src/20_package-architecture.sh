@@ -70,6 +70,7 @@ select_package_architecture() {
 		;;
 		(*)
 			error_architecture_not_supported "$OPTION_ARCHITECTURE"
+			return 1
 		;;
 	esac
 	export PACKAGES_LIST

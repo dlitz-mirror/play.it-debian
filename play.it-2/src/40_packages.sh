@@ -18,6 +18,7 @@ write_metadata() {
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'write_metadata'
+			return 1
 		fi
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
 			warning_skip_package 'write_metadata' "$pkg"
@@ -41,6 +42,7 @@ write_metadata() {
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
+				return 1
 			;;
 		esac
 	done
@@ -69,6 +71,7 @@ build_pkg() {
 	for package in "$@"; do
 		if ! testvar "$package" 'PKG'; then
 			error_invalid_argument 'package' 'build_pkg'
+			return 1
 		fi
 		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$package*}" ]; then
 			warning_skip_package 'build_pkg' "$package"
@@ -98,6 +101,7 @@ build_pkg() {
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
+				return 1
 			;;
 		esac
 	done
@@ -303,6 +307,7 @@ package_get_architecture_string() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_architecture_string'
+			return 1
 		;;
 	esac
 
@@ -418,12 +423,14 @@ package_get_path() {
 	if [ -z "$ARCHIVE" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$ARCHIVE'
+		return 1
 	fi
 
 	# check that PLAYIT_WORKDIR is set by the global context
 	if [ -z "$PLAYIT_WORKDIR" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$PLAYIT_WORKDIR'
+		return 1
 	fi
 
 	# compute the package path from its identifier
@@ -452,6 +459,7 @@ package_get_name() {
 	if [ -z "$ARCHIVE" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$ARCHIVE'
+		return 1
 	fi
 
 	# compute the package path from its identifier
@@ -466,6 +474,7 @@ package_get_name() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
+			return 1
 		;;
 	esac
 

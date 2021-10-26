@@ -26,6 +26,7 @@ get_context_specific_value() {
 		;;
 		(*)
 			error_context_invalid "$context"
+			return 1
 		;;
 	esac
 
@@ -64,6 +65,7 @@ get_context_suffix() {
 		;;
 		(*)
 			error_context_invalid "$context"
+			return 1
 		;;
 	esac
 	printf '%s' "$context_suffix"
@@ -78,6 +80,7 @@ get_context_suffix_archive() {
 	current_archive="$ARCHIVE"
 	if [ -z "$current_archive" ]; then
 		error_archive_unset
+		return 1
 	fi
 
 	# Get the suffix from the full archive identifier

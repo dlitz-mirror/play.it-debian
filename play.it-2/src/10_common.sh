@@ -147,8 +147,10 @@ check_option_validity() {
 	option_name=$(printf '%s' "$option_name" | tr '[:upper:]' '[:lower:]')
 	if [ "$option_name" = 'compression' ]; then
 		error_compression_invalid
+		return 1
 	else
 		error_option_invalid "$option_name" "$option_value"
+		return 1
 	fi
 }
 
@@ -164,6 +166,7 @@ guess_tar_implementation() {
 		;;
 		(*)
 			error_unknown_tar_implementation
+			return 1
 		;;
 	esac
 }
