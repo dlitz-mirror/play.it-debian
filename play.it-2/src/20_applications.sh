@@ -115,13 +115,15 @@ application_exe() {
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
 
 	# If no value is set, try to find one based on the application type
-	local application_type
-	application_type=$(application_type "$application")
-	case "$application_type" in
-		('unity3d')
-			application_exe=$(application_unity3d_exe "$application")
-		;;
-	esac
+	if [ -z "$application_exe" ]; then
+		local application_type
+		application_type=$(application_type "$application")
+		case "$application_type" in
+			('unity3d')
+				application_exe=$(application_unity3d_exe "$application")
+			;;
+		esac
+	fi
 
 	# Check that the file name is not empty
 	if [ -z "$application_exe" ]; then
