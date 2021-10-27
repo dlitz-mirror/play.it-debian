@@ -1,7 +1,5 @@
 # write .deb package meta-data
 # USAGE: pkg_write_deb
-# NEEDED VARS: GAME_NAME PKG_DEPS_DEB
-# CALLED BY: write_metadata
 pkg_write_deb() {
 	###
 	# TODO

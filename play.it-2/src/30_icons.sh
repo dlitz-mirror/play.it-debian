@@ -280,11 +280,10 @@ icons_include_from_directory() {
 		return 0
 	fi
 
-	# Get the application name, falls back on the game name
-	local application application_name
+	# Get the application id
+	local application application_id
 	application="$1"
-	application_name=$(get_value "${application}_ID")
-	: "${application_name:=$GAME_ID}"
+	application_id=$(application_id "$application")
 
 	# Get the icons from the given source directory,
 	# then move them to the current package
@@ -300,7 +299,7 @@ icons_include_from_directory() {
 		fi
 
 		# Compute icon file name
-		destination_name="${application_name}.${source_file##*.}"
+		destination_name="${application_id}.${source_file##*.}"
 
 		# Compute icon path
 		destination_directory="$(package_get_path "$(package_get_current)")${PATH_ICON_BASE}/$(icon_get_resolution "$source_file")/apps"
