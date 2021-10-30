@@ -167,6 +167,7 @@ icon_extract_png_from_file() {
 		;;
 		(*)
 			error_invalid_argument 'extension' 'icon_extract_png_from_file'
+			return 1
 		;;
 	esac
 }
@@ -322,6 +323,7 @@ icon_get_resolution() {
 	# Exits with an explicit error if it is missing
 	if ! command -v 'identify' >/dev/null 2>&1; then
 		error_unavailable_command 'icon_get_resolution' 'identify'
+		return 1
 	fi
 
 	local image_resolution_string image_resolution

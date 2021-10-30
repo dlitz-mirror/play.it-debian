@@ -438,6 +438,7 @@ pkg_build_arch() {
 		;;
 		(*)
 			error_unknown_tar_implementation
+			return 1
 		;;
 	esac
 
@@ -462,6 +463,7 @@ pkg_build_arch() {
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_arch'
+			return 1
 		;;
 	esac
 

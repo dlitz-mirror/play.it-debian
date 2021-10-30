@@ -42,6 +42,7 @@ icon_path() {
 	# Check that the path to the icon is not empty
 	if [ -z "$icon_path" ]; then
 		error_icon_path_empty "$icon"
+		return 1
 	fi
 
 	printf '%s' "$icon_path"

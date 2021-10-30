@@ -4,8 +4,10 @@ launcher_write_script() {
 	# check that this has been called with exactly one argument
 	if [ "$#" -eq 0 ]; then
 		error_missing_argument 'launcher_write_script'
+		return 1
 	elif [ "$#" -gt 1 ]; then
 		error_extra_arguments 'launcher_write_script'
+		return 1
 	fi
 
 	# get the current package
@@ -27,6 +29,7 @@ launcher_write_script() {
 	application="$1"
 	if ! testvar "$application" 'APP'; then
 		error_invalid_argument 'application' 'launcher_write_script'
+		return 1
 	fi
 
 	# compute file path
@@ -56,6 +59,7 @@ launcher_write_script() {
 			then
 				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				error_launcher_missing_binary "$binary_path"
+				return 1
 			fi
 		;;
 		('wine')
@@ -66,6 +70,7 @@ launcher_write_script() {
 					[ ! -f "$binary_path" ]
 				then
 					error_launcher_missing_binary "$binary_path"
+					return 1
 				fi
 			fi
 		;;
@@ -76,6 +81,7 @@ launcher_write_script() {
 				[ ! -f "$binary_path" ]
 			then
 				error_launcher_missing_binary "$binary_path"
+				return 1
 			fi
 		;;
 	esac

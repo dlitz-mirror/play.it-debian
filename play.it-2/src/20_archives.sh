@@ -14,6 +14,7 @@ archive_initialize_required() {
 	# Throw an error if no archive candidate has been found
 	if [ -z "$archive_candidate" ]; then
 		error_archive_not_found "$@"
+		return 1
 	fi
 
 	# Call common part of archive initialization
@@ -310,6 +311,7 @@ archive_get_type() {
 		;;
 		(*)
 			error_archive_type_not_set "$archive_identifier"
+			return 1
 		;;
 	esac
 
@@ -337,6 +339,7 @@ archive_integrity_check() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_CHECKSUM' 'archive_integrity_check'
+			return 1
 		;;
 	esac
 }

@@ -27,6 +27,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	if [ -z "${target_version:=}" ]; then
 		error_missing_target_version
+		exit 1
 	fi
 	VERSION_MAJOR_PROVIDED="${LIBRARY_VERSION%%.*}"
 	VERSION_MAJOR_TARGET="${target_version%%.*}"
@@ -37,6 +38,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		[ $VERSION_MINOR_PROVIDED -lt $VERSION_MINOR_TARGET ]
 	then
 		error_incompatible_versions
+		exit 1
 	fi
 	export VERSION_MAJOR_PROVIDED VERSION_MAJOR_TARGET VERSION_MINOR_PROVIDED VERSION_MINOR_TARGET
 
@@ -165,6 +167,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			;;
 			('--'*)
 				error_option_unknown "$1"
+				exit 1
 			;;
 			(*)
 				if [ -f "$1" ]; then
@@ -172,6 +175,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 					export SOURCE_ARCHIVE
 				else
 					error_not_a_file "$1"
+					exit 1
 				fi
 			;;
 		esac
@@ -223,6 +227,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		([0-9]) ;;
 		(*)
 			error_option_invalid 'DEBUG' "$DEBUG"
+			exit 1
 		;;
 	esac
 
@@ -241,9 +246,11 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	OPTION_OUTPUT_DIR=$(printf '%s' "$OPTION_OUTPUT_DIR" | sed "s#^~#$HOME#")
 	if [ ! -d "$OPTION_OUTPUT_DIR" ]; then
 		error_not_a_directory "$OPTION_OUTPUT_DIR"
+		exit 1
 	fi
 	if [ ! -w "$OPTION_OUTPUT_DIR" ]; then
 		error_not_writable "$OPTION_OUTPUT_DIR"
+		exit 1
 	fi
 	export OPTION_OUTPUT_DIR
 
@@ -270,6 +277,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' "$0"
+			exit 1
 		;;
 	esac
 

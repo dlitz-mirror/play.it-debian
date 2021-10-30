@@ -293,6 +293,7 @@ pkg_build_deb() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_deb'
+			return 1
 		;;
 	esac
 

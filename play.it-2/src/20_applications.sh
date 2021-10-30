@@ -128,6 +128,7 @@ application_exe() {
 	# Check that the file name is not empty
 	if [ -z "$application_exe" ]; then
 		error_application_exe_empty "$application" "$application_type"
+		return 1
 	fi
 
 	printf '%s' "$application_exe"
