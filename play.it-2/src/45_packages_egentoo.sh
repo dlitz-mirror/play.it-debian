@@ -6,7 +6,6 @@ pkg_write_egentoo() {
 	local package
 	local pkg_deps
 	local build_deps
-	local unpack_f
 	local postinst_f
 	local package_filename
 	local package_architectures
@@ -40,7 +39,6 @@ pkg_write_egentoo() {
 	fi
 
 	package_filename="$(package_get_name "$package").tar"
-	unpack_f="default"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			package_filename="${package_filename}.gz"
@@ -53,21 +51,13 @@ pkg_write_egentoo() {
 		;;
 		('zstd')
 			package_filename="${package_filename}.zst"
-			build_deps="$build_deps app-arch/zstd"
-			unpack_f="unzstd --force --quiet \$DISTDIR/$package_filename -o \$T/${package_filename%.zst} || die
-	unpack \$T/${package_filename%.zst}"
+			inherits="$inherits unpacker"
+			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
 		;;
 		('lzip')
 			package_filename="${package_filename}.lz"
-			build_deps="$build_deps app-arch/lzip"
-			unpack_f="lzip --decompress --keep \$DISTDIR/$package_filename -o \$T/${package_filename%.lz} || die
-	unpack \$T/${package_filename%.lz}"
-		;;
-		('lzop')
-			package_filename="${package_filename}.lzo"
-			build_deps="$build_deps app-arch/lzop"
-			unpack_f="lzop --decompress --path=\$T \$DISTDIR/$package_filename || die
-	unpack \$T/${package_filename%.lzo}"
+			inherits="$inherits unpacker"
+			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
 		;;
 		('none') ;;
 		(*)
@@ -114,17 +104,13 @@ SRC_URI="$package_filename"
 SLOT="0"
 
 RDEPEND="$pkg_deps"
-BDEPEND="$build_deps"
+BDEPEND="$(printf "$build_deps")"
 
 S=\${WORKDIR}
 
 pkg_nofetch() {
 	elog "Please move \$SRC_URI"
 	elog "to your distfiles folder."
-}
-
-src_unpack() {
-	$unpack_f
 }
 
 src_install() {
@@ -212,10 +198,6 @@ pkg_build_egentoo() {
 		('lzip')
 			tar_options="$tar_options --lzip"
 			package_filename="${package_filename}.lz"
-		;;
-		('lzop')
-			tar_options="$tar_options --lzop"
-			package_filename="${package_filename}.lzo"
 		;;
 		('none') ;;
 		(*)
