@@ -38,6 +38,12 @@ pkg_write_egentoo() {
 		pkg_deps="${pkg_deps} $(package_get_provide "$package")"
 	fi
 
+	# Gentoo policy is that dependencies should be displayed one per line, and
+	# indentation is to be done using tabulations.
+	local sed_expression
+	sed_expression='s/ /\n\t/g'
+	pkg_deps=$(printf '%s' "$pkg_deps" | sed --expression="$sed_expression")
+
 	package_filename="$(package_get_name "$package").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
@@ -103,7 +109,7 @@ DESCRIPTION="$(package_get_description "$package")"
 SRC_URI="$package_filename"
 SLOT="0"
 
-RDEPEND="$pkg_deps"
+RDEPEND="$(printf "$pkg_deps")"
 BDEPEND="$(printf "$build_deps")"
 
 S=\${WORKDIR}
