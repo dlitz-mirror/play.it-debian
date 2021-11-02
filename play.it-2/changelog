@@ -1,3 +1,11 @@
+2.14.3
+
+  * Fix ability to call the wrapper with --help
+  * WINE: Fix a failure to get the path to current package when generating the
+    .desktop launcher for winecfg
+  * Gentoo: Update icon cache after installation and removal
+  * Gentoo: Fix "provides" fields for ebuild generation
+
 2.14.2
 
   * Ensure all errors related to fetching the path where a package is prepared
