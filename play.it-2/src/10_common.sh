@@ -171,3 +171,16 @@ guess_tar_implementation() {
 	esac
 }
 
+# returns best available lzip implementation
+# fails if lzip is not available
+# USAGE: get_lzip_implementation
+get_lzip_implementation() {
+	for command in 'tarlz' 'plzip' 'lzip'; do
+		if command -v "$command" >/dev/null 2>&1; then
+			printf '%s' "$command"
+			return 0
+		fi
+	done
+	error_dependency_not_found 'lzip'
+	return 1
+}

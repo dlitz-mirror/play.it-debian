@@ -146,7 +146,12 @@ pkg_build_egentoo() {
 	local package
 	local package_path
 	local package_filename
+	local tar_command
 	local tar_options
+	local compression_command
+	local compression_options
+
+	tar_command="tar"
 
 	package="$1"
 	if [ -z "$package" ]; then
@@ -159,6 +164,42 @@ pkg_build_egentoo() {
 	# We don’t want both binary packages to overwrite each other
 	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
 	package_filename=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").tar")
+
+	case $OPTION_COMPRESSION in
+		('gzip')
+			compression_command="gzip"
+			package_filename="${package_filename}.gz"
+		;;
+		('xz')
+			compression_command="xz"
+			compression_options="--threads=0"
+			package_filename="${package_filename}.xz"
+		;;
+		('bzip2')
+			compression_command="bzip2"
+			package_filename="${package_filename}.bz2"
+		;;
+		('zstd')
+			compression_command="zstd"
+			package_filename="${package_filename}.zst"
+		;;
+		('lzip')
+			compression_command="$(get_lzip_implementation)"
+			if [ $compression_command = "tarlz" ]; then
+				tar_command="tarlz"
+				compression_command=""
+				PLAYIT_TAR_IMPLEMENTATION="gnutar"
+			else
+				compression_options="-0"
+				package_filename="${package_filename}.lz"
+			fi
+		;;
+		('none') ;;
+		(*)
+			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
+			return 1
+		;;
+	esac
 
 	tar_options='--create'
 	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
@@ -177,34 +218,7 @@ pkg_build_egentoo() {
 		;;
 	esac
 
-	case $OPTION_COMPRESSION in
-		('gzip')
-			tar_options="$tar_options --gzip"
-			package_filename="${package_filename}.gz"
-		;;
-		('xz')
-			export XZ_DEFAULTS="${XZ_DEFAULTS:=--threads=0}"
-			tar_options="$tar_options --xz"
-			package_filename="${package_filename}.xz"
-		;;
-		('bzip2')
-			tar_options="$tar_options --bzip2"
-			package_filename="${package_filename}.bz2"
-		;;
-		('zstd')
-			tar_options="$tar_options --zstd"
-			package_filename="${package_filename}.zst"
-		;;
-		('lzip')
-			tar_options="$tar_options --lzip"
-			package_filename="${package_filename}.lz"
-		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
-			return 1
-		;;
-	esac
+	compression_options="${compression_options} --stdout --quiet"
 
 	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
@@ -221,9 +235,14 @@ pkg_build_egentoo() {
 		return 0
 	fi
 
-	debug_external_command "tar --directory \"$package_path\" $tar_options --file \"$package_filename\" ."
-	# shellcheck disable=SC2046
-	tar --directory "$package_path" $tar_options --file "$package_filename" .
+	if [ -z "$compression_command" ]; then
+		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options --file \"$package_filename\" ."
+		# shellcheck disable=SC2046
+		"$tar_command" --directory "$package_path" $tar_options --file "$package_filename" .
+	else
+		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options . | \"$compression_command\" $compression_options > \"$package_filename\""
+		"$tar_command" --directory "$package_path" $tar_options . | "$compression_command" $compression_options > "$package_filename"
+	fi
 
 	eval "${package}"_PKG=\""$package_filename"\"
 	export "${package}"_PKG
