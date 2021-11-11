@@ -42,7 +42,10 @@ debug_entering_function() {
 
 		case "$debug_level" in
 			([0-9]) ;;
-			(*) error_invalid_argument 'debug_level' 'debug_entering_function' ;;
+			(*)
+				error_invalid_argument 'debug_level' 'debug_entering_function'
+				return 1
+			;;
 		esac
 
 	else
@@ -78,7 +81,10 @@ debug_leaving_function() {
 
 		case "$debug_level" in
 			([0-9]) ;;
-			(*) error_invalid_argument 'debug_level' 'debug_entering_function' ;;
+			(*)
+				error_invalid_argument 'debug_level' 'debug_entering_function'
+				return 1
+			;;
 		esac
 
 	else

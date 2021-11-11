@@ -43,6 +43,7 @@ INPUT_FILE="$1"
 
 if [ ! -f "$INPUT_FILE" ]; then
 	error_not_a_file "$INPUT_FILE"
+	exit 1
 fi
 
 # Locate script by file name
@@ -52,6 +53,7 @@ SCRIPT=$(games_find_script_for_archive "$FILE_NAME")
 # Exit with an error if the given archive is not supported
 if [ -z "$SCRIPT" ]; then
 	error_no_script_found_for_archive "$FILE_NAME"
+	exit 1
 fi
 
 export PLAYIT_LIB2

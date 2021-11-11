@@ -16,7 +16,6 @@ error_invalid_argument() {
 	esac
 	print_error
 	printf "$message" "$var" "$func" "$value"
-	return 1
 }
 
 # display an error when a function is called without an argument, but is expecting some
@@ -35,7 +34,6 @@ error_missing_argument() {
 	esac
 	print_error
 	printf "$message" "$function"
-	return 1
 }
 
 # display an error when a function is called with multiple arguments, but is expecting no more than one
@@ -54,7 +52,6 @@ error_extra_arguments() {
 	esac
 	print_error
 	printf "$message" "$function"
-	return 1
 }
 
 # display an error when a file is expected and something else has been given
@@ -73,7 +70,6 @@ error_not_a_file() {
 	esac
 	print_error
 	printf "$message" "$param"
-	return 1
 }
 
 # display an error when an unknown application type is used
@@ -117,7 +113,6 @@ error_unknown_tar_implementation() {
 	esac
 	print_error
 	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
-	return 1
 }
 
 # display a message when a required dependency is missing
@@ -137,7 +132,6 @@ error_dependency_not_found() {
 	esac
 	print_error
 	printf "$message" "$command_name" "$provider"
-	return 1
 }
 
 # display an error message if an icon dependency is missing
@@ -160,7 +154,6 @@ error_icon_dependency_not_found() {
 		;;
 	esac
 	printf "$message"
-	return 1
 }
 
 # display an error when trying to extract an archive but no extractor is present
@@ -181,7 +174,6 @@ error_archive_no_extractor_found() {
 	esac
 	print_error
 	printf "$message" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # Display an error when trying to write a launcher for a missing binary
@@ -203,7 +195,6 @@ error_launcher_missing_binary() {
 	esac
 	print_error
 	printf "$message" "$binary" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when the value assigned to a given option is not valid
@@ -225,7 +216,6 @@ error_option_invalid() {
 	esac
 	print_error
 	printf "$message" "$option_value" "$option_name" "$option_name"
-	return 1
 }
 
 # display an error when the compression method is not compatible with the
@@ -254,7 +244,6 @@ error_compression_invalid() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$compression_method" "$package_format" "$allowed_values"
-	return 1
 }
 
 # display an error message when a required archive is not found
@@ -282,7 +271,6 @@ error_archive_not_found() {
 	print_error
 	printf "$message"
 	information_archives_list "$@"
-	return 1
 }
 
 # display an error message when we failed to guess the type of an archive
@@ -301,7 +289,6 @@ error_archive_type_not_set() {
 	esac
 	print_error
 	printf "$message" "$archive"
-	return 1
 }
 
 # display an error message when an integrity check fails
@@ -322,7 +309,6 @@ error_hashsum_mismatch() {
 	esac
 	print_error
 	printf "$message" "$file"
-	return 1
 }
 
 # display an error when the selected architecture is not supported
@@ -341,7 +327,6 @@ error_architecture_not_supported() {
 	esac
 	print_error
 	printf "$message" "$architecture"
-	return 1
 }
 
 # display an error when a variable required by the calling function is not set
@@ -361,7 +346,6 @@ error_variable_not_set() {
 	esac
 	print_error
 	printf "$message" "$function" "$variable"
-	return 1
 }
 
 # display an error if there is not enough free storage space
@@ -383,7 +367,6 @@ error_not_enough_free_space() {
 	for directory in "$@"; do
 		printf '%s\n' "$directory"
 	done
-	return 1
 }
 
 # print error when available version of innoextract is too old
@@ -410,7 +393,6 @@ error_innoextract_version_too_old() {
 	printf "$message" "$archive" \
 		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/debian#available-innoextract-version-is-too-old' \
 		'https://forge.dotslashplay.it/play.it/doc/-/wikis/distributions/ubuntu#innoextract-version-is-too-old'
-	return 1
 }
 
 # diplay an error message if an icon file can not be found
@@ -431,7 +413,6 @@ error_icon_file_not_found() {
 	esac
 	print_error
 	printf "$message" "$file" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when called with an unknown option
@@ -450,7 +431,6 @@ error_option_unknown() {
 	esac
 	print_error
 	printf "$message" "$option_name"
-	return 1
 }
 
 # display an error when a given path is not a directory
@@ -469,7 +449,6 @@ error_not_a_directory() {
 	esac
 	print_error
 	printf "$message" "$path"
-	return 1
 }
 
 # display an error when a given path is not writable
@@ -488,7 +467,6 @@ error_not_writable() {
 	esac
 	print_error
 	printf "$message" "$path"
-	return 1
 }
 
 # display an error when a function has been given an unexpected empty string
@@ -510,7 +488,6 @@ error_empty_string() {
 	esac
 	print_error
 	printf "$message" "$string" "$function" "$PLAYIT_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when a required command is missing, but a function was expecting it to be available
@@ -532,7 +509,6 @@ error_unavailable_command() {
 	esac
 	print_error
 	printf "$message" "$command" "$function" "$PLAYIT_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when the calling script does not set its target library version
@@ -553,7 +529,6 @@ error_missing_target_version() {
 	esac
 	print_error
 	printf "$message" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when the calling script is not compatible with the provided library version
@@ -577,7 +552,6 @@ error_incompatible_versions() {
 		"$VERSION_MAJOR_PROVIDED.$VERSION_MINOR_PROVIDED" \
 		"$VERSION_MAJOR_TARGET.$VERSION_MINOR_TARGET" \
 		"$((VERSION_MAJOR_TARGET + 1)).0"
-	return 1
 }
 
 # display an error when no game script has been found for a given archive
@@ -596,7 +570,6 @@ error_no_script_found_for_archive() {
 	esac
 	print_error
 	printf "$message" "$archive"
-	return 1
 }
 
 # display an error when a variable is empty
@@ -617,7 +590,6 @@ error_empty_variable() {
 	esac
 	print_error
 	printf "$message" "$variable" "$PLAYIT_GAMES_BUG_TRACKER_URL"
-	return 1
 }
 
 # display an error when trying to use a case-insensitive filesystem
@@ -642,8 +614,6 @@ error_case_insensitive_filesystem_is_not_supported() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$directory"
-
-	return 1
 }
 
 # display an error when trying to use a filesystem without support for UNIX permissions
@@ -668,8 +638,6 @@ error_unix_permissions_support_is_required() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$directory"
-
-	return 1
 }
 
 # display an error when trying to get the current archive but none is set
@@ -688,7 +656,6 @@ error_archive_unset() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message"
-	return 1
 }
 
 # display an error when trying to use an unkown type of context
@@ -719,7 +686,6 @@ error_context_invalid() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$context"
-	return 1
 }
 
 # display an error when using an invalid format for an application id
@@ -747,8 +713,6 @@ error_application_id_invalid() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$application" "$application_id"
-
-	return 1
 }
 
 # display an error when using an invalid format for an application ScummVM id
@@ -777,8 +741,6 @@ error_application_scummid_invalid() {
 		"$application" \
 		"$application_scummid" \
 		'https://www.scummvm.org/compatibility/'
-
-	return 1
 }
 
 # display an error when using an invalid format for an application ResidualVM id
@@ -807,8 +769,6 @@ error_application_residualid_invalid() {
 		"$application" \
 		"$application_residualid" \
 		'https://www.residualvm.org/compatibility/'
-
-	return 1
 }
 
 # display an error when APP_xxx_EXE is unset but the application requires it
@@ -832,8 +792,6 @@ error_application_exe_empty() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "${application}_EXE" "$application_type"
-
-	return 1
 }
 
 # display an error when a variable is spanning multiple lines
@@ -856,8 +814,6 @@ error_variable_multiline() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$variable_name"
-
-	return 1
 }
 
 # display an error when calling a type-restricted function on the wrong application type
@@ -881,8 +837,6 @@ error_application_wrong_type() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$function_name" "$application_type"
-
-	return 1
 }
 
 # displays an error when no valid candidates for ./play.it temporary directory
@@ -906,8 +860,6 @@ error_no_valid_temp_dir_found() {
 	# shellcheck disable=SC2059
 	printf "$message"
 	printf '%s\n' "$@"
-
-	return 1
 }
 
 # display an error when the path to a given icon is unset but we try to use it
@@ -930,7 +882,5 @@ error_icon_path_empty() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$icon"
-
-	return 1
 }
 

@@ -1,3 +1,13 @@
+2.14.2
+
+  * Ensure all errors related to fetching the path where a package is prepared
+    are blocking
+  * Fix fetching current package when getting the path where a .desktop file
+    should be written
+  * Fall back on guessed value for game binary only if no value has been
+    explicitely set
+  * Improve handling of failure state on errors
+
 2.14.1
 
   * Only use application type guessing if none is explicitely set

@@ -6,6 +6,7 @@ archive_get_md5sum_cached() {
 	name="$1"
 	if [ -z "$name" ]; then
 		error_empty_string 'archive_get_md5sum_cached' 'name'
+		return 1
 	fi
 	get_value "${name}_CACHED_MD5SUM"
 }
@@ -19,15 +20,19 @@ archive_get_md5sum_computed() {
 	file="$2"
 	if [ -z "$name" ]; then
 		error_empty_string 'archive_get_md5sum_computed' 'name'
+		return 1
 	fi
 	if [ -z "$file" ]; then
 		error_empty_string 'archive_get_md5sum_computed' 'file'
+		return 1
 	fi
 	if [ ! -f "$file" ]; then
 		error_not_a_file "$file"
+		return 1
 	fi
 	if ! command -v 'md5sum' 'awk' >/dev/null 2>&1; then
 		error_unavailable_command 'archive_get_md5sum_computed' 'md5sum'
+		return 1
 	fi
 	md5sum=$(md5sum "$file" | awk '{print $1}')
 	export "${name?}_CACHED_MD5SUM=$md5sum"
@@ -41,6 +46,7 @@ archive_has_md5sum_cached() {
 	name="$1"
 	if [ -z "$name" ]; then
 		error_empty_string 'archive_has_md5sum_cached' 'name'
+		return 1
 	fi
 	test -n "$(archive_get_md5sum_cached "$name")"
 }
@@ -56,15 +62,19 @@ archive_integrity_check_md5() {
 	name="$3"
 	if [ -z "$archive" ]; then
 		error_empty_string 'archive_integrity_check_md5' 'archive'
+		return 1
 	fi
 	if [ -z "$file" ]; then
 		error_empty_string 'archive_integrity_check_md5' 'file'
+		return 1
 	fi
 	if [ -z "$name" ]; then
 		error_empty_string 'archive_integrity_check_md5' 'name'
+		return 1
 	fi
 	if [ ! -f "$file" ]; then
 		error_not_a_file "$file"
+		return 1
 	fi
 	# Cache MD5 hash here to prevent it from getting ignored in a subshell
 	if ! archive_has_md5sum_cached "$name"; then
@@ -76,6 +86,7 @@ archive_integrity_check_md5() {
 	file_sum="$(archive_get_md5sum_cached "$name")"
 	if [ "$file_sum" != "$archive_sum" ]; then
 		error_hashsum_mismatch "$file"
+		return 1
 	fi
 }
 

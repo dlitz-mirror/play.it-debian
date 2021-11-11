@@ -31,10 +31,11 @@ set_temp_directories() {
 	# Export the path to the packages to build as PKG_xxx_PATH
 	# Some game scripts are expecting this variable to be set
 	# These should be updated to call `package_get_path` instead
-	local package
+	local package package_path
 	for package in "$@"; do
 		testvar "$package" 'PKG'
-		eval "${package}_PATH='$(package_get_path "$package")'"
+		package_path=$(package_get_path "$package")
+		eval "${package}_PATH='${package_path}'"
 		export "${package?}_PATH"
 	done
 
@@ -141,6 +142,7 @@ temporary_directories_full_path() {
 	parent_dir="$1"
 	if [ ! -d "$parent_dir" ]; then
 		error_not_a_directory "$parent_dir"
+		return 1
 	fi
 
 	if [ "$(stat -c '%u' "$parent_dir")" -eq "$(id -u)" ]; then
