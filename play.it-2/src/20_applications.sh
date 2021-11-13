@@ -251,7 +251,7 @@ application_icons_list() {
 	# Fall back on the default value of a single APP_xxx_ICON icon
 	local default_icon application_type
 	default_icon="${application}_ICON"
-	application_type=$(application_type "$application")
+	application_type=$(application_type "$application" 'unknown')
 	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon
