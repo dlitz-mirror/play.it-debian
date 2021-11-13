@@ -53,6 +53,9 @@ organize_data() {
 		return 0
 	fi
 	archive_path=$(get_context_specific_value 'archive' "ARCHIVE_${content_id}_PATH")
+	if [ -z "$archive_path" ]; then
+		archive_path=$(content_path_default)
+	fi
 
 	# Set path to source and destination
 	local package_path destination_path source_path
