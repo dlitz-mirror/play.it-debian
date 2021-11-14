@@ -34,7 +34,7 @@ applications_list() {
 }
 
 # print the type of the given application
-# USAGE: application_type $application
+# USAGE: application_type $application [$fallback_type]
 # RETURN: the application type keyword, from the supported values:
 #         - dosbox
 #         - java
@@ -45,16 +45,28 @@ applications_list() {
 #         - residualvm
 #         - scummvm
 #         - wine
+#         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
 	local application_type
 	application_type=$(get_value "${1}_TYPE")
 
-	# If not type has been explicitely set, try to guess one
+	# If no type has been explicitely set, try to guess one
 	if [ -z "$application_type" ]; then
 		if [ -n "$(unity3d_name)" ]; then
 			application_type='unity3d'
 		fi
+	fi
+
+	# If no type has been found and a fallback has been provided,
+	# use the fallback.
+	local fallback_type
+	fallback_type="$2"
+	if \
+		[ -z "$application_type" ] \
+		&& [ -n "$fallback_type" ]
+	then
+		application_type="$fallback_type"
 	fi
 
 	# Check that a supported type has been fetched
@@ -71,6 +83,12 @@ application_type() {
 			'unity3d' | \
 			'wine' \
 		)
+			printf '%s' "$application_type"
+			return 0
+		;;
+		('unknown')
+			# "unknown" is the only allowed invalid application type,
+			# to be used only as a fallback.
 			printf '%s' "$application_type"
 			return 0
 		;;
@@ -233,7 +251,7 @@ application_icons_list() {
 	# Fall back on the default value of a single APP_xxx_ICON icon
 	local default_icon application_type
 	default_icon="${application}_ICON"
-	application_type=$(application_type "$application")
+	application_type=$(application_type "$application" 'unknown')
 	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon
