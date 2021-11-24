@@ -559,12 +559,13 @@ launcher_write_desktop() {
 	application="$1"
 
 	# Skip any action if called for a package excluded for target architectures
+	local package
+	package=$(package_get_current)
 	if \
 		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& \
-		! packages_get_list | grep --quiet "$(package_get_current)"
+		&& ! packages_get_list | grep --quiet "$package"
 	then
-		warning_skip_package 'launcher_write_desktop' "$(package_get_current)"
+		warning_skip_package 'launcher_write_desktop' "$package"
 		return 0
 	fi
 
@@ -585,8 +586,9 @@ launcher_write_desktop() {
 		application_type=$(application_type "$application")
 		case "$application_type" in
 			('wine')
-				local winecfg_desktop
-				winecfg_desktop="$(package_get_path "$package")${PATH_DESK}/${GAME_ID}_winecfg.desktop"
+				local package_path winecfg_desktop
+				package_path=$(package_get_path "$package")
+				winecfg_desktop="${package_path}${PATH_DESK}/${GAME_ID}_winecfg.desktop"
 				if [ ! -e "$winecfg_desktop" ]; then
 					export APP_WINECFG_ID="${GAME_ID}_winecfg"
 					export APP_WINECFG_NAME="$GAME_NAME - WINE configuration"

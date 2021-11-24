@@ -394,9 +394,9 @@ package_get_provide() {
 	# on Gentoo, avoid mixups between numbers in package ID and version number
 	# and add the required "!!games-playit/" prefix to the package ID
 	case "$OPTION_PACKAGE" in
-		('gentoo')
+		('gentoo'|'egentoo')
 			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
-			package_provide="!!games-playit/${package_provide}"
+			package_provide="!games-playit/${package_provide}"
 		;;
 	esac
 

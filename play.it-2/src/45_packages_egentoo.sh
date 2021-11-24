@@ -7,9 +7,11 @@ pkg_write_egentoo() {
 	local pkg_deps
 	local build_deps
 	local unpack_f
+	local postinst_f
 	local package_filename
 	local package_architectures
 	local ebuild_path
+	local inherits
 
 	package="$1"
 	if [ -z "$package" ];then
@@ -17,6 +19,8 @@ pkg_write_egentoo() {
 		error_empty_string 'pkg_write_egentoo' '$package'
 		return 1
 	fi
+
+	inherits="xdg"
 
 	local dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${package}_DEPS")
@@ -84,6 +88,14 @@ pkg_write_egentoo() {
 		;;
 	esac
 
+	if [ -n "$(get_value "${package}_POSTINST_RUN")" ]; then
+		postinst_f="$(get_value "${package}_POSTINST_RUN")"
+	# For compatibility with pre-2.12 scripts,
+	# ignored if a package-specific value is already set
+	elif [ -e "$postinst" ]; then
+		postinst_f="$(cat "$postinst")"
+	fi
+
 	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
 	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").ebuild")
 
@@ -93,6 +105,8 @@ pkg_write_egentoo() {
 
 EAPI=7
 RESTRICT="fetch strip binchecks"
+
+inherit $inherits
 
 KEYWORDS="$package_architectures"
 DESCRIPTION="$(package_get_description "$package")"
@@ -116,21 +130,12 @@ src_unpack() {
 src_install() {
 	cp --recursive --link --verbose \$S/* \$D || die
 }
-EOF
-
-	if [ -n "$(get_value "${package}_POSTINST_RUN")" ]; then
-		cat >> "$ebuild_path" << EOF
 
 pkg_postinst() {
-	$(get_value "${package}_POSTINST_RUN")
+	xdg_pkg_postinst
+	$postinst_f
 }
 EOF
-
-	# For compatibility with pre-2.12 scripts,
-	# ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		compat_pkg_write_gentoo_postinst "$ebuild_path"
-	fi
 
 	if [ -n "$(get_value "${package}_PRERM_RUN")" ]; then
 		cat >> "$ebuild_path" << EOF
