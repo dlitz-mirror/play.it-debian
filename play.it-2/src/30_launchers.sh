@@ -10,16 +10,13 @@ launcher_write_script() {
 		return 1
 	fi
 
-	# get the current package
+	# Check that the current package is part of the target architectures
 	local package
 	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& ! packages_get_list | grep --quiet "$package"
+	then
 		warning_skip_package 'launcher_write_script' "$package"
 		return 0
 	fi
@@ -45,6 +42,8 @@ launcher_write_script() {
 		;;
 		('mono')
 			# Game binary for Mono games may be included in another package than the binaries one
+			local packages_list
+			packages_list=$(packages_get_list)
 			binary_found=0
 			for tested_package in $packages_list; do
 				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$(application_exe "$application")"
@@ -687,17 +686,14 @@ launcher_desktop_exec() {
 # CALLS: launcher_write_script launcher_write_desktop
 # CALLED BY: launchers_write
 launcher_write() {
-	# get the current package
+	# Check that the current package is part of the target architectures
 	local package
 	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# skip any action if called for a package excluded for target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
-		warning_skip_package 'launcher_write_script' "$package"
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& ! packages_get_list | grep --quiet "$package"
+	then
+		warning_skip_package 'launcher_write' "$package"
 		return 0
 	fi
 
@@ -714,13 +710,14 @@ launcher_write() {
 launchers_write() {
 	debug_entering_function 'launchers_write' 2
 
-	# Skip any action if called for a package excluded for target architectures
+	# Check that the current package is part of the target architectures
+	local package
+	package=$(package_get_current)
 	if \
 		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& \
-		! packages_get_list | grep --quiet "$(package_get_current)"
+		&& ! packages_get_list | grep --quiet "$package"
 	then
-		warning_skip_package 'launcher_write_script' "$(package_get_current)"
+		warning_skip_package 'launchers_write' "$package"
 		debug_leaving_function 'launchers_write' 2
 		return 0
 	fi

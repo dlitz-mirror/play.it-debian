@@ -32,16 +32,13 @@ prepare_package_layout() {
 organize_data() {
 	local source_path destination_path source_files_pattern source_file destination_file
 
-	# get the current package
+	# Check that the current package is part of the target architectures
 	local package
 	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# Check that the current package is part of the target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& ! packages_get_list | grep --quiet "$package"
+	then
 		warning_skip_package 'organize_data' "$package"
 		return 0
 	fi
