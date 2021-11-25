@@ -312,7 +312,7 @@ icon_check_file_existence_pre_2_8() {
 		# get the real file name from its globbed one
 		local file_path
 		file_path=$(eval printf '%s' "$directory/$file")
-		file="${file_path#${directory}/}"
+		file=${file_path#"${directory}/"}
 	fi
 
 	printf '%s' "$file"
