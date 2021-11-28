@@ -32,16 +32,13 @@ prepare_package_layout() {
 organize_data() {
 	local source_path destination_path source_files_pattern source_file destination_file
 
-	# get the current package
+	# Check that the current package is part of the target architectures
 	local package
 	package=$(package_get_current)
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	# Check that the current package is part of the target architectures
-	if [ "$OPTION_ARCHITECTURE" != 'all' ] && [ -n "${packages_list##*$package*}" ]; then
+	if \
+		[ "$OPTION_ARCHITECTURE" != 'all' ] \
+		&& ! packages_get_list | grep --quiet "$package"
+	then
 		warning_skip_package 'organize_data' "$package"
 		return 0
 	fi
@@ -69,8 +66,8 @@ organize_data() {
 			set +o noglob
 			for source_file in "$source_path"/$source_files_pattern; do
 				if [ -e "$source_file" ]; then
-					debug_source_file 'Found' "$archive_path${source_file#$source_path}"
-					destination_file="${destination_path}/${source_file#$source_path}"
+					debug_source_file 'Found' "${archive_path}${source_file#"$source_path"}"
+					destination_file="${destination_path}/${source_file#"$source_path"}"
 					debug_file_to_package "$package"
 					mkdir --parents "$(dirname "$destination_file")"
 					cp \
@@ -83,7 +80,7 @@ organize_data() {
 						"$source_file" "$destination_file"
 					rm --force --recursive "$source_file"
 				else
-					debug_source_file 'Missing' "$archive_path${source_file#$source_path}"
+					debug_source_file 'Missing' "${archive_path}${source_file#"$source_path"}"
 				fi
 			done
 			set -o noglob
