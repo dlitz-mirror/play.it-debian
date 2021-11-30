@@ -219,29 +219,21 @@ pkg_set_deps_deb() {
 			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='libvorbisfile3'
 			;;
-			('wine')
-				case "$(package_get_architecture "$pkg")" in
-					('32') pkg_set_deps_deb 'wine32' ;;
-					('64') pkg_set_deps_deb 'wine64' ;;
+			('wine'|'wine-staging')
+				###
+				# TODO
+				# $pkg should be computed here, not implicitely inherited from the calling function
+				###
+				local package_architecture
+				package_architecture=$(package_get_architecture "$pkg")
+				case "$package_architecture" in
+					('32')
+						pkg_dep='wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'
+					;;
+					('64')
+						pkg_dep='wine64 | wine64-development | wine-stable-amd64 | wine-devel-amd64 | wine-staging-amd64, wine'
+					;;
 				esac
-			;;
-			('wine32')
-				pkg_dep='wine32 | wine32-development | wine-bin | wine-i386 | wine-staging-i386, wine'
-			;;
-			('wine64')
-				pkg_dep='wine64 | wine64-development | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
-			;;
-			('wine-staging')
-				case "$(package_get_architecture "$pkg")" in
-					('32') pkg_set_deps_deb 'wine32-staging' ;;
-					('64') pkg_set_deps_deb 'wine64-staging' ;;
-				esac
-			;;
-			('wine32-staging')
-				pkg_dep='wine-staging-i386, winehq-staging:amd64 | winehq-staging'
-			;;
-			('wine64-staging')
-				pkg_dep='wine-staging-amd64, winehq-staging'
 			;;
 			('winetricks')
 				pkg_dep='winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
