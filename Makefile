@@ -19,11 +19,19 @@ endif
 
 PANDOC := $(shell command -v pandoc 2> /dev/null)
 
+DEBUG := 0
+
 all: libplayit2.sh play.it.6
 
 libplayit2.sh: play.it-2/src/*
 	mkdir --parents play.it-2/lib
+ifeq ($(DEBUG),1)
 	cat play.it-2/src/* > play.it-2/lib/libplayit2.sh
+else
+	find play.it-2/src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' '!' -name '99_init.sh' -execdir cat '{}' '+' > play.it-2/lib/libplayit2.sh
+	cat play.it-2/src/99_init.sh >> play.it-2/lib/libplayit2.sh
+	sed -i -e '/^\s*debug_/d' play.it-2/lib/libplayit2.sh
+endif
 
 %.6: %.6.md
 ifneq ($(PANDOC),)

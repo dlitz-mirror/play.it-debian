@@ -151,10 +151,12 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' \
 		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
 		debug_option_value "$option"
+		true
 	done
 	for option in 'CHECKSUM' 'COMPRESSION' \
 		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
 		debug_option_value "OPTION_$option"
+		true
 	done
 
 	# Make sure the output directory exists and is writable
