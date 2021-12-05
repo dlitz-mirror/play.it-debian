@@ -28,8 +28,7 @@ libplayit2.sh: play.it-2/src/*
 ifeq ($(DEBUG),1)
 	cat play.it-2/src/* > play.it-2/lib/libplayit2.sh
 else
-	find play.it-2/src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' '!' -name '99_init.sh' -execdir cat '{}' '+' > play.it-2/lib/libplayit2.sh
-	cat play.it-2/src/99_init.sh >> play.it-2/lib/libplayit2.sh
+	find play.it-2/src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' -print0 | sort -z | xargs -0 cat > play.it-2/lib/libplayit2.sh
 	sed -i -e '/^\s*debug_/d' play.it-2/lib/libplayit2.sh
 endif
 
