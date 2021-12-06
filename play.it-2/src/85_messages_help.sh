@@ -270,15 +270,30 @@ help_output_dir() {
 help_debug() {
 	local message
 
-	#shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='\tDéfinit le niveau de debug. Il vaut 1 par défaut.\n\n'
-			;;
-		('en'|*)
-			message='\tSet the debug level. Default is 1.\n\n'
-			;;
-	esac
+	# shellcheck disable=SC2050
+	if [ %%DEBUG_DISABLED%% -eq 1 ]; then
+		#shellcheck disable=SC2031
+		case "${LANG%_*}" in
+			('fr')
+				message='\tLe debug a été désactivé lors de la compilation.\n'
+				message="$message"'\tCette option est sans effet.\n\n'
+				;;
+			('en'|*)
+				message='\tDebug was disabled at compile-time.\n'
+				message="$message"'\tThis option has no effect.\n\n'
+				;;
+		esac
+	else
+		#shellcheck disable=SC2031
+		case "${LANG%_*}" in
+			('fr')
+				message='\tDéfinit le niveau de debug. Il vaut 1 par défaut.\n\n'
+				;;
+			('en'|*)
+				message='\tSet the debug level. Default is 1.\n\n'
+				;;
+		esac
+	fi
 
 	printf -- '--debug\n'
 	printf -- '--debug=N\n'

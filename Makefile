@@ -27,9 +27,10 @@ libplayit2.sh: play.it-2/src/*
 	mkdir --parents play.it-2/lib
 ifeq ($(DEBUG),1)
 	cat play.it-2/src/* > play.it-2/lib/libplayit2.sh
+	sed -i -e 's/%%DEBUG_DISABLED%%/0/' play.it-2/lib/libplayit2.sh
 else
 	find play.it-2/src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' -print0 | sort -z | xargs -0 cat > play.it-2/lib/libplayit2.sh
-	sed -i -e '/^\s*debug_/d' play.it-2/lib/libplayit2.sh
+	sed -i -e '/^\s*debug_/d' -e 's/%%DEBUG_DISABLED%%/1/' play.it-2/lib/libplayit2.sh
 endif
 
 %.6: %.6.md
