@@ -8,10 +8,15 @@ print_instructions_egentoo() {
 	info_package_to_distfiles
 
 	for pkg in "$@"; do
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${PACKAGES_LIST##*$pkg*}" ]; then
+		# Check that the current package is part of the target architectures
+		if \
+			[ "$OPTION_ARCHITECTURE" != 'all' ] \
+			&& ! packages_get_list | grep --quiet "$pkg"
+		then
 			warning_skip_package 'print_instructions_egentoo' "$pkg"
 			return 0
 		fi
+
 		pkg_path=$(realpath "$(get_value "${pkg}_PKG")")
 		ebuild_path="$(basename "${pkg_path%%.*}").ebuild"
 		pkg_id="$(package_get_id "$pkg")"

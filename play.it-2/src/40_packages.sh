@@ -11,16 +11,17 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'write_metadata'
 			return 1
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
+
+		# Check that the current package is part of the target architectures
+		if \
+			[ "$OPTION_ARCHITECTURE" != 'all' ] \
+			&& ! packages_get_list | grep --quiet "$pkg"
+		then
 			warning_skip_package 'write_metadata' "$pkg"
 			continue
 		fi
@@ -64,19 +65,22 @@ build_pkg() {
 
 	debug_entering_function 'build_pkg'
 
-	# Get packages list for the current game
-	local packages_list package package_path
-	packages_list=$(packages_get_list)
-
+	local package package_path
 	for package in "$@"; do
 		if ! testvar "$package" 'PKG'; then
 			error_invalid_argument 'package' 'build_pkg'
 			return 1
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$package*}" ]; then
+
+		# Check that the current package is part of the target architectures
+		if \
+			[ "$OPTION_ARCHITECTURE" != 'all' ] \
+			&& ! packages_get_list | grep --quiet "$package"
+		then
 			warning_skip_package 'build_pkg' "$package"
-			return 0
+			continue
 		fi
+
 		package_path=$(package_get_path "$package")
 
 		###
