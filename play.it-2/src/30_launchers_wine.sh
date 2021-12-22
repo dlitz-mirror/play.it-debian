@@ -75,7 +75,7 @@ launcher_write_script_wine_application_variables() {
 	application="$1"
 	file="$2"
 	local application_exe application_options
-	application_exe=$(application_exe "$application")
+	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
 
 	cat >> "$file" <<- EOF

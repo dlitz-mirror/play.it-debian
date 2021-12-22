@@ -155,6 +155,17 @@ application_exe() {
 	printf '%s' "$application_exe"
 }
 
+# print the file name of the application, with single quotes escaped,
+# for inclusion in a single quote delimited variable declaration.
+# USAGE: application_exe_escaped $application
+# RETURN: the application file name with single quotes escaped
+application_exe_escaped() {
+	local application
+	application="$1"
+	# If the file name includes single quotes, replace each one with: '\''
+	application_exe "$application" | sed "s/'/'\\\''/g"
+}
+
 # print the name of the given application, for display in menus
 # USAGE: application_name $application
 # RETURN: the pretty version of the application name
