@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall install-library install-wrapper install-manpage
+.PHONY: all clean install uninstall
 
 UID := $(shell id --user)
 
@@ -33,16 +33,11 @@ else
 endif
 
 clean:
-	rm -f play.it-2/lib/libplayit2.sh
-	rm -f *.6
+	rm --force play.it-2/lib/libplayit2.sh *.6
 
-install-library:
+install:
 	install -D --mode=644 play.it-2/lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-
-install-wrapper:
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
-
-install-manpage:
 ifneq ($(wildcard play.it.6),)
 	mkdir --parents $(DESTDIR)$(mandir)/man6
 	gzip -c play.it.6 > $(DESTDIR)$(mandir)/man6/play.it.6.gz
@@ -50,13 +45,6 @@ else
 	@echo "manpage not generated; skipping its installation"
 endif
 
-
-install: install-library install-wrapper install-manpage
-
 uninstall:
-	rm $(DESTDIR)$(bindir)/play.it
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) || true
-	rm $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
-	rm --force $(DESTDIR)$(mandir)/man6/play.it.6.gz
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man6
+	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.s $(DESTDIR)$(mandir)/man6/play.it.6.gz
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) $(DESTDIR)$(datadir)/play.it $(DESTDIR)$(mandir)/man6
