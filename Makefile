@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall install-library install-games install-wrapper install-manpage
+.PHONY: all clean install uninstall install-library install-wrapper install-manpage
 
 UID := $(shell id --user)
 
@@ -16,7 +16,6 @@ else
     datadir = $(prefix)
     mandir = $(prefix)/man
 endif
-gamesdir = $(DESTDIR)$(datadir)/play.it/games
 
 PANDOC := $(shell command -v pandoc 2> /dev/null)
 
@@ -40,9 +39,6 @@ clean:
 install-library:
 	install -D --mode=644 play.it-2/lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 
-install-games:
-	install -D --mode=755 --target-directory=$(gamesdir)/50_core play.it-2/games/*
-
 install-wrapper:
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
 
@@ -55,13 +51,11 @@ else
 endif
 
 
-install: install-library install-games install-wrapper install-manpage
+install: install-library install-wrapper install-manpage
 
 uninstall:
 	rm $(DESTDIR)$(bindir)/play.it
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) || true
-	rm $(gamesdir)/50_core/play-*.sh
-	rmdir -p --ignore-fail-on-non-empty $(gamesdir)/50_core
 	rm $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
 	rm --force $(DESTDIR)$(mandir)/man6/play.it.6.gz
