@@ -59,6 +59,12 @@ fi
 export PLAYIT_LIB2
 
 shift 1
+
+if [ "$1" = "--show-game-script" ]; then
+	realpath "$SCRIPT"
+	exit 0
+fi
+
 "$SCRIPT" "$INPUT_FILE" "$@"
 
 exit 0

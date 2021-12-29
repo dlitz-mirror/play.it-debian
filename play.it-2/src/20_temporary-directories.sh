@@ -1,9 +1,5 @@
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
-# NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: testvar temporary_directories_find_base check_directory_is_case_sensitive
-#	check_directory_supports_unix_permissions
-# SETS: PLAYIT_WORKDIR postinst prerm
 set_temp_directories() {
 	local base_directory
 
@@ -16,7 +12,7 @@ set_temp_directories() {
 	base_directory=$(temporary_directories_find_base)
 
 	# Generate a directory with a unique name for the current instance
-	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "${GAME_ID}.XXXXX")"
+	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "$(game_id).XXXXX")"
 	debug_option_value 'PLAYIT_WORKDIR'
 	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR

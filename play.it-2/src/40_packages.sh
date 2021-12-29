@@ -1,7 +1,5 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
-# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID PKG_PROVIDE
-# CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
 		# shellcheck disable=SC2046
@@ -159,9 +157,14 @@ package_get_current() {
 		package='PKG_MAIN'
 	fi
 
-	printf '%s' "$package"
+	# If the current package is not part of the full list of packages,
+	# something went wrong
+	if ! packages_get_list | grep --quiet --fixed-strings --word-regexp "$package"; then
+		error_package_not_in_list "$package"
+		return 1
+	fi
 
-	return 0
+	printf '%s' "$package"
 }
 
 # get the full list of packages to generate
@@ -202,7 +205,7 @@ package_get_id() {
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
-		package_id="$GAME_ID"
+		package_id=$(game_id)
 	fi
 
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
@@ -338,8 +341,8 @@ package_get_description() {
 
 	###
 	# TODO
-	# Check that $GAME_NAME and $script_version are non-empty strings
-	# Display an explicit error message if one is unset or empty
+	# Check that $script_version is a non-empty strings
+	# Display an explicit error message if it is unset or empty
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
@@ -350,21 +353,21 @@ package_get_description() {
 				package_description_full='Description: %s - %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$package_description" "$script_version")
+				package_description_full=$(printf "$package_description_full" "$(game_name)" "$package_description" "$script_version")
 			else
 				package_description_full='Description: %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$script_version")
+				package_description_full=$(printf "$package_description_full" "$(game_name)" "$script_version")
 			fi
 		;;
 		('arch'|'gentoo')
 			if [ -n "$package_description" ]; then
 				# shellcheck disable=SC2154
-				package_description_full="$GAME_NAME - $package_description - ./play.it script version $script_version"
+				package_description_full="$(game_name) - $package_description - ./play.it script version $script_version"
 			else
 				# shellcheck disable=SC2154
-				package_description_full="$GAME_NAME - ./play.it script version $script_version"
+				package_description_full="$(game_name) - ./play.it script version $script_version"
 			fi
 		;;
 	esac

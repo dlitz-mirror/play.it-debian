@@ -102,6 +102,9 @@ check_deps() {
 			('fakeroot'*)
 				check_deps_fakeroot "$dep"
 			;;
+			('lzip')
+				get_lzip_implementation >/dev/null
+			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
 					error_dependency_not_found "$dep"

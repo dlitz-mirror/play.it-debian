@@ -688,6 +688,30 @@ error_context_invalid() {
 	printf "$message" "$context"
 }
 
+# display an error when using an invalid format for game id
+# USAGE: error_game_id_invalid $game_id
+error_game_id_invalid() {
+	local game_id message
+	game_id="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼid de jeu fourni ne correspond pas au format attendu : "%s"\n'
+			message="$message"'Cette valeur ne peut utiliser que des caractères du set [-a-z0-9],'
+			message="$message"' et ne peut ni débuter ni sʼachever par un tiret.\n'
+		;;
+		('en'|*)
+			message='The provided game id is not using the expected format: "%s"\n'
+			message="$message"'The value should only include characters from the set [-a-z0-9],'
+			message="$message"' and can not begin nor end with an hyphen.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$game_id"
+}
+
 # display an error when using an invalid format for an application id
 # USAGE: error_application_id_invalid $application $application_id
 error_application_id_invalid() {
@@ -882,5 +906,89 @@ error_icon_path_empty() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$icon"
+}
+
+# display an error when the config file is not found
+# USAGE: error_config_file_not_found $config_file_path
+error_config_file_not_found() {
+	local message
+	local config_file_path
+
+	config_file_path="$1"
+
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Le fichier de configuration %s nʼa pas pu être trouvé.\n'
+			;;
+		('en'|*)
+			message='The configuration file %s has not been found.\n'
+			;;
+	esac
+	print_error
+	printf "$message" "$config_file_path"
+	return 1
+}
+
+# No default content path is set
+# USAGE: error_no_content_path_default
+error_no_content_path_default() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='CONTENT_PATH_DEFAULT nʼest pas défini, mais il a été requis.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			message='CONTENT_PATH_DEFAULT is not set, but it has been required.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+}
+
+# the current package is not part of the full list of packages to generate
+# USAGE: error_package_not_in_list $package
+error_package_not_in_list() {
+	local message package
+	package="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Cet identifiant de paquet ne correspond pas à un paquet à construire : %s\n'
+		;;
+		('en'|*)
+			message='The following package identifier is not part of the list of packages to generate: %s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$package"
+}
+
+# An icon file with an unsupported MIME type has been passed
+# USAGE: error_icon_unsupported_type $icon_file $icon_type
+error_icon_unsupported_type() {
+	local icon_file icon_type message
+	icon_file="$1"
+	icon_type="$2"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Le fichier dʼicône suivant est du type MIME "%s", qui nʼest pas pris en charge : %s\n'
+		;;
+		('en'|*)
+			message='The following icon file is of the "%s" MIME type, that is not supported: %s\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$icon_type" "$icon_file"
 }
 

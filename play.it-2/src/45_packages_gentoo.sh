@@ -1,7 +1,5 @@
 # write .ebuild package meta-data
 # USAGE: pkg_write_gentoo
-# NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
-# CALLED BY: write_metadata
 pkg_write_gentoo() {
 	###
 	# TODO
@@ -294,7 +292,9 @@ pkg_set_deps_gentoo() {
 				done
 			;;
 		esac
-		pkg_deps="$pkg_deps $pkg_dep"
+		if [ -n "$pkg_dep" ]; then
+			pkg_deps="$pkg_deps $pkg_dep"
+		fi
 		if [ -n "$pkg_overlay" ]; then
 			if ! printf '%s' "$GENTOO_OVERLAYS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet "$pkg_overlay"; then
 				GENTOO_OVERLAYS="$GENTOO_OVERLAYS $pkg_overlay"
