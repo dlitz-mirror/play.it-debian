@@ -27,6 +27,46 @@ launcher_wine_command_path() {
 	EOF
 }
 
+# print the snippet calling winetricks with the set list of verbs
+# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_wine_winetricks_call() {
+	local winetricks_verbs
+	winetricks_verbs="$*"
+
+	# Return early if no winetricks verb has been passed
+	if [ -z "$winetricks_verbs" ]; then
+		return 0
+	fi
+
+	cat <<- 'EOF'
+	# Export custom paths to WINE commands
+	# so winetricks use them instead of the default paths
+	WINE=$(wine_command)
+	WINESERVER=$(wineserver_command)
+	WINEBOOT=$(wineboot_command)
+	export WINE WINESERVER WINEBOOT
+
+	EOF
+	cat <<- EOF
+	# Run winetricks, spawning a terminal if required
+	# to ensure it is not silently running in the background
+	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	    winetricks $winetricks_verbs
+	elif command -v xterm >/dev/null; then
+	    xterm -e winetricks $winetricks_verbs
+	else
+	    winetricks $winetricks_verbs
+	fi
+
+	EOF
+	cat <<- 'EOF'
+	# Wait a bit for lingering WINE processes to terminate
+	sleep 1s
+
+	EOF
+}
+
 # WINE - write application-specific variables
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
@@ -90,6 +130,7 @@ launcher_write_script_wine_prefix_build() {
 	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
 	    LANG=C $(wineboot_command) --init 2>/dev/null
+
 	EOF
 
 	if version_is_at_least '2.8' "$target_version"; then
@@ -100,6 +141,7 @@ launcher_write_script_wine_prefix_build() {
 		        rm "$directory"
 		        mkdir "$directory"
 		    done
+
 		EOF
 	fi
 
@@ -109,18 +151,8 @@ launcher_write_script_wine_prefix_build() {
 		launcher_wine_user_legacy_link 'Documents' 'My Documents'
 	} >> "$file"
 
-	if [ "$APP_WINETRICKS" ]; then
-		cat >> "$file" <<- EOF
-		    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-		        winetricks $APP_WINETRICKS
-		    elif command -v xterm >/dev/null; then
-		        xterm -e winetricks $APP_WINETRICKS
-		    else
-		        winetricks $APP_WINETRICKS
-		    fi
-		    sleep 1s
-		EOF
-	fi
+	# shellcheck disable=SC2086
+	launcher_wine_winetricks_call $APP_WINETRICKS >> "$file"
 
 	if [ "$APP_REGEDIT" ]; then
 		cat >> "$file" <<- EOF
