@@ -152,10 +152,6 @@ liberror() {
 	return 1
 }
 
-skipping_pkg_warning() {
-	warning_skip_package "$1" "$2"
-}
-
 archive_set_error_not_found() {
 	error_archive_not_found "$@"
 	return 1
@@ -173,10 +169,6 @@ archive_print_file_in_use() {
 archive_integrity_check_error() {
 	error_hashsum_mismatch "$1"
 	return 1
-}
-
-select_package_architecture_warning_unavailable() {
-	warning_architecture_not_available "$OPTION_ARCHITECTURE"
 }
 
 select_package_architecture_error_unknown() {
