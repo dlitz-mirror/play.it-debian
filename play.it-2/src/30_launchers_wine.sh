@@ -1,3 +1,32 @@
+# print the snippet providing a function returning the path to the `wine` command
+# USAGE: launcher_wine_command_path
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_wine_command_path() {
+	cat <<- 'EOF'
+	# Print the path to the `wine` command
+	wine_command() {
+	    if [ -z "$PLAYIT_WINE_CMD" ]; then
+	        command -v wine
+	        return 0
+	    fi
+	    printf '%s' "$PLAYIT_WINE_CMD"
+	}
+	winecfg_command() {
+	    wine_command | sed 's#/wine$#/winecfg#'
+	}
+	wineboot_command() {
+	    wine_command | sed 's#/wine$#/wineboot#'
+	}
+	wineserver_command() {
+	    wine_command | sed 's#/wine$#/wineserver#'
+	}
+	regedit_command() {
+	    wine_command | sed 's#/wine$#/regedit#'
+	}
+
+	EOF
+}
+
 # WINE - write application-specific variables
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script

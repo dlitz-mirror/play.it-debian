@@ -154,6 +154,7 @@ launcher_write_script() {
 			fi
 			launcher_write_script_game_variables "$target_file"
 			launcher_write_script_user_files "$target_file"
+			launcher_wine_command_path >> "$target_file"
 			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_wine_prefix_build "$target_file"
