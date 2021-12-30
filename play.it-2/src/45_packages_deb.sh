@@ -271,8 +271,6 @@ pkg_build_deb() {
 	pkg_filename="$OPTION_OUTPUT_DIR/$(basename "$1").deb"
 	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
 		information_package_already_exists "$(basename "$pkg_filename")"
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg?}_PKG
 		return 0
 	fi
 
@@ -291,14 +289,10 @@ pkg_build_deb() {
 	information_package_building "$(basename "$pkg_filename")"
 	if [ "$DRY_RUN" -eq 1 ]; then
 		printf '\n'
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg?}_PKG
 		return 0
 	fi
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
-	eval ${pkg}_PKG=\"$pkg_filename\"
-	export ${pkg?}_PKG
 
 	information_package_building_done
 }
