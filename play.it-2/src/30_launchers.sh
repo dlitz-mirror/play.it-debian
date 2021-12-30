@@ -10,17 +10,6 @@ launcher_write_script() {
 		return 1
 	fi
 
-	# Check that the current package is part of the target architectures
-	local package
-	package=$(package_get_current)
-	if \
-		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& ! packages_get_list | grep --quiet "$package"
-	then
-		warning_skip_package 'launcher_write_script' "$package"
-		return 0
-	fi
-
 	# parse argument
 	local application
 	application="$1"
@@ -30,8 +19,11 @@ launcher_write_script() {
 	fi
 
 	# compute file path
-	local target_file
-	target_file="$(package_get_path "$package")${PATH_BIN}/$(application_id "$application")"
+	local package package_path application_id target_file
+	package=$(package_get_current)
+	package_path=$(package_get_path "$package")
+	application_id=$(application_id "$application")
+	target_file="${package_path}${PATH_BIN}/${application_id}"
 
 	# Check that the launcher target exists
 	local application_type binary_path binary_found tested_package
@@ -555,17 +547,6 @@ launcher_write_desktop() {
 	local application
 	application="$1"
 
-	# Skip any action if called for a package excluded for target architectures
-	local package
-	package=$(package_get_current)
-	if \
-		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& ! packages_get_list | grep --quiet "$package"
-	then
-		warning_skip_package 'launcher_write_desktop' "$package"
-		return 0
-	fi
-
 	# if called in dry run mode, return before writing anything
 	if [ "$DRY_RUN" -eq 1 ]; then
 		return 0
@@ -583,7 +564,8 @@ launcher_write_desktop() {
 		application_type=$(application_type "$application")
 		case "$application_type" in
 			('wine')
-				local package_path winecfg_desktop
+				local package package_path winecfg_desktop
+				package=$(package_get_current)
 				package_path=$(package_get_path "$package")
 				game_id=$(game_id)
 				winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
@@ -682,21 +664,9 @@ launcher_desktop_exec() {
 
 # write both launcher script and menu entry for a single application
 # USAGE: launcher_write $application
-# NEEDED VARS: OPTION_ARCHITECTURE
 # CALLS: launcher_write_script launcher_write_desktop
 # CALLED BY: launchers_write
 launcher_write() {
-	# Check that the current package is part of the target architectures
-	local package
-	package=$(package_get_current)
-	if \
-		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& ! packages_get_list | grep --quiet "$package"
-	then
-		warning_skip_package 'launcher_write' "$package"
-		return 0
-	fi
-
 	local application
 	application="$1"
 	launcher_write_script "$application"
@@ -709,18 +679,6 @@ launcher_write() {
 # RETURN: nothing
 launchers_write() {
 	debug_entering_function 'launchers_write' 2
-
-	# Check that the current package is part of the target architectures
-	local package
-	package=$(package_get_current)
-	if \
-		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& ! packages_get_list | grep --quiet "$package"
-	then
-		warning_skip_package 'launchers_write' "$package"
-		debug_leaving_function 'launchers_write' 2
-		return 0
-	fi
 
 	# If called with no argument, default to handling the full list of applications
 	if [ $# -eq 0 ]; then

@@ -6,15 +6,6 @@ print_instructions_gentoo() {
 	printf 'quickunpkg --'
 
 	for pkg in "$@"; do
-		# Check that the current package is part of the target architectures
-		if \
-			[ "$OPTION_ARCHITECTURE" != 'all' ] \
-			&& ! packages_get_list | grep --quiet "$pkg"
-		then
-			warning_skip_package 'print_instructions_gentoo' "$pkg"
-			return 0
-		fi
-
 		pkg_path=$(realpath "$(get_value "${pkg}_PKG")")
 		if [ -z "${pkg_path##* *}" ]; then
 			str_format=' "%s"'

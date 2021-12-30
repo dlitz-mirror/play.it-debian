@@ -34,17 +34,6 @@ organize_data() {
 	content_id="$1"
 	target_path="$2"
 
-	# Check that the current package is part of the target architectures
-	local package
-	package=$(package_get_current)
-	if \
-		[ "$OPTION_ARCHITECTURE" != 'all' ] \
-		&& ! packages_get_list | grep --quiet "$package"
-	then
-		warning_skip_package 'organize_data' "$package"
-		return 0
-	fi
-
 	# Get list of files, and path to files
 	local archive_files archive_path
 	archive_files=$(get_context_specific_value 'archive'  "ARCHIVE_${content_id}_FILES")
@@ -58,8 +47,9 @@ organize_data() {
 	fi
 
 	# Set path to source and destination
-	local package_path destination_path source_path
+	local package package_path destination_path source_path
 	source_path="$PLAYIT_WORKDIR/gamedata/$archive_path"
+	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
 	destination_path="${package_path}${target_path}"
 
