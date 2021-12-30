@@ -26,7 +26,6 @@ help() {
 
 	# print details about options usage
 	printf 'OPTIONS\n\n'
-	help_architecture
 	help_checksum
 	help_compression
 	help_prefix
@@ -59,33 +58,6 @@ help() {
 	# shellcheck disable=SC2046
 	information_archives_list $(archives_return_list)
 
-	return 0
-}
-
-# display --architecture option usage
-# USAGE: help_architecture
-help_architecture() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='\tChoix de lʼarchitecture à construire\n\n'
-			message="$message"'\t%s\ttoutes les architectures disponibles\n'                        # all
-			message="$message"'\t%s\tpaquets 32-bit seulement\n'                                    # 32
-			message="$message"'\t%s\tpaquets 64-bit seulement\n'                                    # 64
-			message="$message"'\t%s\tpaquets pour lʼarchitecture du système courant uniquement\n\n' # auto
-		;;
-		('en'|*)
-			message='\tTarget architecture selection\n\n'
-			message="$message"'\t%s\tall available architectures\n'                     # all
-			message="$message"'\t%s\t32-bit packages only\n'                            # 32
-			message="$message"'\t%s\t64-bit packages only\n'                            # 64
-			message="$message"'\t%s\tpackages for current system architecture only\n\n' # auto
-		;;
-	esac
-	printf -- '--architecture=all|32|64|auto\n'
-	printf -- '--architecture all|32|64|auto\n\n'
-	printf "$message" 'all' '32' '64' 'auto'
 	return 0
 }
 

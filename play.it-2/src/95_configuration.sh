@@ -68,9 +68,7 @@ parse_arguments() {
 				help
 				exit 0
 			;;
-			('--architecture='*|\
-			 '--architecture'|\
-			 '--checksum='*|\
+			('--checksum='*|\
 			 '--checksum'|\
 			 '--compression='*|\
 			 '--compression'|\
