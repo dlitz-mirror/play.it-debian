@@ -89,7 +89,7 @@ launcher_write_script_wine_prefix_build() {
 	if ! [ -e "$WINEPREFIX" ]; then
 	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
-	    LANG=C wineboot --init 2>/dev/null
+	    LANG=C $(wineboot_command) --init 2>/dev/null
 	EOF
 
 	if version_is_at_least '2.8' "$target_version"; then
@@ -131,7 +131,7 @@ launcher_write_script_wine_prefix_build() {
 		        cd "$WINEPREFIX/drive_c/"
 		        cp "$PATH_GAME/$reg_file" .
 		        reg_file_basename="$(basename "$reg_file")"
-		        wine regedit "$reg_file_basename"
+		        $(regedit_command) "$reg_file_basename"
 		        rm "$reg_file_basename"
 		    )
 		    done
@@ -237,7 +237,7 @@ launcher_write_script_wine_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	wine "$APP_EXE" $APP_OPTIONS "$@"
+	$(wine_command) "$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
 
@@ -257,7 +257,7 @@ launcher_write_script_winecfg_run() {
 	cat >> "$file" <<- 'EOF'
 	# Run WINE configuration
 
-	winecfg
+	$(winecfg_command)
 
 	EOF
 
