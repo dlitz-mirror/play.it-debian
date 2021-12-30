@@ -1,3 +1,72 @@
+# print the snippet providing a function returning the path to the `wine` command
+# USAGE: launcher_wine_command_path
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_wine_command_path() {
+	cat <<- 'EOF'
+	# Print the path to the `wine` command
+	wine_command() {
+	    if [ -z "$PLAYIT_WINE_CMD" ]; then
+	        command -v wine
+	        return 0
+	    fi
+	    printf '%s' "$PLAYIT_WINE_CMD"
+	}
+	winecfg_command() {
+	    wine_command | sed 's#/wine$#/winecfg#'
+	}
+	wineboot_command() {
+	    wine_command | sed 's#/wine$#/wineboot#'
+	}
+	wineserver_command() {
+	    wine_command | sed 's#/wine$#/wineserver#'
+	}
+	regedit_command() {
+	    wine_command | sed 's#/wine$#/regedit#'
+	}
+
+	EOF
+}
+
+# print the snippet calling winetricks with the set list of verbs
+# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+launcher_wine_winetricks_call() {
+	local winetricks_verbs
+	winetricks_verbs="$*"
+
+	# Return early if no winetricks verb has been passed
+	if [ -z "$winetricks_verbs" ]; then
+		return 0
+	fi
+
+	cat <<- 'EOF'
+	# Export custom paths to WINE commands
+	# so winetricks use them instead of the default paths
+	WINE=$(wine_command)
+	WINESERVER=$(wineserver_command)
+	WINEBOOT=$(wineboot_command)
+	export WINE WINESERVER WINEBOOT
+
+	EOF
+	cat <<- EOF
+	# Run winetricks, spawning a terminal if required
+	# to ensure it is not silently running in the background
+	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	    winetricks $winetricks_verbs
+	elif command -v xterm >/dev/null; then
+	    xterm -e winetricks $winetricks_verbs
+	else
+	    winetricks $winetricks_verbs
+	fi
+
+	EOF
+	cat <<- 'EOF'
+	# Wait a bit for lingering WINE processes to terminate
+	sleep 1s
+
+	EOF
+}
+
 # WINE - write application-specific variables
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
@@ -60,7 +129,8 @@ launcher_write_script_wine_prefix_build() {
 	if ! [ -e "$WINEPREFIX" ]; then
 	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
-	    LANG=C wineboot --init 2>/dev/null
+	    LANG=C $(wineboot_command) --init 2>/dev/null
+
 	EOF
 
 	if version_is_at_least '2.8' "$target_version"; then
@@ -71,6 +141,7 @@ launcher_write_script_wine_prefix_build() {
 		        rm "$directory"
 		        mkdir "$directory"
 		    done
+
 		EOF
 	fi
 
@@ -80,18 +151,8 @@ launcher_write_script_wine_prefix_build() {
 		launcher_wine_user_legacy_link 'Documents' 'My Documents'
 	} >> "$file"
 
-	if [ "$APP_WINETRICKS" ]; then
-		cat >> "$file" <<- EOF
-		    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-		        winetricks $APP_WINETRICKS
-		    elif command -v xterm >/dev/null; then
-		        xterm -e winetricks $APP_WINETRICKS
-		    else
-		        winetricks $APP_WINETRICKS
-		    fi
-		    sleep 1s
-		EOF
-	fi
+	# shellcheck disable=SC2086
+	launcher_wine_winetricks_call $APP_WINETRICKS >> "$file"
 
 	if [ "$APP_REGEDIT" ]; then
 		cat >> "$file" <<- EOF
@@ -102,7 +163,7 @@ launcher_write_script_wine_prefix_build() {
 		        cd "$WINEPREFIX/drive_c/"
 		        cp "$PATH_GAME/$reg_file" .
 		        reg_file_basename="$(basename "$reg_file")"
-		        wine regedit "$reg_file_basename"
+		        $(regedit_command) "$reg_file_basename"
 		        rm "$reg_file_basename"
 		    )
 		    done
@@ -208,7 +269,7 @@ launcher_write_script_wine_run() {
 	launcher_write_script_prerun "$application" "$file"
 
 	cat >> "$file" <<- 'EOF'
-	wine "$APP_EXE" $APP_OPTIONS "$@"
+	$(wine_command) "$APP_EXE" $APP_OPTIONS "$@"
 
 	EOF
 
@@ -228,7 +289,7 @@ launcher_write_script_winecfg_run() {
 	cat >> "$file" <<- 'EOF'
 	# Run WINE configuration
 
-	winecfg
+	$(winecfg_command)
 
 	EOF
 
