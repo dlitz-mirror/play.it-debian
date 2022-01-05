@@ -74,6 +74,9 @@ launcher_write_script_wine_prefix_build() {
 		EOF
 	fi
 
+	# Set compatibility link to legacy AppData path
+	launcher_wine_appdata_legacy_link >> "$file"
+
 	if [ "$APP_WINETRICKS" ]; then
 		cat >> "$file" <<- EOF
 		    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
@@ -227,5 +230,28 @@ launcher_write_script_winecfg_run() {
 	EOF
 
 	return 0
+}
+
+# WINE - Set compatibility link to legacy AppData path
+# USAGE: launcher_wine_appdata_legacy_link
+# RETURN: the code snippet setting the compatibility links to AppData,
+#         indented with 4 spaces
+launcher_wine_appdata_legacy_link() {
+	cat <<- 'EOF'
+	# Set compatibility link to legacy AppData path
+	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
+	appdata_path_current='AppData/Roaming'
+	appdata_path_legacy='Application Data'
+	(
+	    cd "$user_directory"
+	    if [ ! -e "${user_directory}/${appdata_path_current}" ]; then
+	        appdata_path_current_parent=$(dirname "$appdata_path_current")
+	        mkdir --parents "$appdata_path_current_parent"
+	        mv "$appdata_path_legacy" "$appdata_path_current"
+	    fi
+	    ln --symbolic "$appdata_path_current" "$appdata_path_legacy"
+	)
+
+	EOF
 }
 
