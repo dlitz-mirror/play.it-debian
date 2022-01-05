@@ -75,11 +75,9 @@ launcher_write_script_wine_prefix_build() {
 	fi
 
 	{
-		# Set compatibility link to legacy AppData path
-		launcher_wine_appdata_legacy_link
-
-		# Set compatibility link to legacy Documents path
-		launcher_wine_documents_legacy_link
+		# Set compatibility links to legacy user paths
+		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
+		launcher_wine_user_legacy_link 'Documents' 'My Documents'
 	} >> "$file"
 
 	if [ "$APP_WINETRICKS" ]; then
@@ -237,47 +235,31 @@ launcher_write_script_winecfg_run() {
 	return 0
 }
 
-# WINE - Set compatibility link to legacy AppData path
-# USAGE: launcher_wine_appdata_legacy_link
-# RETURN: the code snippet setting the compatibility links to AppData,
+# WINE - Set compatibility link to legacy user path
+# USAGE: launcher_wine_user_legacy_link $path_current $path_legacy
+# RETURN: the code snippet setting the compatibility links,
 #         indented with 4 spaces
-launcher_wine_appdata_legacy_link() {
+launcher_wine_user_legacy_link() {
+	local path_current path_legacy
+	path_current="$1"
+	path_legacy="$2"
 	cat <<- 'EOF'
-	# Set compatibility link to legacy AppData path
+	# Set compatibility link to a legacy user path
 	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
-	appdata_path_current='AppData/Roaming'
-	appdata_path_legacy='Application Data'
-	(
-	    cd "$user_directory"
-	    if [ ! -e "${user_directory}/${appdata_path_current}" ]; then
-	        appdata_path_current_parent=$(dirname "$appdata_path_current")
-	        mkdir --parents "$appdata_path_current_parent"
-	        mv "$appdata_path_legacy" "$appdata_path_current"
-	    fi
-	    ln --symbolic "$appdata_path_current" "$appdata_path_legacy"
-	)
-
 	EOF
-}
-
-# WINE - Set compatibility link to legacy Documents path
-# USAGE: launcher_wine_documents_legacy_link
-# RETURN: the code snippet setting the compatibility links to Documents,
-#         indented with 4 spaces
-launcher_wine_appdata_legacy_link() {
+	cat <<- EOF
+	path_current='${path_current}'
+	path_legacy='${path_legacy}'
+	EOF
 	cat <<- 'EOF'
-	# Set compatibility link to legacy Documents path
-	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
-	documents_path_current='Documents'
-	documents_path_legacy='My Documents'
 	(
 	    cd "$user_directory"
-	    if [ ! -e "${user_directory}/${documents_path_current}" ]; then
-	        documents_path_current_parent=$(dirname "$documents_path_current")
-	        mkdir --parents "$documents_path_current_parent"
-	        mv "$documents_path_legacy" "$documents_path_current"
+	    if [ ! -e "${user_directory}/${path_current}" ]; then
+	        path_current_parent=$(dirname "$path_current")
+	        mkdir --parents "$path_current_parent"
+	        mv "$path_legacy" "$path_current"
 	    fi
-	    ln --symbolic "$documents_path_current" "$documents_path_legacy"
+	    ln --symbolic "$path_current" "$path_legacy"
 	)
 
 	EOF
