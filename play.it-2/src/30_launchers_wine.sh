@@ -74,8 +74,13 @@ launcher_write_script_wine_prefix_build() {
 		EOF
 	fi
 
-	# Set compatibility link to legacy AppData path
-	launcher_wine_appdata_legacy_link >> "$file"
+	{
+		# Set compatibility link to legacy AppData path
+		launcher_wine_appdata_legacy_link
+
+		# Set compatibility link to legacy Documents path
+		launcher_wine_documents_legacy_link
+	} >> "$file"
 
 	if [ "$APP_WINETRICKS" ]; then
 		cat >> "$file" <<- EOF
@@ -250,6 +255,29 @@ launcher_wine_appdata_legacy_link() {
 	        mv "$appdata_path_legacy" "$appdata_path_current"
 	    fi
 	    ln --symbolic "$appdata_path_current" "$appdata_path_legacy"
+	)
+
+	EOF
+}
+
+# WINE - Set compatibility link to legacy Documents path
+# USAGE: launcher_wine_documents_legacy_link
+# RETURN: the code snippet setting the compatibility links to Documents,
+#         indented with 4 spaces
+launcher_wine_appdata_legacy_link() {
+	cat <<- 'EOF'
+	# Set compatibility link to legacy Documents path
+	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
+	documents_path_current='Documents'
+	documents_path_legacy='My Documents'
+	(
+	    cd "$user_directory"
+	    if [ ! -e "${user_directory}/${documents_path_current}" ]; then
+	        documents_path_current_parent=$(dirname "$documents_path_current")
+	        mkdir --parents "$documents_path_current_parent"
+	        mv "$documents_path_legacy" "$documents_path_current"
+	    fi
+	    ln --symbolic "$documents_path_current" "$documents_path_legacy"
 	)
 
 	EOF
