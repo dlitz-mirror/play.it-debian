@@ -43,7 +43,7 @@ set_architecture() {
 icons_linking_postinst() {
 	if \
 		! version_is_at_least '2.8' "$target_version" && \
-		[ -z "${PACKAGES_LIST##*PKG_DATA*}" ]
+		packages_get_list | grep --quiet --fixed-strings 'PKG_DATA'
 	then
 		(
 			PKG='PKG_DATA'
