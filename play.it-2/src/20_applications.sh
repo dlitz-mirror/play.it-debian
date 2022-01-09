@@ -48,8 +48,9 @@ applications_list() {
 #         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
-	local application_type
-	application_type=$(get_value "${1}_TYPE")
+	local application application_type
+	application="$1"
+	application_type=$(get_context_specific_value 'package' "${application}_TYPE")
 
 	# If no type has been explicitely set, try to guess one
 	if [ -z "$application_type" ]; then
