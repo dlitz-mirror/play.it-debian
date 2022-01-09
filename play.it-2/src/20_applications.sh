@@ -212,7 +212,7 @@ application_options() {
 	# Get the application options string from its identifier
 	local application application_options
 	application="$1"
-	application_options=$(get_value "${application}_OPTIONS")
+	application_options=$(get_context_specific_value 'package' "${application}_OPTIONS")
 
 	# Check that the options string does not span multiple lines
 	if [ "$(printf '%s' "$application_options" | wc --lines)" -gt 1 ]; then
