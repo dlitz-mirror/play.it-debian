@@ -1,3 +1,17 @@
+# Keep compatibility with 2.15 and older
+
+extract_data_from() {
+	[ "$PLAYIT_WORKDIR" ] || return 1
+	[ "$ARCHIVE" ] || return 1
+	debug_entering_function 'extract_data_from'
+	local file
+	for file in "$@"; do
+		archive_extraction "$file"
+	done
+	debug_leaving_function 'extract_data_from'
+}
+
+
 # Keep compatibility with 2.13 and older
 
 icons_include_png_from_directory() {
