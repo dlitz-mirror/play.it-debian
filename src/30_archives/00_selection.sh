@@ -206,6 +206,7 @@ archive_set_properties_from_candidate() {
 	# Set other archive properties
 	local property
 	for property in \
+		'EXTRACTOR' \
 		'MD5' \
 		'TYPE' \
 		'SIZE' \
@@ -304,6 +305,18 @@ archive_get_type() {
 	# Return guessed type
 	printf '%s' "$archive_type"
 	return 0
+}
+
+# get the extractor for the given archive
+# USAGE: archive_extractor $archive_identifier
+# RETURNS: the specific extractor to use for the given archive (as a single word string),
+#          or an empty string if none has been explicitely set.
+archive_extractor() {
+	local archive_identifier
+	archive_identifier="$1"
+	assert_not_empty 'archive_identifier' 'archive_extractor'
+
+	get_value "${archive_identifier}_EXTRACTOR"
 }
 
 # check integrity of target file
