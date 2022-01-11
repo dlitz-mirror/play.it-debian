@@ -10,6 +10,8 @@ archive_extraction_using_dpkgdeb() {
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
 
-	debug_external_command "dpkg-deb --extract \"$archive_path\" \"$destination_directory\""
-	dpkg-deb --extract "$archive_path" "$destination_directory"
+	local extractor_options
+	extractor_options=$(archive_extractor_options "$archive")
+	debug_external_command "dpkg-deb $extractor_options --extract \"$archive_path\" \"$destination_directory\""
+	dpkg-deb $extractor_options --extract "$archive_path" "$destination_directory"
 }

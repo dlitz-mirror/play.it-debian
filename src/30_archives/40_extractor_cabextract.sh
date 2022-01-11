@@ -11,7 +11,10 @@ archive_extraction_using_cabextract() {
 	archive_path=$(archive_find_path "$archive")
 
 	local extractor_options
-	extractor_options='-L -q'
+	extractor_options=$(archive_extractor_options "$archive")
+	if [ -z "$extractor_options" ]; then
+		extractor_options='-L -q'
+	fi
 	debug_external_command "cabextract $extractor_options -d \"$destination_directory\" \"$archive_path\""
 	cabextract $extractor_options -d "$destination_directory" "$archive_path"
 }

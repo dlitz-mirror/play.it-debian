@@ -11,7 +11,10 @@ archive_extraction_using_7za() {
 	archive_path=$(archive_find_path "$archive")
 
 	local extractor_options
-	extractor_options='-y'
+	extractor_options=$(archive_extractor_options "$archive")
+	if [ -z "$extractor_options" ]; then
+		extractor_options='-y'
+	fi
 	debug_external_command "7za x $extractor_options -o\"$destination_directory\" \"$archive_path\" 1>/dev/null"
 	7za x $extractor_options -o"$destination_directory" "$archive_path" 1>/dev/null
 }

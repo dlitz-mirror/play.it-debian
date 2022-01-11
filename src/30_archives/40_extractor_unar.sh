@@ -11,7 +11,10 @@ archive_extraction_using_unar() {
 	archive_path=$(archive_find_path "$archive")
 
 	local extractor_options
-	extractor_options='-force-overwrite -no-directory'
+	extractor_options=$(archive_extractor_options "$archive")
+	if [ -z "$extractor_options" ]; then
+		extractor_options='-force-overwrite -no-directory'
+	fi
 	debug_external_command "unar $extractor_options -output-directory \"$destination_directory\" $extractor_options \"$archive_path\" 1>/dev/null"
 	unar $extractor_options -output-directory "$destination_directory" "$archive_path" 1>/dev/null
 }

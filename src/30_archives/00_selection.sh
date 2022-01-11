@@ -207,6 +207,7 @@ archive_set_properties_from_candidate() {
 	local property
 	for property in \
 		'EXTRACTOR' \
+		'EXTRACTOR_OPTIONS' \
 		'MD5' \
 		'TYPE' \
 		'SIZE' \
@@ -317,6 +318,17 @@ archive_extractor() {
 	assert_not_empty 'archive_identifier' 'archive_extractor'
 
 	get_value "${archive_identifier}_EXTRACTOR"
+}
+
+# get the extractor options string for the given archive
+# USAGE: archive_extractor_options $archive
+# RETURNS: the options string to pass to the specific extractor to use for the given archive,
+#          or an empty string if no options string has been explicitely set.
+archive_extractor_options() {
+	local archive
+	archive="$1"
+
+	get_value "${archive}_EXTRACTOR_OPTIONS"
 }
 
 # check integrity of target file

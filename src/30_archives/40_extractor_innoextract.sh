@@ -16,17 +16,10 @@ archive_extraction_using_innoextract() {
 	fi
 
 	local extractor_options
-	extractor_options='--progress=1 --silent --lowercase'
-
-	# WARNING - "innosetup_nolowercase" archive type is deprecated
-	local archive_type
-	archive_type=$(archive_get_type "$archive")
-	case "$archive_type" in
-		('innosetup_nolowercase')
-			extractor_options='--progress=1 --silent'
-		;;
-	esac
-
+	extractor_options=$(archive_extractor_options "$archive")
+	if [ -z "$extractor_options" ]; then
+		extractor_options='--progress=1 --silent --lowercase'
+	fi
 	debug_external_command "innoextract $extractor_options --extract --output-dir \"$destination_directory\" \"$archive_path\" 2>/dev/null"
 	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" 2>/dev/null
 }

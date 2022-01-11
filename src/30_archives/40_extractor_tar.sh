@@ -10,6 +10,8 @@ archive_extraction_using_tar() {
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
 
-	debug_external_command "tar --extract --file \"$archive_path\" --directory \"$destination_directory\""
-	tar --extract --file "$archive_path" --directory "$destination_directory"
+	local extractor_options
+	extractor_options=$(archive_extractor_options "$archive")
+	debug_external_command "tar $extractor_options --extract --file \"$archive_path\" --directory \"$destination_directory\""
+	tar $extractor_options --extract --file "$archive_path" --directory "$destination_directory"
 }

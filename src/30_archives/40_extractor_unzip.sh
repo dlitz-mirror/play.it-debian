@@ -10,6 +10,8 @@ archive_extraction_using_unzip() {
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
 
-	debug_external_command "unzip -d \"$destination_directory\" \"$archive_path\" 1>/dev/null"
-	unzip -d "$destination_directory" "$archive_path" 1>/dev/null
+	local extractor_options
+	extractor_options=$(archive_extractor_options "$archive")
+	debug_external_command "unzip $extractor_options -d \"$destination_directory\" \"$archive_path\" 1>/dev/null"
+	unzip $extractor_options -d "$destination_directory" "$archive_path" 1>/dev/null
 }

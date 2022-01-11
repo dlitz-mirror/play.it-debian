@@ -10,7 +10,9 @@ archive_extraction_using_bsdtar() {
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
 
-	debug_external_command "bsdtar --directory \"$destination_directory\" --extract --file \"$archive_path\""
-	bsdtar --directory "$destination_directory" --extract --file "$archive_path"
+	local extractor_options
+	extractor_options=$(archive_extractor_options "$archive")
+	debug_external_command "bsdtar $extractor_options --directory \"$destination_directory\" --extract --file \"$archive_path\""
+	bsdtar $extractor_options --directory "$destination_directory" --extract --file "$archive_path"
 	set_standard_permissions "$destination_directory"
 }

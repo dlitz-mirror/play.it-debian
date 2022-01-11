@@ -10,7 +10,9 @@ archive_extraction_using_msiextract() {
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
 
-	debug_external_command "msiextract --directory \"$destination_directory\" \"$archive_path\" 1>/dev/null 2>&1"
-	msiextract --directory "$destination_directory" "$archive_path" 1>/dev/null 2>&1
+	local extractor_options
+	extractor_options=$(archive_extractor_options "$archive")
+	debug_external_command "msiextract $extractor_options --directory \"$destination_directory\" \"$archive_path\" 1>/dev/null 2>&1"
+	msiextract $extractor_options --directory "$destination_directory" "$archive_path" 1>/dev/null 2>&1
 	tolower "$destination_directory"
 }

@@ -233,6 +233,7 @@ archive_extraction_from_type() {
 		;;
 		('innosetup_nolowercase')
 			warning_archive_type_deprecated "$archive"
+			export ${archive}_EXTRACTOR_OPTIONS='--progress=1 --silent'
 			archive_extraction_innosetup "$archive" "$destination_directory"
 		;;
 		('installshield')
