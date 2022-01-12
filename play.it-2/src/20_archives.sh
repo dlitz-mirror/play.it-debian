@@ -129,47 +129,53 @@ archive_find_from_candidates() {
 }
 
 # return the absolute path to a given archive
-# USAGE: archive_find_path $archive_name
+# USAGE: archive_find_path $archive
 # RETURNS: an absolute file path, or nothing
 archive_find_path() {
-	local archive_name archive_filename archive_path
-	archive_name="$1"
+	local archive
+	archive="$1"
 
-	# Right now, an archive can only be found using its file name
-	archive_filename=$(get_value "$archive_name")
-	archive_path=$(archive_find_path_from_name "$archive_filename")
+	local archive_name
+	archive_name=$(get_value "$archive")
 
-	printf '%s' "$archive_path"
-	return 0
+	archive_find_path_from_name "$archive_name"
 }
 
 # find an archive from its file name
-# USAGE: archive_find_path_from_name $file_name
+# USAGE: archive_find_path_from_name $archive_name
 # RETURNS: an absolute file path, or nothing
 archive_find_path_from_name() {
-	local file_name
-	file_name="$1"
+	local archive_name
+	archive_name="$1"
 
-	###
-	# TODO
-	# Check that the provided file name is not empty
-	###
+	# If the passed name starts with "/",
+	# assume it is an absolute path to the archive file.
+	if printf '%s' "$archive_name" | grep --quiet '^/'; then
+		if [ -f "$archive_name" ]; then
+			printf '%s' "$archive_name"
+		fi
+		# No archive found at the given absolute path,
+		# return nothing.
+		return 0
+	fi
 
 	# Look for the archive in current directory
-	if [ -f "$PWD/$file_name" ]; then
-		file_path=$(realpath "$PWD/$file_name")
-		printf '%s' "$file_name"
+	local archive_path
+	archive_path="${PWD}/${archive_name}"
+	if [ -f "$archive_path" ]; then
+		realpath "$archive_path"
 		return 0
 	fi
 
 	# Look for the archive in the same directory than the main archive
-	if \
-		[ -n "$SOURCE_ARCHIVE" ] && \
-		[ -f "$(dirname "$SOURCE_ARCHIVE")/$file_name" ]
-	then
-		file_path=$(realpath "$(dirname "$SOURCE_ARCHIVE")/$file_name")
-		printf '%s' "$file_path"
-		return 0
+	if [ -n "$SOURCE_ARCHIVE" ]; then
+		local source_directory
+		source_directory=$(dirname "$SOURCE_ARCHIVE")
+		archive_path="${source_directory}/${archive_name}"
+		if [ -f "$archive_path" ]; then
+			realpath "$archive_path"
+			return 0
+		fi
 	fi
 
 	# No archive found, return nothing
