@@ -1,13 +1,16 @@
 # extract the content of a MojoSetup MakeSelf installer
-# USAGE: archive_extraction_mojosetup $archive_file $destination_directory
+# USAGE: archive_extraction_mojosetup $archive $destination_directory
 archive_extraction_mojosetup() {
-	local archive_file destination_directory
-	archive_file="$1"
+	local archive destination_directory
+	archive="$1"
 	destination_directory="$2"
 
+	local archive_path
+	archive_path=$(archive_find_path "$archive")
+
 	if command -v 'bsdtar' >/dev/null 2>&1; then
-		debug_external_command "bsdtar --directory \"$destination_directory\" --extract --file \"$archive_file\""
-		bsdtar --directory "$destination_directory" --extract --file "$archive_file"
+		debug_external_command "bsdtar --directory \"$destination_directory\" --extract --file \"$archive_path\""
+		bsdtar --directory "$destination_directory" --extract --file "$archive_path"
 		set_standard_permissions "$destination_directory"
 	else
 		error_archive_no_extractor_found 'mojosetup'
@@ -16,16 +19,19 @@ archive_extraction_mojosetup() {
 }
 
 # extract the content of a MojoSetup MakeSelf installer (using unzip)
-# USAGE: archive_extraction_mojosetup_unzip $archive_file $destination_directory
+# USAGE: archive_extraction_mojosetup_unzip $archive $destination_directory
 archive_extraction_mojosetup_unzip() {
-	local archive_file destination_directory
-	archive_file="$1"
+	local archive destination_directory
+	archive="$1"
 	destination_directory="$2"
+
+	local archive_path
+	archive_path=$(archive_find_path "$archive")
 
 	if command -v 'unzip' >/dev/null 2>&1; then
 		set +o errexit
-		debug_external_command "unzip -d \"$destination_directory\" \"$archive_file\" 1>/dev/null 2>&1"
-		unzip -d "$destination_directory" "$archive_file" 1>/dev/null 2>&1
+		debug_external_command "unzip -d \"$destination_directory\" \"$archive_path\" 1>/dev/null 2>&1"
+		unzip -d "$destination_directory" "$archive_path" 1>/dev/null 2>&1
 		set -o errexit
 		set_standard_permissions "$destination_directory"
 	else
