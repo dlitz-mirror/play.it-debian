@@ -102,10 +102,7 @@ archive_extraction() {
 			archive_extraction_innosetup "$archive" "$destination_directory"
 		;;
 		('innosetup1.7'|'innosetup_nolowercase')
-			###
-			# TODO
-			# Usage of "innosetup1.7" or "innosetup_nolowercase" archive types should trigger a deprecation warning.
-			###
+			warning_archive_type_deprecated "$archive"
 			archive_extraction_innosetup "$archive" "$destination_directory"
 		;;
 		('installshield')
@@ -124,10 +121,7 @@ archive_extraction() {
 			archive_extraction_mojosetup "$archive" "$destination_directory"
 		;;
 		('mojosetup_unzip')
-			###
-			# TODO
-			# Usage of "mojosetup_unzip" archive type should trigger a deprecation warning.
-			###
+			warning_archive_type_deprecated "$archive"
 			archive_extraction_mojosetup_unzip "$archive" "$destination_directory"
 		;;
 		('nix_stage1')
@@ -149,10 +143,7 @@ archive_extraction() {
 			archive_extraction_zip "$archive" "$destination_directory"
 		;;
 		('zip_unclean')
-			###
-			# TODO
-			# Usage of "zip_unclean" archive type should trigger a deprecation warning.
-			###
+			warning_archive_type_deprecated "$archive"
 			archive_extraction_zip_unclean "$archive" "$destination_directory"
 		;;
 		(*)

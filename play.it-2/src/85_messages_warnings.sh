@@ -85,3 +85,32 @@ warning_missing_library() {
 	return 0
 }
 
+# display a warning when some game script uses a deprecated archive type
+# USAGE: warning_archive_type_deprecated $archive
+warning_archive_type_deprecated() {
+	local archive
+	archive="$1"
+
+	local archive_type
+	archive_type=$(archive_get_type "$archive")
+
+	local game_name
+	game_name=$(game_name)
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La prise en charge de "%s" utilise un type dʼarchive déprécié : %s\n'
+			message="$message"'Merci de signaler cet avertissement sur notre système de suivi : %s\n'
+		;;
+		('en'|*)
+			message='Support for "%s" is using an obsolete archive type: %s\n'
+			message="$message"'Please report this warning on our issues tracker: %s\n'
+		;;
+	esac
+
+	print_warning
+	printf "$message" "$game_name" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+}
+
