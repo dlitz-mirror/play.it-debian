@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a .zip archive
+# USAGE: archive_dependencies_check_type_zip
+archive_dependencies_check_type_zip() {
+	if command -v 'unzip' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'unzip'
+	return 1
+}
+
 # extract the content of a .zip archive
 # USAGE: archive_extraction_zip $archive $destination_directory
 archive_extraction_zip() {

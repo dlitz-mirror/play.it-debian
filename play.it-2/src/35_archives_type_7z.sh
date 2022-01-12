@@ -1,3 +1,16 @@
+# check the presence of required tools to handle a 7z archive
+# USAGE: archive_dependencies_check_type_7z
+archive_dependencies_check_type_7z() {
+	local required_command
+	for required_command in '7zr' '7za' 'unar'; do
+		if command -v "$required_command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	error_dependency_not_found '7zr'
+	return 1
+}
+
 # extract the content of a 7z archive
 # USAGE: archive_extraction_7z $archive $destination_directory
 archive_extraction_7z() {

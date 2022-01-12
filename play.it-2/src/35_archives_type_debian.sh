@@ -1,3 +1,23 @@
+# check the presence of required tools to handle a Debian package (.deb)
+# USAGE: archive_dependencies_check_type_debian
+archive_dependencies_check_type_debian() {
+	local required_command
+	for required_command in 'dpkg-deb' 'bsdtar' 'unar'; do
+		if command -v "$required_command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
+	if command -v 'tar' >/dev/null 2>&1; then
+		for required_command in '7z' '7zr' 'ar'; do
+			if command -v "$required_command" >/dev/null 2>&1; then
+				return 0
+			fi
+		done
+	fi
+	error_dependency_not_found 'dpkg-deb'
+	return 1
+}
+
 # extract the content of a Debian package (.deb)
 # USAGE: archive_extraction_debian $archive $destination_directory
 archive_extraction_debian() {

@@ -1,3 +1,13 @@
+# check the presence of required tools to handle an ISO9660 CD-ROM image
+# USAGE: archive_dependencies_check_type_iso
+archive_dependencies_check_type_iso() {
+	if command -v 'bsdtar' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'bsdtar'
+	return 1
+}
+
 # extract the content of an ISO9660 CD-ROM image
 # USAGE: archive_extraction_iso $archive $destination_directory
 archive_extraction_iso() {

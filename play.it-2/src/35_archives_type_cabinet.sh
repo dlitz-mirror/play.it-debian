@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a Microsoft Cabinet (.cab) archive
+# USAGE: archive_dependencies_check_type_cabinet
+archive_dependencies_check_type_cabinet() {
+	if command -v 'cabextract' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'cabextract'
+	return 1
+}
+
 # extract the content of a Microsoft Cabinet (.cab) archive
 # USAGE: archive_extraction_cabinet $archive $destination_directory
 archive_extraction_cabinet() {

@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a Windows Installer (.msi)
+# USAGE: archive_dependencies_check_type_msi
+archive_dependencies_check_type_msi() {
+	if command -v 'msiextract' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'msiextract'
+	return 1
+}
+
 # extract the content of a Windows Installer (.msi)
 # USAGE: archive_extraction_msi $archive $destination_directory
 archive_extraction_msi() {

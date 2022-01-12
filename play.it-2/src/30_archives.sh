@@ -1,3 +1,75 @@
+# check the presence of required tools to handle given archive
+# USAGE: archive_dependencies_check $archive
+archive_dependencies_check() {
+	local archive
+	archive="$1"
+
+	local archive_type
+	archive_type=$(archive_get_type "$archive")
+	case "$archive_type" in
+		('7z')
+			archive_dependencies_check_type_7z
+		;;
+		('cabinet')
+			archive_dependencies_check_type_cabinet
+		;;
+		('debian')
+			archive_dependencies_check_type_debian
+		;;
+		('innosetup')
+			archive_dependencies_check_type_innosetup
+		;;
+		('innosetup1.7'|'innosetup_nolowercase')
+			archive_dependencies_check_type_innosetup
+		;;
+		('installshield')
+			archive_dependencies_check_type_installshield
+		;;
+		('iso')
+			archive_dependencies_check_type_iso
+		;;
+		('lha')
+			archive_dependencies_check_type_lha
+		;;
+		('msi')
+			archive_dependencies_check_type_msi
+		;;
+		('mojosetup')
+			archive_dependencies_check_type_mojosetup
+		;;
+		('mojosetup_unzip')
+			archive_dependencies_check_type_mojosetup_unzip
+		;;
+		('nix_stage1')
+			archive_dependencies_check_type_nixstaller_stage1
+		;;
+		('nix_stage2')
+			archive_dependencies_check_type_nixstaller_stage2
+		;;
+		('nullsoft-installer')
+			archive_dependencies_check_type_nullsoft
+		;;
+		('rar')
+			archive_dependencies_check_type_rar
+		;;
+		('tar')
+			archive_dependencies_check_type_tar
+		;;
+		('tar.gz')
+			archive_dependencies_check_type_targz
+		;;
+		('tar.xz')
+			archive_dependencies_check_type_tarxz
+		;;
+		('zip')
+			archive_dependencies_check_type_zip
+		;;
+		('zip_unclean')
+			archive_dependencies_check_type_zip
+		;;
+	esac
+}
+
 # extract data from a given archive file
 # USAGE: archive_extraction $archive
 archive_extraction() {

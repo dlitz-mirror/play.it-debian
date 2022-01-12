@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a NullSoft installer
+# USAGE: archive_dependencies_check_type_nullsoft
+archive_dependencies_check_type_nullsoft() {
+	if command -v 'unar' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'unar'
+	return 1
+}
+
 # extract the content of a NullSoft installer
 # USAGE: archive_extraction_nullsoft $archive $destination_directory
 archive_extraction_nullsoft() {

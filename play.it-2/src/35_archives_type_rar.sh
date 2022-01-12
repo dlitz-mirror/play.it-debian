@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a RAR archive
+# USAGE: archive_dependencies_check_type_rar
+archive_dependencies_check_type_rar() {
+	if command -v 'unar' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'unar'
+	return 1
+}
+
 # extract the content of a RAR archive
 # USAGE: archive_extraction_rar $archive $destination_directory
 archive_extraction_rar() {

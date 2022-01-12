@@ -1,3 +1,29 @@
+# check the presence of required tools to handle a Nixstaller installer (1st stage of extraction)
+# USAGE: archive_dependencies_check_type_nixstaller_stage1
+archive_dependencies_check_type_nixstaller_stage1() {
+	if \
+		command -v 'dd' >/dev/null 2>&1 \
+		&& \
+		command -v 'gunzip' >/dev/null 2>&1 \
+		&& \
+		command -v 'tar' >/dev/null 2>&1
+	then
+		return 0
+	fi
+	error_dependency_not_found 'dd + gunzip + tar'
+	return 1
+}
+
+# check the presence of required tools to handle a Nixstaller installer (2nd stage of extraction)
+# USAGE: archive_dependencies_check_type_nixstaller_stage2
+archive_dependencies_check_type_nixstaller_stage2() {
+	if command -v 'tar' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'tar'
+	return 1
+}
+
 # extract the content of a Nixstaller installer (1st stage of extraction)
 # USAGE: archive_extraction_nixstaller_stage1 $archive $destination_directory
 archive_extraction_nixstaller_stage1() {

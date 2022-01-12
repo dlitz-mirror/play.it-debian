@@ -1,3 +1,13 @@
+# check the presence of required tools to handle a InnoSetup installer
+# USAGE: archive_dependencies_check_type_innosetup
+archive_dependencies_check_type_innosetup() {
+	if command -v 'innoextract' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'innoextract'
+	return 1
+}
+
 # extract the content of a InnoSetup installer
 # USAGE: archive_extraction_innosetup $archive $destination_directory
 archive_extraction_innosetup() {
