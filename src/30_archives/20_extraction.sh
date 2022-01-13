@@ -19,7 +19,7 @@ archive_dependencies_check() {
 		('innosetup')
 			archive_dependencies_check_type_innosetup
 		;;
-		('innosetup1.7'|'innosetup_nolowercase')
+		('innosetup_nolowercase')
 			archive_dependencies_check_type_innosetup
 		;;
 		('installshield')
@@ -39,12 +39,6 @@ archive_dependencies_check() {
 		;;
 		('mojosetup_unzip')
 			archive_dependencies_check_type_mojosetup_unzip
-		;;
-		('nix_stage1')
-			archive_dependencies_check_type_nixstaller_stage1
-		;;
-		('nix_stage2')
-			archive_dependencies_check_type_nixstaller_stage2
 		;;
 		('nullsoft-installer')
 			archive_dependencies_check_type_nullsoft
@@ -101,7 +95,7 @@ archive_extraction() {
 		('innosetup')
 			archive_extraction_innosetup "$archive" "$destination_directory"
 		;;
-		('innosetup1.7'|'innosetup_nolowercase')
+		('innosetup_nolowercase')
 			warning_archive_type_deprecated "$archive"
 			archive_extraction_innosetup "$archive" "$destination_directory"
 		;;
@@ -123,12 +117,6 @@ archive_extraction() {
 		('mojosetup_unzip')
 			warning_archive_type_deprecated "$archive"
 			archive_extraction_mojosetup_unzip "$archive" "$destination_directory"
-		;;
-		('nix_stage1')
-			archive_extraction_nixstaller_stage1 "$archive" "$destination_directory"
-		;;
-		('nix_stage2')
-			archive_extraction_nixstaller_stage2 "$archive" "$destination_directory"
 		;;
 		('nullsoft-installer')
 			archive_extraction_nullsoft "$archive" "$destination_directory"

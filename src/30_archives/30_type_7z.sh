@@ -17,28 +17,17 @@ archive_extraction_7z() {
 	local archive destination_directory
 	archive="$1"
 	destination_directory="$2"
-
-	local archive_path
-	archive_path=$(archive_find_path "$archive")
+	assert_not_empty 'archive' 'archive_extraction_7z'
+	assert_not_empty 'destination_directory' 'archive_extraction_7z'
 
 	if command -v '7zr' >/dev/null 2>&1; then
-		local extractor_options
-		extractor_options='-y'
-		debug_external_command "7zr x $extractor_options -o\"$destination_directory\" \"$archive_path\" 1>/dev/null"
-		7zr x $extractor_options -o"$destination_directory" "$archive_path" 1>/dev/null
+		archive_extraction_using_7zr "$archive" "$destination_directory"
 	elif command -v '7za' >/dev/null 2>&1; then
-		local extractor_options
-		extractor_options='-y'
-		debug_external_command "7za x $extractor_options -o\"$destination_directory\" \"$archive_path\" 1>/dev/null"
-		7za x $extractor_options -o"$destination_directory" "$archive_path" 1>/dev/null
+		archive_extraction_using_7za "$archive" "$destination_directory"
 	elif command -v 'unar' >/dev/null 2>&1; then
-		local extractor_options
-		extractor_options='-force-overwrite -no-directory'
-		debug_external_command "unar $extractor_options -output-directory \"$destination_directory\" $extractor_options \"$archive_path\" 1>/dev/null"
-		unar $extractor_options -output-directory "$destination_directory" "$archive_path" 1>/dev/null
+		archive_extraction_using_unar "$archive" "$destination_directory"
 	else
 		error_archive_no_extractor_found '7z'
 		return 1
 	fi
 }
-
