@@ -82,6 +82,7 @@ organize_data() {
 					rm --force --recursive "$source_file"
 				else
 					debug_source_file 'Missing' "${archive_path}${source_file#"$source_path"}"
+					true
 				fi
 			done
 			set -o noglob
