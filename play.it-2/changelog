@@ -1,3 +1,10 @@
+2.15.1
+
+  * WINE: Set compatibility links to legacy user paths
+  * Drop direct calls to PACKAGES_LIST environment variable
+  * Fix behaviour of archive_find_path when the archive variable contains
+    an absolute path
+
 2.15.0
 
   * New features:
