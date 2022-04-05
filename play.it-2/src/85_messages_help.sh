@@ -36,6 +36,7 @@ help() {
 	help_overwrite
 	help_output_dir
 	help_debug
+	help_no_mtree
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -319,6 +320,27 @@ help_show_game_script() {
 	esac
 
 	printf -- '--show-game-script\n'
+	printf "$message"
+
+	return 0
+}
+
+# display --no-mtree option usage
+# USAGE: help_no_mtree
+help_no_mtree() {
+	local message
+
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tNe crée pas de fichier .MTREE pour les paquets Arch Linux.\n\n'
+			;;
+		('en'|*)
+			message='\tDo not make .MTREE file in Arch Linux packages\n\n'
+			;;
+	esac
+
+	printf -- '--no-mtree\n'
 	printf "$message"
 
 	return 0
