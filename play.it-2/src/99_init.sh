@@ -77,6 +77,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_SKIP_ICONS=0
 	export DEFAULT_OVERWRITE_PACKAGES=0
 	export DEFAULT_DEBUG=0
+	export DEFAULT_MTREE=1
 
 	# Load configuration file values
 
@@ -117,7 +118,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		fi
 	done
 
-	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' 'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' 'SKIP_ICONS' \
+		'OVERWRITE_PACKAGES' 'DEBUG' 'MTREE'; do
 		if
 			[ -z "$(get_value "$option")" ] && \
 			[ -n "$(get_value "DEFAULT_$option")" ]
@@ -149,7 +151,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# DEBUG: output all options value
 	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG' 'MTREE'; do
 		debug_option_value "$option"
 		true
 	done

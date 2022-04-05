@@ -127,6 +127,10 @@ parse_arguments() {
 				fi
 				export DEBUG
 			;;
+			('--no-mtree')
+				MTREE=0
+				export MTREE
+			;;
 			('--config-file='*|\
 			 '--config-file'|\
 			 '-c')

@@ -93,7 +93,9 @@ pkg_write_arch() {
 	fi
 
 	# Creates .MTREE
-	package_archlinux_create_mtree "$(package_get_path "$pkg")"
+	if [ "$MTREE" -eq 1 ]; then
+		package_archlinux_create_mtree "$(package_get_path "$pkg")"
+	fi
 }
 
 # set list or Arch Linux dependencies from generic names
@@ -479,9 +481,12 @@ pkg_build_arch() {
 	(
 		cd "$1"
 		local files
-		files='.MTREE .PKGINFO *'
+		files='.PKGINFO *'
 		if [ -e '.INSTALL' ]; then
 			files=".INSTALL $files"
+		fi
+		if [ -e '.MTREE' ]; then
+			files=".MTREE $files"
 		fi
 		debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
 		tar $tar_options --file "$pkg_filename" $files
