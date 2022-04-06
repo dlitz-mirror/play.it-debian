@@ -94,7 +94,7 @@ pkg_write_arch() {
 
 	# Creates .MTREE
 	if [ "$MTREE" -eq 1 ]; then
-		package_archlinux_create_mtree "$(package_get_path "$pkg")"
+		package_archlinux_create_mtree "$pkg"
 	fi
 }
 
@@ -502,9 +502,12 @@ pkg_build_arch() {
 # USAGE: package_archlinux_create_mtree $pkg_path
 # RETURNS: nothing
 package_archlinux_create_mtree() {
+	local pkg
 	local pkg_path
-	pkg_path="$1"
+	pkg="$1"
+	pkg_path="$(package_get_path "$pkg")"
 
+	info_package_mtree_computation "$pkg"
 	(
 		cd "$pkg_path"
 		# shellcheck disable=SC2030
@@ -525,6 +528,7 @@ package_archlinux_create_mtree() {
 			--to-stdout \
 			> .MTREE
 	)
+	info_package_mtree_computation_done
 
 	return 0
 }
