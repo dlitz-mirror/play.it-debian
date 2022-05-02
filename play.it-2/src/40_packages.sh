@@ -561,6 +561,7 @@ packages_get_version() {
 			if [ -z "$packages_version" ]; then
 				packages_version='1.0'
 			fi
+			packages_version="${packages_version}_p$(printf '%s' "$script_version" | sed 's/\.//g')"
 		;;
 	esac
 
