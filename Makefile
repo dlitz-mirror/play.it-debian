@@ -24,10 +24,10 @@ all: libplayit2.sh
 libplayit2.sh: src/*
 	mkdir --parents lib
 ifeq ($(DEBUG),1)
-	cat src/* > lib/libplayit2.sh
+	find src -type f -name '*.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
 	sed -i -e 's/%%DEBUG_DISABLED%%/0/' lib/libplayit2.sh
 else
-	find src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
+	find src -type f -name '*.sh' \! -path 'src/40_messages/10_debug.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
 	sed -i -e '/^\s*debug_/d' -e 's/%%DEBUG_DISABLED%%/1/' lib/libplayit2.sh
 endif
 
