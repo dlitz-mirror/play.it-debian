@@ -47,6 +47,7 @@ find_configuration_file() {
 	if [ -n "$config_file_path" ]; then
 		if [ ! -f "$config_file_path" ]; then
 			error_config_file_not_found "$config_file_path"
+			return 1
 		fi
 	else
 		config_file_path="${XDG_CONFIG_HOME:="$HOME/.config"}/play.it/config"

@@ -1,15 +1,6 @@
 # write launcher script
 # USAGE: launcher_write_script $app
 launcher_write_script() {
-	# check that this has been called with exactly one argument
-	if [ "$#" -eq 0 ]; then
-		error_missing_argument 'launcher_write_script'
-		return 1
-	elif [ "$#" -gt 1 ]; then
-		error_extra_arguments 'launcher_write_script'
-		return 1
-	fi
-
 	# parse argument
 	local application
 	application="$1"

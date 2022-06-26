@@ -82,7 +82,6 @@ help_checksum() {
 	printf -- '--checksum=md5|none\n'
 	printf -- '--checksum md5|none\n\n'
 	printf "$message" 'md5' 'none'
-	return 0
 }
 
 # display --compression option usage
@@ -120,7 +119,6 @@ help_compression() {
 	printf -- '--compression none|gzip|xz|bzip2|zstd|lz4|lzip|lzop\n\n'
 	# shellcheck disable=SC2059
 	printf "$message" 'none' 'gzip' 'xz' 'bzip2' 'zstd' 'lz4' 'lzip' 'lzop'
-	return 0
 }
 
 # display --prefix option usage
@@ -141,7 +139,6 @@ help_prefix() {
 	printf -- '--prefix=$path\n'
 	printf -- '--prefix $path\n\n'
 	printf "$message"
-	return 0
 }
 
 # display --package option usage
@@ -166,7 +163,6 @@ help_package() {
 	printf -- '--package=arch|deb|gentoo\n'
 	printf -- '--package arch|deb|gentoo\n\n'
 	printf "$message" 'arch' 'deb' 'gentoo'
-	return 0
 }
 
 # display --dry-run option usage
@@ -184,7 +180,6 @@ help_dryrun() {
 	esac
 	printf -- '--dry-run\n\n'
 	printf "$message"
-	return 0
 }
 
 # display --skip-free-space-check option usage
@@ -202,7 +197,6 @@ help_skipfreespacecheck() {
 	esac
 	printf -- '--skip-free-space-check\n\n'
 	printf "$message"
-	return 0
 }
 
 # display --icons option usage
@@ -227,7 +221,6 @@ help_icons() {
 	printf -- '--icons=yes|no|auto\n'
 	printf -- '--icons yes|no|auto\n\n'
 	printf "$message" 'yes' 'no' 'auto'
-	return 0
 }
 
 # display --overwrite option usage
@@ -245,7 +238,6 @@ help_overwrite() {
 	esac
 	printf -- '--overwrite\n\n'
 	printf "$message"
-	return 0
 }
 
 # display --output-dir option usage
@@ -263,7 +255,6 @@ help_output_dir() {
 	esac
 	printf -- '--output-dir\n\n'
 	printf "$message"
-	return 0
 }
 
 # display --debug option usage
@@ -300,8 +291,6 @@ help_debug() {
 	printf -- '--debug=N\n'
 	printf -- '--debug N\n\n'
 	printf "$message"
-
-	return 0
 }
 
 # display --show-game-script option usage
@@ -321,8 +310,6 @@ help_show_game_script() {
 
 	printf -- '--show-game-script\n'
 	printf "$message"
-
-	return 0
 }
 
 # display --no-mtree option usage
@@ -342,6 +329,5 @@ help_no_mtree() {
 
 	printf -- '--no-mtree\n'
 	printf "$message"
-
-	return 0
 }
+

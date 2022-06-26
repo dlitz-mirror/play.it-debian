@@ -27,7 +27,7 @@ ifeq ($(DEBUG),1)
 	find src -type f -name '*.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
 	sed -i -e 's/%%DEBUG_DISABLED%%/0/' lib/libplayit2.sh
 else
-	find src -type f -name '*.sh' \! -path 'src/40_messages/10_debug.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
+	find src -type f -name '*.sh' \! -path 'src/80_debug/*' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
 	sed -i -e '/^\s*debug_/d' -e 's/%%DEBUG_DISABLED%%/1/' lib/libplayit2.sh
 endif
 

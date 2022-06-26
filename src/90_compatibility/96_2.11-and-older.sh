@@ -169,3 +169,77 @@ pkg_print() {
 	information_package_building "$1"
 }
 
+# display an error when the selected architecture is not supported
+# USAGE: error_architecture_not_supported $architecture
+error_architecture_not_supported() {
+	local message architecture
+	architecture="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼarchitecture demandée nʼest pas gérée : %s\n'
+		;;
+		('en'|*)
+			message='Selected architecture is not supported: %s\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$architecture"
+}
+
+# display an error if there is not enough free storage space
+# print a list of directories that have been scanned for available space
+# USAGE: error_not_enough_free_space $directory[…]
+error_not_enough_free_space() {
+	local message directory
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Il nʼy a pas assez dʼespace libre dans les différents répertoires testés :\n'
+		;;
+		('en'|*)
+			message='There is not enough free space in the tested directories:\n'
+		;;
+	esac
+	print_error
+	printf "$message"
+	for directory in "$@"; do
+		printf '%s\n' "$directory"
+	done
+}
+
+# display a warning when using an option not supported by the current script
+# USAGE: warning_option_not_supported $option
+warning_option_not_supported() {
+	local message option
+	option="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼoption %s nʼest pas gérée par ce script.\n'
+		;;
+		('en'|*)
+			message='%s option is not supported by this script.\n'
+		;;
+	esac
+	print_warning
+	printf "$message" "$option"
+}
+
+# print integrity check message
+# USAGE: information_file_integrity_check $file
+information_file_integrity_check() {
+	local message file
+	file=$(basename "$1")
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Contrôle de lʼintégrité de %s'
+		;;
+		('en'|*)
+			message='Checking integrity of %s'
+		;;
+	esac
+	printf "$message" "$file"
+}
+

@@ -53,8 +53,6 @@ archive_has_md5sum_cached() {
 
 # check integrity of target file against MD5 control sum
 # USAGE: archive_integrity_check_md5 $archive $file ($name)
-# CALLS: info_archive_integrity_check error_hashsum_mismatch
-# CALLED BY: archive_integrity_check
 archive_integrity_check_md5() {
 	local archive file name
 	archive="$1"
