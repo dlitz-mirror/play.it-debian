@@ -68,9 +68,7 @@ parse_arguments() {
 				help
 				exit 0
 			;;
-			('--architecture='*|\
-			 '--architecture'|\
-			 '--checksum='*|\
+			('--checksum='*|\
 			 '--checksum'|\
 			 '--compression='*|\
 			 '--compression'|\
@@ -128,6 +126,10 @@ parse_arguments() {
 					esac
 				fi
 				export DEBUG
+			;;
+			('--no-mtree')
+				MTREE=0
+				export MTREE
 			;;
 			('--config-file='*|\
 			 '--config-file'|\

@@ -1,42 +1,3 @@
-# display a warning when PKG value is not included in PACKAGES_LIST
-# USAGE: warning_skip_package $function_name $package
-warning_skip_package() {
-	local message function package
-	function="$1"
-	package="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La valeur de PKG fournie à %s ne fait pas partie de la liste de paquets à construire : %s\n'
-		;;
-		('en'|*)
-			message='The PKG value used by %s is not part of the list of packages to build: %s\n'
-		;;
-	esac
-	print_warning
-	printf "$message" "$function" "$package"
-	return 0
-}
-
-# display a warning when the selected architecture is not available
-# USAGE: warning_architecture_not_available $architecture
-warning_architecture_not_available() {
-	local message architecture
-	architecture="$1"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Lʼarchitecture demandée nʼest pas disponible : %s\n'
-		;;
-		('en'|*)
-			message='Selected architecture is not available: %s\n'
-		;;
-	esac
-	print_warning
-	printf "$message" "$architecture"
-	return 0
-}
-
 # display a warning when using an option not supported by the current script
 # USAGE: warning_option_not_supported $option
 warning_option_not_supported() {
@@ -122,5 +83,34 @@ warning_missing_library() {
 	print_warning
 	printf "$message" "$lib" "$target_system" "$architecture"
 	return 0
+}
+
+# display a warning when some game script uses a deprecated archive type
+# USAGE: warning_archive_type_deprecated $archive
+warning_archive_type_deprecated() {
+	local archive
+	archive="$1"
+
+	local archive_type
+	archive_type=$(archive_get_type "$archive")
+
+	local game_name
+	game_name=$(game_name)
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La prise en charge de "%s" utilise un type dʼarchive déprécié : %s\n'
+			message="$message"'Merci de signaler cet avertissement sur notre système de suivi : %s\n'
+		;;
+		('en'|*)
+			message='Support for "%s" is using an obsolete archive type: %s\n'
+			message="$message"'Please report this warning on our issues tracker: %s\n'
+		;;
+	esac
+
+	print_warning
+	printf "$message" "$game_name" "$archive_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
 }
 

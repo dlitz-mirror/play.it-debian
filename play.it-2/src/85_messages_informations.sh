@@ -304,3 +304,39 @@ info_package_to_distfiles() {
 	return 0
 }
 
+# print mtree computation message
+# USAGE: info_package_mtree_computation $package
+info_package_mtree_computation() {
+	local pkg pkg_name message
+	pkg="$1"
+	pkg_name="$(package_get_name "$pkg")"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Création du fichier .MTREE pour %s…\n'
+			;;
+		('en'|*)
+			message='Creating .MTREE file for %s…\n'
+			;;
+	esac
+	# shellcheck disable=SC2059
+	printf "$message" "$pkg_name"
+	return 0
+}
+
+# print mtree computation success message
+# USAGE: info_package_mtree_computation_done
+info_package_mtree_computation_done() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Fichier .MTREE créé !'
+			;;
+		('en'|*)
+			message='.MTREE file created!'
+			;;
+	esac
+	printf '%s\n' "$message"
+	return 0
+}

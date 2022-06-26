@@ -8,7 +8,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Unset variables that we do not want to import from the user environment
 
-	unset OPTION_ARCHITECTURE
 	unset OPTION_CHECKSUM
 	unset OPTION_COMPRESSION
 	unset OPTION_PREFIX
@@ -45,8 +44,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set allowed values for common options
 
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_ARCHITECTURE='all 32 64 auto'
-	# shellcheck disable=SC2034
 	ALLOWED_VALUES_CHECKSUM='none md5'
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_COMPRESSION_DEB='none gzip xz'
@@ -63,7 +60,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set default values for common options
 
-	export DEFAULT_OPTION_ARCHITECTURE='all'
 	export DEFAULT_OPTION_CHECKSUM='md5'
 	export DEFAULT_OPTION_COMPRESSION_ARCH='zstd'
 	export DEFAULT_OPTION_COMPRESSION_DEB='none'
@@ -81,6 +77,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_SKIP_ICONS=0
 	export DEFAULT_OVERWRITE_PACKAGES=0
 	export DEFAULT_DEBUG=0
+	export DEFAULT_MTREE=1
 
 	# Load configuration file values
 
@@ -110,7 +107,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set options not already set by script arguments to default values
 
-	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' 'ICONS' 'OUTPUT_DIR' 'PREFIX'; do
+	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS' 'OUTPUT_DIR' 'PREFIX'; do
 		if
 			[ -z "$(get_value "OPTION_$option")" ] && \
 			[ -n "$(get_value "DEFAULT_OPTION_$option")" ]
@@ -121,7 +118,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		fi
 	done
 
-	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' 'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' 'SKIP_ICONS' \
+		'OVERWRITE_PACKAGES' 'DEBUG' 'MTREE'; do
 		if
 			[ -z "$(get_value "$option")" ] && \
 			[ -n "$(get_value "DEFAULT_$option")" ]
@@ -153,12 +151,14 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# DEBUG: output all options value
 	for option in 'DRY_RUN' 'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG'; do
+		'SKIP_ICONS' 'OVERWRITE_PACKAGES' 'DEBUG' 'MTREE'; do
 		debug_option_value "$option"
+		true
 	done
-	for option in 'ARCHITECTURE' 'CHECKSUM' 'COMPRESSION' \
+	for option in 'CHECKSUM' 'COMPRESSION' \
 		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
 		debug_option_value "OPTION_$option"
+		true
 	done
 
 	# Make sure the output directory exists and is writable
@@ -186,6 +186,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
 
+	# Check the presence of required tools to handle the main game archive
+
+	archive_dependencies_check "$ARCHIVE"
+
 	# Set package paths
 
 	case $OPTION_PACKAGE in
@@ -209,10 +213,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		;;
 	esac
 	export PATH_BIN PATH_DESK PATH_DOC PATH_GAME PATH_ICON_BASE
-
-	# Restrict packages list to target architecture
-
-	select_package_architecture
 
 	# Set working directories
 

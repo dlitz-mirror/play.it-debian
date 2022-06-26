@@ -51,9 +51,8 @@ make install
 
 ## Game scripts
 
-Starting with ./play.it 2.14 release, the game scripts provided in this repository
-are no longer kept up-to-date. You need to install a collection of game scripts
-in addition to the core library and wrapper to add support for some game installers.
+Starting with ./play.it 2.16 release, game scripts are no longer provided in this repository.
+You need to install a collection of game scripts in addition to the core library and wrapper to add support for some game installers.
 The recommended collection can be found in the following repository: [Core game scripts collection]
 
 [Core game scripts collection]: https://forge.dotslashplay.it/play.it/games

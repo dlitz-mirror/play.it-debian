@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall install-library install-games install-wrapper install-manpage
+.PHONY: all clean install uninstall
 
 UID := $(shell id --user)
 
@@ -16,53 +16,30 @@ else
     datadir = $(prefix)
     mandir = $(prefix)/man
 endif
-gamesdir = $(DESTDIR)$(datadir)/play.it/games
 
-PANDOC := $(shell command -v pandoc 2> /dev/null)
+DEBUG := 0
 
-all: libplayit2.sh play.it.6
+all: libplayit2.sh
 
 libplayit2.sh: play.it-2/src/*
 	mkdir --parents play.it-2/lib
+ifeq ($(DEBUG),1)
 	cat play.it-2/src/* > play.it-2/lib/libplayit2.sh
-
-%.6: %.6.md
-ifneq ($(PANDOC),)
-	$(PANDOC) --standalone $< --to man --output $@
+	sed -i -e 's/%%DEBUG_DISABLED%%/0/' play.it-2/lib/libplayit2.sh
 else
-	@echo "pandoc not installed; skipping $@"
+	find play.it-2/src -maxdepth 1 -type f '!' -name '85_messages_debug.sh' -print0 | sort -z | xargs -0 cat > play.it-2/lib/libplayit2.sh
+	sed -i -e '/^\s*debug_/d' -e 's/%%DEBUG_DISABLED%%/1/' play.it-2/lib/libplayit2.sh
 endif
 
 clean:
-	rm -f play.it-2/lib/libplayit2.sh
-	rm -f *.6
+	rm --force play.it-2/lib/libplayit2.sh
 
-install-library:
+install:
 	install -D --mode=644 play.it-2/lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-
-install-games:
-	install -D --mode=755 --target-directory=$(gamesdir)/50_core play.it-2/games/*
-
-install-wrapper:
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
-
-install-manpage:
-ifneq ($(wildcard play.it.6),)
-	mkdir --parents $(DESTDIR)$(mandir)/man6
-	gzip -c play.it.6 > $(DESTDIR)$(mandir)/man6/play.it.6.gz
-else
-	@echo "manpage not generated; skipping its installation"
-endif
-
-
-install: install-library install-games install-wrapper install-manpage
+	install -D man/man6/play.it.6 $(DESTDIR)$(mandir)/man6/play.it.6
+	install -D man/fr/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
 
 uninstall:
-	rm $(DESTDIR)$(bindir)/play.it
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) || true
-	rm $(gamesdir)/50_core/play-*.sh
-	rmdir -p --ignore-fail-on-non-empty $(gamesdir)/50_core
-	rm $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
-	rm --force $(DESTDIR)$(mandir)/man6/play.it.6.gz
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man6
+	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.sh $(DESTDIR)$(mandir)/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) $(DESTDIR)$(datadir)/play.it $(DESTDIR)$(mandir)/man6 $(DESTDIR)$(mandir)/fr/man6

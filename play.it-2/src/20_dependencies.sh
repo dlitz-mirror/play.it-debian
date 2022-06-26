@@ -3,55 +3,6 @@
 # NEEDED VARS: (ARCHIVE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
-	local archive_type
-
-	if [ "$ARCHIVE" ]; then
-		archive_type=$(archive_get_type "$ARCHIVE")
-		case "$archive_type" in
-			('cabinet')
-				SCRIPT_DEPS="$SCRIPT_DEPS cabextract"
-			;;
-			('debian')
-				SCRIPT_DEPS="$SCRIPT_DEPS debian"
-			;;
-			('innosetup1.7'*)
-				SCRIPT_DEPS="$SCRIPT_DEPS innoextract1.7"
-			;;
-			('innosetup'*)
-				SCRIPT_DEPS="$SCRIPT_DEPS innoextract"
-			;;
-			('installshield')
-				SCRIPT_DEPS="$SCRIPT_DEPS unshield"
-			;;
-			('lha')
-				SCRIPT_DEPS="$SCRIPT_DEPS lha"
-			;;
-			('nixstaller')
-				SCRIPT_DEPS="$SCRIPT_DEPS gzip tar unxz"
-			;;
-			('msi')
-				SCRIPT_DEPS="$SCRIPT_DEPS msiextract"
-			;;
-			('mojosetup'|'iso')
-				SCRIPT_DEPS="$SCRIPT_DEPS bsdtar"
-			;;
-			('rar'|'nullsoft-installer')
-				SCRIPT_DEPS="$SCRIPT_DEPS unar"
-			;;
-			('tar')
-				SCRIPT_DEPS="$SCRIPT_DEPS tar"
-			;;
-			('tar.gz')
-				SCRIPT_DEPS="$SCRIPT_DEPS gzip tar"
-			;;
-			('tar.xz')
-				SCRIPT_DEPS="$SCRIPT_DEPS xz tar"
-			;;
-			('zip'|'zip_unclean'|'mojosetup_unzip')
-				SCRIPT_DEPS="$SCRIPT_DEPS unzip"
-			;;
-		esac
-	fi
 	case "$OPTION_COMPRESSION" in
 		('gzip')
 			SCRIPT_DEPS="$SCRIPT_DEPS gzip"
@@ -85,19 +36,23 @@ check_deps() {
 		# fakeroot-ng doesn't work anymore, fakeroot >=1.25.1 does
 		SCRIPT_DEPS="$SCRIPT_DEPS fakeroot:>=1.25.1 ebuild"
 	fi
+	if [ "$OPTION_PACKAGE" = 'arch' ]; then
+		# bsdtar and gzip are required for .MTREE
+		SCRIPT_DEPS="$SCRIPT_DEPS bsdtar gzip"
+	fi
 	for dep in $SCRIPT_DEPS; do
 		case $dep in
 			('7z')
-				check_deps_7z
-			;;
-			('innoextract'*)
-				check_deps_innoextract "$dep"
-			;;
-			('lha')
-				check_deps_lha
+				archive_dependencies_check_type_7z
 			;;
 			('debian')
-				check_deps_debian
+				archive_dependencies_check_type_debian
+			;;
+			('innoextract')
+				archive_dependencies_check_type_innosetup
+			;;
+			('lha')
+				archive_dependencies_check_type_lha
 			;;
 			('fakeroot'*)
 				check_deps_fakeroot "$dep"
@@ -132,91 +87,6 @@ check_deps() {
 			esac
 		fi
 	done
-}
-
-# check presence of a software to handle .7z archives
-# USAGE: check_deps_7z
-# CALLS: error_dependency_not_found
-# CALLED BY: check_deps
-check_deps_7z() {
-	for command in '7zr' '7za' 'unar'; do
-		if command -v "$command" >/dev/null 2>&1; then
-			return 0
-		fi
-	done
-	error_dependency_not_found '7zr'
-	return 1
-}
-
-# check presence of a software to handle LHA (.lzh) archives
-# USAGE: check_deps_lha
-# CALLS: error_dependency_not_found
-# CALLED BY: check_deps
-check_deps_lha() {
-	for command in 'lha' 'bsdtar'; do
-		if command -v "$command" >/dev/null 2>&1; then
-			return 0
-		fi
-	done
-	error_dependency_not_found 'lha'
-	return 1
-}
-
-# check presence of a software to handle .deb packages
-# USAGE: check_deps_debian
-# CALLS: error_dependency_not_found
-# CALLED BY: check_deps
-check_deps_debian() {
-	for command in 'dpkg-deb' 'bsdtar' 'unar'; do
-		if command -v "$command" >/dev/null 2>&1; then
-			return 0
-		fi
-	done
-	if command -v 'tar' >/dev/null 2>&1; then
-		for command in '7z' '7zr' 'ar'; do
-			if command -v "$command" >/dev/null 2>&1; then
-				return 0
-			fi
-		done
-	fi
-	error_dependency_not_found 'dpkg-deb'
-	return 1
-}
-
-# check innoextract presence, optionally in a given minimum version
-# USAGE: check_deps_innoextract $keyword
-# CALLS: error_dependency_not_found
-# CALLED BYD: check_deps
-check_deps_innoextract() {
-	local keyword
-	local name
-	keyword="$1"
-	case "$keyword" in
-		('innoextract1.7')
-			name='innoextract (>= 1.7)'
-		;;
-		(*)
-			name='innoextract'
-		;;
-	esac
-	if ! command -v 'innoextract' >/dev/null 2>&1; then
-		error_dependency_not_found "$name"
-		return 1
-	fi
-
-	# Check innoextract version
-	local innoextract_version
-	innoextract_version=$(LANG=C innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)
-	case "$keyword" in
-		('innoextract1.7')
-			if ! version_is_at_least '1.7' "$innoextract_version"; then
-				error_dependency_not_found "$name"
-				return 1
-			fi
-		;;
-	esac
-
-	return 0
 }
 
 check_deps_fakeroot() {

@@ -1,3 +1,35 @@
+# Keep compatibility with 2.15 and older
+
+extract_data_from() {
+	local archive_path_from_environment archive_path_from_parameters
+	archive_path_from_environment=$(archive_find_path "$ARCHIVE")
+	archive_path_from_parameters="$1"
+	local archive_path_from_environment_real archive_path_from_parameters_real
+	archive_path_from_environment_real=$(realpath --canonicalize-existing "$archive_path_from_environment")
+	archive_path_from_parameters_real=$(realpath --canonicalize-existing "$archive_path_from_parameters")
+	if [ "$archive_path_from_environment_real" != "$archive_path_from_parameters_real" ]; then
+		local message game_name
+		game_name=$(game_name)
+		# shellcheck disable=SC2031
+		case "${LANG%_*}" in
+			('fr')
+				message='La prise en charge de "%s" utilise du code obsolète qui nʼest plus fonctionnel.\n'
+				message="$message"'La fonction ayant déclenché cette erreur est : %s\n'
+				message="$message"'Merci de signaler cette erreur sur notre système de suivi : %s\n'
+			;;
+			('en'|*)
+				message='Support for "%s" is relying on obsolete code that no longer works.\n'
+				message="$message"'The function that triggered this error is: %s\n'
+				message="$message"'Please report this error on our issues tracker: %s\n'
+			;;
+		esac
+		print_error
+		printf "$message" "$game_name" 'extract_data_from' "$PLAYIT_GAMES_BUG_TRACKER_URL"
+		return 1
+	fi
+	archive_extraction "$ARCHIVE"
+}
+
 # Keep compatibility with 2.13 and older
 
 icons_include_png_from_directory() {
@@ -152,10 +184,6 @@ liberror() {
 	return 1
 }
 
-skipping_pkg_warning() {
-	warning_skip_package "$1" "$2"
-}
-
 archive_set_error_not_found() {
 	error_archive_not_found "$@"
 	return 1
@@ -173,10 +201,6 @@ archive_print_file_in_use() {
 archive_integrity_check_error() {
 	error_hashsum_mismatch "$1"
 	return 1
-}
-
-select_package_architecture_warning_unavailable() {
-	warning_architecture_not_available "$OPTION_ARCHITECTURE"
 }
 
 select_package_architecture_error_unknown() {

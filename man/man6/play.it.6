@@ -1,0 +1,273 @@
+.Dd $Mdocdate$
+.Dt ./play.it 6
+.Os
+.Sh NAME
+.Nm ./play.it
+.Nd Installer for drm-free commercial games
+.Sh SYNOPSIS
+.Nm
+.Ar archive
+.Op Fl -checksum Cm md5 | Cm none
+.Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
+.Op Fl -prefix Ar path
+.Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+.Op Fl -dry-run
+.Op Fl -skip-free-space-check
+.Op Fl -icons Cm yes | Cm no | Cm auto
+.Op Fl -overwrite
+.Op Fl -output-dir Ar path
+.Op Fl -debug Op Ar N
+.Op Fl -show-game-script
+.Op Fl -no-mtree
+.Sh DESCRIPTION
+.Nm
+is a free software building native packages from installers for Windows or
+Linux, mainly those sold by stores focusing on DRM-free games distribution. The
+goal is that a game installed via
+.Nm
+is indistinguishable from a game installed via the official repositories of
+your favorite distribution.
+.Pp
+The games are installed globally on multi-user systems, avoiding unnecessary
+duplication. The locations of save games, settings, mods, temporary files and
+backups are standardized with XDG Base Directory support.
+.Pp
+Packaging the games simplifies future updates, uninstalls and handling of any
+necessary dependencies, including integrated obsolete dependencies if specific
+versions are needed.
+.Ss Options
+.Bl -tag -width DS
+.It Fl -checksum Cm md5 | Cm none
+Archive integrity verification method selection.
+.Bl -tag -width indent -compact
+.It Cm md5
+md5sum verification
+.It Cm none
+no verification
+.El
+.It Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
+Generated packages compression method selection. (Some options may not be
+available depending on the chosen package format.)
+.Bl -tag -width indent -compact
+.It Cm none
+no compression
+.It Cm gzip
+gzip compression (fast)
+.It Cm xz
+xz compression (slower but more efficient than gzip)
+.It Cm bzip2
+bzip2 compression
+.It Cm zstd
+zstd compression
+.It Cm lz4
+lz4 compression (fastest but biggest files)
+.It Cm lzip
+lzip compression (similar to xz, fit for long-term archiving)
+.It Cm lzop
+lzop compression (slower than lz4 at inflating but more efficient)
+.El
+.It Fl -prefix Ar path
+Game installation
+.Ar path
+setting.
+.Pp
+This option accepts an absolute
+.Ar path
+only.
+.It Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+Generated package type selection.
+.Bl -tag -width indent-two -compact
+.It Cm arch
+.No .pkg.tar package (Arch Linux)
+.It Cm deb
+.No .deb package (Debian, Ubuntu)
+.It Cm gentoo
+.No .tbz2 package (Gentoo)
+.It Cm egentoo
+.No .tar package with an associated .ebuild (Gentoo)
+.El
+.It Fl -dry-run
+Run syntax checks but do not extract data nor build packages.
+.It Fl -skip-free-space-checks
+Do not check for free space. Temporary directories are created under
+.Ev TMPDIR .
+.It Fl -icons Cm yes | Cm no | Cm auto
+Include icons in packages.
+.Bl -tag -width indent -compact
+.It Cm yes
+Include icons and stop if a dependency wasn’t found
+.It Cm no
+Do not include icons even if all dependencies are present
+.It Cm auto
+Only include icons if all dependencies are present
+.El
+.It Fl -overwrite
+Replace packages if they already exist.
+.It Fl -output-dir Ar path
+Set the output directory for generated packages.
+.It Fl -debug Op Ar N
+Set the debug level. If
+.Ar N
+is unspecified, defaults to 1.
+.It Fl -show-game-script
+Only display the name of the game script to use, without running it.
+.It Fl -no-mtree
+Do not create .MTREE files in Arch Linux packages. As these files contain a
+hash of every file in the package, they may be quite long to create when
+dealing with big games.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width DS
+.It Ev PLAYIT_LIB2
+If set, overrides the provided version of
+.Pa libplayit2.sh
+(and its supported games) to a local copy for development.
+(default: /usr/share/games/play.it/libplayit2.sh)
+.It Ev TMPDIR
+Default place where temporary files are processed.
+.Sh DIAGNOSTICS
+.Ss Arch Linux
+.Bl -ohang
+.It Sy Conflicting files
+When running the installation command with pacman, you might see an error
+similar to this one:
+.Bd -literal -offset indent
+(2/2) checking for file conflicts                  [######################] 100%
+error: failed to commit transaction (conflicting files)
+the-stanley-parable: /usr/local/share/icons/hicolor/128x128/apps/the-stanley-parable.png exists in filesystem
+Errors occurred, no packages were upgraded.
+.Ed
+.Pp
+This happens when a package used to provide an icon via a symbolic link, but
+now provides it with a real icon file.
+.Pp
+The common workaround is to add the following switch to the pacman command:
+.Dl --overwrite /usr/local/share/icons/hicolor/\\*/apps/\\*.png
+.It Sy 32-bit packages dependencies can not be satisfied
+When running the installation command for 32-bit games with pacman, including
+.Xr wine 1
+ones, you might see an error similar to this one:
+.Bd -literal -offset indent
+error: failed to prepare transaction (could not satisfy dependencies)
+:: unable to satisfy dependency 'wine' required by dungeon-keeper-2
+:: unable to satisfy dependency 'wine' required by winetricks
+:: unable to satisfy dependency 'winetricks' required by dungeon-keeper-2
+:: unable to satisfy dependency 'lib32-libgl' required by dungeon-keeper-2
+.Ed
+.Pp
+This happens when you do not have activated multilib repositories in pacman
+configuration. To enable them and complete your game installation, you need to:
+.Bl -enum -offset indent -compact
+.It
+Uncomment the
+.Ql [multilib]
+section in
+.Ql /etc/pacman.conf
+(including the line containing
+.Ql [multilib]
+)
+.It
+Upgrade your system with
+.Ql pacman -Syu
+.It
+Run again the
+.Ql pacman
+installation command displayed by
+.Nm
+.El
+More details about multilib repositories can be found on
+.Lk https://wiki.archlinux.org/index.php/Official_repositories#multilib "Arch Linux wiki"
+.El
+.Ss Debian
+.Bl -ohang
+.It Sy Install i386 packages on an amd64 system
+Some games need i386 packages. On a default amd64 setup, i386 packages can not
+be installed.
+.Pp
+The following commands, that need to be run with the root account, allow the
+installation of i386 packages with their dependencies:
+.Bd -literal -offset indent
+dpkg --add-architecture i386
+apt-get update
+apt-get install libc6:i386
+.Ed
+.Pp
+This needs to be done once per system, afterwards all i386 packages should be
+installable.
+.Pp
+More information about mixing architectures can be found on
+.Lk https://wiki.debian.org/Multiarch/HOWTO "Debian documentation"
+.It Sy Available innoextract version is too old
+When calling
+.Nm
+on a Windows installer, you could get an error similar to this one:
+.Bd -literal -offset indent
+Error: Available innoextract version is too old to extract data from the following archive: setup_heroes_of_might_and_magic_3_complete_4.0_(28740).exe
+.Ed
+.Pp
+This happens when the installer you are trying to convert to native packages is
+an InnoSetup installer that is not supported by the version of
+.Xr innoextract 1
+currently available on your Debian. There is a package available from openSuse
+Build Service to get an up-to-date version of
+.Xr innoextract 1
+:
+.Lk https://software.opensuse.org/download/package?project=home%3Adscharrer&package=innoextract
+.It Sy Depends: libfaudio0 but it is not installable
+When installing some packages generated by
+.Nm
+on a
+.Em Debian Buster
+(or some derivative), the installation might fail with a message similar to
+this one:
+.Bd -literal -offset indent
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ owlboy : Depends: libfaudio0 but it is not installable
+E: Unable to correct problems, you have held broken packages.
+.Ed
+.Pp
+This is because the
+.Ql libfaudio0
+package is only available starting with
+.Em Debian Bullseye
+or through
+.Em Debian Buster backports
+\&. To enable the Buster backports repository, follow the instructions from
+.Lk https://wiki.debian.org/Backports#Adding_the_repository "Debian documentation"
+.Pp
+Once backports are enabled, you can run again the command to install your game
+package.
+.Xr apt 1
+should no longer complain about some not installable
+.Ql libfaudio0
+package.
+.It Sy undefined symbol: SDL_SIMDAlloc
+When trying to run some games installed on a
+.Em Debian Buster
+(or some derivative), a failure similar to this one may prevent the game
+launch:
+.Bd -literal -offset indent
+\&./Terraria.bin.x86_64: symbol lookup error: …/lib64/libFNA3D.so.0: undefined symbol: SDL_SIMDAlloc
+.Ed
+.Pp
+This is due to a libsdl2 symbol that is not available with the 2.0.9 version of
+this library coming from
+.Em Debian Buster
+official repositories. A more recent libsdl2 is provided on
+.Lk https://downloads.dotslashplay.it/resources/debian/buster/libsdl2/ "our server"
+.Pp
+From this page, download
+.Lk https://downloads.dotslashplay.it/resources/debian/buster/libsdl2/libsdl2-2.0-0_2.0.12+dfsg1-4_amd64.deb "libsdl2-2.0-0_2.0.12+dfsg1-4_amd64.deb"
+then install this package with
+.Xr apt 1 ,
+the required command should be similar to
+.Dl apt install /home/debian-user/libsdl2-2.0-0_2.0.12+dfsg1-4_amd64.deb
+.Pp
+Once the updated libsdl2 package is installed, the game should run without the
+previous error. There is no need to reinstall the game itself.

@@ -16,8 +16,11 @@ application_scummvm_scummid() {
 	application_scummid=$(get_value "${application}_SCUMMID")
 
 	# Check that the id fits the ScummVM id format
+	# Allowed formats are:
+	# - "engine:game"
+	# - "game"
 	if ! printf '%s' "$application_scummid" | \
-		grep --quiet --regexp='^[0-9a-z]\+$'
+		grep --quiet --regexp='^\([0-9a-z]\+:\)\?[0-9a-z]\+$'
 	then
 		error_application_scummid_invalid "$application" "$application_scummid"
 		return 1

@@ -359,3 +359,24 @@ debug_temp_dir_no_unix_permissions() {
 	printf 'Skipping directory without UNIX permissions: %s\n' "$directory" >> /dev/stderr
 	return 0
 }
+
+# print the path of a directory without support for executable files
+# USAGE: debug_temp_dir_no_executable_files
+debug_temp_dir_no_executable_files() {
+	if [ "$DEBUG" -le 1 ]; then
+		return 0
+	fi
+
+	local directory
+	directory="$1"
+
+	if [ -z "$directory" ]; then
+		error_empty_string 'debug_temp_dir_no_executable_files' 'directory'
+		return 1
+	fi
+
+	print_debug
+	printf 'Skipping directory without support for executable files: %s\n' \
+		"$directory" >> /dev/stderr
+	return 0
+}

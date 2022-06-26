@@ -15,15 +15,6 @@ write_metadata() {
 			return 1
 		fi
 
-		# Check that the current package is part of the target architectures
-		if \
-			[ "$OPTION_ARCHITECTURE" != 'all' ] \
-			&& ! packages_get_list | grep --quiet "$pkg"
-		then
-			warning_skip_package 'write_metadata' "$pkg"
-			continue
-		fi
-
 		[ "$DRY_RUN" -eq 1 ] && continue
 
 		case $OPTION_PACKAGE in
@@ -68,15 +59,6 @@ build_pkg() {
 		if ! testvar "$package" 'PKG'; then
 			error_invalid_argument 'package' 'build_pkg'
 			return 1
-		fi
-
-		# Check that the current package is part of the target architectures
-		if \
-			[ "$OPTION_ARCHITECTURE" != 'all' ] \
-			&& ! packages_get_list | grep --quiet "$package"
-		then
-			warning_skip_package 'build_pkg' "$package"
-			continue
 		fi
 
 		package_path=$(package_get_path "$package")
@@ -579,6 +561,7 @@ packages_get_version() {
 			if [ -z "$packages_version" ]; then
 				packages_version='1.0'
 			fi
+			packages_version="${packages_version}_p$(printf '%s' "$script_version" | sed 's/\.//g')"
 		;;
 	esac
 

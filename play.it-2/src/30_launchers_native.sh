@@ -6,7 +6,7 @@ launcher_write_script_native_application_variables() {
 	application="$1"
 	file="$2"
 	local application_exe application_libs application_options
-	application_exe=$(application_exe "$application")
+	application_exe=$(application_exe_escaped "$application")
 	application_libs=$(application_libs "$application")
 	application_options=$(application_options "$application")
 

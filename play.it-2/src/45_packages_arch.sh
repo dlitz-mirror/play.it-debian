@@ -91,6 +91,11 @@ pkg_write_arch() {
 	elif [ -e "$postinst" ]; then
 		compat_pkg_write_arch_prerm "$target"
 	fi
+
+	# Creates .MTREE
+	if [ "$MTREE" -eq 1 ]; then
+		package_archlinux_create_mtree "$pkg"
+	fi
 }
 
 # set list or Arch Linux dependencies from generic names
@@ -480,6 +485,9 @@ pkg_build_arch() {
 		if [ -e '.INSTALL' ]; then
 			files=".INSTALL $files"
 		fi
+		if [ -e '.MTREE' ]; then
+			files=".MTREE $files"
+		fi
 		debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
 		tar $tar_options --file "$pkg_filename" $files
 	)
@@ -490,3 +498,37 @@ pkg_build_arch() {
 	information_package_building_done
 }
 
+# creates .MTREE in package
+# USAGE: package_archlinux_create_mtree $pkg_path
+# RETURNS: nothing
+package_archlinux_create_mtree() {
+	local pkg
+	local pkg_path
+	pkg="$1"
+	pkg_path="$(package_get_path "$pkg")"
+
+	info_package_mtree_computation "$pkg"
+	(
+		cd "$pkg_path"
+		# shellcheck disable=SC2030
+		export LANG=C
+		# shellcheck disable=SC2094
+		find . -print0 | bsdtar \
+			--create \
+			--file - \
+			--files-from - \
+			--format=mtree \
+			--no-recursion \
+			--null \
+			--options='!all,use-set,type,uid,gid,mode,time,size,md5,sha256,link' \
+			--exclude .MTREE \
+			| gzip \
+			--force \
+			--no-name \
+			--to-stdout \
+			> .MTREE
+	)
+	info_package_mtree_computation_done
+
+	return 0
+}
