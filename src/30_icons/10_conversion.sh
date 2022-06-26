@@ -316,13 +316,8 @@ icon_get_resolution() {
 	fi
 
 	local image_resolution_string image_resolution
-	# shellcheck disable=SC2154
-	if version_is_at_least '2.8' "$target_version"; then
-		image_resolution_string=$(identify "$image_file" | sed "s;^${image_file} ;;" | cut --delimiter=' ' --fields=2)
-		image_resolution="${image_resolution_string%+0+0}"
-	else
-		image_resolution=$(icon_get_resolution_pre_2_8 "$image_file")
-	fi
+	image_resolution_string=$(identify "$image_file" | sed "s;^${image_file} ;;" | cut --delimiter=' ' --fields=2)
+	image_resolution="${image_resolution_string%+0+0}"
 
 	printf '%s' "$image_resolution"
 	return 0
