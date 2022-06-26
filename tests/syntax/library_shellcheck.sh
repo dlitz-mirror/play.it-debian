@@ -1,7 +1,7 @@
 #!/bin/sh
 set -o errexit
 
-TESTED_SCRIPT='play.it-2/lib/libplayit2.sh'
+TESTED_SCRIPT='lib/libplayit2.sh'
 SHELLCHECK_OPTIONS='--shell=sh'
 
 # Exclude warning SC2016:

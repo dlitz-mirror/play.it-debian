@@ -13,7 +13,7 @@ build_library:
     - make
   artifacts:
     paths:
-      - ./play.it-2/lib/libplayit2.sh
+      - ./lib/libplayit2.sh
 
 syntax_library:
   stage: syntax
