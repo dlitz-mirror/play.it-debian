@@ -60,8 +60,7 @@ archive_initialize() {
 	archive_candidate="$2"
 
 	archive_path=$(archive_find_path "$archive_candidate")
-
-	assert_not_empty "$archive_path" '$archive_path' 'archive_initialize'
+	assert_not_empty 'archive_path' 'archive_initialize'
 
 	# Set the current archive properties from the candidate one
 	archive_set_properties_from_candidate "$archive_name" "$archive_candidate"
@@ -183,17 +182,16 @@ archive_find_path_from_name() {
 # USAGE: archive_set_properties_from_candidate $archive_name $archive_candidate
 # RETURNS: nothing
 archive_set_properties_from_candidate() {
-	local archive_name archive_candidate archive_path property
+	local archive_name archive_candidate
 	archive_name="$1"
 	archive_candidate="$2"
-
-	assert_not_empty "$archive_name" '$archive_name' 'archive_set_properties_from_candidate'
-	assert_not_empty "$archive_candidate" '$archive_candidate' 'archive_set_properties_from_candidate'
+	assert_not_empty 'archive_name' 'archive_set_properties_from_candidate'
+	assert_not_empty 'archive_candidate' 'archive_set_properties_from_candidate'
 
 	# Set archive path
+	local archive_path
 	archive_path=$(archive_find_path "$archive_candidate")
-
-	assert_not_empty "$archive_path" '$archive_path' 'archive_set_properties_from_candidate'
+	assert_not_empty 'archive_path' 'archive_set_properties_from_candidate'
 
 	export "${archive_name}=$archive_path"
 
@@ -206,6 +204,7 @@ archive_set_properties_from_candidate() {
 	done
 
 	# Set other archive properties
+	local property
 	for property in \
 		'MD5' \
 		'TYPE' \
@@ -222,12 +221,12 @@ archive_set_properties_from_candidate() {
 # USAGE: archive_add_size_to_total $archive
 # RETURNS: nothing
 archive_add_size_to_total() {
-	local archive archive_size
+	local archive
 	archive="$1"
-
-	assert_not_empty "$archive" '$archive' 'archive_add_size_to_total'
+	assert_not_empty 'archive' 'archive_add_size_to_total'
 
 	# Get the given archive size, defaults to a size of 0
+	local archive_size
 	archive_size=$(get_value "${archive}_SIZE")
 	: "${archive_size:=0}"
 

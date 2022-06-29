@@ -173,11 +173,13 @@ error_not_writable() {
 }
 
 # display an error when a function has been given an unexpected empty string
-# USAGE: error_empty_string $function $string
+# USAGE: error_empty_string $calling_function $variable_name
 error_empty_string() {
-	local message function string
-	function="$1"
-	string="$2"
+	local calling_function variable_name
+	calling_function="$1"
+	variable_name="$2"
+
+	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
@@ -190,7 +192,7 @@ error_empty_string() {
 		;;
 	esac
 	print_error
-	printf "$message" "$string" "$function" "$PLAYIT_BUG_TRACKER_URL"
+	printf "$message" "$variable_name" "$calling_function" "$PLAYIT_BUG_TRACKER_URL"
 }
 
 # display an error when a required command is missing, but a function was expecting it to be available
