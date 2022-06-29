@@ -181,11 +181,11 @@ error_empty_string() {
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Lʼargument "%s" fourni à la fonction "%s" ne doit pas être vide.\n'
+			message='La variable "%s" de la fonction "%s" ne doit pas être vide.\n'
 			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
 		;;
 		('en'|*)
-			message='Argument "%s" as provided to function "%s" can not be empty.\n'
+			message='Variable "%s" in function "%s" can not be empty.\n'
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac

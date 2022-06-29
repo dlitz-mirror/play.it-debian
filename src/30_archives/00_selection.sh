@@ -61,10 +61,7 @@ archive_initialize() {
 
 	archive_path=$(archive_find_path "$archive_candidate")
 
-	###
-	# TODO
-	# Check that the archive path is not empty
-	###
+	assert_not_empty "$archive_path" '$archive_path' 'archive_initialize'
 
 	# Set the current archive properties from the candidate one
 	archive_set_properties_from_candidate "$archive_name" "$archive_candidate"
@@ -190,23 +187,13 @@ archive_set_properties_from_candidate() {
 	archive_name="$1"
 	archive_candidate="$2"
 
-	###
-	# TODO
-	# Check that the provided archive name is not empty
-	###
-
-	###
-	# TODO
-	# Check that the provided archive candidate is not empty
-	###
+	assert_not_empty "$archive_name" '$archive_name' 'archive_set_properties_from_candidate'
+	assert_not_empty "$archive_candidate" '$archive_candidate' 'archive_set_properties_from_candidate'
 
 	# Set archive path
 	archive_path=$(archive_find_path "$archive_candidate")
 
-	###
-	# TODO
-	# Check that the archive path is not empty
-	###
+	assert_not_empty "$archive_path" '$archive_path' 'archive_set_properties_from_candidate'
 
 	export "${archive_name}=$archive_path"
 
@@ -238,10 +225,7 @@ archive_add_size_to_total() {
 	local archive archive_size
 	archive="$1"
 
-	###
-	# TODO
-	# Check that the provided archive name is not empty
-	###
+	assert_not_empty "$archive" '$archive' 'archive_add_size_to_total'
 
 	# Get the given archive size, defaults to a size of 0
 	archive_size=$(get_value "${archive}_SIZE")
