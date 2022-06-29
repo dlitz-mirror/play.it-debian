@@ -245,10 +245,7 @@ archive_get_type() {
 	# Get the archive identifier, check that it is not empty
 	local archive_identifier
 	archive_identifier="$1"
-	if [ -z "$archive_identifier" ]; then
-		error_empty_string 'archive_get_type' 'archive_identifier'
-		return 1
-	fi
+	assert_not_empty 'archive_identifier' 'archive_get_type'
 
 	# Return archive type early if it is already set
 	local archive_type
