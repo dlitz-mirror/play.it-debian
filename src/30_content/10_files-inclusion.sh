@@ -57,11 +57,6 @@ organize_data() {
 	package_path=$(package_get_path "$package")
 	destination_path="${package_path}${target_path}"
 
-	# When called in dry-run mode, return early
-	if [ "$DRY_RUN" -eq 1 ]; then
-		return 0
-	fi
-
 	# Proceed with the actual files inclusion
 	local source_files_pattern source_file destination_file
 	if [ -d "$source_path" ]; then

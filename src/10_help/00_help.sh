@@ -30,7 +30,6 @@ help() {
 	help_compression
 	help_prefix
 	help_package
-	help_dryrun
 	help_skipfreespacecheck
 	help_icons
 	help_overwrite
@@ -163,23 +162,6 @@ help_package() {
 	printf -- '--package=arch|deb|gentoo\n'
 	printf -- '--package arch|deb|gentoo\n\n'
 	printf "$message" 'arch' 'deb' 'gentoo'
-}
-
-# display --dry-run option usage
-# USAGE: help_dryrun
-help_dryrun() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='\tEffectue des tests de syntaxe mais nʼextrait pas de données et ne construit pas de paquets.\n\n'
-		;;
-		('en'|*)
-			message='\tRun syntax checks but do not extract data nor build packages.\n\n'
-		;;
-	esac
-	printf -- '--dry-run\n\n'
-	printf "$message"
 }
 
 # display --skip-free-space-check option usage

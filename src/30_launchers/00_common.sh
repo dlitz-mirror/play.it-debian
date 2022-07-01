@@ -35,10 +35,7 @@ launcher_write_script() {
 					break;
 				fi
 			done
-			if \
-				[ $DRY_RUN -eq 0 ] && \
-				[ $binary_found -eq 0 ]
-			then
+			if [ $binary_found -eq 0 ]; then
 				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 				error_launcher_missing_binary "$binary_path"
 				return 1
@@ -47,10 +44,7 @@ launcher_write_script() {
 		('wine')
 			if [ "$(application_exe "$application")" != 'winecfg' ]; then
 				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
-				if \
-					[ $DRY_RUN -eq 0 ] && \
-					[ ! -f "$binary_path" ]
-				then
+				if [ ! -f "$binary_path" ]; then
 					error_launcher_missing_binary "$binary_path"
 					return 1
 				fi
@@ -58,20 +52,12 @@ launcher_write_script() {
 		;;
 		(*)
 			binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
-			if \
-				[ $DRY_RUN -eq 0 ] && \
-				[ ! -f "$binary_path" ]
-			then
+			if [ ! -f "$binary_path" ]; then
 				error_launcher_missing_binary "$binary_path"
 				return 1
 			fi
 		;;
 	esac
-
-	# if called in dry run mode, return before writing anything
-	if [ "$DRY_RUN" -eq 1 ]; then
-		return 0
-	fi
 
 	# write launcher script
 	debug_write_launcher "$application_type" "$binary_file"
@@ -736,11 +722,6 @@ launcher_write_script_postrun() {
 launcher_write_desktop() {
 	local application
 	application="$1"
-
-	# if called in dry run mode, return before writing anything
-	if [ "$DRY_RUN" -eq 1 ]; then
-		return 0
-	fi
 
 	# write desktop file
 	local desktop_file

@@ -11,7 +11,6 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -dry-run
 .Op Fl -skip-free-space-check
 .Op Fl -icons Cm yes | Cm no | Cm auto
 .Op Fl -overwrite
@@ -86,8 +85,6 @@ Generated package type selection.
 .It Cm egentoo
 .No .tar package with an associated .ebuild (Gentoo)
 .El
-.It Fl -dry-run
-Run syntax checks but do not extract data nor build packages.
 .It Fl -skip-free-space-checks
 Do not check for free space. Temporary directories are created under
 .Ev TMPDIR .

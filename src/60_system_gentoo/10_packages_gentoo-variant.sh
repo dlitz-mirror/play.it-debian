@@ -334,12 +334,6 @@ pkg_build_gentoo() {
 	fi
 
 	information_package_building "$pkg_filename_base"
-	if [ "$DRY_RUN" -eq 1 ]; then
-		printf '\n'
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg}_PKG
-		return 0
-	fi
 
 	mkdir --parents "$PLAYIT_WORKDIR/portage-tmpdir"
 	local ebuild_path

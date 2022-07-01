@@ -1,7 +1,6 @@
 # set defaults rights on files (755 for dirs & 644 for regular files)
 # USAGE: set_standard_permissions $dir[…]
 set_standard_permissions() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
 	for dir in "$@"; do
 		[  -d "$dir" ] || return 1
 		find "$dir" -type d -exec chmod 755 '{}' +
@@ -13,10 +12,6 @@ set_standard_permissions() {
 # USAGE: tolower $dir[…]
 # CALLS: tolower_convmv tolower_shell
 tolower() {
-	if [ "$DRY_RUN" -eq 1 ]; then
-		return 0
-	fi
-
 	local directory
 	for directory in "$@"; do
 		if [ ! -d "$directory" ]; then
@@ -73,10 +68,6 @@ tolower_shell() {
 # USAGE: toupper $dir[…]
 # CALLS: toupper_convmv toupper_shell
 toupper() {
-	if [ "$DRY_RUN" -eq 1 ]; then
-		return 0
-	fi
-
 	local directory
 	for directory in "$@"; do
 		if [ ! -d "$directory" ]; then

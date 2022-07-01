@@ -287,10 +287,6 @@ pkg_build_deb() {
 
 
 	information_package_building "$(basename "$pkg_filename")"
-	if [ "$DRY_RUN" -eq 1 ]; then
-		printf '\n'
-		return 0
-	fi
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
 

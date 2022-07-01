@@ -234,12 +234,6 @@ pkg_build_egentoo() {
 	fi
 
 	information_package_building "$(basename "$package_filename")"
-	if [ "$DRY_RUN" -eq 1 ]; then
-		printf '\n'
-		eval "${package}"_PKG=\""$package_filename"\"
-		export "${package}"_PKG
-		return 0
-	fi
 
 	if [ -z "$compression_command" ]; then
 		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options --file \"$package_filename\" ."

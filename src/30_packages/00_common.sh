@@ -15,8 +15,6 @@ write_metadata() {
 			return 1
 		fi
 
-		[ "$DRY_RUN" -eq 1 ] && continue
-
 		case $OPTION_PACKAGE in
 			('arch')
 				pkg_write_arch

@@ -101,10 +101,6 @@ parse_arguments() {
 				unset option
 				unset value
 			;;
-			('--dry-run')
-				DRY_RUN='1'
-				export DRY_RUN
-			;;
 			('--skip-free-space-check')
 				NO_FREE_SPACE_CHECK='1'
 				export NO_FREE_SPACE_CHECK

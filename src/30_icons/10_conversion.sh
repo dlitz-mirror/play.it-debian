@@ -119,12 +119,6 @@ icon_check_file_existence() {
 	directory="$1"
 	file="$2"
 
-	# Return early in dry-run mode
-	if [ $DRY_RUN -eq 1 ]; then
-		printf '%s' "$file"
-		return 0
-	fi
-
 	if [ ! -f "$directory/$file" ]; then
 		# pre-2.8 scripts could use globbing in file path
 		# shellcheck disable=SC2154
@@ -185,7 +179,6 @@ icon_extract_png_from_file() {
 # RETURNS: nothing
 # SIDE EFFECT: extract .png icons from the given .exe file, the .png files are created in the given directory
 icon_extract_png_from_exe() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -212,9 +205,6 @@ icon_extract_ico_from_exe() {
 
 	debug_external_command "wrestool $WRESTOOL_OPTIONS --extract --output=\"$destination\" \"$icon_file\" 2>/dev/null"
 
-	# Return early if run in dry-run mode
-	[ "$DRY_RUN" -eq 1 ] && return 0
-
 	# shellcheck disable=SC2086
 	wrestool $WRESTOOL_OPTIONS --extract --output="$destination" "$icon_file" 2>/dev/null
 }
@@ -236,7 +226,6 @@ icon_extract_png_from_ico() { icon_convert_to_png "$@"; }
 # RETURNS: nothing
 # SIDE EFFECT: convert the given image file to .png, the .png files are created in the given directory
 icon_convert_to_png() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	local name
@@ -252,7 +241,6 @@ icon_convert_to_png() {
 # RETURNS: nothing
 # SIDE EFFECT: copy the given .png file to the given directory
 icon_copy_png() {
-	[ "$DRY_RUN" -eq 1 ] && return 0
 	local destination
 	local file
 	file="$1"
@@ -265,11 +253,6 @@ icon_copy_png() {
 # RETURNS: nothing
 # SIDE EFFECT: copy the given .png file to the given directory
 icon_copy_xpm() {
-	# Return early if called in dry-run mode
-	if [ $DRY_RUN -eq 1 ]; then
-		return 0
-	fi
-
 	local destination file
 	file="$1"
 	destination="$2"
@@ -283,11 +266,6 @@ icon_copy_xpm() {
 # RETURNS: nothing
 # SIDE EFFECT: take the icons from the given directory, move them to standard paths into the current package
 icons_include_from_directory() {
-	# Return early if called in dry-run mode
-	if [ $DRY_RUN -eq 1 ]; then
-		return 0
-	fi
-
 	# Get the application id
 	local application application_id
 	application="$1"
@@ -366,11 +344,6 @@ icons_move_to() {
 	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
 	destination_package="$1"
 	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
-
-	# If called in dry-run mode, return early
-	if [ $DRY_RUN -eq 1 ]; then
-		return 0
-	fi
 
 	# a basic `mv` call here would fail if the destination is not empty
 	mkdir --parents "$destination_directory"
