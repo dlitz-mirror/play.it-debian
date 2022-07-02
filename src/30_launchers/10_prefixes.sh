@@ -100,16 +100,6 @@ launcher_write_script_prefix_functions() {
 	    )
 	}
 
-	# create prefix and user config/data directories
-	# USAGE: prefix_create_dirs
-	prefix_create_dirs() {
-	    for dir in "$PATH_PREFIX" "$PATH_CONFIG" "$PATH_DATA"; do
-	        if [ ! -d "$dir" ]; then
-	            mkdir --parents "$dir"
-	        fi
-	    done
-	}
-
 	# populate prefix with symbolic links to all game file
 	# USAGE: prefix_init_game_files
 	prefix_init_game_files() {
@@ -360,7 +350,6 @@ launcher_write_script_prefix_functions() {
 	                "fr:Réponse invalide : '$reply'."
 	        done
 	    fi
-	    prefix_create_dirs
 	    prefix_init_game_files
 	    prefix_init_user_files 'directory' "$PATH_CONFIG" "$CONFIG_DIRS"
 	    prefix_init_user_files 'directory' "$PATH_DATA" "$DATA_DIRS"
