@@ -69,8 +69,7 @@ launcher_write_script() {
 		('dosbox')
 			launcher_write_script_dosbox_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			dosbox_prefix_function_toupper >> "$target_file"
 			launcher_write_script_prefix_build "$target_file"
@@ -80,8 +79,7 @@ launcher_write_script() {
 		('java')
 			launcher_write_script_java_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_java_run "$application" "$target_file"
@@ -90,8 +88,7 @@ launcher_write_script() {
 		('native')
 			launcher_write_script_native_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_native_run "$application" "$target_file"
@@ -109,8 +106,7 @@ launcher_write_script() {
 		;;
 		('renpy')
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_renpy_run "$application" "$target_file"
@@ -124,8 +120,7 @@ launcher_write_script() {
 		('unity3d')
 			launcher_write_script_native_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_unity3d_run "$application" "$target_file"
@@ -136,9 +131,8 @@ launcher_write_script() {
 				launcher_write_script_wine_application_variables "$application" "$target_file"
 			fi
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_wine_command_path >> "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_wine_prefix_build "$target_file"
 			if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
@@ -151,8 +145,7 @@ launcher_write_script() {
 		('mono')
 			launcher_write_script_mono_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_user_files "$target_file"
-			launcher_write_script_prefix_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_mono_run "$application" "$target_file"
@@ -212,25 +205,6 @@ launcher_write_script_game_variables() {
 
 	GAME_ID='$(game_id)'
 	PATH_GAME='$PATH_GAME'
-
-	EOF
-	return 0
-}
-
-# write launcher script list of user-writable files
-# USAGE: launcher_write_script_user_files $file
-# NEEDED VARS: CONFIG_DIRS CONFIG_FILES DATA_DIRS DATA_FILES
-# CALLED BY: launcher_write_script
-launcher_write_script_user_files() {
-	local file
-	file="$1"
-	cat >> "$file" <<- EOF
-	# Set list of user-writable files
-
-	CONFIG_DIRS='$CONFIG_DIRS'
-	CONFIG_FILES='$CONFIG_FILES'
-	DATA_DIRS='$DATA_DIRS'
-	DATA_FILES='$DATA_FILES'
 
 	EOF
 	return 0

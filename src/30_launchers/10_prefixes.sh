@@ -339,10 +339,8 @@ launcher_prefix_function_build() {
 	        done
 	    fi
 	    prefix_init_game_files
-	    prefix_init_user_files 'directory' "$PATH_CONFIG" "$CONFIG_DIRS"
-	    prefix_init_user_files 'directory' "$PATH_DATA" "$DATA_DIRS"
-	    prefix_init_user_files 'file' "$PATH_CONFIG" "$CONFIG_FILES"
-	    prefix_init_user_files 'file' "$PATH_DATA" "$DATA_FILES"
+	    prefix_init_user_files 'directory' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_DIRECTORIES"
+	    prefix_init_user_files 'file' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_FILES"
 	    touch "$PREFIX_LOCK"
 	}
 	EOF
@@ -355,30 +353,11 @@ launcher_prefix_function_cleanup() {
 	# clean up and synchronize back user prefix
 	# USAGE: prefix_cleanup
 	prefix_cleanup() {
-	    prefix_sync_user_files 'directory' "$PATH_CONFIG" "$CONFIG_DIRS"
-	    prefix_sync_user_files 'directory' "$PATH_DATA" "$DATA_DIRS"
-	    prefix_sync_user_files 'file' "$PATH_CONFIG" "$CONFIG_FILES"
-	    prefix_sync_user_files 'file' "$PATH_DATA" "$DATA_FILES"
+	    prefix_sync_user_files 'directory' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_DIRECTORIES"
+	    prefix_sync_user_files 'file' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_FILES"
 	    rm --force "$PREFIX_LOCK"
 	}
 	EOF
-}
-
-# write launcher script prefix-related variables
-# USAGE: launcher_write_script_prefix_variables $file
-# CALLED BY: launcher_write_script
-launcher_write_script_prefix_variables() {
-	local file
-	file="$1"
-	cat >> "$file" <<- 'EOF'
-	# Set prefix-related values
-
-	: "${PREFIX_ID:="$GAME_ID"}"
-	PATH_CONFIG="${XDG_CONFIG_HOME:="$HOME/.config"}/$PREFIX_ID"
-	PATH_DATA="${XDG_DATA_HOME:="$HOME/.local/share"}/games/$PREFIX_ID"
-
-	EOF
-	return 0
 }
 
 # write launcher script prefix functions
@@ -437,12 +416,11 @@ launcher_write_script_prefix_build() {
 	cat >> "$file" <<- 'EOF'
 	# Build user prefix
 
-	PATH_PREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
+	PATH_PREFIX="${XDG_DATA_HOME:=$HOME/.local/share}/play.it/prefixes/${PREFIX_ID:=$GAME_ID}"
 	PREFIX_LOCK="$PATH_PREFIX/.$GAME_ID.lock"
 	mkdir --parents \
 	    "$PATH_PREFIX" \
-	    "$PATH_CONFIG" \
-	    "$PATH_DATA"
+	    "$USER_PERSISTENT_PATH"
 	EOF
 
 	launcher_write_script_prefix_prepare "$file"

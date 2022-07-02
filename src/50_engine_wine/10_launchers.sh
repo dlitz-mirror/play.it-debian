@@ -176,8 +176,7 @@ launcher_write_script_wine_prefix_build() {
 
 	mkdir --parents \
 	    "$PATH_PREFIX" \
-	    "$PATH_CONFIG" \
-	    "$PATH_DATA"
+	    "$USER_PERSISTENT_PATH"
 	EOF
 
 	launcher_write_script_prefix_prepare "$file"
