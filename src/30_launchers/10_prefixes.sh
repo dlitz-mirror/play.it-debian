@@ -32,16 +32,6 @@ launcher_prefix_functions_localized_messages() {
 	    done 1>&2
 	}
 
-	# print a localized error message on standard error output
-	# strings must be prefixed by a two-letter language code and a colon
-	# USAGE: display_error $string[…]
-	display_error() {
-	    display_message \
-	        'en:\033[1;31mError:\033[0m' \
-	        'fr:\033[1;31mErreur :\033[0m'
-	    display_message "$@"
-	}
-
 	# print a localized warning message on standard error output
 	# strings must be prefixed by a two-letter language code and a colon
 	# USAGE: display_warning $string[…]
@@ -50,27 +40,6 @@ launcher_prefix_functions_localized_messages() {
 	        'en:\033[1;33mWarning:\033[0m' \
 	        'fr:\033[1;33mAvertissement :\033[0m'
 	    display_message "$@"
-	}
-
-	# return the localized name of a given file type ('file' or 'directory')
-	# USAGE: get_type_name $type
-	get_type_name() {
-	    local type
-	    type="$1"
-	    case "$type" in
-	        ('file')
-	            localize 'en:file' 'fr:le fichier'
-	        ;;
-	        ('directory')
-	            localize 'en:directory' 'fr:le répertoire'
-	        ;;
-	        (*)
-	            display_error \
-	                "en:Invalid file type in launcher script: '$type'" \
-	                "fr:Type de fichier invalide dans le script : '$type'"
-	            exit 1
-	        ;;
-	    esac
 	}
 	EOF
 }
@@ -111,201 +80,6 @@ launcher_prefix_function_init_game_files() {
 	EOF
 }
 
-# print function creating links from the prefix to persistent paths
-# USAGE: launcher_prefix_function_symlink_to_userdir
-launcher_prefix_function_symlink_to_userdir() {
-	cat <<- 'EOF'
-	# create symbolic link $PATH_PREFIX/$target -> $userdir/$target,
-	# overwriting $PATH_PREFIX/$target if it exists
-	# USAGE: prefix_symlink_to_userdir $userdir $target
-	prefix_symlink_to_userdir() {
-	    local userdir target target_prefix target_real
-	    userdir="$1"
-	    target="$2"
-	    if [ -e "${PATH_PREFIX}/${target}" ]; then
-	        target_prefix=$(readlink --canonicalize-existing "${PATH_PREFIX}/${target}")
-	    else
-	        unset target_prefix
-	    fi
-	    target_real=$(readlink --canonicalize-existing "${userdir}/${target}")
-	    if [ "$target_real" != "$target_prefix" ]; then
-	        if [ "$target_prefix" ]; then
-	            rm --force --recursive "${PATH_PREFIX:?}/${target}"
-	        fi
-	        local target_parent
-	        target_parent=$(dirname "$target")
-	        mkdir --parents "${PATH_PREFIX}/${target_parent}"
-	        ln --symbolic "$target_real" "${PATH_PREFIX}/${target}"
-	    fi
-	}
-	EOF
-}
-
-# print function moving files/directories from the prefix to persistent paths
-# USAGE: launcher_prefix_function_move_to_userdir_and_symlink
-launcher_prefix_function_move_to_userdir_and_symlink() {
-	cat <<- 'EOF'
-	# move $PATH_PREFIX/$target to $userdir/$target (overwriting it if it exists),
-	# and create symbolic link $PATH_PREFIX/$target -> $userdir/$target
-	# USAGE: prefix_move_to_userdir_and_symlink $userdir $target
-	prefix_move_to_userdir_and_symlink() {
-	    local userdir target
-	    userdir="$1"
-	    target="$2"
-	    if [ -e "${userdir}/${target}" ]; then
-	        rm --force --recursive "${userdir}/${target}"
-	    fi
-	    local target_parent
-	    target_parent=$(dirname "$target")
-	    mkdir --parents "${userdir}/${target_parent}"
-	    cp --recursive --dereference --no-target-directory "${PATH_PREFIX}/${target}" "${userdir}/${target}"
-	    rm --force --recursive "${PATH_PREFIX:?}/${target}"
-	    ln --symbolic "${userdir}/${target}" "${PATH_PREFIX}/${target}"
-	}
-	EOF
-}
-
-# print function initializing prefix with user files or directories
-# USAGE: launcher_prefix_function_init_user_files
-launcher_prefix_function_init_user_files() {
-	cat <<- 'EOF'
-	# initialize prefix with user files or directories
-	# USAGE: prefix_init_user_files file|directory $userdir $list
-	prefix_init_user_files() {
-	    local type userdir list type_name
-	    type="$1"
-	    userdir="$2"
-	    list="$3"
-	    type_name=$(get_type_name "$type")
-	    # populate prefix with symlinks to specified files or directories
-	    (
-	        cd "$userdir"
-	        if [ "$type" = 'file' ]; then
-	            # symlink to all files, even those not specified in $list
-	            find -L . -type f
-	        else
-	            for target in $list; do echo "$target"; done
-	        fi | while read -r target; do
-	            case "$type" in
-	                ('file')
-	                    [ -f "$target" ] || continue
-	                ;;
-	                ('directory')
-	                    [ -d "$target" ] || continue
-	                ;;
-	            esac
-	            prefix_symlink_to_userdir "$userdir" "$target"
-	        done
-	    )
-	    # move specified files or directories, if any, from prefix back to user directory
-	    (
-	        cd "$PATH_PREFIX"
-	        for target in $list; do
-	            case "$type" in
-	                ('file')
-	                    [ -f "$target" ] || continue
-	                ;;
-	                ('directory')
-	                    # User directories should always be available in the game prefix from the first launch,
-	                    # because some games will fail trying to write in them instead of creating them when needed.
-	                    mkdir --parents "$target"
-	                ;;
-	            esac
-	            if [ ! -e "$userdir/$target" ]; then
-	                prefix_move_to_userdir_and_symlink "$userdir" "$target"
-	            else
-	                case "$type" in
-	                    ('file')
-	                        if [ ! -f "$userdir/$target" ]; then
-	                            display_warning \
-	                                "en:Cannot overwrite '$userdir/$target' with $type_name '$PATH_PREFIX/$target'" \
-	                                "fr:Impossible d'écraser '$userdir/$target' par $type_name '$PATH_PREFIX/$target'"
-	                        fi
-	                    ;;
-	                    ('directory')
-	                        if [ ! -d "$userdir/$target" ]; then
-	                            display_warning \
-	                                "en:Cannot overwrite '$userdir/$target' with $type_name '$PATH_PREFIX/$target'" \
-	                                "fr:Impossible d'écraser '$userdir/$target' par $type_name '$PATH_PREFIX/$target'"
-	                        fi
-	                    ;;
-	                esac
-	            fi
-	        done
-	    )
-	}
-	EOF
-}
-
-# print function synchronizing user files or directories with prefix
-# USAGE: launcher_prefix_function_sync_user_files
-launcher_prefix_function_sync_user_files() {
-	cat <<- 'EOF'
-	# synchronize user files or directories with prefix
-	# USAGE: prefix_sync_user_files $type $userdir $list
-	prefix_sync_user_files() {
-	    local type userdir list type_name
-	    type="$1"
-	    userdir="$2"
-	    list="$3"
-	    type_name=$(get_type_name "$type")
-	    # move specified files or directories, if any, from prefix back to user directory
-	    (
-	        cd "$PATH_PREFIX"
-	        for target in $list; do
-	            case "$type" in
-	                ('file')
-	                    [ -f "$target" ] || continue
-	                ;;
-	                ('directory')
-	                    [ -d "$target" ] || continue
-	                ;;
-	            esac
-	            if [ ! -h "$target" ]; then
-	                case "$type" in
-	                    ('file')
-	                        if [ ! -e "$userdir/$target" ] || [ -f "$userdir/$target" ]; then
-	                            prefix_move_to_userdir_and_symlink "$userdir" "$target"
-	                        else
-	                            display_warning \
-	                                "en:Cannot overwrite '$userdir/$target' with $type_name '$PATH_PREFIX/$target'" \
-	                                "fr:Impossible d'écraser '$userdir/$target' par $type_name '$PATH_PREFIX/$target'"
-	                        fi
-	                    ;;
-	                    ('directory')
-	                        if [ ! -e "$userdir/$target" ] || [ -d "$userdir/$target" ]; then
-	                            prefix_move_to_userdir_and_symlink "$userdir" "$target"
-	                        else
-	                            display_warning \
-	                                "en:Cannot overwrite '$userdir/$target' with $type_name '$PATH_PREFIX/$target'" \
-	                                "fr:Impossible d'écraser '$userdir/$target' par $type_name '$PATH_PREFIX/$target'"
-	                        fi
-	                    ;;
-	                esac
-	            fi
-	        done
-	    )
-	    # remove user files or directories which are not in the prefix anymore, if any
-	    (
-	        cd "$userdir"
-	        for target in $list; do
-	            case "$type" in
-	                ('file')
-	                    [ -f "$target" ] || continue
-	                ;;
-	                ('directory')
-	                    [ -d "$target" ] || continue
-	                ;;
-	            esac
-	            if [ ! -e "$PATH_PREFIX/$target" ]; then
-	                rm --force --recursive "$target"
-	            fi
-	        done
-	    )
-	}
-	EOF
-}
-
 # print function creating and initializing the user prefix
 # USAGE: launcher_prefix_function_build
 launcher_prefix_function_build() {
@@ -339,8 +113,9 @@ launcher_prefix_function_build() {
 	        done
 	    fi
 	    prefix_init_game_files
-	    prefix_init_user_files 'directory' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_DIRECTORIES"
-	    prefix_init_user_files 'file' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_FILES"
+	    persistent_populate_prefix
+	    persistent_init_directories
+	    persistent_init_files
 	    touch "$PREFIX_LOCK"
 	}
 	EOF
@@ -353,8 +128,7 @@ launcher_prefix_function_cleanup() {
 	# clean up and synchronize back user prefix
 	# USAGE: prefix_cleanup
 	prefix_cleanup() {
-	    prefix_sync_user_files 'directory' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_DIRECTORIES"
-	    prefix_sync_user_files 'file' "$USER_PERSISTENT_PATH" "$USER_PERSISTENT_FILES"
+	    persistent_update_from_prefix
 	    rm --force "$PREFIX_LOCK"
 	}
 	EOF
@@ -378,11 +152,8 @@ launcher_write_script_prefix_functions() {
 		# Set userdir- and prefix-related functions
 
 		EOF
+		launcher_prefix_functions_persistent
 		launcher_prefix_function_init_game_files
-		launcher_prefix_function_symlink_to_userdir
-		launcher_prefix_function_move_to_userdir_and_symlink
-		launcher_prefix_function_init_user_files
-		launcher_prefix_function_sync_user_files
 		launcher_prefix_function_build
 		launcher_prefix_function_cleanup
 	} >> "$file"
