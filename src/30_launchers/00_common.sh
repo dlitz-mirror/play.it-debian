@@ -72,6 +72,7 @@ launcher_write_script() {
 			launcher_write_script_user_files "$target_file"
 			launcher_write_script_prefix_variables "$target_file"
 			launcher_write_script_prefix_functions "$target_file"
+			dosbox_prefix_function_toupper >> "$target_file"
 			launcher_write_script_prefix_build "$target_file"
 			launcher_write_script_dosbox_run "$application" "$target_file"
 			launcher_write_script_prefix_cleanup "$target_file"

@@ -1,29 +1,7 @@
-# write launcher script prefix-related variables
-# USAGE: launcher_write_script_prefix_variables $file
-# CALLED BY: launcher_write_script
-launcher_write_script_prefix_variables() {
-	local file
-	file="$1"
-	cat >> "$file" <<- 'EOF'
-	# Set prefix-related values
-
-	: "${PREFIX_ID:="$GAME_ID"}"
-	PATH_CONFIG="${XDG_CONFIG_HOME:="$HOME/.config"}/$PREFIX_ID"
-	PATH_DATA="${XDG_DATA_HOME:="$HOME/.local/share"}/games/$PREFIX_ID"
-
-	EOF
-	return 0
-}
-
-# write launcher script prefix functions
-# USAGE: launcher_write_script_prefix_functions $file
-# CALLED BY: launcher_write_script
-launcher_write_script_prefix_functions() {
-	local file
-	file="$1"
-	cat >> "$file" <<- 'EOF'
-	# Set localization and error reporting functions
-
+# print functions used to display localized messages
+# USAGE: launcher_prefix_functions_localized_messages
+launcher_prefix_functions_localized_messages() {
+	cat <<- 'EOF'
 	# select strings matching the current locale
 	# strings must be prefixed by a two-letter language code and a colon
 	# USAGE: localize $string[…]
@@ -74,32 +52,33 @@ launcher_write_script_prefix_functions() {
 	    display_message "$@"
 	}
 
-	# Set userdir- and prefix-related functions
-
-	# convert the name of specified user files and directories to upper case
-	# note that only the last component of each matching path is converted
-	# USAGE: userdir_toupper_files $userdir $list
-	userdir_toupper_files() {
-	    local userdir
-	    local list
-	    userdir="$1"
-	    list="$2"
-	    (
-	        cd "$userdir"
-	        for file in $list; do
-	            [ -e "$file" ] || continue
-	            newfile=$(dirname "$file")/$(basename "$file" | tr '[:lower:]' '[:upper:]')
-	            if [ ! -e "$newfile" ]; then
-	                mv "$file" "$newfile"
-	            else
-	                display_warning \
-	                    "en:Cannot overwrite '$userdir/${newfile#./}' with '$userdir/$file'" \
-	                    "fr:Impossible d'écraser '$userdir/${newfile#./}' par '$userdir/$file'"
-	            fi
-	        done
-	    )
+	# return the localized name of a given file type ('file' or 'directory')
+	# USAGE: get_type_name $type
+	get_type_name() {
+	    local type
+	    type="$1"
+	    case "$type" in
+	        ('file')
+	            localize 'en:file' 'fr:le fichier'
+	        ;;
+	        ('directory')
+	            localize 'en:directory' 'fr:le répertoire'
+	        ;;
+	        (*)
+	            display_error \
+	                "en:Invalid file type in launcher script: '$type'" \
+	                "fr:Type de fichier invalide dans le script : '$type'"
+	            exit 1
+	        ;;
+	    esac
 	}
+	EOF
+}
 
+# print function populating prefix symbolic links to all game file
+# USAGE: launcher_prefix_function_init_game_files
+launcher_prefix_function_init_game_files() {
+	cat <<- 'EOF'
 	# populate prefix with symbolic links to all game file
 	# USAGE: prefix_init_game_files
 	prefix_init_game_files() {
@@ -129,7 +108,13 @@ launcher_write_script_prefix_functions() {
 	        done
 	    )
 	}
+	EOF
+}
 
+# print function creating links from the prefix to persistent paths
+# USAGE: launcher_prefix_function_symlink_to_userdir
+launcher_prefix_function_symlink_to_userdir() {
+	cat <<- 'EOF'
 	# create symbolic link $PATH_PREFIX/$target -> $userdir/$target,
 	# overwriting $PATH_PREFIX/$target if it exists
 	# USAGE: prefix_symlink_to_userdir $userdir $target
@@ -153,7 +138,13 @@ launcher_write_script_prefix_functions() {
 	        ln --symbolic "$target_real" "${PATH_PREFIX}/${target}"
 	    fi
 	}
+	EOF
+}
 
+# print function moving files/directories from the prefix to persistent paths
+# USAGE: launcher_prefix_function_move_to_userdir_and_symlink
+launcher_prefix_function_move_to_userdir_and_symlink() {
+	cat <<- 'EOF'
 	# move $PATH_PREFIX/$target to $userdir/$target (overwriting it if it exists),
 	# and create symbolic link $PATH_PREFIX/$target -> $userdir/$target
 	# USAGE: prefix_move_to_userdir_and_symlink $userdir $target
@@ -171,28 +162,13 @@ launcher_write_script_prefix_functions() {
 	    rm --force --recursive "${PATH_PREFIX:?}/${target}"
 	    ln --symbolic "${userdir}/${target}" "${PATH_PREFIX}/${target}"
 	}
+	EOF
+}
 
-	# return the localized name of a given file type ('file' or 'directory')
-	# USAGE: get_type_name $type
-	get_type_name() {
-	    local type
-	    type="$1"
-	    case "$type" in
-	        ('file')
-	            localize 'en:file' 'fr:le fichier'
-	        ;;
-	        ('directory')
-	            localize 'en:directory' 'fr:le répertoire'
-	        ;;
-	        (*)
-	            display_error \
-	                "en:Invalid file type in launcher script: '$type'" \
-	                "fr:Type de fichier invalide dans le script : '$type'"
-	            exit 1
-	        ;;
-	    esac
-	}
-
+# print function initializing prefix with user files or directories
+# USAGE: launcher_prefix_function_init_user_files
+launcher_prefix_function_init_user_files() {
+	cat <<- 'EOF'
 	# initialize prefix with user files or directories
 	# USAGE: prefix_init_user_files file|directory $userdir $list
 	prefix_init_user_files() {
@@ -258,7 +234,13 @@ launcher_write_script_prefix_functions() {
 	        done
 	    )
 	}
+	EOF
+}
 
+# print function synchronizing user files or directories with prefix
+# USAGE: launcher_prefix_function_sync_user_files
+launcher_prefix_function_sync_user_files() {
+	cat <<- 'EOF'
 	# synchronize user files or directories with prefix
 	# USAGE: prefix_sync_user_files $type $userdir $list
 	prefix_sync_user_files() {
@@ -321,7 +303,13 @@ launcher_write_script_prefix_functions() {
 	        done
 	    )
 	}
+	EOF
+}
 
+# print function creating and initializing the user prefix
+# USAGE: launcher_prefix_function_build
+launcher_prefix_function_build() {
+	cat <<- 'EOF'
 	# create and initialize user prefix
 	# USAGE: prefix_build
 	prefix_build() {
@@ -357,7 +345,13 @@ launcher_write_script_prefix_functions() {
 	    prefix_init_user_files 'file' "$PATH_DATA" "$DATA_FILES"
 	    touch "$PREFIX_LOCK"
 	}
+	EOF
+}
 
+# print function cleaning up and synchronizing back user prefix
+# USAGE: launcher_prefix_function_cleanup
+launcher_prefix_function_cleanup() {
+	cat <<- 'EOF'
 	# clean up and synchronize back user prefix
 	# USAGE: prefix_cleanup
 	prefix_cleanup() {
@@ -367,8 +361,52 @@ launcher_write_script_prefix_functions() {
 	    prefix_sync_user_files 'file' "$PATH_DATA" "$DATA_FILES"
 	    rm --force "$PREFIX_LOCK"
 	}
+	EOF
+}
+
+# write launcher script prefix-related variables
+# USAGE: launcher_write_script_prefix_variables $file
+# CALLED BY: launcher_write_script
+launcher_write_script_prefix_variables() {
+	local file
+	file="$1"
+	cat >> "$file" <<- 'EOF'
+	# Set prefix-related values
+
+	: "${PREFIX_ID:="$GAME_ID"}"
+	PATH_CONFIG="${XDG_CONFIG_HOME:="$HOME/.config"}/$PREFIX_ID"
+	PATH_DATA="${XDG_DATA_HOME:="$HOME/.local/share"}/games/$PREFIX_ID"
 
 	EOF
+	return 0
+}
+
+# write launcher script prefix functions
+# USAGE: launcher_write_script_prefix_functions $file
+# CALLED BY: launcher_write_script
+launcher_write_script_prefix_functions() {
+	local file
+	file="$1"
+	{
+		cat <<- 'EOF'
+
+		# Set localization and error reporting functions
+
+		EOF
+		launcher_prefix_functions_localized_messages
+		cat <<- 'EOF'
+
+		# Set userdir- and prefix-related functions
+
+		EOF
+		launcher_prefix_function_init_game_files
+		launcher_prefix_function_symlink_to_userdir
+		launcher_prefix_function_move_to_userdir_and_symlink
+		launcher_prefix_function_init_user_files
+		launcher_prefix_function_sync_user_files
+		launcher_prefix_function_build
+		launcher_prefix_function_cleanup
+	} >> "$file"
 	sed --in-place 's/    /\t/g' "$file"
 	return 0
 }
