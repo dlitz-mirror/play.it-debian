@@ -150,3 +150,17 @@ version_is_at_least() {
 	fi
 }
 
+# assert a variable is not empty and display an error message otherwise
+# USAGE: assert_not_empty $variable_name $calling_function
+assert_not_empty() {
+	local variable_name calling_function
+	variable_name="$1"
+	calling_function="$2"
+
+	local variable_value
+	variable_value=$(get_value "$variable_name")
+	if [ -z "$variable_value" ]; then
+		error_empty_string "$calling_function" "$variable_name"
+		return 1
+	fi
+}

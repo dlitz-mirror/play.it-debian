@@ -1,9 +1,6 @@
 # write .ebuild package meta-data
 # USAGE: pkg_write_egentoo PKG_xxx
-# NEEDED VARS: PKG_DEPS_GENTOO OPTION_COMPRESSION OPTION_OUTPUT_DIR
-# CALLED BY: write_metadata
 pkg_write_egentoo() {
-	local package
 	local pkg_deps
 	local build_deps
 	local postinst_f
@@ -12,12 +9,9 @@ pkg_write_egentoo() {
 	local ebuild_path
 	local inherits
 
+	local package
 	package="$1"
-	if [ -z "$package" ];then
-		# shellcheck disable=SC2016
-		error_empty_string 'pkg_write_egentoo' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'pkg_write_egentoo'
 
 	inherits="xdg"
 
@@ -146,11 +140,7 @@ EOF
 
 # builds dummy egentoo package
 # USAGE: pkg_build_egentoo PKG_xxx
-# NEEDED VARS: (LANG) PLAYIT_WORKDIR
-# CALLED BY: build_pkg
 pkg_build_egentoo() {
-	local package
-	local package_path
 	local package_filename
 	local tar_command
 	local tar_options
@@ -159,12 +149,11 @@ pkg_build_egentoo() {
 
 	tar_command="tar"
 
+	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'pkg_build_egentoo' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'pkg_build_egentoo'
+
+	local package_path
 	package_path=$(package_get_path "$package")
 
 	# We don’t want both binary packages to overwrite each other

@@ -60,11 +60,7 @@ archive_initialize() {
 	archive_candidate="$2"
 
 	archive_path=$(archive_find_path "$archive_candidate")
-
-	###
-	# TODO
-	# Check that the archive path is not empty
-	###
+	assert_not_empty 'archive_path' 'archive_initialize'
 
 	# Set the current archive properties from the candidate one
 	archive_set_properties_from_candidate "$archive_name" "$archive_candidate"
@@ -186,27 +182,16 @@ archive_find_path_from_name() {
 # USAGE: archive_set_properties_from_candidate $archive_name $archive_candidate
 # RETURNS: nothing
 archive_set_properties_from_candidate() {
-	local archive_name archive_candidate archive_path property
+	local archive_name archive_candidate
 	archive_name="$1"
 	archive_candidate="$2"
-
-	###
-	# TODO
-	# Check that the provided archive name is not empty
-	###
-
-	###
-	# TODO
-	# Check that the provided archive candidate is not empty
-	###
+	assert_not_empty 'archive_name' 'archive_set_properties_from_candidate'
+	assert_not_empty 'archive_candidate' 'archive_set_properties_from_candidate'
 
 	# Set archive path
+	local archive_path
 	archive_path=$(archive_find_path "$archive_candidate")
-
-	###
-	# TODO
-	# Check that the archive path is not empty
-	###
+	assert_not_empty 'archive_path' 'archive_set_properties_from_candidate'
 
 	export "${archive_name}=$archive_path"
 
@@ -219,6 +204,7 @@ archive_set_properties_from_candidate() {
 	done
 
 	# Set other archive properties
+	local property
 	for property in \
 		'MD5' \
 		'TYPE' \
@@ -235,15 +221,12 @@ archive_set_properties_from_candidate() {
 # USAGE: archive_add_size_to_total $archive
 # RETURNS: nothing
 archive_add_size_to_total() {
-	local archive archive_size
+	local archive
 	archive="$1"
-
-	###
-	# TODO
-	# Check that the provided archive name is not empty
-	###
+	assert_not_empty 'archive' 'archive_add_size_to_total'
 
 	# Get the given archive size, defaults to a size of 0
+	local archive_size
 	archive_size=$(get_value "${archive}_SIZE")
 	: "${archive_size:=0}"
 
@@ -262,10 +245,7 @@ archive_get_type() {
 	# Get the archive identifier, check that it is not empty
 	local archive_identifier
 	archive_identifier="$1"
-	if [ -z "$archive_identifier" ]; then
-		error_empty_string 'archive_get_type' 'archive_identifier'
-		return 1
-	fi
+	assert_not_empty 'archive_identifier' 'archive_get_type'
 
 	# Return archive type early if it is already set
 	local archive_type

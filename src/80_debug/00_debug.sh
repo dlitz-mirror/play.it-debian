@@ -8,34 +8,26 @@ print_debug() {
 # print an option’s value
 # USAGE: debug_option_value $option_name
 debug_option_value() {
-	local option_name
-	local option_value
-
 	if [ "$DEBUG" -eq 0 ]; then
 		return 0
-	else
-		option_name="$1"
-
-		if [ -z "$option_name" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_option_value' '$option_name'
-			return 1
-
-		else
-			option_value=$(get_value "$option_name")
-
-			print_debug
-			printf '%s: %s\n' "$option_name" "$option_value" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local option_name
+	option_name="$1"
+	assert_not_empty 'option_name' 'debug_option_value'
+
+	local option_value
+	option_value=$(get_value "$option_name")
+
+	print_debug
+	printf '%s: %s\n' "$option_name" "$option_value" >> /dev/stderr
+	return 0
 }
 
 # print the name of the entered function
 # USAGE: debug_entering_function $function_name [$debug_level]
 debug_entering_function() {
 	local debug_level
-	local function_name
 
 	if [ "$#" -eq 2 ]; then
 		debug_level="$2"
@@ -54,27 +46,21 @@ debug_entering_function() {
 
 	if [ "$DEBUG" -lt "$debug_level" ]; then
 		return 0
-	else
-		function_name="$1"
-
-		if [ -z "$function_name" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_entering_function' '$function_name'
-			return 1
-
-		else
-			print_debug
-			printf 'Entering %s\n' "$function_name" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local function_name
+	function_name="$1"
+	assert_not_empty 'function_name' 'debug_entering_function'
+
+	print_debug
+	printf 'Entering %s\n' "$function_name" >> /dev/stderr
+	return 0
 }
 
 # print the name of the leaved function
 # USAGE: debug_leaving_function $function_name [$debug_level]
 debug_leaving_function() {
 	local debug_level
-	local function_name
 
 	if [ "$#" -eq 2 ]; then
 		debug_level="$2"
@@ -93,43 +79,31 @@ debug_leaving_function() {
 
 	if [ "$DEBUG" -lt "$debug_level" ]; then
 		return 0
-	else
-		function_name="$1"
-
-		if [ -z "$function_name" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_leaving_function' '$function_name'
-			return 1
-
-		else
-			print_debug
-			printf 'Leaving %s\n' "$function_name" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local function_name
+	function_name="$1"
+	assert_not_empty 'function_name' 'debug_leaving_function'
+
+	print_debug
+	printf 'Leaving %s\n' "$function_name" >> /dev/stderr
+	return 0
 }
 
 # print the name of the created directory
 # USAGE: debug_creating_directory $dir_path
 debug_creating_directory() {
-	local dir_path
-
 	if [ "$DEBUG" -eq 0 ]; then
 		return 0
-	else
-		dir_path="$1"
-
-		if [ -z "$dir_path" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_creating_directory' '$dir_path'
-			return 1
-
-		else
-			print_debug
-			printf 'Creating directory %s\n' "$dir_path" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local dir_path
+	dir_path="$1"
+	assert_not_empty 'dir_path' 'debug_creating_directory'
+
+	print_debug
+	printf 'Creating directory %s\n' "$dir_path" >> /dev/stderr
+	return 0
 }
 
 # print the name of an used directory
@@ -141,11 +115,7 @@ debug_using_directory() {
 
 	local dir_path
 	dir_path="$1"
-
-	if [ -z "$dir_path" ]; then
-		error_empty_string 'debug_using_directory' 'dir_path'
-		return 1
-	fi
+	assert_not_empty 'dir_path' 'debug_using_directory'
 
 	print_debug
 	printf 'Using existing directory %s\n' "$dir_path" >> /dev/stderr
@@ -155,9 +125,6 @@ debug_using_directory() {
 # print the name of a source file found
 # USAGE: debug_source_file $filename $source_path $inner_path
 debug_source_file() {
-	local found_status
-	local filename
-
 	###
 	# TODO
 	# check number of arguments
@@ -165,99 +132,71 @@ debug_source_file() {
 
 	if [ "$DEBUG" -lt 2 ]; then
 		return 0
-	else
-		found_status="$1"
-		filename="$2"
-
-		if [ -z "$filename" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_source_file' '$filename'
-			return 1
-		elif [ -z "$found_status" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_source_file' '$found_status'
-			return 1
-
-		else
-			print_debug
-			printf '%s file: %s\n' "$found_status" "${filename}" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local found_status filename
+	found_status="$1"
+	filename="$2"
+	assert_not_empty 'found_status' 'debug_source_file'
+	assert_not_empty 'filename' 'debug_source_file'
+
+	print_debug
+	printf '%s file: %s\n' "$found_status" "${filename}" >> /dev/stderr
+	return 0
 }
 
 # print the id of the package a source file is moved to
 # intended to be used after debug_source_file
 # USAGE: debug_file_to_package $package_id
 debug_file_to_package() {
-	local package_id
-
 	if [ "$DEBUG" -lt 3 ]; then
 		return 0
-	else
-		package_id="$1"
-
-		if [ -z "$package_id" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_file_to_package' '$package_id'
-			return 1
-
-		else
-			print_debug
-			printf 'Moving file to: %s\n' "$package_id" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local package_id
+	package_id="$1"
+	assert_not_empty 'package_id' 'debug_file_to_package'
+
+	print_debug
+	printf 'Moving file to: %s\n' "$package_id" >> /dev/stderr
+	return 0
 }
 
 # print the type of the launcher being created
 # USAGE: debug_write_launcher $launcher_type
 debug_write_launcher() {
-	local launcher_type
-	local binary_file
-
 	if [ "$DEBUG" -eq 0 ]; then
 		return 0
-	else
-		launcher_type="$1"
-		binary_file="$2"
-
-		if [ -z "$launcher_type" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_write_launcher' '$launcher_type'
-			return 1
-		else
-			print_debug
-			if [ -z "$binary_file" ]; then
-				printf 'Writing launcher: %s\n' "$launcher_type" >> /dev/stderr
-			else
-				printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file" >> /dev/stderr
-			fi
-			return 0
-		fi
 	fi
+
+	local launcher_type binary_file
+	launcher_type="$1"
+	binary_file="$2"
+	assert_not_empty 'launcher_type' 'debug_write_launcher'
+
+	print_debug
+	if [ -z "$binary_file" ]; then
+		printf 'Writing launcher: %s\n' "$launcher_type" >> /dev/stderr
+	else
+		printf 'Writing %s launcher: %s\n' "$launcher_type" "$binary_file" >> /dev/stderr
+	fi
+	return 0
 }
 
 # print an external command
 # USAGE: debug_external_command $command
 debug_external_command() {
-	local external_command
-
 	if [ "$DEBUG" -eq 0 ]; then
 		return 0
-	else
-		external_command="$1"
-
-		if [ -z "$external_command" ]; then
-			# shellcheck disable=SC2016
-			error_empty_string 'debug_external_command' '$external_command'
-			return 1
-		else
-			print_debug
-			printf 'Running: %s\n' "$external_command" >> /dev/stderr
-			return 0
-		fi
 	fi
+
+	local external_command
+	external_command="$1"
+	assert_not_empty 'external_command' 'debug_external_command'
+
+	print_debug
+	printf 'Running: %s\n' "$external_command" >> /dev/stderr
+	return 0
 }
 
 # print the path of a non-existant temporary directory
@@ -269,11 +208,7 @@ debug_temp_dir_nonexistant() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_nonexistant' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_nonexistant'
 
 	print_debug
 	printf 'Skipping non-existant directory: %s\n' "$directory" >> /dev/stderr
@@ -289,11 +224,7 @@ debug_temp_dir_nonwritable() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_nonwritable' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_nonwritable'
 
 	print_debug
 	printf 'Skipping non-writable directory: %s\n' "$directory" >> /dev/stderr
@@ -309,11 +240,7 @@ debug_temp_dir_not_enough_space() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_not_enough_space' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_not_enough_space'
 
 	print_debug
 	printf 'Skipping too small directory: %s\n' "$directory" >> /dev/stderr
@@ -329,11 +256,7 @@ debug_temp_dir_case_insensitive_not_supported() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_case_insensitive_not_supported' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_case_insensitive_not_supported'
 
 	print_debug
 	printf 'Skipping case-insensitive directory: %s\n' "$directory" >> /dev/stderr
@@ -349,11 +272,7 @@ debug_temp_dir_no_unix_permissions() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_no_unix_permissions' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_no_unix_permissions'
 
 	print_debug
 	printf 'Skipping directory without UNIX permissions: %s\n' "$directory" >> /dev/stderr
@@ -369,11 +288,7 @@ debug_temp_dir_no_executable_files() {
 
 	local directory
 	directory="$1"
-
-	if [ -z "$directory" ]; then
-		error_empty_string 'debug_temp_dir_no_executable_files' 'directory'
-		return 1
-	fi
+	assert_not_empty 'directory' 'debug_temp_dir_no_executable_files'
 
 	print_debug
 	printf 'Skipping directory without support for executable files: %s\n' \

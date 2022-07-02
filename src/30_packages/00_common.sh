@@ -173,11 +173,7 @@ package_get_id() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_id' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_id'
 
 	# get package ID from its name
 	local package_id
@@ -217,11 +213,7 @@ package_get_architecture() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_architecture' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_architecture'
 
 	# get package architecture from its name
 	local package_architecture
@@ -243,11 +235,7 @@ package_get_architecture_string() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_architecture_string' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_architecture_string'
 
 	# get package architecture
 	local package_architecture
@@ -309,11 +297,7 @@ package_get_description() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_description' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_description'
 
 	# get package description from its name
 	local package_description
@@ -363,11 +347,7 @@ package_get_provide() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_provide' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_provide'
 
 	# get provided package ID from its name
 	local package_provide
@@ -398,27 +378,13 @@ package_get_path() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_path' '$package'
-		return 1
-	fi
-
+	assert_not_empty 'package' 'package_get_path'
 
 	# check that an archive is set by the global context
-	# shellcheck disable=SC2153
-	if [ -z "$ARCHIVE" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_name' '$ARCHIVE'
-		return 1
-	fi
+	assert_not_empty 'ARCHIVE' 'package_get_path'
 
 	# check that PLAYIT_WORKDIR is set by the global context
-	if [ -z "$PLAYIT_WORKDIR" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_name' '$PLAYIT_WORKDIR'
-		return 1
-	fi
+	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
 
 	# compute the package path from its identifier
 	local package_path
@@ -435,19 +401,10 @@ package_get_name() {
 	# single argument should be the package name
 	local package
 	package="$1"
-	if [ -z "$package" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_name' '$package'
-		return 1
-	fi
+	assert_not_empty 'package' 'package_get_name'
 
 	# check that an archive is set by the global context
-	# shellcheck disable=SC2153
-	if [ -z "$ARCHIVE" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'package_get_name' '$ARCHIVE'
-		return 1
-	fi
+	assert_not_empty 'ARCHIVE' 'package_get_name'
 
 	# compute the package path from its identifier
 	local package_name package_path
@@ -529,11 +486,7 @@ packages_get_version() {
 	# single argument should be the archive name
 	local archive
 	archive="$1"
-	if [ -z "$archive" ]; then
-		# shellcheck disable=SC2016
-		error_empty_string 'packages_get_version' '$archive'
-		return 1
-	fi
+	assert_not_empty 'archive' 'packages_get_version'
 
 	###
 	# TODO
