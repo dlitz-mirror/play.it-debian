@@ -58,3 +58,20 @@ icons_get_from_legacy_path() {
 		done
 	done
 }
+
+icons_move_to() {
+	[ $SKIP_ICONS -eq 1 ] && return 0
+
+	local source_package      source_path      source_directory
+	local destination_package destination_path destination_directory
+	source_package=$(package_get_current)
+	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
+	destination_package="$1"
+	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
+
+	# a basic `mv` call here would fail if the destination is not empty
+	mkdir --parents "$destination_directory"
+	cp --link --recursive "$source_directory"/* "$destination_directory"
+	rm --recursive "${source_directory:?}"/*
+	rmdir --ignore-fail-on-non-empty --parents "$source_directory"
+}

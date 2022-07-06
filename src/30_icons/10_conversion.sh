@@ -327,32 +327,3 @@ icon_get_resolution() {
 	printf '%s' "$image_resolution"
 	return 0
 }
-
-# move icons to the target package
-# USAGE: icons_move_to $pkg
-# RETURNS: nothing
-# SIDE EFFECT: move the icons from the current package to the given package
-icons_move_to() {
-	###
-	# TODO
-	# Check that $destination_package is set to a valid package
-	# Check that $PATH_ICON_BASE is set to an absolute path
-	###
-
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	local source_package      source_path      source_directory
-	local destination_package destination_path destination_directory
-	source_package=$(package_get_current)
-	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
-	destination_package="$1"
-	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
-
-	# a basic `mv` call here would fail if the destination is not empty
-	mkdir --parents "$destination_directory"
-	cp --link --recursive "$source_directory"/* "$destination_directory"
-	rm --recursive "${source_directory:?}"/*
-	rmdir --ignore-fail-on-non-empty --parents "$source_directory"
-}
-
