@@ -157,5 +157,8 @@ assert_not_empty() {
 	variable="$1"
 	variable_name="$2"
 	function="$3"
-	test -n "$variable" || error_empty_string "$function" "$variable_name"
+	if [ -z "$variable" ]; then
+		error_empty_string "$function" "$variable_name"
+		return 1
+	fi
 }
