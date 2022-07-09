@@ -138,7 +138,7 @@ icon_check_file_existence() {
 # USAGE: icon_file_type $icon_file
 # RETURNS: the MIME type, as a string
 icon_file_type() {
-	file --brief --mime-type "$1"
+	file --brief --dereference --mime-type "$1"
 }
 
 # extract .png file(s) from target file
