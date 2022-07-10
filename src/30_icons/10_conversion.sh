@@ -40,105 +40,109 @@ icons_list_dependencies() {
 	export ICONS_DEPS
 }
 
-# get .png file(s) from various icon sources in current package
-# USAGE: icons_get_from_package $app[…]
-# RETURNS: nothing
-# SIDE EFFECT: get original icon files from the current package,
-#              convert them to standard icon formats,
-#              and include the standard icons in the current package
-icons_get_from_package() {
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
+# Fetch icon from the archive contents,
+# convert it to PNG if it is not already in a supported format,
+# include it in the current package.
+#
+# This function is the one that should be called from game scripts,
+# it can take several applications as its arguments,
+# and default to handle all applications if none are explicitely given.
+#
+# USAGE: icons_inclusion $application[…]
+icons_inclusion() {
+	# Do nothing if icons inclusion has been disabled
+	if [ "$SKIP_ICONS" -eq 1 ]; then
+		return 0
+	fi
 
-	# get the current package
-	local package
-	package=$(package_get_current)
+	# If no applications are explicitely listed,
+	# try to fetch the icons for all applications.
+	if [ "$#" -eq 0 ]; then
+		applications_list=$(applications_list)
+		icons_inclusion $applications_list
+		return 0
+	fi
 
-	local path
-	path="$(package_get_path "$package")${PATH_GAME}"
-	icons_get_from_path "$path" "$@"
-}
-
-# get .png file(s) from various icon sources in temporary work directory
-# USAGE: icons_get_from_workdir $app[…]
-# RETURNS: nothing
-# SIDE EFFECT: get original icon files from ./play.it temporary directory,
-#              convert them to standard icon formats,
-#              and include the standard icons in the current package
-icons_get_from_workdir() {
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	local path
-	path="$PLAYIT_WORKDIR/gamedata"
-	icons_get_from_path "$path" "$@"
-}
-
-# get .png file(s) from various icon sources
-# USAGE: icons_get_from_path $directory $app[…]
-# RETURNS: nothing
-# SIDE EFFECT: get original icon files from the given directory,
-#              convert them to standard icon formats,
-#              and include the standard icons in the current package
-icons_get_from_path() {
-	local destination directory
-	destination="$PLAYIT_WORKDIR/icons"
-	directory="$1"
-	shift 1
-
-	local application application_icons_list icon icon_path
+	local application
 	for application in "$@"; do
-		application_icons_list=$(application_icons_list "$application")
-		for icon in $application_icons_list; do
-			# Check icon file existence
-			icon_path=$(icon_check_file_existence "$directory" "$(icon_path "$icon")")
-
-			###
-			# TODO
-			# wrestool options string is passed as a global variable,
-			# there is probably a better way to handle that.
-			###
-			if icon_path "$icon" | grep --quiet '\.exe$'; then
-				WRESTOOL_OPTIONS=$(icon_wrestool_options "$icon")
-				export WRESTOOL_OPTIONS
-			fi
-
-			icon_extract_png_from_file "$directory/$icon_path" "$destination"
-			icons_include_png_from_directory "$application" "$destination"
-
-			unset WRESTOOL_OPTIONS
-		done
+		assert_not_empty 'application' 'icons_inclusion'
+		icons_inclusion_single_application "$application"
 	done
 }
 
-# check icon file existence
-# USAGE: icon_check_file_existence $directory $file
-# RETURNS: $file or throws an error
-icon_check_file_existence() {
-	local directory file
-	directory="$1"
-	file="$2"
+# Fetch icon from the archive contents,
+# convert it to PNG if it is not already in a supported format,
+# include it in the current package.
+#
+# This function handles all icons for a given application.
+#
+# USAGE: icons_inclusion_single_application $application
+icons_inclusion_single_application() {
+	local application
+	application="$1"
+	assert_not_empty 'application' 'icons_inclusion_single_application'
 
-	if [ ! -f "$directory/$file" ]; then
-		# pre-2.8 scripts could use globbing in file path
-		# shellcheck disable=SC2154
-		if version_is_at_least '2.8' "$target_version"; then
-			error_icon_file_not_found "$directory/$file"
-			return 1
-		else
-			file=$(icon_check_file_existence_pre_2_8 "$directory" "$file")
-		fi
+	local application_icons_list
+	application_icons_list=$(application_icons_list "$application")
+	# Return early if the current application has no associated icon
+	if [ -z "$application_icons_list" ]; then
+		return 0
 	fi
 
-	printf '%s' "$file"
-	return 0
+	local icon
+	for icon in $application_icons_list; do
+		icons_inclusion_single_icon "$application" "$icon"
+	done
+}
+
+# Fetch icon from the archive contents,
+# convert it to PNG if it is not already in a supported format,
+# include it in the current package.
+#
+# This function handles a single icon.
+#
+# USAGE: icons_inclusion_single_icon $application $icon
+icons_inclusion_single_icon() {
+	local application
+	application="$1"
+	assert_not_empty 'application' 'icons_inclusion_single_icon'
+
+	local icon
+	icon="$2"
+	assert_not_empty 'icon' 'icons_inclusion_single_icon'
+
+	# Compute icon file full path
+	local content_path icon_source_directory icon_path icon_full_path
+	content_path=$(content_path_default)
+	icon_source_directory="${PLAYIT_WORKDIR}/gamedata/${content_path}"
+	icon_path=$(icon_path "$icon")
+	icon_full_path="${icon_source_directory}/${icon_path}"
+
+	# Check for icon file existence
+	if [ ! -f "$icon_full_path" ]; then
+		error_icon_file_not_found "$icon_full_path"
+		return 1
+	fi
+
+	# TODO - wrestool options string should not be relying on a global variable
+	if printf '%s' "$icon_path" | grep --quiet '\.exe$'; then
+		WRESTOOL_OPTIONS=$(icon_wrestool_options "$icon")
+		export WRESTOOL_OPTIONS
+	fi
+
+	icons_temporary_directory="${PLAYIT_WORKDIR}/icons"
+	icon_extract_png_from_file "$icon_full_path" "$icons_temporary_directory"
+	icons_include_from_directory "$application" "$icons_temporary_directory"
+
+	# TODO - wrestool options string should not be relying on a global variable
+	unset WRESTOOL_OPTIONS
 }
 
 # Return the MIME type of a given icon file
 # USAGE: icon_file_type $icon_file
 # RETURNS: the MIME type, as a string
 icon_file_type() {
-	file --brief --mime-type "$1"
+	file --brief --dereference --mime-type "$1"
 }
 
 # extract .png file(s) from target file
@@ -323,32 +327,3 @@ icon_get_resolution() {
 	printf '%s' "$image_resolution"
 	return 0
 }
-
-# move icons to the target package
-# USAGE: icons_move_to $pkg
-# RETURNS: nothing
-# SIDE EFFECT: move the icons from the current package to the given package
-icons_move_to() {
-	###
-	# TODO
-	# Check that $destination_package is set to a valid package
-	# Check that $PATH_ICON_BASE is set to an absolute path
-	###
-
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	local source_package      source_path      source_directory
-	local destination_package destination_path destination_directory
-	source_package=$(package_get_current)
-	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
-	destination_package="$1"
-	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
-
-	# a basic `mv` call here would fail if the destination is not empty
-	mkdir --parents "$destination_directory"
-	cp --link --recursive "$source_directory"/* "$destination_directory"
-	rm --recursive "${source_directory:?}"/*
-	rmdir --ignore-fail-on-non-empty --parents "$source_directory"
-}
-
