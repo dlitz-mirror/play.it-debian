@@ -757,26 +757,25 @@ launcher_write_desktop() {
 	mkdir --parents "$(dirname "$desktop_file")"
 	launcher_desktop "$application" > "$desktop_file"
 
-	# for WINE applications, write desktop file for winecfg
-	if [ "$application" != 'APP_WINECFG' ]; then
-		local application_type
-		application_type=$(application_type "$application")
-		case "$application_type" in
-			('wine')
-				local package package_path winecfg_desktop
-				package=$(package_get_current)
-				package_path=$(package_get_path "$package")
-				game_id=$(game_id)
-				winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
-				if [ ! -e "$winecfg_desktop" ]; then
-					APP_WINECFG_ID="$(game_id)_winecfg"
-					APP_WINECFG_NAME="$(game_name) - WINE configuration"
-					APP_WINECFG_CAT='Settings'
-					export APP_WINECFG_ID APP_WINECFG_NAME APP_WINECFG_CAT
-					launcher_write_desktop 'APP_WINECFG'
-				fi
-			;;
-		esac
+	# WINE - Write XDG desktop file for winecfg
+	local application_type
+	application_type=$(application_type "$application" 'unknown')
+	if \
+		[ "$application_type" = 'wine' ] && \
+		[ "$application" != 'APP_WINECFG' ]
+	then
+		local package package_path winecfg_desktop
+		package=$(package_get_current)
+		package_path=$(package_get_path "$package")
+		game_id=$(game_id)
+		winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
+		if [ ! -e "$winecfg_desktop" ]; then
+			APP_WINECFG_ID="$(game_id)_winecfg"
+			APP_WINECFG_NAME="$(game_name) - WINE configuration"
+			APP_WINECFG_CAT='Settings'
+			export APP_WINECFG_ID APP_WINECFG_NAME APP_WINECFG_CAT
+			launcher_write_desktop 'APP_WINECFG'
+		fi
 	fi
 
 	return 0
