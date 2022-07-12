@@ -4,36 +4,34 @@
 # SIDE EFFECT: export $ICONS_DEPS, a variable including a space-separated list of required commands to handle the icons of the current game
 icons_list_dependencies() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	[ $SKIP_ICONS -eq 1 ] && return 0
-
-	local script
-	script="$0"
-	if grep \
-		--quiet \
-		--regexp="^APP_[^_]\\+_ICON='.\\+'" \
-		--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+'" \
-		"$script"
-	then
-		ICONS_DEPS="$ICONS_DEPS identify"
-		if grep \
-			--quiet \
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.bmp'" \
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.bmp'" \
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.ico'" \
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.ico'" \
-			"$script"
-		then
-			ICONS_DEPS="$ICONS_DEPS convert"
-		fi
-		if grep \
-			--quiet \
-			--regexp="^APP_[^_]\\+_ICON='.\\+\\.exe'" \
-			--regexp="^APP_[^_]\\+_ICON_.\\+='.\\+\\.exe'" \
-			"$script"
-		then
-			ICONS_DEPS="$ICONS_DEPS convert wrestool"
-		fi
+	if [ "$SKIP_ICONS" -eq 1 ]; then
+		return 0
 	fi
+
+	# Get list of applications
+	local applications_list
+	applications_list=$(applications_list)
+
+	# Get list of icons
+	local application application_icons_list full_icons_list
+	for application in $applications_list; do
+		application_icons_list=$(application_icons_list "$application")
+		full_icons_list="$full_icons_list $application_icons_list"
+	done
+
+	# Get dependencies for each icon
+	local icon
+	for icon in $full_icons_list; do
+		case "$icon" in
+			('*.bmp'|'*.ico')
+				ICONS_DEPS="$ICONS_DEPS identify convert"
+			;;
+			('*.exe')
+				ICONS_DEPS="$ICONS_DEPS identify convert wrestool"
+			;;
+		esac
+	done
+
 	export ICONS_DEPS
 }
 
