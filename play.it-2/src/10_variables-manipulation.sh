@@ -25,6 +25,11 @@ get_context_specific_value() {
 	context="$1"
 	case "$context" in
 		('archive')
+			# Return early if no archive is explicitely set
+			if [ -z "$ARCHIVE" ]; then
+				get_value "$variable_name"
+				return 0
+			fi
 			context_suffix=$(get_context_suffix_archive)
 		;;
 		('package')
