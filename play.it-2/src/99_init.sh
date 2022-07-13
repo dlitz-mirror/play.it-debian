@@ -174,10 +174,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	export OPTION_OUTPUT_DIR
 
-	# Check script dependencies
-
-	check_deps
-
 	# Set main archive
 
 	# shellcheck disable=SC2046
@@ -186,8 +182,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
 
-	# Check the presence of required tools to handle the main game archive
+	# Check the presence of required tools
 
+	check_deps
 	archive_dependencies_check "$ARCHIVE"
 
 	# Set package paths
