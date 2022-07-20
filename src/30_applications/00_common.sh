@@ -103,7 +103,7 @@ application_prefix_type() {
 #         - java
 #         - mono
 #         - native
-#         - native_no-prefix
+#         - native_no-prefix (deprecated)
 #         - renpy
 #         - residualvm
 #         - scummvm
@@ -140,27 +140,28 @@ application_type() {
 			'java' | \
 			'mono' | \
 			'native' | \
-			'native_no-prefix' | \
 			'renpy' | \
 			'residualvm' | \
 			'scummvm' | \
 			'unity3d' | \
 			'wine' \
 		)
-			printf '%s' "$application_type"
-			return 0
+			## This is a supported type, no error to throw.
+		;;
+		('native_no-prefix')
+			## WARNING - This archive type is deprecated.
 		;;
 		('unknown')
-			# "unknown" is the only allowed invalid application type,
-			# to be used only as a fallback.
-			printf '%s' "$application_type"
-			return 0
+			## "unknown" is the only allowed invalid application type,
+			## to be used only as a fallback.
 		;;
 		(*)
 			error_unknown_application_type "$application_type"
 			return 1
 		;;
 	esac
+
+	printf '%s' "$application_type"
 }
 
 # print the id of the given application

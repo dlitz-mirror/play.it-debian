@@ -16,9 +16,13 @@ launcher_write_script() {
 	application_id=$(application_id "$application")
 	target_file="${package_path}${PATH_BIN}/${application_id}"
 
-	# Check that the launcher target exists
-	local application_type binary_path binary_found tested_package
+	# Get application type and prefix type
+	local application_type prefix_type
 	application_type=$(application_type "$application")
+	prefix_type=$(application_prefix_type "$application")
+
+	# Check that the launcher target exists
+	local binary_path binary_found tested_package
 	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
@@ -86,18 +90,33 @@ launcher_write_script() {
 			launcher_write_script_prefix_cleanup "$target_file"
 		;;
 		('native')
-			launcher_write_script_native_application_variables "$application" "$target_file"
-			launcher_write_script_game_variables "$target_file"
-			launcher_print_persistent_paths >> "$target_file"
-			launcher_write_script_prefix_functions "$target_file"
-			launcher_write_script_prefix_build "$target_file"
-			launcher_write_script_native_run "$application" "$target_file"
-			launcher_write_script_prefix_cleanup "$target_file"
+			case "$prefix_type" in
+				('symlinks')
+					launcher_write_script_native_application_variables "$application" "$target_file"
+					launcher_write_script_game_variables "$target_file"
+					launcher_print_persistent_paths >> "$target_file"
+					launcher_write_script_prefix_functions "$target_file"
+					launcher_write_script_prefix_build "$target_file"
+					launcher_write_script_native_run "$application" "$target_file"
+					launcher_write_script_prefix_cleanup "$target_file"
+				;;
+				('none')
+					launcher_write_script_native_application_variables "$application" "$target_file"
+					launcher_write_script_game_variables "$target_file"
+					launcher_write_script_nativenoprefix_run "$application" "$target_file"
+				;;
+				('copy')
+					# TODO
+				;;
+			esac
 		;;
 		('native_no-prefix')
-			launcher_write_script_native_application_variables "$application" "$target_file"
-			launcher_write_script_game_variables "$target_file"
-			launcher_write_script_nativenoprefix_run "$application" "$target_file"
+			# WARNING - This archive type is deprecated.
+			(
+				export ${application}_TYPE='native'
+				export ${application}_PREFIX_TYPE='none'
+				launcher_write_script "$@"
+			)
 		;;
 		('scummvm')
 			launcher_write_script_scummvm_application_variables "$application" "$target_file"
@@ -158,7 +177,7 @@ launcher_write_script() {
 
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
-		('native'*|'unity3d')
+		('native'|'unity3d')
 			local binary_file
 			binary_file="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
 			chmod +x "$binary_file"
