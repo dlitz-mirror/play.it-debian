@@ -20,6 +20,29 @@ error_unknown_application_type() {
 	printf "$message" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
 }
 
+# Display an error when an unknown prefix type is requested.
+# USAGE: error_unknown_prefix_type $prefix_type
+error_unknown_prefix_type() {
+	local prefix_type
+	prefix_type="$1"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Le type de préfixe "%s" est inconnu.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de suivi des problèmes : %s\n'
+		;;
+		('en'|*)
+			message='"%s" prefix type is unknown.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$prefix_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+}
+
 # display an error when using an invalid format for an application id
 # USAGE: error_application_id_invalid $application $application_id
 error_application_id_invalid() {

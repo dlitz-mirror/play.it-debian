@@ -43,6 +43,59 @@ applications_list() {
 	# callers should handle this case.
 }
 
+# Print the type of prefix to use for the given application.
+# If no type is explicitely set from the game script, it defaults to "symlinks".
+# USAGE: application_prefix_type $application
+# RETURN: the prefix type keyword, from the supported values:
+#         - symlinks
+#         - none
+application_prefix_type() {
+	# Prefix types:
+	# - "symlinks", the default, generate our usual symbolic links farm
+	# - "none", no prefix is generated, the game is run from the read-only system directory
+
+	local application
+	application="$1"
+
+	# The default for most application types is "symlinks".
+	local prefix_type
+	prefix_type='symlinks'
+
+	# ScummVM and ResidualVM applications default to "none".
+	local application_type
+	application_type=$(application_type "$application")
+	case "$application_type" in
+		('scummvm'|'residualvm')
+			prefix_type='none'
+		;;
+	esac
+
+	# Override default with explicitely set prefix type for the current game.
+	if [ -n "$APPLICATIONS_PREFIX_TYPE" ]; then
+		prefix_type="$APPLICATIONS_PREFIX_TYPE"
+	fi
+
+	# Override default with explicitely set prefix type for the given application.
+	local prefix_type_override
+	prefix_type_override=$(get_value "${application}_PREFIX_TYPE")
+	if [ -n "$prefix_type_override" ]; then
+		prefix_type="$prefix_type_override"
+	fi
+
+	# Check that a supported prefix type has been fetched
+	case "$prefix_type" in
+		('symlinks'|'none')
+			## This is a supported type, no error to throw.
+		;;
+		(*)
+			error_unknown_prefix_type "$prefix_type"
+			return 1
+		;;
+	esac
+
+	printf '%s' "$prefix_type"
+}
+
 # print the type of the given application
 # USAGE: application_type $application [$fallback_type]
 # RETURN: the application type keyword, from the supported values:
