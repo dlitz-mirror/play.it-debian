@@ -14,17 +14,13 @@ archive_extraction_msi() {
 	local archive destination_directory
 	archive="$1"
 	destination_directory="$2"
-
-	local archive_path
-	archive_path=$(archive_find_path "$archive")
+	assert_not_empty 'archive' 'archive_extraction_msi'
+	assert_not_empty 'destination_directory' 'archive_extraction_msi'
 
 	if command -v 'msiextract' >/dev/null 2>&1; then
-		debug_external_command "msiextract --directory \"$destination_directory\" \"$archive_path\" 1>/dev/null 2>&1"
-		msiextract --directory "$destination_directory" "$archive_path" 1>/dev/null 2>&1
-		tolower "$destination_directory"
+		archive_extraction_using_msiextract "$archive" "$destination_directory"
 	else
 		error_archive_no_extractor_found 'msi'
 		return 1
 	fi
 }
-

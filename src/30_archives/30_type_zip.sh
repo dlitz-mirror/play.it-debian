@@ -14,13 +14,11 @@ archive_extraction_zip() {
 	local archive destination_directory
 	archive="$1"
 	destination_directory="$2"
-
-	local archive_path
-	archive_path=$(archive_find_path "$archive")
+	assert_not_empty 'archive' 'archive_extraction_zip'
+	assert_not_empty 'destination_directory' 'archive_extraction_zip'
 
 	if command -v 'unzip' >/dev/null 2>&1; then
-		debug_external_command "unzip -d \"$destination_directory\" \"$archive_path\" 1>/dev/null"
-		unzip -d "$destination_directory" "$archive_path" 1>/dev/null
+		archive_extraction_using_unzip "$archive" "$destination_directory"
 	else
 		error_archive_no_extractor_found 'zip'
 		return 1
@@ -30,17 +28,16 @@ archive_extraction_zip() {
 # extract the content of a .zip archive (ignore errors)
 # USAGE: archive_extraction_zip_unclean $archive $destination_directory
 archive_extraction_zip_unclean() {
+	# WARNING - This function is deprecated.
 	local archive destination_directory
 	archive="$1"
 	destination_directory="$2"
-
-	local archive_path
-	archive_path=$(archive_find_path "$archive")
+	assert_not_empty 'archive' 'archive_extraction_zip_unclean'
+	assert_not_empty 'destination_directory' 'archive_extraction_zip_unclean'
 
 	if command -v 'unzip' >/dev/null 2>&1; then
-		debug_external_command "unzip -d \"$destination_directory\" \"$archive_path\" 1>/dev/null 2>&1"
 		set +o errexit
-		unzip -d "$destination_directory" "$archive_path" 1>/dev/null 2>&1
+		archive_extraction_using_unzip "$archive" "$destination_directory" 2>/dev/null
 		set -o errexit
 		set_standard_permissions "$destination_directory"
 	else
@@ -48,4 +45,3 @@ archive_extraction_zip_unclean() {
 		return 1
 	fi
 }
-
