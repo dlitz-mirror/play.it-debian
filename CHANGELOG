@@ -1,3 +1,12 @@
+2.16.1
+
+  * icons_list_dependencies - Rely on application_icons_list to get the list of icons.
+  * launcher_write_desktop - Drop requirement on APP_xxx_TYPE.
+  * get_context_specific_value:
+    - Do not try to guess a package identifier if none is set.
+    - Do not look for an archive-specific value before an archive is set.
+  * Check for dependencies only after the main archive is set.
+
 2.16.0
 
   * Major changes:

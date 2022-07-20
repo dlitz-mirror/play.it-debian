@@ -17,12 +17,28 @@ get_value() {
 # USAGE: get_context_specific_value archive|package $variable_name
 # RETURN: the context-specific value for the given variable, or its default value
 get_context_specific_value() {
+	local variable_name
+	variable_name="$2"
+
 	# Get the context suffix based on the context type
 	local context context_suffix
 	context="$1"
 	case "$context" in
-		('archive'|'package')
-			context_suffix=$(get_context_suffix "$context")
+		('archive')
+			# Return early if no archive is explicitely set
+			if [ -z "$ARCHIVE" ]; then
+				get_value "$variable_name"
+				return 0
+			fi
+			context_suffix=$(get_context_suffix_archive)
+		;;
+		('package')
+			# Return early if no package is explicitely set
+			if [ -z "$PKG" ]; then
+				get_value "$variable_name"
+				return 0
+			fi
+			context_suffix=$(get_context_suffix_package)
 		;;
 		(*)
 			error_context_invalid "$context"
@@ -31,8 +47,7 @@ get_context_specific_value() {
 	esac
 
 	# Try to find a context-specific value
-	local variable_name variable_name_with_suffix
-	variable_name="$2"
+	local variable_name_with_suffix
 	variable_name_with_suffix="${variable_name}_${context_suffix}"
 	while [ "$variable_name_with_suffix" != "$variable_name" ]; do
 		context_specific_value=$(get_value "$variable_name_with_suffix")
@@ -48,27 +63,6 @@ get_context_specific_value() {
 	fi
 
 	printf '%s' "$context_specific_value"
-}
-
-# get the context suffix and print it
-# USAGE: get_context_suffix archive|package
-# RETURN: the context suffix, not including the leading underscore (_)
-get_context_suffix() {
-	local context context_suffix
-	context="$1"
-	case "$context" in
-		('archive')
-			get_context_suffix_archive
-		;;
-		('package')
-			get_context_suffix_package
-		;;
-		(*)
-			error_context_invalid "$context"
-			return 1
-		;;
-	esac
-	printf '%s' "$context_suffix"
 }
 
 # get the current archive suffix and print it
