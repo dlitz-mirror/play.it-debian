@@ -285,17 +285,20 @@ archive_get_type() {
 		(*'.tar')
 			archive_type='tar'
 		;;
+		(*'.tar.bz2'|*'.tbz2')
+			archive_type='tar.bz2'
+		;;
 		(*'.tar.gz'|*'.tgz')
 			archive_type='tar.gz'
+		;;
+		(*'.tar.xz'|*'.txz')
+			archive_type='tar.xz'
 		;;
 		(*'.zip')
 			archive_type='zip'
 		;;
 		(*'.7z')
 			archive_type='7z'
-		;;
-		(*'.tar.xz'|*'.txz')
-			archive_type='tar.xz'
 		;;
 		(*)
 			error_archive_type_not_set "$archive_identifier"

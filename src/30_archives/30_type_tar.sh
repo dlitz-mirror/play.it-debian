@@ -8,6 +8,17 @@ archive_dependencies_check_type_tar() {
 	return 1
 }
 
+# check the presence of required tools to handle a tar.bz2 archive
+# USAGE: archive_dependencies_check_type_tarbz2
+archive_dependencies_check_type_tarbz2() {
+	archive_dependencies_check_type_tar
+	if command -v 'bunzip2' >/dev/null 2>&1; then
+		return 0
+	fi
+	error_dependency_not_found 'bunzip2'
+	return 1
+}
+
 # check the presence of required tools to handle a tar.gz archive
 # USAGE: archive_dependencies_check_type_targz
 archive_dependencies_check_type_targz() {

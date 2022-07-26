@@ -110,6 +110,9 @@ archive_dependencies_check_from_type() {
 		('tar')
 			archive_dependencies_check_type_tar
 		;;
+		('tar.bz2')
+			archive_dependencies_check_type_tarbz2
+		;;
 		('tar.gz')
 			archive_dependencies_check_type_targz
 		;;
@@ -261,7 +264,7 @@ archive_extraction_from_type() {
 		('rar')
 			archive_extraction_rar "$archive" "$destination_directory"
 		;;
-		('tar'|'tar.gz'|'tar.xz')
+		('tar'|'tar.bz2'|'tar.gz'|'tar.xz')
 			archive_extraction_tar "$archive" "$destination_directory"
 		;;
 		('zip')
