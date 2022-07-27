@@ -300,15 +300,29 @@ archive_get_type() {
 		(*'.7z')
 			archive_type='7z'
 		;;
-		(*)
-			error_archive_type_not_set "$archive_identifier"
-			return 1
-		;;
 	esac
+	if [ -n "$archive_type" ]; then
+		printf '%s' "$archive_type"
+		return 0
+	fi
 
-	# Return guessed type
-	printf '%s' "$archive_type"
-	return 0
+	# Fall back on using the type of the parent archive, if there is one
+	if \
+		printf '%s' "$archive_identifier" | \
+		grep --quiet --word-regexp '^ARCHIVE_.*_PART[0-9]\+$'
+	then
+		local parent_archive
+		parent_archive=$(printf '%s' "$archive_identifier" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
+		archive_type=$(archive_get_type "$parent_archive")
+		if [ -n "$archive_type" ]; then
+			printf '%s' "$archive_type"
+			return 0
+		fi
+	fi
+
+	# Throw an error if no type could be found
+	error_archive_type_not_set "$archive_identifier"
+	return 1
 }
 
 # get the extractor for the given archive
@@ -320,7 +334,30 @@ archive_extractor() {
 	archive_identifier="$1"
 	assert_not_empty 'archive_identifier' 'archive_extractor'
 
-	get_value "${archive_identifier}_EXTRACTOR"
+	# Return archive extractor early if it is already set
+	local archive_extractor
+	archive_extractor=$(get_value "${archive_identifier}_EXTRACTOR")
+	if [ -n "$archive_extractor" ]; then
+		printf '%s' "$archive_extractor"
+		return 0
+	fi
+
+	# Fall back on using the extractor of the parent archive, if there is one
+	if \
+		printf '%s' "$archive_identifier" | \
+		grep --quiet --word-regexp '^ARCHIVE_.*_PART[0-9]\+$'
+	then
+		local parent_archive
+		parent_archive=$(printf '%s' "$archive_identifier" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
+		archive_extractor=$(archive_extractor "$parent_archive")
+		if [ -n "$archive_extractor" ]; then
+			printf '%s' "$archive_extractor"
+			return 0
+		fi
+	fi
+
+	# No failure if no extractor could be found
+	return 0
 }
 
 # get the extractor options string for the given archive
