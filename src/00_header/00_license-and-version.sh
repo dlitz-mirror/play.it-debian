@@ -1,16 +1,16 @@
 ###
-# Copyright (c) 2015-2021, Antoine Le Gonidec <vv221@dotslashplay.it>
-# Copyright (c) 2016-2021, Mopi
-# Copyright (c) 2017-2021, Phil Morrell
-# Copyright (c) 2017-2021, Jacek Szafarkiewicz
-# Copyright (c) 2018-2021, VA
-# Copyright (c) 2018-2021, Janeene "dawnmist" Beeforth
-# Copyright (c) 2018-2021, BetaRays
-# Copyright (c) 2018-2021, Andrey
-# Copyright (c) 2019-2021, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
-# Copyright (c) 2020-2021, macaron
-# Copyright (c) 2020-2021, Hoël Bézier
-# Copyright (c) 2020-2021, quinao
+# Copyright © 2015, Antoine Le Gonidec <vv221@dotslashplay.it>
+# Copyright © 2016, Mopi
+# Copyright © 2017, Phil Morrell
+# Copyright © 2017, Jacek Szafarkiewicz
+# Copyright © 2018, VA
+# Copyright © 2018, Janeene "dawnmist" Beeforth
+# Copyright © 2018, BetaRays
+# Copyright © 2018, Andrey
+# Copyright © 2019, Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+# Copyright © 2020, macaron
+# Copyright © 2020, Hoël Bézier
+# Copyright © 2020, quinao
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
