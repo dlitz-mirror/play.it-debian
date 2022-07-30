@@ -12,6 +12,11 @@ icons_list_dependencies() {
 	local applications_list
 	applications_list=$(applications_list)
 
+	# Return early if there is no application for the current game script
+	if [ -z "$applications_list" ]; then
+		return 0
+	fi
+
 	# Get list of icons
 	local application application_icons_list full_icons_list
 	for application in $applications_list; do

@@ -1,21 +1,25 @@
-# prepare package layout by putting files from archive in the right packages
-# directories
+# Fetch game data from the files extracted from archives,
+# and put them in the directories used to prepare the packages.
 # USAGE: prepare_package_layout [$pkg…]
-# NEEDED VARS: (LANG) PLAYIT_WORKDIR
 prepare_package_layout() {
-	if [ -z "$1" ]; then
-		# shellcheck disable=SC2046
-		prepare_package_layout $(packages_get_list)
+	# If prepare_package_layout has been called with no argument,
+	# it is assumed that all packages should be handled.
+	if [ $# -eq 0 ]; then
+		local packages_list
+		packages_list=$(packages_get_list)
+		prepare_package_layout $packages_list
 		return 0
 	fi
 
 	debug_entering_function 'prepare_package_layout'
 
+	# Changes to PKG value, expected by organize_data,
+	# should not leak outside of the current prepare_package_layout call.
+	local PKG
+
 	local package
 	for package in "$@"; do
 		PKG="$package"
-		export PKG
-
 		organize_data "GAME_${package#PKG_}" "$PATH_GAME"
 		organize_data "DOC_${package#PKG_}"  "$PATH_DOC"
 		for i in $(seq 0 9); do

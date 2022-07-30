@@ -24,13 +24,23 @@ applications_list() {
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
 	# - APP_xxx_RESIDUALID
-	local sed_expression application_id
+	local sed_expression application_id applications_list
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
-		printf '%s ' "$application_id"
+		if [ -n "$application_id" ]; then
+			applications_list="$applications_list $application_id"
+		fi
 	done <<- EOF
 	$(sed --silent --expression="$sed_expression" "$game_script")
 	EOF
+
+	if [ -n "$applications_list" ]; then
+		printf '%s\n' "$applications_list"
+		return 0
+	fi
+
+	# This function does not error out if the list is empty,
+	# callers should handle this case.
 }
 
 # print the type of the given application

@@ -4,9 +4,17 @@
 icon_application() {
 	# We assume here that the icon identifier is built from the application identifier,
 	# with a suffix appended.
-	local application icon
+	local application applications_list icon
 	icon="$1"
-	for application in $(applications_list); do
+	applications_list=$(applications_list)
+
+	# The applications list should not be empty if this function has been called
+	if [ -z "$applications_list" ]; then
+		error_applications_list_empty
+		return 1
+	fi
+
+	for application in $applications_list; do
 		if printf '%s' "$icon" | grep --quiet "^${application}"; then
 			printf '%s' "$application"
 			return 0

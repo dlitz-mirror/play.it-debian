@@ -880,8 +880,17 @@ launchers_write() {
 
 	# If called with no argument, default to handling the full list of applications
 	if [ $# -eq 0 ]; then
-		# shellcheck disable=SC2046
-		launchers_write $(applications_list)
+		local applications_list
+		applications_list=$(applications_list)
+
+		# Calling launchers_write with no explicit arguments is not supported
+		# if the applications list is empty
+		if [ -z "$applications_list" ]; then
+			error_applications_list_empty
+			return 1
+		fi
+
+		launchers_write $applications_list
 		debug_leaving_function 'launchers_write' 2
 		return 0
 	fi

@@ -992,3 +992,24 @@ error_icon_unsupported_type() {
 	printf "$message" "$icon_type" "$icon_file"
 }
 
+# The applications list for the current game script is empty
+# USAGE: error_applications_list_empty
+error_applications_list_empty() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La liste dʼapplications à prendre en charge pour ce jeu semble vide'
+			message="$message"', mais un traitement de cette liste a été demandé.\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de gestion de bugs : %s\n'
+		;;
+		('en'|*)
+			message='The applications list for the current game seems to be empty'
+			message="$message"', but some action on this list has been requested.\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
+}

@@ -1,3 +1,8 @@
+2.16.2
+
+  * applications_list - Throw an explicit error on unexpected empty list.
+  * prepare_package_layout - Prevent PKG value changes to leak outside of the current function call.
+
 2.16.1
 
   * icons_list_dependencies - Rely on application_icons_list to get the list of icons.
