@@ -1,9 +1,12 @@
 # check the presence of required tools to handle a MojoSetup MakeSelf installer
 # USAGE: archive_dependencies_check_type_mojosetup
 archive_dependencies_check_type_mojosetup() {
-	if command -v 'bsdtar' >/dev/null 2>&1; then
-		return 0
-	fi
+	local required_command
+	for required_command in 'bsdtar' 'unzip'; do
+		if command -v "$required_command" >/dev/null 2>&1; then
+			return 0
+		fi
+	done
 	error_dependency_not_found 'bsdtar'
 	return 1
 }
@@ -30,6 +33,12 @@ archive_extraction_mojosetup() {
 
 	if command -v 'bsdtar' >/dev/null 2>&1; then
 		archive_extraction_using_bsdtar "$archive" "$destination_directory"
+	elif command -v 'unzip' >/dev/null 2>&1; then
+		# Data extraction using unzip will end in a failure state even if nothing went wrong.
+		set +o errexit
+		archive_extraction_using_unzip "$archive" "$destination_directory" 2>/dev/null
+		set -o errexit
+		set_standard_permissions "$destination_directory"
 	else
 		error_archive_no_extractor_found 'mojosetup'
 		return 1
