@@ -30,12 +30,13 @@ help() {
 	help_compression
 	help_prefix
 	help_package
-	help_skipfreespacecheck
 	help_icons
 	help_overwrite
 	help_output_dir
 	help_debug
 	help_no_mtree
+	help_tmpdir
+	help_skipfreespacecheck
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -162,23 +163,6 @@ help_package() {
 	printf -- '--package=arch|deb|gentoo\n'
 	printf -- '--package arch|deb|gentoo\n\n'
 	printf "$message" 'arch' 'deb' 'gentoo'
-}
-
-# display --skip-free-space-check option usage
-# USAGE: help_skipfreespacecheck
-help_skipfreespacecheck() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='\tNe teste pas lʼespace libre disponible. Les répertoires temporaires seront créés sous $TMPDIR, ou /tmp par défaut.\n\n'
-		;;
-		('en'|*)
-			message='\tDo not check for free space. Temporary directories are created under $TMPDIR, or /tmp by default.\n\n'
-		;;
-	esac
-	printf -- '--skip-free-space-check\n\n'
-	printf "$message"
 }
 
 # display --icons option usage
@@ -313,3 +297,38 @@ help_no_mtree() {
 	printf "$message"
 }
 
+# Display --tmpdir option usage
+# USAGE: help_tmpdir
+help_tmpdir() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tDéfinit le répertoire utilisé pour le stockage des fichiers temporaire.\n'
+			message="$message"'\tLa valeur par défaut est : %s\n\n'
+		;;
+		('en'|*)
+			message='\tSet the directory used for temporary files storage.\n'
+			message="$message"'\tDefault value is: %s\n\n'
+		;;
+	esac
+	printf -- '--tmpdir\n\n'
+	printf "$message" "${TMPDIR:-/tmp}"
+}
+
+# Display --skip-free-space-check option usage
+# USAGE: help_skipfreespacecheck
+help_skipfreespacecheck() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tNe pas tester lʼespace libre disponible.\n\n'
+		;;
+		('en'|*)
+			message='\tDo not check for free space.\n\n'
+		;;
+	esac
+	printf -- '--skip-free-space-check\n\n'
+	printf "$message"
+}
