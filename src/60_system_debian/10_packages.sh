@@ -79,9 +79,6 @@ pkg_write_deb() {
 		exit 0
 		EOF
 		chmod 755 "$postinst_script"
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		compat_pkg_write_deb_postinst "$postinst_script"
 	fi
 
 	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
@@ -93,9 +90,6 @@ pkg_write_deb() {
 		exit 0
 		EOF
 		chmod 755 "$prerm_script"
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$prerm" ]; then
-		compat_pkg_write_deb_prerm "$prerm_script"
 	fi
 }
 

@@ -220,9 +220,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	esac
 	export PATH_BIN PATH_DESK PATH_DOC PATH_GAME PATH_ICON_BASE
 
-	# Set working directories
-
-	# shellcheck disable=SC2046
-	set_temp_directories $(packages_get_list)
-
+	# Set path to working directory
+	set_temp_directories
 fi

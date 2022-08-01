@@ -77,9 +77,6 @@ pkg_write_gentoo() {
 		$(get_value "${pkg}_POSTINST_RUN")
 		}
 		EOF
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		compat_pkg_write_gentoo_postinst "$target"
 	fi
 
 	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
@@ -88,9 +85,6 @@ pkg_write_gentoo() {
 		$(get_value "${pkg}_PRERM_RUN")
 		}
 		EOF
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$prerm" ]; then
-		compat_pkg_write_gentoo_prerm "$target"
 	fi
 }
 

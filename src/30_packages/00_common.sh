@@ -34,7 +34,6 @@ write_metadata() {
 			;;
 		esac
 	done
-	rm  --force "$postinst" "$prerm"
 
 	debug_leaving_function 'write_metadata'
 }
