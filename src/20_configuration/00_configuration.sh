@@ -69,18 +69,22 @@ parse_arguments() {
 				help
 				exit 0
 			;;
-			('--checksum='*|\
-			 '--checksum'|\
-			 '--compression='*|\
-			 '--compression'|\
-			 '--prefix='*|\
-			 '--prefix'|\
-			 '--package='*|\
-			 '--package'|\
-			 '--icons='*|\
-			 '--icons'|\
-			 '--output-dir='*|\
-			 '--output-dir')
+			( \
+				'--checksum='*| \
+				'--checksum'| \
+				'--compression='*| \
+				'--compression'| \
+				'--prefix='*| \
+				'--prefix'| \
+				'--package='*| \
+				'--package'| \
+				'--icons='*| \
+				'--icons'| \
+				'--output-dir='*| \
+				'--output-dir'| \
+				'--tmpdir='*| \
+				'--tmpdir'* \
+			)
 				if [ "${1%=*}" != "${1#*=}" ]; then
 					option="$(printf '%s' "${1%=*}" | sed 's/^--//;s/-/_/g')"
 					value="${1#*=}"

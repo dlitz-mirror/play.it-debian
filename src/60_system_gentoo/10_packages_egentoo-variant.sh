@@ -80,10 +80,6 @@ pkg_write_egentoo() {
 
 	if [ -n "$(get_value "${package}_POSTINST_RUN")" ]; then
 		postinst_f="$(get_value "${package}_POSTINST_RUN")"
-	# For compatibility with pre-2.12 scripts,
-	# ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		postinst_f="$(cat "$postinst")"
 	fi
 
 	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
@@ -130,11 +126,6 @@ pkg_prerm() {
 	$(get_value "${package}_PRERM_RUN")
 }
 EOF
-
-	# For compatibility with pre-2.12 scripts,
-	# ignored if a package-specific value is already set
-	elif [ -e "$prerm" ]; then
-		compat_pkg_write_gentoo_prerm "$ebuild_path"
 	fi
 }
 

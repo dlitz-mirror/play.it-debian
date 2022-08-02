@@ -13,13 +13,14 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar chemin
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -skip-free-space-check
 .Op Fl -icons Cm yes | Cm no | Cm auto
 .Op Fl -overwrite
 .Op Fl -output-dir Ar chemin
 .Op Fl -debug Op Ar N
-.Op Fl -show-game-script
 .Op Fl -no-mtree
+.Op Fl -tmpdir
+.Op Fl -skip-free-space-check
+.Op Fl -show-game-script
 .Sh DESCRIPTION
 .Nm
 est un logiciel libre qui automatise la construction de paquets natifs pour
@@ -90,10 +91,6 @@ paquets .tbz2 (Gentoo)
 .It Cm egentoo
 paquets .tar accompagné d’un .ebuild (Gentoo)
 .El
-.It Fl -skip-free-space-checks
-Ne vérifie pas la quantité d’espace disponible. Les dossiers temporaires sont
-créés dans
-.Ev TMPDIR .
 .It Fl -icons Cm yes | Cm no | Cm auto
 Détermine l’inclusion des icônes dans les paquets.
 .Bl -tag -width indent -compact
@@ -112,13 +109,19 @@ Détermine le dossier dans lequel seront placés les paquets générés.
 Détermine le niveau de débuggage.
 .Ar N
 a la valeur 1 par défaut s’il n’est pas précisé.
-.It Fl -show-game-script
-Affiche seulement le nom du script du jeu à utiliser sans l’exécuter.
 .It Fl -no-mtree
 Ne crée pas de fichier .MTREE lors de la création de paquets pour Arch Linux.
 Ces fichiers contenant un hash de tous les autres fichiers du paquet, ils
 peuvent être relativement long à calculer lors du traitement de jeux
 volumineux.
+.It Fl -tmpdir Ar chemin
+Définit le répertoire utilisé pour le stockage des fichiers temporaire.
+La valeur par défaut est : 
+.Ev TMPDIR
+.It Fl -skip-free-space-check
+Ne pas tester lʼespace libre disponible.
+.It Fl -show-game-script
+Affiche seulement le nom du script du jeu à utiliser sans l’exécuter.
 .El
 .Sh ENVIRONNEMENT
 .Bl -tag -width DS
@@ -129,6 +132,7 @@ Remplace la version fournie de
 (défaut : /usr/share/games/play.it/libplayit2.sh)
 .It Ev TMPDIR
 Emplacement par défaut où les fichiers temporaires sont traités.
+(défaut : /tmp)
 .Sh VOIR AUSSI
 .Bl -column
 .Xr dosbox 1

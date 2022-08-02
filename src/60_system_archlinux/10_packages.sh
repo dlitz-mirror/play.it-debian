@@ -72,9 +72,6 @@ pkg_write_arch() {
 		post_install
 		}
 		EOF
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		compat_pkg_write_arch_postinst "$target"
 	fi
 
 	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
@@ -87,9 +84,6 @@ pkg_write_arch() {
 		pre_remove
 		}
 		EOF
-	# For compatibility with pre-2.12 scripts, ignored if a package-specific value is already set
-	elif [ -e "$postinst" ]; then
-		compat_pkg_write_arch_prerm "$target"
 	fi
 
 	# Creates .MTREE
