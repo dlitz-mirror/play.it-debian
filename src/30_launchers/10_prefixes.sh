@@ -1,3 +1,22 @@
+# Print function computing the path to the game prefix
+# USAGE: prefix_function_prefix_path
+prefix_function_prefix_path() {
+	cat <<- 'EOF'
+	# Compute the path to game prefix for the current session
+	prefix_path() {
+	    # Prefix path can be explicitely set using an environment variable
+	    if [ -n "$PLAYIT_PREFIX_PATH" ]; then
+	        printf '%s' "$PLAYIT_PREFIX_PATH"
+	        return 0
+	    fi
+	    # Compute the default prefix path if none has been explicitely set
+	    printf '%s/play.it/prefixes/%s' \
+	        "${XDG_CACHE_HOME:="$HOME/.cache"}" \
+	        "$GAME_ID"
+	}
+	EOF
+}
+
 # print functions used to display localized messages
 # USAGE: launcher_prefix_functions_localized_messages
 launcher_prefix_functions_localized_messages() {
@@ -152,6 +171,7 @@ launcher_write_script_prefix_functions() {
 		# Set userdir- and prefix-related functions
 
 		EOF
+		prefix_function_prefix_path
 		launcher_prefix_functions_persistent
 		launcher_prefix_function_init_game_files
 		launcher_prefix_function_build
@@ -187,7 +207,7 @@ launcher_write_script_prefix_build() {
 	cat >> "$file" <<- 'EOF'
 	# Build user prefix
 
-	PATH_PREFIX="${XDG_DATA_HOME:=$HOME/.local/share}/play.it/prefixes/${PREFIX_ID:=$GAME_ID}"
+	PATH_PREFIX=$(prefix_path)
 	PREFIX_LOCK="$PATH_PREFIX/.$GAME_ID.lock"
 	mkdir --parents \
 	    "$PATH_PREFIX" \
