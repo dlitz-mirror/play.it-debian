@@ -1,3 +1,22 @@
+# WINE - Print function computing the path to the WINE prefix
+# USAGE: wine_prefix_function_prefix_path
+wine_prefix_function_wineprefix_path() {
+	cat <<- 'EOF'
+	# Compute the path to WINE prefix for the current session
+	wineprefix_path() {
+	    # Prefix path can be explicitely set using an environment variable
+	    if [ -n "$WINEPREFIX" ]; then
+	        printf '%s' "$WINEPREFIX"
+	        return 0
+	    fi
+	    # Compute the default prefix path if none has been explicitely set
+	    printf '%s/play.it/wine/%s' \
+	        "${XDG_CACHE_HOME:="$HOME/.cache"}" \
+	        "$GAME_ID"
+	}
+	EOF
+}
+
 # print the snippet providing a function returning the path to the `wine` command
 # USAGE: launcher_wine_command_path
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
@@ -109,98 +128,100 @@ launcher_write_script_wine_prefix_build() {
 		('64') winearch='win64' ;;
 	esac
 
-	cat >> "$file" <<- EOF
-	# Build user prefix
-
-	WINEARCH='$winearch'
-	EOF
-
+	# Build game prefix
 	cat >> "$file" <<- 'EOF'
-	: "${WINEDEBUG:=-all}"
-	WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
-	WINEPREFIX="$XDG_DATA_HOME/play.it/prefixes/$PREFIX_ID"
-	# Work around WINE bug 41639
-	FREETYPE_PROPERTIES="truetype:interpreter-version=35"
-
-	PATH_PREFIX="$WINEPREFIX/drive_c/$GAME_ID"
-	PREFIX_LOCK="$PATH_PREFIX/.$GAME_ID.lock"
-
-	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
-
-	if ! [ -e "$WINEPREFIX" ]; then
-	    mkdir --parents "$(dirname "$WINEPREFIX")"
-	    # Use LANG=C to avoid localized directory names
-	    LANG=C $(wineboot_command) --init 2>/dev/null
-
-	EOF
-
-	if version_is_at_least '2.8' "$target_version"; then
-		cat >> "$file" <<- 'EOF'
-		    # Remove most links pointing outside of the WINE prefix
-		    rm "$WINEPREFIX/dosdevices/z:"
-		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
-		        rm "$directory"
-		        mkdir "$directory"
-		    done
-
-		EOF
-	fi
-
-	{
-		# Set compatibility links to legacy user paths
-		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
-		launcher_wine_user_legacy_link 'Documents' 'My Documents'
-	} >> "$file"
-
-	# shellcheck disable=SC2086
-	launcher_wine_winetricks_call $APP_WINETRICKS >> "$file"
-
-	if [ "$APP_REGEDIT" ]; then
-		cat >> "$file" <<- EOF
-		    for reg_file in $APP_REGEDIT; do
-		EOF
-		cat >> "$file" <<- 'EOF'
-		    (
-		        cd "$WINEPREFIX/drive_c/"
-		        cp "$PATH_GAME/$reg_file" .
-		        reg_file_basename="$(basename "$reg_file")"
-		        $(regedit_command) "$reg_file_basename"
-		        rm "$reg_file_basename"
-		    )
-		    done
-		EOF
-	fi
-
-	cat >> "$file" <<- 'EOF'
-	fi
-
+	# Build game prefix
+	PATH_PREFIX=$(prefix_path)
+	PREFIX_LOCK="${PATH_PREFIX}/.${GAME_ID}.lock"
 	mkdir --parents \
 	    "$PATH_PREFIX" \
 	    "$USER_PERSISTENT_PATH"
 	EOF
-
 	launcher_write_script_prefix_prepare "$file"
-
 	cat >> "$file" <<- 'EOF'
 	prefix_build
 
-	# Move files that should be diverted to persistent paths to the game directory
-	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
-	    prefix_dir="$PATH_PREFIX/${line%%:*}"
-	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
-	    if [ ! -h "$wine_dir" ]; then
-	        if [ -d "$wine_dir" ]; then
-	            mv --no-target-directory "$wine_dir" "$prefix_dir"
-	        fi
-	        if [ ! -d "$prefix_dir" ]; then
-	            mkdir --parents "$prefix_dir"
-	        fi
-	        mkdir --parents "$(dirname "$wine_dir")"
-	        ln --symbolic "$prefix_dir" "$wine_dir"
-	    fi
-	done
-
 	EOF
+
+	# Build WINE prefix
+	{
+		wine_prefix_function_wineprefix_path
+		cat <<- EOF
+		WINEARCH='$winearch'
+		EOF
+		cat <<- 'EOF'
+		: "${WINEDEBUG:=-all}"
+		WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
+		WINEPREFIX=$(wineprefix_path)
+		# Work around WINE bug 41639
+		FREETYPE_PROPERTIES="truetype:interpreter-version=35"
+		export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
+
+		# Build WINE prefix
+		if ! [ -e "$WINEPREFIX" ]; then
+		    mkdir --parents "$(dirname "$WINEPREFIX")"
+		    # Use LANG=C to avoid localized directory names
+		    LANG=C $(wineboot_command) --init 2>/dev/null
+		    # Link game prefix into WINE prefix
+		    ln --symbolic \
+		        "$PATH_PREFIX" \
+		        "${WINEPREFIX}/drive_c/${GAME_ID}"
+		EOF
+
+		if version_is_at_least '2.8' "$target_version"; then
+			cat <<- 'EOF'
+			    # Remove most links pointing outside of the WINE prefix
+			    rm "$WINEPREFIX/dosdevices/z:"
+			    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
+			        rm "$directory"
+			        mkdir "$directory"
+			    done
+			EOF
+		fi
+
+		# Set compatibility links to legacy user paths
+		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
+		launcher_wine_user_legacy_link 'Documents' 'My Documents'
+
+		# shellcheck disable=SC2086
+		launcher_wine_winetricks_call $APP_WINETRICKS
+
+		if [ "$APP_REGEDIT" ]; then
+			cat <<- EOF
+			    # Load registry scripts
+			    for regedit_script in $APP_REGEDIT; do
+			EOF
+			cat <<- 'EOF'
+			        (
+			            cd "${WINEPREFIX}/drive_c/${GAME_ID}"
+			            printf 'Loading registry script: %s\n' "$regedit_script"
+			            $(regedit_command) "$regedit_script"
+			        )
+			    done
+			EOF
+		fi
+
+		## The following `fi` is closing the earlier test `if ! [ -e "$WINEPREFIX" ]; then`
+		cat <<- 'EOF'
+		fi
+
+		# Move files that should be diverted to persistent paths to the game directory
+		printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
+		    prefix_dir="$PATH_PREFIX/${line%%:*}"
+		    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
+		    if [ ! -h "$wine_dir" ]; then
+		        if [ -d "$wine_dir" ]; then
+		            mv --no-target-directory "$wine_dir" "$prefix_dir"
+		        fi
+		        if [ ! -d "$prefix_dir" ]; then
+		            mkdir --parents "$prefix_dir"
+		        fi
+		        mkdir --parents "$(dirname "$wine_dir")"
+		        ln --symbolic "$prefix_dir" "$wine_dir"
+		    fi
+		done
+		EOF
+	} >> "$file"
 	sed --in-place 's/    /\t/g' "$file"
 	return 0
 }
@@ -232,7 +253,7 @@ launcher_write_script_wine_run() {
 	cat >> "$file" <<- 'EOF'
 	# Run the game
 
-	cd "$PATH_PREFIX"
+	cd "${WINEPREFIX}/drive_c/${GAME_ID}"
 
 	EOF
 
