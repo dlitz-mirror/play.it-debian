@@ -48,15 +48,34 @@ persistent_list_files() {
 	set -o noglob
 }
 
+# Print function computing the path for persistent storage of user data
+# USAGE: persistent_function_user_path
+persistent_function_user_path() {
+	cat <<- 'EOF'
+	# Print path to directory used for persistent storage of user data
+	persistent_user_path() {
+	    # The path can be explicitely set using an environment variable
+	    if [ -n "$PLAYIT_PERSISTENT_USER_PATH" ]; then
+	        printf '%s' "$PLAYIT_PERSISTENT_USER_PATH"
+	        return 0
+	    fi
+	    # Compute the default path if none has been explicitly set
+	    printf '%s/games/%s' \
+	        "${XDG_DATA_HOME:=$HOME/.local/share}" \
+	        "$GAME_ID"
+	}
+	EOF
+}
+
 # print list of variables setting persistent paths
 # USAGE: launcher_print_persistent_paths
 launcher_print_persistent_paths() {
+	persistent_function_user_path
 	cat <<- 'EOF'
-	# Set list of files and directories that should be saved in persistent paths
-
-	USER_PERSISTENT_PATH="${XDG_DATA_HOME:=$HOME/.local/share}/games/${PREFIX_ID:=$GAME_ID}"
+	USER_PERSISTENT_PATH=$(persistent_user_path)
 	EOF
 	cat <<- EOF
+	# Set list of files and directories that should be saved in persistent paths
 	USER_PERSISTENT_DIRECTORIES='$(persistent_list_directories)'
 	USER_PERSISTENT_FILES='$(persistent_list_files)'
 	EOF
