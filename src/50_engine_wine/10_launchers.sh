@@ -17,6 +17,40 @@ wine_prefix_function_wineprefix_path() {
 	EOF
 }
 
+# WINE - Print variables used for setting WINE prefix
+# USAGE: wine_prefix_wineprefix_variables
+wine_prefix_wineprefix_variables() {
+	# Compute WINE prefix architecture
+	local package package_architecture wine_architecture
+	package=$(package_get_current)
+	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	case "$package_architecture" in
+		('32')
+			wine_architecture='win32'
+		;;
+		('64')
+			wine_architecture='win64'
+		;;
+	esac
+
+	# Set variables used for WINE prefix
+	cat <<- EOF
+	# Set variables used for WINE prefix
+	WINEARCH='$wine_architecture'
+	WINEDEBUG="\${WINEDEBUG:=-all}"
+	WINEPREFIX=\$(wineprefix_path)
+	## Disable some WINE anti-features
+	## - creation of desktop entries
+	## - installation of Mono
+	## - installation of Gecko
+	WINEDLLOVERRIDES="\${WINEDLLOVERRIDES:=winemenubuilder.exe,mscoree,mshtml=}"
+	## Work around WINE bug 41639 - Wine with freetype 2.7 causes font rendering issues
+	## cf. https://bugs.winehq.org/show_bug.cgi?id=41639
+	FREETYPE_PROPERTIES='truetype:interpreter-version=35'
+	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
+	EOF
+}
+
 # print the snippet providing a function returning the path to the `wine` command
 # USAGE: launcher_wine_command_path
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
@@ -116,32 +150,11 @@ launcher_write_script_wine_prefix_build() {
 	local file
 	file="$1"
 
-	# get the current package
-	local package
-	package=$(package_get_current)
-
-	# compute WINE prefix architecture
-	local architecture winearch
-	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
-	case "$architecture" in
-		('32') winearch='win32' ;;
-		('64') winearch='win64' ;;
-	esac
-
 	# Build WINE prefix
 	{
 		wine_prefix_function_wineprefix_path
-		cat <<- EOF
-		WINEARCH='$winearch'
-		EOF
+		wine_prefix_wineprefix_variables
 		cat <<- 'EOF'
-		: "${WINEDEBUG:=-all}"
-		WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
-		WINEPREFIX=$(wineprefix_path)
-		# Work around WINE bug 41639
-		FREETYPE_PROPERTIES="truetype:interpreter-version=35"
-		export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
-
 		# Build WINE prefix
 		if ! [ -e "$WINEPREFIX" ]; then
 		    mkdir --parents "$(dirname "$WINEPREFIX")"
