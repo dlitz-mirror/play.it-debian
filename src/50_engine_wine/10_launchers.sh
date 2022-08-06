@@ -164,18 +164,13 @@ launcher_write_script_wine_prefix_build() {
 		    ln --symbolic \
 		        "$PATH_PREFIX" \
 		        "${WINEPREFIX}/drive_c/${GAME_ID}"
+		    # Remove most links pointing outside of the WINE prefix
+		    rm "$WINEPREFIX/dosdevices/z:"
+		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
+		        rm "$directory"
+		        mkdir "$directory"
+		    done
 		EOF
-
-		if version_is_at_least '2.8' "$target_version"; then
-			cat <<- 'EOF'
-			    # Remove most links pointing outside of the WINE prefix
-			    rm "$WINEPREFIX/dosdevices/z:"
-			    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
-			        rm "$directory"
-			        mkdir "$directory"
-			    done
-			EOF
-		fi
 
 		# Set compatibility links to legacy user paths
 		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
