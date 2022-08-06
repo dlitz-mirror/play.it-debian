@@ -72,6 +72,44 @@ wine_prefix_wineprefix_regedit() {
 	EOF
 }
 
+# WINE - Print the snippet used to generate the WINE prefix
+# USAGE: wine_prefix_wineprefix_build
+wine_prefix_wineprefix_build() {
+	wine_prefix_function_wineprefix_path
+	wine_prefix_wineprefix_variables
+	cat <<- 'EOF'
+	# Generate the WINE prefix
+	if ! [ -e "$WINEPREFIX" ]; then
+	    mkdir --parents "$(dirname "$WINEPREFIX")"
+	    # Use LANG=C to avoid localized directory names
+	    LANG=C $(wineboot_command) --init 2>/dev/null
+	    # Link game prefix into WINE prefix
+	    ln --symbolic \
+	        "$PATH_PREFIX" \
+	        "${WINEPREFIX}/drive_c/${GAME_ID}"
+	    # Remove most links pointing outside of the WINE prefix
+	    rm "$WINEPREFIX/dosdevices/z:"
+	    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
+	        rm "$directory"
+	        mkdir "$directory"
+	    done
+	EOF
+
+	# Set compatibility links to legacy user paths
+	launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
+	launcher_wine_user_legacy_link 'Documents' 'My Documents'
+
+	# Run initial winetricks call
+	launcher_wine_winetricks_call $APP_WINETRICKS
+
+	# Load registry scripts
+	wine_prefix_wineprefix_regedit $APP_REGEDIT
+
+	cat <<- 'EOF'
+	fi
+	EOF
+}
+
 # print the snippet providing a function returning the path to the `wine` command
 # USAGE: launcher_wine_command_path
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
@@ -171,41 +209,10 @@ launcher_write_script_wine_prefix_build() {
 	local file
 	file="$1"
 
-	# Build WINE prefix
+	# Generate the WINE prefix
 	{
-		wine_prefix_function_wineprefix_path
-		wine_prefix_wineprefix_variables
+		wine_prefix_wineprefix_build
 		cat <<- 'EOF'
-		# Build WINE prefix
-		if ! [ -e "$WINEPREFIX" ]; then
-		    mkdir --parents "$(dirname "$WINEPREFIX")"
-		    # Use LANG=C to avoid localized directory names
-		    LANG=C $(wineboot_command) --init 2>/dev/null
-		    # Link game prefix into WINE prefix
-		    ln --symbolic \
-		        "$PATH_PREFIX" \
-		        "${WINEPREFIX}/drive_c/${GAME_ID}"
-		    # Remove most links pointing outside of the WINE prefix
-		    rm "$WINEPREFIX/dosdevices/z:"
-		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
-		        rm "$directory"
-		        mkdir "$directory"
-		    done
-		EOF
-
-		# Set compatibility links to legacy user paths
-		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
-		launcher_wine_user_legacy_link 'Documents' 'My Documents'
-
-		# shellcheck disable=SC2086
-		launcher_wine_winetricks_call $APP_WINETRICKS
-
-		# Load registry scripts
-		wine_prefix_wineprefix_regedit $APP_REGEDIT
-
-		cat <<- 'EOF'
-		fi
-
 		# Move files that should be diverted to persistent paths to the game directory
 		printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
 		    prefix_dir="$PATH_PREFIX/${line%%:*}"
