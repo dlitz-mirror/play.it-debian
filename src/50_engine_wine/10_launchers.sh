@@ -51,6 +51,27 @@ wine_prefix_wineprefix_variables() {
 	EOF
 }
 
+# WINE - Print initial call to regedit during prefix generation
+# USAGE: wine_prefix_wineprefix_regedit $regedit_script[…]
+wine_prefix_wineprefix_regedit() {
+	# Return early if no regedit call is required
+	if [ $# -eq 0 ]; then
+		return 0
+	fi
+
+	# Load registry scripts
+	cat <<- EOF
+	# Load registry scripts
+	for regedit_script in $*; do
+	    (
+	        cd "\${WINEPREFIX}/drive_c/\${GAME_ID}"
+	        printf 'Loading registry script: %s\n' "\$regedit_script"
+	        \$(regedit_command) "\$regedit_script"
+	    )
+	done
+	EOF
+}
+
 # print the snippet providing a function returning the path to the `wine` command
 # USAGE: launcher_wine_command_path
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
@@ -179,22 +200,9 @@ launcher_write_script_wine_prefix_build() {
 		# shellcheck disable=SC2086
 		launcher_wine_winetricks_call $APP_WINETRICKS
 
-		if [ "$APP_REGEDIT" ]; then
-			cat <<- EOF
-			    # Load registry scripts
-			    for regedit_script in $APP_REGEDIT; do
-			EOF
-			cat <<- 'EOF'
-			        (
-			            cd "${WINEPREFIX}/drive_c/${GAME_ID}"
-			            printf 'Loading registry script: %s\n' "$regedit_script"
-			            $(regedit_command) "$regedit_script"
-			        )
-			    done
-			EOF
-		fi
+		# Load registry scripts
+		wine_prefix_wineprefix_regedit $APP_REGEDIT
 
-		## The following `fi` is closing the earlier test `if ! [ -e "$WINEPREFIX" ]; then`
 		cat <<- 'EOF'
 		fi
 
