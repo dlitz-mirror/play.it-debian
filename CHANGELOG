@@ -1,3 +1,44 @@
+2.17.0
+
+  * Changes related to launchers:
+    * Prefix type can be set at the application level (using APP_xxx_PREFIX_TYPE)
+      or for all applications (using APPLICATIONS_PREFIX_TYPE), with the following valid values:
+      - symlinks: generate our usual symbolic links farm, the default for most application types
+      - none: the game is run from the read-only system directory, the default for ScummVM and ResidualVM
+    * Prefix path can be overridden for the current game session by setting PLAYIT_PREFIX_PATH
+      The default value is: ~/.cache/play.it/prefixes/${GAME_ID}
+    * WINE prefix path follows WINEPREFIX if it is set. If the variable is unset, it defaults to:
+      ~/.cache/play.it/wine/${GAME_ID}
+    * A single directory is used for persistent storage of user data.
+      It can be set using PLAYIT_PERSISTENT_USER_PATH, and defaults to:
+      ~/.local/share/games/${GAME_ID}
+    * The undocumented runtime variable PREFIX_ID is no longer supported.
+
+  * Changes related to archives:
+    * New archive type "tar.bz2".
+    * For multi-part archives, type is optional for extra parts.
+    * Allow use of unzip for data extraction from mojosetup archives, if bsdtar is not available.
+    * Force the use of a specific tool for content extraction:
+      - An archive extractor can be set with ARCHIVE_xxx_EXTRACTOR
+      - An options strings can be set with ARCHIVE_xxx_EXTRACTOR_OPTIONS
+
+  * Changes related to icons:
+    * Icons inclusion is now done using a single function, icons_inclusion.
+    * The following functions are deprecated:
+      - icons_get_from_package
+      - icons_get_from_workdir
+      - icons_move_to
+
+  * Other changes:
+    * Drop option to do partial runs with no actual disk write.
+      (--dry-run option)
+    * New option provided to change ./play.it working path: --tmpdir
+      The default value is $TMPDIR, falling back on /tmp
+
+  * Codebase improvements:
+    * New layout for source files.
+    * Use a dedicated check to detect unexpected empty variables.
+
 2.16.2
 
   * applications_list - Throw an explicit error on unexpected empty list.

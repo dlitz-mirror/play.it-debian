@@ -11,14 +11,14 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -dry-run
-.Op Fl -skip-free-space-check
 .Op Fl -icons Cm yes | Cm no | Cm auto
 .Op Fl -overwrite
 .Op Fl -output-dir Ar path
 .Op Fl -debug Op Ar N
-.Op Fl -show-game-script
 .Op Fl -no-mtree
+.Op Fl -tmpdir
+.Op Fl -skip-free-space-check
+.Op Fl -show-game-script
 .Sh DESCRIPTION
 .Nm
 is a free software building native packages from installers for Windows or
@@ -86,11 +86,6 @@ Generated package type selection.
 .It Cm egentoo
 .No .tar package with an associated .ebuild (Gentoo)
 .El
-.It Fl -dry-run
-Run syntax checks but do not extract data nor build packages.
-.It Fl -skip-free-space-checks
-Do not check for free space. Temporary directories are created under
-.Ev TMPDIR .
 .It Fl -icons Cm yes | Cm no | Cm auto
 Include icons in packages.
 .Bl -tag -width indent -compact
@@ -109,12 +104,18 @@ Set the output directory for generated packages.
 Set the debug level. If
 .Ar N
 is unspecified, defaults to 1.
-.It Fl -show-game-script
-Only display the name of the game script to use, without running it.
 .It Fl -no-mtree
 Do not create .MTREE files in Arch Linux packages. As these files contain a
 hash of every file in the package, they may be quite long to create when
 dealing with big games.
+.It Fl -tmpdir Ar path
+Set the directory used for temporary files storage.
+Default value is: 
+.Ev TMPDIR
+.It Fl -skip-free-space-check
+Do not check for free space.
+.It Fl -show-game-script
+Only display the name of the game script to use, without running it.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width DS
@@ -125,6 +126,7 @@ If set, overrides the provided version of
 (default: /usr/share/games/play.it/libplayit2.sh)
 .It Ev TMPDIR
 Default place where temporary files are processed.
+(default: /tmp)
 .Sh DIAGNOSTICS
 .Ss Arch Linux
 .Bl -ohang

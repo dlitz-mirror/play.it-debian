@@ -8,7 +8,7 @@ LIB_ONLY=1
 if [ -z "$PLAYIT_LIB2" ]; then
 	for path in\
 		"$PWD"\
-		"$(dirname "$0")/play.it-2/lib"\
+		"$(dirname "$0")/lib"\
 		"$XDG_DATA_HOME/play.it"\
 		'/usr/local/share/games/play.it'\
 		'/usr/local/share/play.it'\
@@ -26,7 +26,7 @@ if [ -z "$PLAYIT_LIB2" ]; then
 	printf 'libplayit2.sh not found.\n'
 	exit 1
 fi
-# shellcheck source=play.it-2/lib/libplayit2.sh
+# shellcheck source=lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
 if [ "$#" = 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
