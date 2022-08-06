@@ -184,7 +184,6 @@ launcher_write_script_prefix_functions() {
 
 # write launcher script prefix prepare hook
 # USAGE: launcher_write_script_prefix_prepare $file
-# CALLED BY: launcher_write_script_prefix_build launcher_write_script_wine_prefix_build
 launcher_write_script_prefix_prepare() {
 	local file
 	file="$1"

@@ -128,21 +128,6 @@ launcher_write_script_wine_prefix_build() {
 		('64') winearch='win64' ;;
 	esac
 
-	# Build game prefix
-	cat >> "$file" <<- 'EOF'
-	# Build game prefix
-	PATH_PREFIX=$(prefix_path)
-	PREFIX_LOCK="${PATH_PREFIX}/.${GAME_ID}.lock"
-	mkdir --parents \
-	    "$PATH_PREFIX" \
-	    "$USER_PERSISTENT_PATH"
-	EOF
-	launcher_write_script_prefix_prepare "$file"
-	cat >> "$file" <<- 'EOF'
-	prefix_build
-
-	EOF
-
 	# Build WINE prefix
 	{
 		wine_prefix_function_wineprefix_path

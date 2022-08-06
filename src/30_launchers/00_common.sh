@@ -204,6 +204,7 @@ launcher_write_script() {
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_wine_command_path >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
+					launcher_write_script_prefix_build "$target_file"
 					launcher_write_script_wine_prefix_build "$target_file"
 					if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
 						launcher_write_script_winecfg_run "$target_file"
