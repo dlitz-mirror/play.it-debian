@@ -1,6 +1,6 @@
-# WINE - Print function computing the path to the WINE prefix
-# USAGE: wine_prefix_function_prefix_path
-wine_prefix_function_wineprefix_path() {
+# WINE - Compute path to WINE prefix
+# USAGE: wine_prefix_wineprefix_path
+wine_prefix_wineprefix_path() {
 	cat <<- 'EOF'
 	# Compute the path to WINE prefix for the current session
 	wineprefix_path() {
@@ -17,9 +17,9 @@ wine_prefix_function_wineprefix_path() {
 	EOF
 }
 
-# WINE - Print variables used for setting WINE prefix
-# USAGE: wine_prefix_wineprefix_variables
-wine_prefix_wineprefix_variables() {
+# WINE - Set WINE prefix environment
+# USAGE: wine_prefix_wineprefix_environment
+wine_prefix_wineprefix_environment() {
 	# Compute WINE prefix architecture
 	local package package_architecture wine_architecture
 	package=$(package_get_current)
@@ -32,7 +32,6 @@ wine_prefix_wineprefix_variables() {
 			wine_architecture='win64'
 		;;
 	esac
-
 	# Set variables used for WINE prefix
 	cat <<- EOF
 	# Set variables used for WINE prefix
@@ -51,14 +50,13 @@ wine_prefix_wineprefix_variables() {
 	EOF
 }
 
-# WINE - Print initial call to regedit during prefix generation
+# WINE - Initial call to regedit during prefix generation
 # USAGE: wine_prefix_wineprefix_regedit $regedit_script[…]
 wine_prefix_wineprefix_regedit() {
 	# Return early if no regedit call is required
 	if [ $# -eq 0 ]; then
 		return 0
 	fi
-
 	# Load registry scripts
 	cat <<- EOF
 	# Load registry scripts
@@ -72,11 +70,67 @@ wine_prefix_wineprefix_regedit() {
 	EOF
 }
 
+# WINE - Initial call to winetricks during prefix generation
+# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
+wine_prefix_wineprefix_winetricks() {
+	# Return early if no winetricks call is required
+	if [ $# -eq 0 ]; then
+		return 0
+	fi
+	# Run initial winetricks call
+	cat <<- EOF
+	# Run initial winetricks call
+	## Export custom paths to WINE commands
+	## so winetricks use them instead of the default paths
+	WINE=\$(wine_command)
+	WINESERVER=\$(wineserver_command)
+	WINEBOOT=\$(wineboot_command)
+	export WINE WINESERVER WINEBOOT
+	## Run winetricks, spawning a terminal if required
+	## to ensure it is not silently running in the background
+	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	    winetricks $*
+	elif command -v xterm >/dev/null; then
+	    xterm -e winetricks $*
+	else
+	    winetricks $*
+	fi
+	## Wait a bit for lingering WINE processes to terminate
+	sleep 1s
+	EOF
+}
+
+# WINE - Set compatibility link to legacy user path
+# USAGE: wine_prefix_wineprefix_legacy_link $path_current $path_legacy
+wine_prefix_wineprefix_legacy_link() {
+	local path_current path_legacy
+	path_current="$1"
+	path_legacy="$2"
+	cat <<- EOF
+	# Set compatibility link to a legacy user path
+	user_directory="\${WINEPREFIX}/drive_c/users/\${USER}"
+	path_current='${path_current}'
+	path_legacy='${path_legacy}'
+	(
+	    cd "\$user_directory"
+	    if [ ! -e "\${user_directory}/\${path_current}" ]; then
+	        path_current_parent=\$(dirname "\$path_current")
+	        mkdir --parents "\$path_current_parent"
+	        mv "\$path_legacy" "\$path_current"
+	    fi
+	    ln --symbolic "\$path_current" "\$path_legacy"
+	)
+	EOF
+}
+
 # WINE - Print the snippet used to generate the WINE prefix
 # USAGE: wine_prefix_wineprefix_build
 wine_prefix_wineprefix_build() {
-	wine_prefix_function_wineprefix_path
-	wine_prefix_wineprefix_variables
+	# Compute path to WINE prefix
+	wine_prefix_wineprefix_path
+	# Set WINE prefix environment
+	wine_prefix_wineprefix_environment
+	# Generate the WINE prefix
 	cat <<- 'EOF'
 	# Generate the WINE prefix
 	if ! [ -e "$WINEPREFIX" ]; then
@@ -94,17 +148,13 @@ wine_prefix_wineprefix_build() {
 	        mkdir "$directory"
 	    done
 	EOF
-
 	# Set compatibility links to legacy user paths
-	launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
-	launcher_wine_user_legacy_link 'Documents' 'My Documents'
-
+	wine_prefix_wineprefix_legacy_link 'AppData/Roaming' 'Application Data'
+	wine_prefix_wineprefix_legacy_link 'Documents' 'My Documents'
 	# Run initial winetricks call
-	launcher_wine_winetricks_call $APP_WINETRICKS
-
+	wine_prefix_wineprefix_winetricks $APP_WINETRICKS
 	# Load registry scripts
 	wine_prefix_wineprefix_regedit $APP_REGEDIT
-
 	cat <<- 'EOF'
 	fi
 	EOF
@@ -135,46 +185,6 @@ launcher_wine_command_path() {
 	regedit_command() {
 	    wine_command | sed 's#/wine$#/regedit#'
 	}
-
-	EOF
-}
-
-# print the snippet calling winetricks with the set list of verbs
-# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
-# RETURN: the code snippet, a multi-lines string, indented with four spaces
-launcher_wine_winetricks_call() {
-	local winetricks_verbs
-	winetricks_verbs="$*"
-
-	# Return early if no winetricks verb has been passed
-	if [ -z "$winetricks_verbs" ]; then
-		return 0
-	fi
-
-	cat <<- 'EOF'
-	# Export custom paths to WINE commands
-	# so winetricks use them instead of the default paths
-	WINE=$(wine_command)
-	WINESERVER=$(wineserver_command)
-	WINEBOOT=$(wineboot_command)
-	export WINE WINESERVER WINEBOOT
-
-	EOF
-	cat <<- EOF
-	# Run winetricks, spawning a terminal if required
-	# to ensure it is not silently running in the background
-	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-	    winetricks $winetricks_verbs
-	elif command -v xterm >/dev/null; then
-	    xterm -e winetricks $winetricks_verbs
-	else
-	    winetricks $winetricks_verbs
-	fi
-
-	EOF
-	cat <<- 'EOF'
-	# Wait a bit for lingering WINE processes to terminate
-	sleep 1s
 
 	EOF
 }
@@ -294,34 +304,3 @@ launcher_write_script_winecfg_run() {
 
 	return 0
 }
-
-# WINE - Set compatibility link to legacy user path
-# USAGE: launcher_wine_user_legacy_link $path_current $path_legacy
-# RETURN: the code snippet setting the compatibility links,
-#         indented with 4 spaces
-launcher_wine_user_legacy_link() {
-	local path_current path_legacy
-	path_current="$1"
-	path_legacy="$2"
-	cat <<- 'EOF'
-	# Set compatibility link to a legacy user path
-	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
-	EOF
-	cat <<- EOF
-	path_current='${path_current}'
-	path_legacy='${path_legacy}'
-	EOF
-	cat <<- 'EOF'
-	(
-	    cd "$user_directory"
-	    if [ ! -e "${user_directory}/${path_current}" ]; then
-	        path_current_parent=$(dirname "$path_current")
-	        mkdir --parents "$path_current_parent"
-	        mv "$path_legacy" "$path_current"
-	    fi
-	    ln --symbolic "$path_current" "$path_legacy"
-	)
-
-	EOF
-}
-
