@@ -226,6 +226,4 @@ pkg_build_egentoo() {
 
 	eval "${package}"_PKG=\""$package_filename"\"
 	export "${package}"_PKG
-
-	information_package_building_done
 }

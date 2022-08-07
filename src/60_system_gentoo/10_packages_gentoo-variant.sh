@@ -340,7 +340,4 @@ pkg_build_gentoo() {
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg}_PKG
-
-	information_package_building_done
 }
-

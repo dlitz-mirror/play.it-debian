@@ -151,8 +151,6 @@ archive_extraction() {
 	else
 		archive_extraction_from_type "$archive" "$destination_directory"
 	fi
-
-	information_archive_data_extraction_done
 }
 
 # extract data from the target archive, using the specified extractor

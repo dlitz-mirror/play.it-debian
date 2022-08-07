@@ -72,20 +72,3 @@ information_package_building() {
 	# shellcheck disable=SC2059
 	printf "$message" "$file"
 }
-
-# print package building message
-# USAGE: information_package_building $file
-information_package_building_done() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Contruction terminée !'
-		;;
-		('en'|*)
-			message='Building done!'
-		;;
-	esac
-	printf '%s\n' "$message"
-}
-

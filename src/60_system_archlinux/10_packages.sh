@@ -482,8 +482,6 @@ pkg_build_arch() {
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg?}_PKG
-
-	information_package_building_done
 }
 
 # creates .MTREE in package
@@ -516,7 +514,4 @@ package_archlinux_create_mtree() {
 			--to-stdout \
 			> .MTREE
 	)
-	info_package_mtree_computation_done
-
-	return 0
 }
