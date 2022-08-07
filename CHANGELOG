@@ -1,3 +1,28 @@
+2.18.0
+
+  * Changes related to archive contents inclusion:
+    * CONTENT_xxx_PATH is a new variable replacing ARCHIVE_xxx_PATH.
+    * CONTENT_xxx_FILES is a new variable replacing ARCHIVE_xxx_FILES.
+    * content_inclusion is a new function replacing organize_data.
+    * content_inclusion_default is a new function replacing prepare_package_layout.
+
+  * Changes related to packages:
+    * Provide a new dependency system for native libraries, using a new variable:
+      PKG_xxx_DEPENDENCIES_LIBRARIES
+    * Support is added for extra native libraries.
+
+  * Changes specific to WINE:
+    * WINEDLLOVERRIDES can be overridden at runtime.
+    * Provide persistent storage for registry keys, using a new dedicated variable:
+      WINE_REGEDIT_PERSISTENT_KEYS
+    * Add ability to set the Direct3D renderer using WINE_DIRECT3D_RENDERER.
+
+  * Other changes:
+    * Drop messages on completion of long tasks.
+
+  * Codebase improvements:
+    * Rework prefix generation for WINE games.
+
 2.17.2
 
   * Prefixes - Fix handling of symbolic links in read-only game data
