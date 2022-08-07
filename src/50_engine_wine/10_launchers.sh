@@ -1,6 +1,6 @@
-# WINE - Print function computing the path to the WINE prefix
-# USAGE: wine_prefix_function_prefix_path
-wine_prefix_function_wineprefix_path() {
+# WINE - Compute path to WINE prefix
+# USAGE: wine_prefix_wineprefix_path
+wine_prefix_wineprefix_path() {
 	cat <<- 'EOF'
 	# Compute the path to WINE prefix for the current session
 	wineprefix_path() {
@@ -14,6 +14,171 @@ wine_prefix_function_wineprefix_path() {
 	        "${XDG_CACHE_HOME:="$HOME/.cache"}" \
 	        "$GAME_ID"
 	}
+	EOF
+}
+
+# WINE - Set WINE prefix environment
+# USAGE: wine_prefix_wineprefix_environment
+wine_prefix_wineprefix_environment() {
+	# Compute WINE prefix architecture
+	local package package_architecture wine_architecture
+	package=$(package_get_current)
+	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	case "$package_architecture" in
+		('32')
+			wine_architecture='win32'
+		;;
+		('64')
+			wine_architecture='win64'
+		;;
+	esac
+	# Set variables used for WINE prefix
+	cat <<- EOF
+	# Set variables used for WINE prefix
+	WINEARCH='$wine_architecture'
+	WINEDEBUG="\${WINEDEBUG:=-all}"
+	WINEPREFIX=\$(wineprefix_path)
+	## Disable some WINE anti-features
+	## - creation of desktop entries
+	## - installation of Mono
+	## - installation of Gecko
+	WINEDLLOVERRIDES="\${WINEDLLOVERRIDES:=winemenubuilder.exe,mscoree,mshtml=}"
+	## Work around WINE bug 41639 - Wine with freetype 2.7 causes font rendering issues
+	## cf. https://bugs.winehq.org/show_bug.cgi?id=41639
+	FREETYPE_PROPERTIES='truetype:interpreter-version=35'
+	export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
+	EOF
+}
+
+# WINE - Initial call to regedit during prefix generation
+# USAGE: wine_prefix_wineprefix_regedit $regedit_script[…]
+wine_prefix_wineprefix_regedit() {
+	# Return early if no regedit call is required
+	if [ $# -eq 0 ]; then
+		return 0
+	fi
+	# Load registry scripts
+	cat <<- EOF
+	# Load registry scripts
+	for regedit_script in $*; do
+	    (
+	        cd "\${WINEPREFIX}/drive_c/\${GAME_ID}"
+	        printf 'Loading registry script: %s\n' "\$regedit_script"
+	        \$(regedit_command) "\$regedit_script"
+	    )
+	done
+	EOF
+}
+
+# WINE - Initial call to winetricks during prefix generation
+# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
+wine_prefix_wineprefix_winetricks() {
+	# Return early if no winetricks call is required
+	if [ $# -eq 0 ]; then
+		return 0
+	fi
+	# Run initial winetricks call
+	cat <<- EOF
+	# Run initial winetricks call
+	## Export custom paths to WINE commands
+	## so winetricks use them instead of the default paths
+	WINE=\$(wine_command)
+	WINESERVER=\$(wineserver_command)
+	WINEBOOT=\$(wineboot_command)
+	export WINE WINESERVER WINEBOOT
+	## Run winetricks, spawning a terminal if required
+	## to ensure it is not silently running in the background
+	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	    winetricks $*
+	elif command -v xterm >/dev/null; then
+	    xterm -e winetricks $*
+	else
+	    winetricks $*
+	fi
+	## Wait a bit for lingering WINE processes to terminate
+	sleep 1s
+	EOF
+}
+
+# WINE - Set compatibility link to legacy user path
+# USAGE: wine_prefix_wineprefix_legacy_link $path_current $path_legacy
+wine_prefix_wineprefix_legacy_link() {
+	local path_current path_legacy
+	path_current="$1"
+	path_legacy="$2"
+	cat <<- EOF
+	# Set compatibility link to a legacy user path
+	user_directory="\${WINEPREFIX}/drive_c/users/\${USER}"
+	path_current='${path_current}'
+	path_legacy='${path_legacy}'
+	(
+	    cd "\$user_directory"
+	    if [ ! -e "\${user_directory}/\${path_current}" ]; then
+	        path_current_parent=\$(dirname "\$path_current")
+	        mkdir --parents "\$path_current_parent"
+	        mv "\$path_legacy" "\$path_current"
+	    fi
+	    ln --symbolic "\$path_current" "\$path_legacy"
+	)
+	EOF
+}
+
+# WINE - Print the snippet used to generate the WINE prefix
+# USAGE: wine_prefix_wineprefix_build
+wine_prefix_wineprefix_build() {
+	# Compute path to WINE prefix
+	wine_prefix_wineprefix_path
+	# Set WINE prefix environment
+	wine_prefix_wineprefix_environment
+	# Generate the WINE prefix
+	cat <<- 'EOF'
+	# Generate the WINE prefix
+	if ! [ -e "$WINEPREFIX" ]; then
+	    mkdir --parents "$(dirname "$WINEPREFIX")"
+	    # Use LANG=C to avoid localized directory names
+	    LANG=C $(wineboot_command) --init 2>/dev/null
+	    # Link game prefix into WINE prefix
+	    ln --symbolic \
+	        "$PATH_PREFIX" \
+	        "${WINEPREFIX}/drive_c/${GAME_ID}"
+	    # Remove most links pointing outside of the WINE prefix
+	    rm "$WINEPREFIX/dosdevices/z:"
+	    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
+	        rm "$directory"
+	        mkdir "$directory"
+	    done
+	EOF
+	# Set compatibility links to legacy user paths
+	wine_prefix_wineprefix_legacy_link 'AppData/Roaming' 'Application Data'
+	wine_prefix_wineprefix_legacy_link 'Documents' 'My Documents'
+	# Run initial winetricks call
+	wine_prefix_wineprefix_winetricks $APP_WINETRICKS
+	# Load registry scripts
+	wine_prefix_wineprefix_regedit $APP_REGEDIT
+	cat <<- 'EOF'
+	fi
+	EOF
+}
+
+# WINE - Set links required for persistent paths diversion
+# USAGE: wine_prefix_persistent_links
+wine_prefix_persistent_links() {
+	cat <<- 'EOF'
+	# Move files that should be diverted to persistent paths to the game directory
+	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
+	    prefix_dir="$PATH_PREFIX/${line%%:*}"
+	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
+	    if [ ! -h "$wine_dir" ]; then
+	        if [ -d "$wine_dir" ]; then
+	            mv --no-target-directory "$wine_dir" "$prefix_dir"
+	        fi
+	        if [ ! -d "$prefix_dir" ]; then
+	            mkdir --parents "$prefix_dir"
+	        fi
+	        mkdir --parents "$(dirname "$wine_dir")"
+	        ln --symbolic "$prefix_dir" "$wine_dir"
+	    fi
+	done
 	EOF
 }
 
@@ -46,46 +211,6 @@ launcher_wine_command_path() {
 	EOF
 }
 
-# print the snippet calling winetricks with the set list of verbs
-# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
-# RETURN: the code snippet, a multi-lines string, indented with four spaces
-launcher_wine_winetricks_call() {
-	local winetricks_verbs
-	winetricks_verbs="$*"
-
-	# Return early if no winetricks verb has been passed
-	if [ -z "$winetricks_verbs" ]; then
-		return 0
-	fi
-
-	cat <<- 'EOF'
-	# Export custom paths to WINE commands
-	# so winetricks use them instead of the default paths
-	WINE=$(wine_command)
-	WINESERVER=$(wineserver_command)
-	WINEBOOT=$(wineboot_command)
-	export WINE WINESERVER WINEBOOT
-
-	EOF
-	cat <<- EOF
-	# Run winetricks, spawning a terminal if required
-	# to ensure it is not silently running in the background
-	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-	    winetricks $winetricks_verbs
-	elif command -v xterm >/dev/null; then
-	    xterm -e winetricks $winetricks_verbs
-	else
-	    winetricks $winetricks_verbs
-	fi
-
-	EOF
-	cat <<- 'EOF'
-	# Wait a bit for lingering WINE processes to terminate
-	sleep 1s
-
-	EOF
-}
-
 # WINE - write application-specific variables
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
@@ -105,124 +230,6 @@ launcher_write_script_wine_application_variables() {
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
-	return 0
-}
-
-# WINE - write launcher script prefix initialization
-# USAGE: launcher_write_script_wine_prefix_build $file
-# NEEDED VARS: APP_WINETRICKS APP_REGEDIT
-# CALLED BY: launcher_write_build
-launcher_write_script_wine_prefix_build() {
-	local file
-	file="$1"
-
-	# get the current package
-	local package
-	package=$(package_get_current)
-
-	# compute WINE prefix architecture
-	local architecture winearch
-	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
-	case "$architecture" in
-		('32') winearch='win32' ;;
-		('64') winearch='win64' ;;
-	esac
-
-	# Build game prefix
-	cat >> "$file" <<- 'EOF'
-	# Build game prefix
-	PATH_PREFIX=$(prefix_path)
-	PREFIX_LOCK="${PATH_PREFIX}/.${GAME_ID}.lock"
-	mkdir --parents \
-	    "$PATH_PREFIX" \
-	    "$USER_PERSISTENT_PATH"
-	EOF
-	launcher_write_script_prefix_prepare "$file"
-	cat >> "$file" <<- 'EOF'
-	prefix_build
-
-	EOF
-
-	# Build WINE prefix
-	{
-		wine_prefix_function_wineprefix_path
-		cat <<- EOF
-		WINEARCH='$winearch'
-		EOF
-		cat <<- 'EOF'
-		: "${WINEDEBUG:=-all}"
-		WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml=d'
-		WINEPREFIX=$(wineprefix_path)
-		# Work around WINE bug 41639
-		FREETYPE_PROPERTIES="truetype:interpreter-version=35"
-		export WINEARCH WINEDEBUG WINEDLLOVERRIDES WINEPREFIX FREETYPE_PROPERTIES
-
-		# Build WINE prefix
-		if ! [ -e "$WINEPREFIX" ]; then
-		    mkdir --parents "$(dirname "$WINEPREFIX")"
-		    # Use LANG=C to avoid localized directory names
-		    LANG=C $(wineboot_command) --init 2>/dev/null
-		    # Link game prefix into WINE prefix
-		    ln --symbolic \
-		        "$PATH_PREFIX" \
-		        "${WINEPREFIX}/drive_c/${GAME_ID}"
-		EOF
-
-		if version_is_at_least '2.8' "$target_version"; then
-			cat <<- 'EOF'
-			    # Remove most links pointing outside of the WINE prefix
-			    rm "$WINEPREFIX/dosdevices/z:"
-			    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
-			        rm "$directory"
-			        mkdir "$directory"
-			    done
-			EOF
-		fi
-
-		# Set compatibility links to legacy user paths
-		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
-		launcher_wine_user_legacy_link 'Documents' 'My Documents'
-
-		# shellcheck disable=SC2086
-		launcher_wine_winetricks_call $APP_WINETRICKS
-
-		if [ "$APP_REGEDIT" ]; then
-			cat <<- EOF
-			    # Load registry scripts
-			    for regedit_script in $APP_REGEDIT; do
-			EOF
-			cat <<- 'EOF'
-			        (
-			            cd "${WINEPREFIX}/drive_c/${GAME_ID}"
-			            printf 'Loading registry script: %s\n' "$regedit_script"
-			            $(regedit_command) "$regedit_script"
-			        )
-			    done
-			EOF
-		fi
-
-		## The following `fi` is closing the earlier test `if ! [ -e "$WINEPREFIX" ]; then`
-		cat <<- 'EOF'
-		fi
-
-		# Move files that should be diverted to persistent paths to the game directory
-		printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
-		    prefix_dir="$PATH_PREFIX/${line%%:*}"
-		    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
-		    if [ ! -h "$wine_dir" ]; then
-		        if [ -d "$wine_dir" ]; then
-		            mv --no-target-directory "$wine_dir" "$prefix_dir"
-		        fi
-		        if [ ! -d "$prefix_dir" ]; then
-		            mkdir --parents "$prefix_dir"
-		        fi
-		        mkdir --parents "$(dirname "$wine_dir")"
-		        ln --symbolic "$prefix_dir" "$wine_dir"
-		    fi
-		done
-		EOF
-	} >> "$file"
-	sed --in-place 's/    /\t/g' "$file"
 	return 0
 }
 
@@ -286,34 +293,3 @@ launcher_write_script_winecfg_run() {
 
 	return 0
 }
-
-# WINE - Set compatibility link to legacy user path
-# USAGE: launcher_wine_user_legacy_link $path_current $path_legacy
-# RETURN: the code snippet setting the compatibility links,
-#         indented with 4 spaces
-launcher_wine_user_legacy_link() {
-	local path_current path_legacy
-	path_current="$1"
-	path_legacy="$2"
-	cat <<- 'EOF'
-	# Set compatibility link to a legacy user path
-	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
-	EOF
-	cat <<- EOF
-	path_current='${path_current}'
-	path_legacy='${path_legacy}'
-	EOF
-	cat <<- 'EOF'
-	(
-	    cd "$user_directory"
-	    if [ ! -e "${user_directory}/${path_current}" ]; then
-	        path_current_parent=$(dirname "$path_current")
-	        mkdir --parents "$path_current_parent"
-	        mv "$path_legacy" "$path_current"
-	    fi
-	    ln --symbolic "$path_current" "$path_legacy"
-	)
-
-	EOF
-}
-
