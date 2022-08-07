@@ -53,7 +53,10 @@ icons_get_from_legacy_path() {
 			# Remove compatibility link
 			if [ "$icon_full_path_legacy_canonical" != "$icon_full_path_new_canonical" ]; then
 				rm "$icon_full_path_new"
-				rmdir --parents --ignore-fail-on-non-empty "$(dirname "$icon_full_path_new")"
+				# Do not try to delete "…/gamedata/.", rmdir would fail with "Invalid argument"
+				if [ "$CONTENT_PATH_DEFAULT" != '.' ]; then
+					rmdir --parents --ignore-fail-on-non-empty "$(dirname "$icon_full_path_new")"
+				fi
 			fi
 		done
 	done
