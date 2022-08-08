@@ -114,7 +114,7 @@ launcher_prefix_function_persistent_populate_prefix() {
 	persistent_populate_prefix() {
 	    (
 	        cd "$USER_PERSISTENT_PATH"
-	        find -L . -type f | while read file; do
+	        find -L . -type f ! -path './wine/*' | while read -r file; do
 	            persistent_file="${USER_PERSISTENT_PATH}/${file}"
 	            prefix_file="${PATH_PREFIX}/${file}"
 	            if \
