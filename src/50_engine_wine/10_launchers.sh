@@ -248,12 +248,8 @@ launcher_write_script_wine_winecfg() {
 
 # WINE - run the game
 # USAGE: launcher_write_script_wine_run $application $file
-# CALLS: launcher_write_script_prerun launcher_write_script_postrun
-# CALLED BY: launcher_write_script
 launcher_write_script_wine_run() {
-	# parse arguments
-	local application
-	local file
+	local application file
 	application="$1"
 	file="$2"
 
@@ -261,19 +257,17 @@ launcher_write_script_wine_run() {
 	# Run the game
 
 	cd "${WINEPREFIX}/drive_c/${GAME_ID}"
-
 	EOF
-
 	launcher_write_script_prerun "$application" "$file"
-
 	cat >> "$file" <<- 'EOF'
+	# Do not exit on application failure,
+	# to ensure post-run commands are run.
+	set +o errexit
 	$(wine_command) "$APP_EXE" $APP_OPTIONS "$@"
-
+	game_exit_status=$?
+	set -o errexit
 	EOF
-
 	launcher_write_script_postrun "$application" "$file"
-
-	return 0
 }
 
 # WINE - run winecfg

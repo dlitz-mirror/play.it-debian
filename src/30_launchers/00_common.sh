@@ -239,7 +239,11 @@ launcher_write_script() {
 		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'
-	exit 0
+	if [ -n "$game_exit_status" ]; then
+	    exit $game_exit_status
+	else
+	    exit 0
+	fi
 	EOF
 
 	# for native applications, add execution permissions to the game binary file
