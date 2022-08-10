@@ -207,10 +207,13 @@ launcher_write_script() {
 					launcher_write_script_prefix_build "$target_file"
 					wine_prefix_wineprefix_build >> "$target_file"
 					wine_prefix_persistent_links >> "$target_file"
+					wine_persistent_regedit_environment >> "$target_file"
 					if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
 						launcher_write_script_winecfg_run "$target_file"
 					else
+						wine_persistent_regedit_load >> "$target_file"
 						launcher_write_script_wine_run "$application" "$target_file"
+						wine_persistent_regedit_store >> "$target_file"
 					fi
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
@@ -239,7 +242,11 @@ launcher_write_script() {
 		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'
-	exit 0
+	if [ -n "$game_exit_status" ]; then
+	    exit $game_exit_status
+	else
+	    exit 0
+	fi
 	EOF
 
 	# for native applications, add execution permissions to the game binary file
