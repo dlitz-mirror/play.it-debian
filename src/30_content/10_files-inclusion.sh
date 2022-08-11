@@ -1,42 +1,27 @@
-# Fetch game data from the files extracted from archives,
-# and put them in the directories used to prepare the packages.
-# USAGE: prepare_package_layout [$pkg…]
-prepare_package_layout() {
-	# If prepare_package_layout has been called with no argument,
-	# it is assumed that all packages should be handled.
-	if [ $# -eq 0 ]; then
-		local packages_list
-		packages_list=$(packages_get_list)
-		prepare_package_layout $packages_list
-		return 0
-	fi
-
-	debug_entering_function 'prepare_package_layout'
-
-	# Changes to PKG value, expected by organize_data,
-	# should not leak outside of the current prepare_package_layout call.
-	local PKG
-
-	local package
-	for package in "$@"; do
-		PKG="$package"
-		organize_data "GAME_${package#PKG_}" "$PATH_GAME"
-		organize_data "DOC_${package#PKG_}"  "$PATH_DOC"
-		for i in $(seq 0 9); do
-			organize_data "GAME${i}_${package#PKG_}" "$PATH_GAME"
-			organize_data "DOC${i}_${package#PKG_}"  "$PATH_DOC"
+# Fetch files from the archive, and include them into the package skeleton.
+# A list of default content identifiers is used.
+# USAGE: content_inclusion_default
+content_inclusion_default() {
+	local packages_list package package_suffix index
+	packages_list=$(packages_get_list)
+	for package in $packages_list; do
+		package_suffix=${package#PKG_}
+		content_inclusion "GAME_${package_suffix}" "$package" "$PATH_GAME"
+		content_inclusion "DOC_${package_suffix}" "$package" "$PATH_DOC"
+		for index in $(seq 0 9); do
+			content_inclusion "GAME${index}_${package_suffix}" "$package" "$PATH_GAME"
+			content_inclusion "DOC${index}_${package_suffix}" "$package" "$PATH_DOC"
 		done
 	done
-
-	debug_leaving_function 'prepare_package_layout'
 }
 
 # Fetch files from the archive, and include them into the package skeleton.
-# USAGE: content_inclusion $content_id $target_path
+# USAGE: content_inclusion $content_id $package $target_path
 content_inclusion() {
-	local content_id target_path
+	local content_id package target_path
 	content_id="$1"
-	target_path="$2"
+	package="$2"
+	target_path="$3"
 
 	# Return early if the content source path does not exist.
 	local content_path
@@ -48,8 +33,7 @@ content_inclusion() {
 
 	# Set path to destination,
 	# ensuring it is an absolute path.
-	local package package_path destination_path
-	package=$(package_get_current)
+	local package_path destination_path
 	package_path=$(package_get_path "$package")
 	destination_path=$(realpath --canonicalize-missing "${package_path}${target_path}")
 
