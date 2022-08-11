@@ -32,58 +32,83 @@ prepare_package_layout() {
 }
 
 # Fetch files from the archive, and include them into the package skeleton.
-# USAGE: organize_data $content_id $target_path
-organize_data() {
+# USAGE: content_inclusion $content_id $target_path
+content_inclusion() {
 	local content_id target_path
 	content_id="$1"
 	target_path="$2"
 
-	# Get list of files, and path to files
-	local content_files content_path
-	content_files=$(content_files "$content_id")
-	if [ -z "$content_files" ]; then
-		# No list of files for current content, skipping
+	# Return early if the content source path does not exist.
+	local content_path
+	content_path=$(content_path "$content_id")
+	content_path_full="${PLAYIT_WORKDIR}/gamedata/${content_path}"
+	if [ ! -e "$content_path_full" ]; then
 		return 0
 	fi
-	content_path=$(content_path "$content_id")
 
-	# Set path to source and destination
-	local package package_path destination_path source_path
-	source_path="$PLAYIT_WORKDIR/gamedata/$content_path"
+	# Set path to destination,
+	# ensuring it is an absolute path.
+	local package package_path destination_path
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
-	destination_path="${package_path}${target_path}"
+	destination_path=$(realpath --canonicalize-missing "${package_path}${target_path}")
 
 	# Proceed with the actual files inclusion
-	local source_files_pattern source_file destination_file
-	if [ -d "$source_path" ]; then
-		mkdir --parents "$destination_path"
-		set -o noglob
-		for source_files_pattern in $content_files; do
-			set +o noglob
-			for source_file in "$source_path"/$source_files_pattern; do
-				if [ -e "$source_file" ]; then
-					debug_source_file 'Found' "${content_path}${source_file#"$source_path"}"
-					destination_file="${destination_path}/${source_file#"$source_path"}"
-					debug_file_to_package "$package"
-					mkdir --parents "$(dirname "$destination_file")"
-					cp \
-						--recursive \
-						--force \
-						--link \
-						--no-dereference \
-						--no-target-directory \
-						--preserve=links \
-						"$source_file" "$destination_file"
-					rm --force --recursive "$source_file"
-				else
-					debug_source_file 'Missing' "${content_path}${source_file#"$source_path"}"
-					true
-				fi
-			done
-			set -o noglob
-		done
-		set +o noglob
-	fi
+	(
+		cd "$content_path_full"
+		while read -r file_pattern; do
+			if [ -z "$file_pattern" ]; then
+				continue
+			fi
+			if [ -e "$file_pattern" ]; then
+				content_inclusion_include_file "$file_pattern" "$destination_path"
+			else
+				content_inclusion_include_pattern "$file_pattern" "$destination_path"
+			fi
+		done <<- EOF
+		$(content_files "$content_id")
+		EOF
+	)
 }
 
+# Fetch a given file or directory from the archive,
+# identified by an explicit path.
+# Non existing files are skipped silently.
+# USAGE: content_inclusion_include_file $file_path $destination_path
+content_inclusion_include_file() {
+	local file_path destination_path
+	file_path="$1"
+	destination_path="$2"
+
+	# Skip silently files that are not found
+	if [ ! -e "$file_path" ]; then
+		return 0
+	fi
+
+	mkdir --parents "$destination_path"
+	cp \
+		--force \
+		--link \
+		--recursive \
+		--no-dereference \
+		--parents \
+		--preserve=links \
+		"$file_path" "$destination_path"
+	rm --force --recursive "$file_path"
+}
+
+# Fetch several files or directories from the archive,
+# identified by a pattern.
+# USAGE: content_inclusion_include_pattern $file_pattern $destination_path
+content_inclusion_include_pattern() {
+	local file_pattern destination_path
+	file_pattern="$1"
+	destination_path="$2"
+
+	local file_path
+	while read -r file_path; do
+		content_inclusion_include_file "$file_path" "$destination_path"
+	done <<- EOF
+	$(find . -path "./${file_pattern#./}")
+	EOF
+}
