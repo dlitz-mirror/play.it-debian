@@ -31,7 +31,7 @@ prepare_package_layout() {
 	debug_leaving_function 'prepare_package_layout'
 }
 
-# put files from archive in the right package directories
+# Fetch files from the archive, and include them into the package skeleton.
 # USAGE: organize_data $content_id $target_path
 organize_data() {
 	local content_id target_path
@@ -39,20 +39,17 @@ organize_data() {
 	target_path="$2"
 
 	# Get list of files, and path to files
-	local archive_files archive_path
+	local archive_files content_path
 	archive_files=$(get_context_specific_value 'archive'  "ARCHIVE_${content_id}_FILES")
 	if [ -z "$archive_files" ]; then
 		# No list of files for current content, skipping
 		return 0
 	fi
-	archive_path=$(get_context_specific_value 'archive' "ARCHIVE_${content_id}_PATH")
-	if [ -z "$archive_path" ]; then
-		archive_path=$(content_path_default)
-	fi
+	content_path=$(content_path "$content_id")
 
 	# Set path to source and destination
 	local package package_path destination_path source_path
-	source_path="$PLAYIT_WORKDIR/gamedata/$archive_path"
+	source_path="$PLAYIT_WORKDIR/gamedata/$content_path"
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
 	destination_path="${package_path}${target_path}"
@@ -66,7 +63,7 @@ organize_data() {
 			set +o noglob
 			for source_file in "$source_path"/$source_files_pattern; do
 				if [ -e "$source_file" ]; then
-					debug_source_file 'Found' "${archive_path}${source_file#"$source_path"}"
+					debug_source_file 'Found' "${content_path}${source_file#"$source_path"}"
 					destination_file="${destination_path}/${source_file#"$source_path"}"
 					debug_file_to_package "$package"
 					mkdir --parents "$(dirname "$destination_file")"
@@ -80,7 +77,7 @@ organize_data() {
 						"$source_file" "$destination_file"
 					rm --force --recursive "$source_file"
 				else
-					debug_source_file 'Missing' "${archive_path}${source_file#"$source_path"}"
+					debug_source_file 'Missing' "${content_path}${source_file#"$source_path"}"
 					true
 				fi
 			done
