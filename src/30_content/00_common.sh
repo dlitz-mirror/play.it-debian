@@ -41,3 +41,28 @@ content_path() {
 
 	printf '%s' "$content_path"
 }
+
+# Print the list of files to include from the archive for a given identifier
+# USAGE: content_files $content_id
+# RETURN: a list of paths relative to the path for the given identifier,
+#         line breaks are used as separator between each item,
+#         this list can include globbing patterns,
+#         this list can be empty
+content_files() {
+	local content_id
+	content_id="$1"
+
+	# Use the archive-specific files list if available
+	local content_files
+	content_files=$(get_context_specific_value 'archive' "CONTENT_${content_id}_FILES")
+
+	# Try to parse legacy variables for old game scripts
+	if \
+		[ -z "$content_files" ] \
+		&& ! version_is_at_least '2.19' "$target_version"
+	then
+		content_files=$(content_files_legacy "$content_id")
+	fi
+
+	printf '%s' "$content_files"
+}

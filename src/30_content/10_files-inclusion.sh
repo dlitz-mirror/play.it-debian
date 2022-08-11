@@ -39,9 +39,9 @@ organize_data() {
 	target_path="$2"
 
 	# Get list of files, and path to files
-	local archive_files content_path
-	archive_files=$(get_context_specific_value 'archive'  "ARCHIVE_${content_id}_FILES")
-	if [ -z "$archive_files" ]; then
+	local content_files content_path
+	content_files=$(content_files "$content_id")
+	if [ -z "$content_files" ]; then
 		# No list of files for current content, skipping
 		return 0
 	fi
@@ -59,7 +59,7 @@ organize_data() {
 	if [ -d "$source_path" ]; then
 		mkdir --parents "$destination_path"
 		set -o noglob
-		for source_files_pattern in $archive_files; do
+		for source_files_pattern in $content_files; do
 			set +o noglob
 			for source_file in "$source_path"/$source_files_pattern; do
 				if [ -e "$source_file" ]; then
