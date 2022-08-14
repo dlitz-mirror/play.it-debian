@@ -122,46 +122,6 @@ debug_using_directory() {
 	return 0
 }
 
-# print the name of a source file found
-# USAGE: debug_source_file $filename $source_path $inner_path
-debug_source_file() {
-	###
-	# TODO
-	# check number of arguments
-	###
-
-	if [ "$DEBUG" -lt 2 ]; then
-		return 0
-	fi
-
-	local found_status filename
-	found_status="$1"
-	filename="$2"
-	assert_not_empty 'found_status' 'debug_source_file'
-	assert_not_empty 'filename' 'debug_source_file'
-
-	print_debug
-	printf '%s file: %s\n' "$found_status" "${filename}" >> /dev/stderr
-	return 0
-}
-
-# print the id of the package a source file is moved to
-# intended to be used after debug_source_file
-# USAGE: debug_file_to_package $package_id
-debug_file_to_package() {
-	if [ "$DEBUG" -lt 3 ]; then
-		return 0
-	fi
-
-	local package_id
-	package_id="$1"
-	assert_not_empty 'package_id' 'debug_file_to_package'
-
-	print_debug
-	printf 'Moving file to: %s\n' "$package_id" >> /dev/stderr
-	return 0
-}
-
 # print the type of the launcher being created
 # USAGE: debug_write_launcher $launcher_type
 debug_write_launcher() {
