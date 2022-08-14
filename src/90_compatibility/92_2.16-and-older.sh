@@ -63,10 +63,11 @@ icons_get_from_legacy_path() {
 }
 
 icons_move_to() {
-	[ $SKIP_ICONS -eq 1 ] && return 0
+	if [ "$SKIP_ICONS" -eq 1 ]; then
+		return 0
+	fi
 
-	local source_package      source_path      source_directory
-	local destination_package destination_path destination_directory
+	local source_package source_directory destination_package destination_directory
 	source_package=$(package_get_current)
 	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
 	destination_package="$1"
