@@ -298,5 +298,20 @@ package_debian_field_depends() {
 		fi
 	fi
 
+	# Include dependencies on native libraries
+	local dependency_string
+	while read -r dependency_string; do
+		if [ -z "$dependency_string" ]; then
+			continue
+		fi
+		if [ -n "$dependencies_string" ]; then
+			dependencies_string="$dependencies_string, $dependency_string"
+		else
+			dependencies_string="$dependency_string"
+		fi
+	done <<- EOL
+	$(dependencies_list_native_libraries_packages "$package")
+	EOL
+
 	printf '%s' "$dependencies_string"
 }

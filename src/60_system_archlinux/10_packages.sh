@@ -524,5 +524,16 @@ package_archlinux_fields_depend() {
 		dependencies_list="$dependencies_list $package_dependencies_specific"
 	fi
 
+	# Include dependencies on native libraries
+	local dependency_string
+	while read -r dependency_string; do
+		if [ -z "$dependency_string" ]; then
+			continue
+		fi
+		dependencies_list="$dependencies_list $dependency_string"
+	done <<- EOL
+	$(dependencies_list_native_libraries_packages "$package")
+	EOL
+
 	printf 'depend = %s\n' $dependencies_list
 }
