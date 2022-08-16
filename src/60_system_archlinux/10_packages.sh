@@ -9,19 +9,6 @@ pkg_write_arch() {
 	local package_path
 	package_path=$(package_get_path "$pkg")
 
-	local pkg_deps dependencies_string
-	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
-	if [ -n "$dependencies_string" ]; then
-		# shellcheck disable=SC2046
-		pkg_set_deps_arch $dependencies_string
-	fi
-
-	local dependencies_string_arch
-	dependencies_string_arch=$(get_context_specific_value 'archive' "${pkg}_DEPS_ARCH")
-	if [ -n "$dependencies_string_arch" ]; then
-		pkg_deps="$pkg_deps $dependencies_string_arch"
-	fi
-
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 	local target
@@ -38,13 +25,8 @@ pkg_write_arch() {
 	size = $pkg_size
 	arch = $(package_get_architecture_string "$pkg")
 	pkgdesc = $(package_get_description "$pkg")
+	$(package_archlinux_fields_depend "$pkg")
 	EOF
-
-	for dep in $pkg_deps; do
-		cat >> "$target" <<- EOF
-		depend = $dep
-		EOF
-	done
 
 	if [ -n "$(package_get_provide "$pkg")" ]; then
 		cat >> "$target" <<- EOF
@@ -514,4 +496,33 @@ package_archlinux_create_mtree() {
 			--to-stdout \
 			> .MTREE
 	)
+}
+
+# Arch Linux - Print list of "depend" fields
+# USAGE: package_archlinux_fields_depend $package
+package_archlinux_fields_depend() {
+	local package
+	package="$1"
+
+	# Include generic dependencies
+	local package_dependencies_generic dependencies_list
+	package_dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	if [ -n "$package_dependencies_generic" ]; then
+		# pkg_set_deps_arch sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking using local/unset.
+		local pkg_deps
+		unset pkg_deps
+		pkg_set_deps_arch $package_dependencies_generic
+		dependencies_list="$pkg_deps"
+		unset pkg_deps
+	fi
+
+	# Include Arch-specific dependencies
+	local package_dependencies_specific
+	package_dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_ARCH")
+	if [ -n "$package_dependencies_specific" ]; then
+		dependencies_list="$dependencies_list $package_dependencies_specific"
+	fi
+
+	printf 'depend = %s\n' $dependencies_list
 }
