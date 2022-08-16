@@ -16,25 +16,6 @@ pkg_write_deb() {
 	postinst_script="$control_directory/postinst"
 	prerm_script="$control_directory/prerm"
 
-	# Get package dependencies list
-
-	local dependencies_string
-	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
-	if [ -n "$dependencies_string" ]; then
-		# shellcheck disable=SC2046
-		pkg_set_deps_deb $dependencies_string
-	fi
-
-	local dependencies_string_deb
-	dependencies_string_deb=$(get_context_specific_value 'archive' "${pkg}_DEPS_DEB")
-	if [ -n "$dependencies_string_deb" ]; then
-		if [ -n "$pkg_deps" ]; then
-			pkg_deps="$pkg_deps, $dependencies_string_deb"
-		else
-			pkg_deps="$dependencies_string_deb"
-		fi
-	fi
-
 	# Get package size
 	pkg_size=$(du --total --block-size=1K --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 
@@ -59,9 +40,11 @@ pkg_write_deb() {
 		Replaces: $(package_get_provide "$pkg")
 		EOF
 	fi
-	if [ -n "$pkg_deps" ]; then
+	local field_depends
+	field_depends=$(package_debian_field_depends "$pkg")
+	if [ -n "$field_depends" ]; then
 		cat >> "$control_file" <<- EOF
-		Depends: $pkg_deps
+		Depends: $field_depends
 		EOF
 	fi
 	cat >> "$control_file" <<- EOF
@@ -283,4 +266,37 @@ pkg_build_deb() {
 	information_package_building "$(basename "$pkg_filename")"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
+}
+
+# Debian - Print contents of "Depends" field
+# USAGE: package_debian_field_depends $package
+package_debian_field_depends() {
+	local package
+	package="$1"
+
+	# Include generic dependencies
+	local package_dependencies_generic dependencies_string
+	package_dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	if [ -n "$package_dependencies_generic" ]; then
+		# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking using local/unset.
+		local pkg_deps
+		unset pkg_deps
+		pkg_set_deps_deb $package_dependencies_generic
+		dependencies_string="$pkg_deps"
+		unset pkg_deps
+	fi
+
+	# Include Debian-specific dependencies
+	local package_dependencies_specific
+	package_dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_DEB")
+	if [ -n "$package_dependencies_specific" ]; then
+		if [ -n "$dependencies_string" ]; then
+			dependencies_string="$dependencies_string, $package_dependencies_specific"
+		else
+			dependencies_string="$package_dependencies_specific"
+		fi
+	fi
+
+	printf '%s' "$dependencies_string"
 }
