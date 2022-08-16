@@ -330,45 +330,20 @@ package_gentoo_field_rdepend() {
 	local package
 	package="$1"
 
-	# Include generic dependencies
-	local package_dependencies_generic dependencies_list
-	package_dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
-	if [ -n "$package_dependencies_generic" ]; then
-		# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
-		# we prevent it from leaking using local/unset.
-		local pkg_deps
-		unset pkg_deps
-		pkg_set_deps_gentoo $package_dependencies_generic
-		dependencies_list="$pkg_deps"
-		unset pkg_deps
-	fi
-
-	# Include Gentoo-specific dependencies
-	local package_dependencies_specific
-	package_dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
-	if [ -n "$package_dependencies_specific" ]; then
-		dependencies_list="$dependencies_list $package_dependencies_specific"
-	fi
-
-	# Include dependencies on native libraries
-	local dependency_string
+	local first_item_displayed dependency_string
+	first_item_displayed=0
 	while read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
 		fi
-		dependencies_list="$dependencies_list $dependency_string"
+		# Gentoo policy is that dependencies should be displayed one per line,
+		# and indentation is to be done using tabulations.
+		if [ "$first_item_displayed" -eq 0 ]; then
+			printf '%s' "$dependency_string"
+		else
+			printf '\n\t%s' "$dependency_string"
+		fi
 	done <<- EOL
-	$(dependencies_list_native_libraries_packages "$package")
+	$(dependencies_gentoo_full_list "$package")
 	EOL
-
-	local package_provide
-	package_provide=$(package_get_provide "$package")
-	if [ -n "$package_provide" ]; then
-		dependencies_list="$dependencies_list $package_provide"
-	fi
-
-	# Gentoo policy is that dependencies should be displayed one per line,
-	# and indentation is to be done using tabulations.
-	printf '%s' "$dependencies_list" | \
-		sed --expression='s/ /\n\t/g'
 }

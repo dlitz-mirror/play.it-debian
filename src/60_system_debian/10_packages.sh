@@ -274,44 +274,19 @@ package_debian_field_depends() {
 	local package
 	package="$1"
 
-	# Include generic dependencies
-	local package_dependencies_generic dependencies_string
-	package_dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
-	if [ -n "$package_dependencies_generic" ]; then
-		# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
-		# we prevent it from leaking using local/unset.
-		local pkg_deps
-		unset pkg_deps
-		pkg_set_deps_deb $package_dependencies_generic
-		dependencies_string="$pkg_deps"
-		unset pkg_deps
-	fi
-
-	# Include Debian-specific dependencies
-	local package_dependencies_specific
-	package_dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_DEB")
-	if [ -n "$package_dependencies_specific" ]; then
-		if [ -n "$dependencies_string" ]; then
-			dependencies_string="$dependencies_string, $package_dependencies_specific"
-		else
-			dependencies_string="$package_dependencies_specific"
-		fi
-	fi
-
-	# Include dependencies on native libraries
-	local dependency_string
+	local first_item_displayed dependency_string
+	local first_item_displayed=0
 	while read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
 		fi
-		if [ -n "$dependencies_string" ]; then
-			dependencies_string="$dependencies_string, $dependency_string"
+		if [ "$first_item_displayed" -eq 0 ]; then
+			printf '%s' "$dependency_string"
+			first_item_displayed=1
 		else
-			dependencies_string="$dependency_string"
+			printf ', %s' "$dependency_string"
 		fi
-	done <<- EOL
-	$(dependencies_list_native_libraries_packages "$package")
-	EOL
-
-	printf '%s' "$dependencies_string"
+	done <<- EOF
+	$(dependencies_debian_full_list "$package")
+	EOF
 }

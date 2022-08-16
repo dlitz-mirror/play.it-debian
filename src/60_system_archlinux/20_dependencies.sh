@@ -183,3 +183,34 @@ dependency_package_providing_library_arch32() {
 	$library"
 	export UNKNOWN_LIBRARIES
 }
+
+# Arch Linux - List all dependencies for the given package
+# USAGE: dependencies_archlinux_full_list $package
+# RETURN: print a list of dependency strings,
+#         one per line
+dependencies_archlinux_full_list() {
+	local package
+	package="$1"
+
+	# Include generic dependencies
+	local dependencies_generic dependency_generic
+	dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	for dependency_generic in $dependencies_generic; do
+		# pkg_set_deps_arch sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking using unset.
+		unset pkg_deps
+		pkg_set_deps_arch $dependencies_generic
+		printf '%s\n' "$pkg_deps"
+		unset pkg_deps
+	done
+
+	# Include Arch-specific dependencies
+	local dependencies_specific
+	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_ARCH")
+	if [ -n "$dependencies_specific" ]; then
+		printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
+	fi
+
+	# Include dependencies on native libraries
+	dependencies_list_native_libraries_packages "$package"
+}
