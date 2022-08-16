@@ -9,24 +9,6 @@ pkg_write_gentoo() {
 	local package_path
 	package_path=$(package_get_path "$pkg")
 
-	local pkg_deps dependencies_string
-	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
-	if [ -n "$dependencies_string" ]; then
-		# shellcheck disable=SC2046
-		pkg_set_deps_gentoo $dependencies_string
-		export GENTOO_OVERLAYS
-	fi
-
-	local dependencies_string_gentoo
-	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${pkg}_DEPS_GENTOO")
-	if [ -n "$dependencies_string_gentoo" ]; then
-		pkg_deps="$pkg_deps $dependencies_string_gentoo"
-	fi
-
-	if [ -n "$(package_get_provide "$pkg")" ]; then
-		pkg_deps="${pkg_deps} $(package_get_provide "$pkg")"
-	fi
-
 	mkdir --parents \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata" \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles" \
@@ -61,7 +43,7 @@ pkg_write_gentoo() {
 
 	# fakeroot >=1.25.1 considers all files belong to root by default
 	cat >> "$target" <<- EOF
-	RDEPEND="$pkg_deps"
+	RDEPEND="$(package_gentoo_field_rdepend "$pkg")"
 
 	src_unpack() {
 		mkdir --parents "\$S"
@@ -340,4 +322,42 @@ pkg_build_gentoo() {
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg}_PKG
+}
+
+# Gentoo - Print "RDEPEND" field
+# USAGE: package_gentoo_field_rdepend $package
+package_gentoo_field_rdepend() {
+	local package
+	package="$1"
+
+	# Include generic dependencies
+	local package_dependencies_generic dependencies_list
+	package_dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	if [ -n "$package_dependencies_generic" ]; then
+		# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking using local/unset.
+		local pkg_deps
+		unset pkg_deps
+		pkg_set_deps_gentoo $package_dependencies_generic
+		dependencies_list="$pkg_deps"
+		unset pkg_deps
+	fi
+
+	# Include Gentoo-specific dependencies
+	local package_dependencies_specific
+	package_dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+	if [ -n "$package_dependencies_specific" ]; then
+		dependencies_list="$dependencies_list $package_dependencies_specific"
+	fi
+
+	local package_provide
+	package_provide=$(package_get_provide "$package")
+	if [ -n "$package_provide" ]; then
+		dependencies_list="$dependencies_list $package_provide"
+	fi
+
+	# Gentoo policy is that dependencies should be displayed one per line,
+	# and indentation is to be done using tabulations.
+	printf '%s' "$dependencies_list" | \
+		sed --expression='s/ /\n\t/g'
 }
