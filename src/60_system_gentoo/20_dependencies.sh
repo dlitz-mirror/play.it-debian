@@ -188,31 +188,33 @@ dependencies_gentoo_full_list() {
 	local package
 	package="$1"
 
-	# Include generic dependencies
-	local dependencies_generic dependency_generic
-	dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
-	for dependency_generic in $dependencies_generic; do
-		# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
-		# we prevent it from leaking using unset.
-		unset pkg_deps
-		pkg_set_deps_gentoo $dependencies_generic
-		printf '%s\n' "$pkg_deps"
-		unset pkg_deps
-	done
+	{
+		# Include generic dependencies
+		local dependencies_generic dependency_generic
+		dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+		for dependency_generic in $dependencies_generic; do
+			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
+			# we prevent it from leaking using unset.
+			unset pkg_deps
+			pkg_set_deps_gentoo $dependencies_generic
+			printf '%s\n' "$pkg_deps"
+			unset pkg_deps
+		done
 
-	# Include Gentoo-specific dependencies
-	local dependencies_specific
-	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
-	if [ -n "$dependencies_specific" ]; then
-		printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
-	fi
+		# Include Gentoo-specific dependencies
+		local dependencies_specific
+		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+		if [ -n "$dependencies_specific" ]; then
+			printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
+		fi
 
-	# Include dependencies on native libraries
-	dependencies_list_native_libraries_packages "$package"
+		# Include dependencies on native libraries
+		dependencies_list_native_libraries_packages "$package"
 
-	local package_provide
-	package_provide=$(package_get_provide "$package")
-	if [ -n "$package_provide" ]; then
-		printf '%s\n' "$package_provide"
-	fi
+		local package_provide
+		package_provide=$(package_get_provide "$package")
+		if [ -n "$package_provide" ]; then
+			printf '%s\n' "$package_provide"
+		fi
+	} | sort --unique
 }
