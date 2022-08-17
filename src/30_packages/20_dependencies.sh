@@ -49,3 +49,44 @@ dependencies_list_native_libraries_packages() {
 		printf '\n'
 	done | sort --unique
 }
+
+# Print the path to a temporary files used for unknown libraries listing
+# USAGE: dependencies_unknown_libraries_file
+dependencies_unknown_libraries_file() {
+	printf '%s/unknown_libraries_list' "$PLAYIT_WORKDIR"
+}
+
+# Print a list of unknown libraries
+# USAGE: dependencies_unknown_libraries_list
+dependencies_unknown_libraries_list() {
+	local unknown_library unknown_libraries_list
+	unknown_libraries_list=$(dependencies_unknown_libraries_file)
+
+	# Return early if there is no unknown library
+	if [ ! -e "$unknown_libraries_list" ]; then
+		return 0
+	fi
+
+	# Display the list of unkown libraries,
+	# skipping duplicates and empty entries.
+	sort --unique "$unknown_libraries_list" | \
+		grep --invert-match --regexp='^$'
+}
+
+# Add a library to the list of unknown ones
+# USAGE: dependencies_unknown_libraries_add $unknown_library
+dependencies_unknown_libraries_add() {
+	local unknown_library unknown_libraries_list
+	unknown_library="$1"
+	unknown_libraries_list=$(dependencies_unknown_libraries_file)
+
+	# Do nothing if this library is already included in the list
+	if \
+		[ -e "$unknown_libraries_list" ] \
+		&& grep --quiet --fixed-strings --word-regexp "$unknown_library" "$unknown_libraries_list"
+	then
+		return 0
+	fi
+
+	printf '%s\n' "$unknown_library" >> "$unknown_libraries_list"
+}

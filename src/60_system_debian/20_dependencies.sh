@@ -83,11 +83,7 @@ dependency_package_providing_library_deb() {
 		return 0
 	fi
 
-	# If the given library is not part of the correspondance table,
-	# it is added to the global variable UNKNOWN_LIBRARIES.
-	UNKNOWN_LIBRARIES="$UNKNOWN_LIBRARIES
-	$library"
-	export UNKNOWN_LIBRARIES
+	dependencies_unknown_libraries_add "$library"
 }
 
 # Debian - List all dependencies for the given package
