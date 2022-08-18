@@ -144,6 +144,8 @@ wine_prefix_wineprefix_build() {
 	wine_prefix_wineprefix_winetricks $APP_WINETRICKS
 	# Load registry scripts
 	wine_prefix_wineprefix_regedit $APP_REGEDIT
+	# Set Direct3D renderer
+	wine_renderer_launcher_snippet
 	cat <<- 'EOF'
 	fi
 	EOF
