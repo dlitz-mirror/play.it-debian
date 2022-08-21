@@ -80,23 +80,7 @@ wine_prefix_wineprefix_winetricks() {
 	# Run initial winetricks call
 	cat <<- EOF
 	# Run initial winetricks call
-	## Export custom paths to WINE commands
-	## so winetricks use them instead of the default paths
-	WINE=\$(wine_command)
-	WINESERVER=\$(wineserver_command)
-	WINEBOOT=\$(wineboot_command)
-	export WINE WINESERVER WINEBOOT
-	## Run winetricks, spawning a terminal if required
-	## to ensure it is not silently running in the background
-	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-	    winetricks $*
-	elif command -v xterm >/dev/null; then
-	    xterm -e winetricks $*
-	else
-	    winetricks $*
-	fi
-	## Wait a bit for lingering WINE processes to terminate
-	sleep 1s
+	winetricks_wrapper $*
 	EOF
 }
 
@@ -363,4 +347,31 @@ launcher_write_script_winecfg_run() {
 	EOF
 
 	return 0
+}
+
+# WINE - Apply winetricks verbs, spawning a terminal if required
+# USAGE: wine_winetricks_wrapper
+wine_winetricks_wrapper() {
+	cat <<- 'EOF'
+	# Apply winetricks verbs, spawning a terminal if required
+	winetricks_wrapper() {
+	    # Export custom paths to WINE commands
+	    # so winetricks use them instead of the default paths
+	    WINE=$(wine_command)
+	    WINESERVER=$(wineserver_command)
+	    WINEBOOT=$(wineboot_command)
+	    export WINE WINESERVER WINEBOOT
+	    # Run winetricks, spawning a terminal if required
+	    # to ensure it is not silently running in the background
+	    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	        winetricks "$@"
+	    elif command -v xterm >/dev/null; then
+	        xterm -e winetricks "$@"
+	    else
+	        winetricks "$@"
+	    fi
+	    ## Wait a bit for lingering WINE processes to terminate
+	    sleep 1s
+	}
+	EOF
 }

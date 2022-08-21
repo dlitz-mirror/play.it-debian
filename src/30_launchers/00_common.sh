@@ -205,9 +205,12 @@ launcher_write_script() {
 					launcher_wine_command_path >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					wine_prefix_wineprefix_build >> "$target_file"
-					wine_prefix_persistent_links >> "$target_file"
-					wine_persistent_regedit_environment >> "$target_file"
+					{
+						wine_winetricks_wrapper
+						wine_prefix_wineprefix_build
+						wine_prefix_persistent_links
+						wine_persistent_regedit_environment
+					} >> "$target_file"
 					if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
 						launcher_write_script_winecfg_run "$target_file"
 					else
