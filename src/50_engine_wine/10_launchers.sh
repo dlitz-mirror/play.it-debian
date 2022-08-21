@@ -121,6 +121,11 @@ wine_prefix_wineprefix_build() {
 	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
 	    LANG=C $(wineboot_command) --init 2>/dev/null
+	    # Wait until the WINE prefix creation is complete
+	    printf "Waiting for the WINE prefix initialization to complete, it might take a couple seconds…\\n"
+	    while [ ! -f "${WINEPREFIX}/system.reg" ]; do
+	        sleep 1s
+	    done
 	    # Link game prefix into WINE prefix
 	    ln --symbolic \
 	        "$PATH_PREFIX" \
