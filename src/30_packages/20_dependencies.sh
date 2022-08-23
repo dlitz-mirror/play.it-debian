@@ -119,3 +119,30 @@ dependencies_unknown_libraries_add() {
 
 	printf '%s\n' "$unknown_library" >> "$unknown_libraries_list"
 }
+
+# Add a dependency to the list of the given package.
+# This function is used to update the generic dependencies list.
+# USAGE: dependencies_add_generic $package $dependency
+dependencies_add_generic() {
+	local package dependency
+	package="$1"
+	dependency="$2"
+
+	local current_dependencies
+	current_dependencies=$(get_value "${package}_DEPS")
+	export ${package}_DEPS="$current_dependencies $dependency"
+}
+
+# Add a depdendency to the list of the given package.
+# This function is used to update the native libraries dependencies list.
+# USAGE: dependencies_add_native_libraries $package $dependency
+dependencies_add_native_libraries() {
+	local package dependency
+	package="$1"
+	dependency="$2"
+
+	local current_dependencies
+	current_dependencies=$(dependencies_list_native_libraries)
+	export ${package}_DEPENDENCIES_LIBRARIES="$current_dependencies
+	$dependency"
+}
