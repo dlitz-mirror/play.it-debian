@@ -216,14 +216,59 @@ dependency_package_providing_library_gentoo() {
 	local library package_name
 	library="$1"
 	case "$library" in
+		('ld-linux.so.2')
+			package_name='sys-libs/glibc'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='sys-libs/glibc'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib'
 		;;
 		('libasound_module_'*'.so')
 			package_name='media-plugins/alsa-plugins'
 		;;
+		('libatk-1.0.so.0')
+			package_name='dev-libs/atk'
+		;;
+		('libavcodec.so.58')
+			package_name='media-video/ffmpeg'
+		;;
+		('libavformat.so.58')
+			package_name='media-video/ffmpeg'
+		;;
+		('libavutil.so.56')
+			package_name='media-video/ffmpeg'
+		;;
 		('libc.so.6')
 			package_name='sys-libs/glibc'
+		;;
+		('libcairo.so.2')
+			package_name='x11-libs/cairo'
+		;;
+		('libcrypto.so.1.1')
+			package_name='dev-libs/openssl'
+		;;
+		('libcurl.so.4')
+			package_name='net-misc/curl'
+		;;
+		('libdl.so.2')
+			package_name='sys-libs/glibc'
+		;;
+		('libexpat.so.1')
+			package_name='dev-libs/expat'
+		;;
+		('libfontconfig.so.1')
+			package_name='media-libs/fontconfig'
+		;;
+		('libfreeimage.so.3')
+			package_name='media-libs/freeimage'
+		;;
+		('libfreetype.so.6')
+			package_name='media-libs/freetype'
+		;;
+		('libgcc_s.so.1')
+			package_name='sys-devel/gcc'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2'
@@ -231,8 +276,14 @@ dependency_package_providing_library_gentoo() {
 		('libgdk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2'
 		;;
+		('libgio-2.0.so.0')
+			package_name='dev-libs/glib:2'
+		;;
 		('libGL.so.1')
 			package_name='virtual/opengl'
+		;;
+		('libglfw.so.3')
+			package_name='media-libs/glfw'
 		;;
 		('libglib-2.0.so.0')
 			package_name='dev-libs/glib:2'
@@ -240,20 +291,47 @@ dependency_package_providing_library_gentoo() {
 		('libGLU.so.1')
 			package_name='virtual/glu'
 		;;
+		('libgmodule-2.0.so.0')
+			package_name='dev-libs/glib:2'
+		;;
 		('libgobject-2.0.so.0')
+			package_name='dev-libs/glib:2'
+		;;
+		('libgthread-2.0.so.0')
 			package_name='dev-libs/glib:2'
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2'
 		;;
+		('libICE.so.6')
+			package_name='x11-libs/libICE'
+		;;
+		('libm.so.6')
+			package_name='sys-libs/glibc'
+		;;
 		('libmbedtls.so.12')
 			package_name='net-libs/mbedtls:0/12'
+		;;
+		('libminiupnpc.so.17')
+			package_name='net-libs/miniupnpc'
+		;;
+		('libopenal.so.1')
+			package_name='media-libs/openal'
+		;;
+		('libpango-1.0.so.0')
+			package_name='x11-libs/pango'
+		;;
+		('libpangocairo-1.0.so.0')
+			package_name='x11-libs/pango'
+		;;
+		('libpangoft2-1.0.so.0')
+			package_name='x11-libs/pango'
 		;;
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16'
 		;;
-		('libopenal.so.1')
-			package_name='media-libs/openal'
+		('libpthread.so.0')
+			package_name='sys-libs/glibc'
 		;;
 		('libpulse.so.0')
 			package_name='media-sound/pulseaudio'
@@ -261,11 +339,38 @@ dependency_package_providing_library_gentoo() {
 		('libpulse-simple.so.0')
 			package_name='media-sound/pulseaudio'
 		;;
+		('libresolv.so.2')
+			package_name='sys-libs/glibc'
+		;;
+		('librt.so.1')
+			package_name='sys-libs/glibc'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl'
 		;;
+		('libSDL_mixer-1.2.so.0')
+			package_name='media-libs/sdl-mixer'
+		;;
+		('libSDL_ttf-2.0.so.0')
+			package_name='media-libs/sdl-ttf'
+		;;
 		('libSDL2-2.0.so.0')
 			package_name='media-libs/libsdl2'
+		;;
+		('libSDL2_ttf-2.0.so.0')
+			package_name='media-libs/sdl2-ttf'
+		;;
+		('libSM.so.6')
+			package_name='x11-libs/libSM'
+		;;
+		('libsmpeg-0.4.so.0')
+			package_name='media-libs/smpeg'
+		;;
+		('libssl.so.1.1')
+			package_name='dev-libs/openssl'
+		;;
+		('libstdc++.so.5')
+			package_name='sys-libs/libstdc++-v3'
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++'
@@ -276,14 +381,41 @@ dependency_package_providing_library_gentoo() {
 		('libudev.so.1')
 			package_name='virtual/libudev'
 		;;
+		('libuuid.so.1')
+			package_name='sys-apps/util-linux'
+		;;
 		('libuv.so.1')
 			package_name='dev-libs/libuv:0/1'
 		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis'
 		;;
+		('libvulkan.so.1')
+			package_name='media-libs/vulkan-loader'
+		;;
 		('libX11.so.6')
 			package_name='x11-libs/libX11'
+		;;
+		('libXcursor.so.1')
+			package_name='x11-libs/libXcursor'
+		;;
+		('libXext.so.6')
+			package_name='x11-libs/libXext'
+		;;
+		('libXft.so.2')
+			package_name='x11-libs/libXft'
+		;;
+		('libXinerama.so.1')
+			package_name='x11-libs/libXinerama'
+		;;
+		('libXrandr.so.2')
+			package_name='x11-libs/libXrandr'
+		;;
+		('libXxf86vm.so.1')
+			package_name='x11-libs/libXxf86vm'
+		;;
+		('libxmp.so.4')
+			package_name='media-libs/libxmp'
 		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1'
@@ -304,14 +436,59 @@ dependency_package_providing_library_gentoo32() {
 	local library package_name
 	library="$1"
 	case "$library" in
+		('ld-linux.so.2')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib[abi_x86_32]'
 		;;
 		('libasound_module_'*'.so')
 			package_name='media-plugins/alsa-plugins[abi_x86_32]'
 		;;
+		('libatk-1.0.so.0')
+			package_name='dev-libs/atk[abi_x86_32]'
+		;;
+		('libavcodec.so.58')
+			package_name='media-video/ffmpeg[abi_x86_32]'
+		;;
+		('libavformat.so.58')
+			package_name='media-video/ffmpeg[abi_x86_32]'
+		;;
+		('libavutil.so.56')
+			package_name='media-video/ffmpeg[abi_x86_32]'
+		;;
 		('libc.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
+		('libcairo.so.2')
+			package_name='x11-libs/cairo[abi_x86_32]'
+		;;
+		('libcrypto.so.1.1')
+			package_name='dev-libs/openssl[abi_x86_32]'
+		;;
+		('libcurl.so.4')
+			package_name='net-misc/curl[abi_x86_32]'
+		;;
+		('libdl.so.2')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
+		('libexpat.so.1')
+			package_name='dev-libs/expat[abi_x86_32]'
+		;;
+		('libfontconfig.so.1')
+			package_name='media-libs/fontconfig[abi_x86_32]'
+		;;
+		('libfreeimage.so.3')
+			package_name='media-libs/freeimage[abi_x86_32]'
+		;;
+		('libfreetype.so.6')
+			package_name='media-libs/freetype[abi_x86_32]'
+		;;
+		('libgcc_s.so.1')
+			package_name='sys-devel/gcc[abi_x86_32]'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2[abi_x86_32]'
@@ -319,8 +496,14 @@ dependency_package_providing_library_gentoo32() {
 		('libgdk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2[abi_x86_32]'
 		;;
+		('libgio-2.0.so.0')
+			package_name='dev-libs/glib:2[abi_x86_32]'
+		;;
 		('libGL.so.1')
 			package_name='virtual/opengl[abi_x86_32]'
+		;;
+		('libglfw.so.3')
+			package_name='media-libs/glfw[abi_x86_32]'
 		;;
 		('libglib-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
@@ -328,20 +511,47 @@ dependency_package_providing_library_gentoo32() {
 		('libGLU.so.1')
 			package_name='virtual/glu[abi_x86_32]'
 		;;
+		('libgmodule-2.0.so.0')
+			package_name='dev-libs/glib:2[abi_x86_32]'
+		;;
 		('libgobject-2.0.so.0')
+			package_name='dev-libs/glib:2[abi_x86_32]'
+		;;
+		('libgthread-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2[abi_x86_32]'
 		;;
+		('libICE.so.6')
+			package_name='x11-libs/libICE[abi_x86_32]'
+		;;
+		('libm.so.6')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
 		('libmbedtls.so.12')
 			package_name='net-libs/mbedtls:0/12[abi_x86_32]'
+		;;
+		('libminiupnpc.so.17')
+			package_name='net-libs/miniupnpc[abi_x86_32]'
+		;;
+		('libopenal.so.1')
+			package_name='media-libs/openal[abi_x86_32]'
+		;;
+		('libpango-1.0.so.0')
+			package_name='x11-libs/pango[abi_x86_32]'
+		;;
+		('libpangocairo-1.0.so.0')
+			package_name='x11-libs/pango[abi_x86_32]'
+		;;
+		('libpangoft2-1.0.so.0')
+			package_name='x11-libs/pango[abi_x86_32]'
 		;;
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16[abi_x86_32]'
 		;;
-		('libopenal.so.1')
-			package_name='media-libs/openal[abi_x86_32]'
+		('libpthread.so.0')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
 		('libpulse.so.0')
 			package_name='media-sound/pulseaudio[abi_x86_32]'
@@ -349,11 +559,38 @@ dependency_package_providing_library_gentoo32() {
 		('libpulse-simple.so.0')
 			package_name='media-sound/pulseaudio[abi_x86_32]'
 		;;
+		('libresolv.so.2')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
+		('librt.so.1')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl[abi_x86_32]'
 		;;
+		('libSDL_mixer-1.2.so.0')
+			package_name='media-libs/sdl-mixer[abi_x86_32]'
+		;;
+		('libSDL_ttf-2.0.so.0')
+			package_name='media-libs/sdl-ttf[abi_x86_32]'
+		;;
 		('libSDL2-2.0.so.0')
 			package_name='media-libs/libsdl2[abi_x86_32]'
+		;;
+		('libSDL2_ttf-2.0.so.0')
+			package_name='media-libs/sdl2-ttf[abi_x86_32]'
+		;;
+		('libSM.so.6')
+			package_name='x11-libs/libSM[abi_x86_32]'
+		;;
+		('libsmpeg-0.4.so.0')
+			package_name='media-libs/smpeg[abi_x86_32]'
+		;;
+		('libssl.so.1.1')
+			package_name='dev-libs/openssl[abi_x86_32]'
+		;;
+		('libstdc++.so.5')
+			package_name='sys-libs/libstdc++-v3[abi_x86_32]'
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++[abi_x86_32]'
@@ -364,14 +601,41 @@ dependency_package_providing_library_gentoo32() {
 		('libudev.so.1')
 			package_name='virtual/libudev[abi_x86_32]'
 		;;
+		('libuuid.so.1')
+			package_name='sys-apps/util-linux[abi_x86_32]'
+		;;
 		('libuv.so.1')
 			package_name='dev-libs/libuv:0/1[abi_x86_32]'
 		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis[abi_x86_32]'
 		;;
+		('libvulkan.so.1')
+			package_name='media-libs/vulkan-loader[abi_x86_32]'
+		;;
 		('libX11.so.6')
 			package_name='x11-libs/libX11[abi_x86_32]'
+		;;
+		('libXcursor.so.1')
+			package_name='x11-libs/libXcursor[abi_x86_32]'
+		;;
+		('libXext.so.6')
+			package_name='x11-libs/libXext[abi_x86_32]'
+		;;
+		('libXft.so.2')
+			package_name='x11-libs/libXft[abi_x86_32]'
+		;;
+		('libXinerama.so.1')
+			package_name='x11-libs/libXinerama[abi_x86_32]'
+		;;
+		('libXrandr.so.2')
+			package_name='x11-libs/libXrandr[abi_x86_32]'
+		;;
+		('libXxf86vm.so.1')
+			package_name='x11-libs/libXxf86vm[abi_x86_32]'
+		;;
+		('libxmp.so.4')
+			package_name='media-libs/libxmp[abi_x86_32]'
 		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1[abi_x86_32]'

@@ -304,14 +304,59 @@ dependency_package_providing_library_arch() {
 	local library package_name
 	library="$1"
 	case "$library" in
+		('ld-linux.so.2')
+			package_name='glibc'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='glibc'
+		;;
 		('libasound.so.2')
 			package_name='alsa-lib'
 		;;
 		('libasound_module_'*'.so')
 			package_name='alsa-plugins'
 		;;
+		('libatk-1.0.so.0')
+			package_name='atk'
+		;;
+		('libavcodec.so.58')
+			package_name='ffmpeg'
+		;;
+		('libavformat.so.58')
+			package_name='ffmpeg'
+		;;
+		('libavutil.so.56')
+			package_name='ffmpeg'
+		;;
 		('libc.so.6')
 			package_name='glibc'
+		;;
+		('libcairo.so.2')
+			package_name='cairo'
+		;;
+		('libcrypto.so.1.1')
+			package_name='openssl'
+		;;
+		('libcurl.so.4')
+			package_name='curl'
+		;;
+		('libdl.so.2')
+			package_name='glibc'
+		;;
+		('libexpat.so.1')
+			package_name='expat'
+		;;
+		('libfontconfig.so.1')
+			package_name='fontconfig'
+		;;
+		('libfreeimage.so.3')
+			package_name='freeimage'
+		;;
+		('libfreetype.so.6')
+			package_name='freetype2'
+		;;
+		('libgcc_s.so.1')
+			package_name='gcc-libs'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='gdk-pixbuf2'
@@ -319,8 +364,14 @@ dependency_package_providing_library_arch() {
 		('libgdk-x11-2.0.so.0')
 			package_name='gtk2'
 		;;
+		('libgio-2.0.so.0')
+			package_name='glib2'
+		;;
 		('libGL.so.1')
 			package_name='libgl'
+		;;
+		('libglfw.so.3')
+			package_name='glfw'
 		;;
 		('libglib-2.0.so.0')
 			package_name='glib2'
@@ -328,20 +379,47 @@ dependency_package_providing_library_arch() {
 		('libGLU.so.1')
 			package_name='glu'
 		;;
+		('libgmodule-2.0.so.0')
+			package_name='glib2'
+		;;
 		('libgobject-2.0.so.0')
+			package_name='glib2'
+		;;
+		('libgthread-2.0.so.0')
 			package_name='glib2'
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='gtk2'
 		;;
+		('libICE.so.6')
+			package_name='libice'
+		;;
+		('libm.so.6')
+			package_name='glibc'
+		;;
 		('libmbedtls.so.12')
 			package_name='mbedtls'
+		;;
+		('libminiupnpc.so.17')
+			package_name='miniupnpc'
+		;;
+		('libopenal.so.1')
+			package_name='openal'
+		;;
+		('libpango-1.0.so.0')
+			package_name='pango'
+		;;
+		('libpangocairo-1.0.so.0')
+			package_name='pango'
+		;;
+		('libpangoft2-1.0.so.0')
+			package_name='pango'
 		;;
 		('libpng16.so.16')
 			package_name='libpng'
 		;;
-		('libopenal.so.1')
-			package_name='openal'
+		('libpthread.so.0')
+			package_name='glibc'
 		;;
 		('libpulse.so.0')
 			package_name='libpulse'
@@ -349,11 +427,38 @@ dependency_package_providing_library_arch() {
 		('libpulse-simple.so.0')
 			package_name='libpulse'
 		;;
+		('libresolv.so.2')
+			package_name='glibc'
+		;;
+		('librt.so.1')
+			package_name='glibc'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='sdl'
 		;;
+		('libSDL_mixer-1.2.so.0')
+			package_name='sdl_mixer'
+		;;
+		('libSDL_ttf-2.0.so.0')
+			package_name='sdl_ttf'
+		;;
 		('libSDL2-2.0.so.0')
 			package_name='sdl2'
+		;;
+		('libSDL2_ttf-2.0.so.0')
+			package_name='sdl2_ttf'
+		;;
+		('libSM.so.6')
+			package_name='libsm'
+		;;
+		('libsmpeg-0.4.so.0')
+			package_name='smpeg'
+		;;
+		('libssl.so.1.1')
+			package_name='openssl'
+		;;
+		('libstdc++.so.5')
+			package_name='libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='gcc-libs'
@@ -364,14 +469,41 @@ dependency_package_providing_library_arch() {
 		('libudev.so.1')
 			package_name='libudev.so=1-64'
 		;;
+		('libuuid.so.1')
+			package_name='util-linux-libs'
+		;;
 		('libuv.so.1')
 			package_name='libuv'
 		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbis'
 		;;
+		('libvulkan.so.1')
+			package_name='vulkan-icd-loader'
+		;;
 		('libX11.so.6')
 			package_name='libx11'
+		;;
+		('libXcursor.so.1')
+			package_name='libxcursor'
+		;;
+		('libXext.so.6')
+			package_name='libxext'
+		;;
+		('libXft.so.2')
+			package_name='libxft'
+		;;
+		('libXinerama.so.1')
+			package_name='libxinerama'
+		;;
+		('libXrandr.so.2')
+			package_name='libxrandr'
+		;;
+		('libXxf86vm.so.1')
+			package_name='libxxf86vm'
+		;;
+		('libxmp.so.4')
+			package_name='libxmp'
 		;;
 		('libz.so.1')
 			package_name='zlib'
@@ -392,14 +524,59 @@ dependency_package_providing_library_arch32() {
 	local library package_name
 	library="$1"
 	case "$library" in
+		('ld-linux.so.2')
+			package_name='lib32-glibc'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='lib32-glibc'
+		;;
 		('libasound.so.2')
 			package_name='lib32-alsa-lib'
 		;;
 		('libasound_module_'*'.so')
 			package_name='lib32-alsa-plugins'
 		;;
+		('libatk-1.0.so.0')
+			package_name='lib32-atk'
+		;;
+		('libavcodec.so.58')
+			package_name='lib32-libffmpeg'
+		;;
+		('libavformat.so.58')
+			package_name='lib32-libffmpeg'
+		;;
+		('libavutil.so.56')
+			package_name='lib32-libffmpeg'
+		;;
 		('libc.so.6')
 			package_name='lib32-glibc'
+		;;
+		('libcairo.so.2')
+			package_name='lib32-cairo'
+		;;
+		('libcrypto.so.1.1')
+			package_name='lib32-openssl'
+		;;
+		('libcurl.so.4')
+			package_name='lib32-curl'
+		;;
+		('libdl.so.2')
+			package_name='lib32-glibc'
+		;;
+		('libexpat.so.1')
+			package_name='lib32-expat'
+		;;
+		('libfontconfig.so.1')
+			package_name='lib32-fontconfig'
+		;;
+		('libfreeimage.so.3')
+			package_name='lib32-freeimage'
+		;;
+		('libfreetype.so.6')
+			package_name='lib32-freetype2'
+		;;
+		('libgcc_s.so.1')
+			package_name='lib32-gcc-libs'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='lib32-gdk-pixbuf2'
@@ -407,8 +584,14 @@ dependency_package_providing_library_arch32() {
 		('libgdk-x11-2.0.so.0')
 			package_name='lib32-gtk2'
 		;;
+		('libgio-2.0.so.0')
+			package_name='lib32-glib2'
+		;;
 		('libGL.so.1')
 			package_name='lib32-libgl'
+		;;
+		('libglfw.so.3')
+			package_name='lib32-glfw'
 		;;
 		('libglib-2.0.so.0')
 			package_name='lib32-glib2'
@@ -416,21 +599,49 @@ dependency_package_providing_library_arch32() {
 		('libGLU.so.1')
 			package_name='lib32-glu'
 		;;
+		('libgmodule-2.0.so.0')
+			package_name='lib32-glib2'
+		;;
 		('libgobject-2.0.so.0')
+			package_name='lib32-glib2'
+		;;
+		('libgthread-2.0.so.0')
 			package_name='lib32-glib2'
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='lib32-gtk2'
 		;;
+		('libICE.so.6')
+			package_name='lib32-libice'
+		;;
+		('libm.so.6')
+			package_name='lib32-glibc'
+		;;
 		('libmbedtls.so.12')
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
 		;;
-		('libpng16.so.16')
-			package_name='lib32-libpng'
+		('libminiupnpc.so.17')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
 		;;
 		('libopenal.so.1')
 			package_name='lib32-openal'
+		;;
+		('libpango-1.0.so.0')
+			package_name='lib32-pango'
+		;;
+		('libpangocairo-1.0.so.0')
+			package_name='lib32-pango'
+		;;
+		('libpangoft2-1.0.so.0')
+			package_name='lib32-pango'
+		;;
+		('libpng16.so.16')
+			package_name='lib32-libpng'
+		;;
+		('libpthread.so.0')
+			package_name='lib32-glibc'
 		;;
 		('libpulse.so.0')
 			package_name='lib32-libpulse'
@@ -438,11 +649,38 @@ dependency_package_providing_library_arch32() {
 		('libpulse-simple.so.0')
 			package_name='lib32-libpulse'
 		;;
+		('libresolv.so.2')
+			package_name='lib32-glibc'
+		;;
+		('librt.so.1')
+			package_name='lib32-glibc'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='lib32-sdl'
 		;;
+		('libSDL_mixer-1.2.so.0')
+			package_name='lib32-sdl_mixer'
+		;;
+		('libSDL_ttf-2.0.so.0')
+			package_name='lib32-sdl_ttf'
+		;;
 		('libSDL2-2.0.so.0')
 			package_name='lib32-sdl2'
+		;;
+		('libSDL2_ttf-2.0.so.0')
+			package_name='lib32-sdl2_ttf'
+		;;
+		('libSM.so.6')
+			package_name='lib32-libsm'
+		;;
+		('libsmpeg-0.4.so.0')
+			package_name='lib32-smpeg'
+		;;
+		('libssl.so.1.1')
+			package_name='lib32-openssl'
+		;;
+		('libstdc++.so.5')
+			package_name='lib32-libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='lib32-gcc-libs'
@@ -453,6 +691,9 @@ dependency_package_providing_library_arch32() {
 		('libudev.so.1')
 			package_name='lib32-systemd'
 		;;
+		('libuuid.so.1')
+			package_name='lib32-util-linux'
+		;;
 		('libuv.so.1')
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
@@ -460,8 +701,32 @@ dependency_package_providing_library_arch32() {
 		('libvorbisfile.so.3')
 			package_name='lib32-libvorbis'
 		;;
+		('libvulkan.so.1')
+			package_name='lib32-vulkan-icd-loader'
+		;;
 		('libX11.so.6')
 			package_name='lib32-libx11'
+		;;
+		('libXcursor.so.1')
+			package_name='lib32-libxcursor'
+		;;
+		('libXext.so.6')
+			package_name='lib32-libxext'
+		;;
+		('libXft.so.2')
+			package_name='lib32-libxft'
+		;;
+		('libXinerama.so.1')
+			package_name='lib32-libxinerama'
+		;;
+		('libXrandr.so.2')
+			package_name='lib32-libxrandr'
+		;;
+		('libXxf86vm.so.1')
+			package_name='lib32-libxxf86vm'
+		;;
+		('libxmp.so.4')
+			package_name='lib32-libxmp-git'
 		;;
 		('libz.so.1')
 			package_name='lib32-zlib'

@@ -161,14 +161,59 @@ dependency_package_providing_library_deb() {
 	local library package_name
 	library="$1"
 	case "$library" in
+		('ld-linux.so.2')
+			package_name='libc6'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='libc6'
+		;;
 		('libasound.so.2')
 			package_name='libasound2'
 		;;
 		('libasound_module_'*'.so')
 			package_name='libasound2-plugins'
 		;;
+		('libatk-1.0.so.0')
+			package_name='libatk1.0-0'
+		;;
+		('libavcodec.so.58')
+			package_name='libavcodec58 | libavcodec-extra58'
+		;;
+		('libavformat.so.58')
+			package_name='libavformat58 | libavformat-extra58'
+		;;
+		('libavutil.so.56')
+			package_name='libavutil56'
+		;;
 		('libc.so.6')
 			package_name='libc6'
+		;;
+		('libcairo.so.2')
+			package_name='libcairo2'
+		;;
+		('libcrypto.so.1.1')
+			package_name='libssl1.1'
+		;;
+		('libcurl.so.4')
+			package_name='libcurl4'
+		;;
+		('libdl.so.2')
+			package_name='libc6'
+		;;
+		('libexpat.so.1')
+			package_name='libexpat1'
+		;;
+		('libfontconfig.so.1')
+			package_name='libfontconfig1'
+		;;
+		('libfreeimage.so.3')
+			package_name='libfreeimage3'
+		;;
+		('libfreetype.so.6')
+			package_name='libfreetype6'
+		;;
+		('libgcc_s.so.1')
+			package_name='libgcc-s1'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
@@ -176,8 +221,16 @@ dependency_package_providing_library_deb() {
 		('libgdk-x11-2.0.so.0')
 			package_name='libgtk2.0-0'
 		;;
+		('libgio-2.0.so.0')
+			package_name='libglib2.0-0'
+		;;
 		('libGL.so.1')
-			package_name='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
+			package_name='
+			libgl1 | libgl1-mesa-glx
+			libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
+		;;
+		('libglfw.so.3')
+			package_name='libglfw3 | libglfw3-wayland'
 		;;
 		('libglib-2.0.so.0')
 			package_name='libglib2.0-0'
@@ -185,20 +238,47 @@ dependency_package_providing_library_deb() {
 		('libGLU.so.1')
 			package_name='libglu1-mesa | libglu1'
 		;;
+		('libgmodule-2.0.so.0')
+			package_name='libglib2.0-0'
+		;;
 		('libgobject-2.0.so.0')
+			package_name='libglib2.0-0'
+		;;
+		('libgthread-2.0.so.0')
 			package_name='libglib2.0-0'
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='libgtk2.0-0'
 		;;
+		('libICE.so.6')
+			package_name='libice6'
+		;;
+		('libm.so.6')
+			package_name='libc6'
+		;;
 		('libmbedtls.so.12')
 			package_name='libmbedtls12'
+		;;
+		('libminiupnpc.so.17')
+			package_name='libminiupnpc17'
+		;;
+		('libopenal.so.1')
+			package_name='libopenal1'
+		;;
+		('libpango-1.0.so.0')
+			package_name='libpango-1.0-0'
+		;;
+		('libpangocairo-1.0.so.0')
+			package_name='libpangocairo-1.0-0'
+		;;
+		('libpangoft2-1.0.so.0')
+			package_name='libpangoft2-1.0-0'
 		;;
 		('libpng16.so.16')
 			package_name='libpng16-16'
 		;;
-		('libopenal.so.1')
-			package_name='libopenal1'
+		('libpthread.so.0')
+			package_name='libc6'
 		;;
 		('libpulse.so.0')
 			package_name='libpulse0'
@@ -206,11 +286,38 @@ dependency_package_providing_library_deb() {
 		('libpulse-simple.so.0')
 			package_name='libpulse0'
 		;;
+		('libresolv.so.2')
+			package_name='libc6'
+		;;
+		('librt.so.1')
+			package_name='libc6'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='libsdl1.2debian'
 		;;
+		('libSDL_mixer-1.2.so.0')
+			package_name='libsdl-mixer1.2'
+		;;
+		('libSDL_ttf-2.0.so.0')
+			package_name='libsdl-ttf2.0-0'
+		;;
 		('libSDL2-2.0.so.0')
 			package_name='libsdl2-2.0-0'
+		;;
+		('libSDL2_ttf-2.0.so.0')
+			package_name='libsdl2-ttf-2.0-0'
+		;;
+		('libSM.so.6')
+			package_name='libsm6'
+		;;
+		('libsmpeg-0.4.so.0')
+			package_name='libsmpeg0'
+		;;
+		('libssl.so.1.1')
+			package_name='libssl1.1'
+		;;
+		('libstdc++.so.5')
+			package_name='libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='libstdc++6'
@@ -221,14 +328,43 @@ dependency_package_providing_library_deb() {
 		('libudev.so.1')
 			package_name='libudev1'
 		;;
+		('libuuid.so.1')
+			package_name='libuuid1'
+		;;
 		('libuv.so.1')
 			package_name='libuv1'
 		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbisfile3'
 		;;
+		('libvulkan.so.1')
+			package_name='
+			libvulkan1
+			mesa-vulkan-drivers | vulkan-icd'
+		;;
 		('libX11.so.6')
 			package_name='libx11-6'
+		;;
+		('libXcursor.so.1')
+			package_name='libxcursor1'
+		;;
+		('libXext.so.6')
+			package_name='libxext6'
+		;;
+		('libXft.so.2')
+			package_name='libxft2'
+		;;
+		('libXinerama.so.1')
+			package_name='libxinerama1'
+		;;
+		('libXrandr.so.2')
+			package_name='libxrandr2'
+		;;
+		('libXxf86vm.so.1')
+			package_name='libxxf86vm1'
+		;;
+		('libxmp.so.4')
+			package_name='libxmp4'
 		;;
 		('libz.so.1')
 			package_name='zlib1g'
