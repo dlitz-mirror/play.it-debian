@@ -1,3 +1,23 @@
+# Print the list of generic dependencies required by a given package
+# USAGE: dependencies_list_generic $package
+dependencies_list_generic() {
+	local package
+	package="$1"
+
+	# Distinct dependencies lists might be used based on source archive
+	local dependencies_generic
+	dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+
+	# Always return a list with no duplicate entry,
+	# excluding empty lines.
+	# Ignore grep error return if there is nothing to print.
+	local dependency
+	printf '%s' "$dependencies_generic" | \
+		sed 's/ /\n/g' | \
+		sort --unique | \
+		grep --invert-match --regexp='^$' || true
+}
+
 # Print the list of native libraries required by a given package
 # USAGE: dependencies_list_native_libraries $package
 # RETURNS: a list of native library names,
@@ -6,7 +26,16 @@ dependencies_list_native_libraries() {
 	local package
 	package="$1"
 
-	get_value "${package}_DEPENDENCIES_LIBRARIES"
+	# Distinct dependencies lists might be used based on source archive
+	local dependencies_libraries
+	dependencies_libraries=$(get_context_specific_value 'archive' "${package}_DEPENDENCIES_LIBRARIES")
+
+	# Always return a list with no duplicate entry,
+	# excluding empty lines.
+	# Ignore grep error return if there is nothing to print.
+	printf '%s' "$dependencies_libraries" | \
+		sort --unique | \
+		grep --invert-match --regexp='^$' || true
 }
 
 # Print the list of native packages providing the native libraries required by a given package

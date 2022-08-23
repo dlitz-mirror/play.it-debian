@@ -751,16 +751,17 @@ dependencies_archlinux_full_list() {
 
 	{
 		# Include generic dependencies
-		local dependencies_generic dependency_generic
-		dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
-		for dependency_generic in $dependencies_generic; do
+		local dependency_generic
+		while read -r dependency_generic; do
 			# pkg_set_deps_arch sets a variable $pkg_deps instead of printing a value,
 			# we prevent it from leaking using unset.
 			unset pkg_deps
 			pkg_set_deps_arch $dependencies_generic
 			printf '%s\n' "$pkg_deps"
 			unset pkg_deps
-		done
+		done <<- EOL
+		$(dependencies_list_generic "$package")
+		EOL
 
 		# Include Arch-specific dependencies
 		local dependencies_specific
