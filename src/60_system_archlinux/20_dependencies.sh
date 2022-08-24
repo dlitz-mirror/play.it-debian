@@ -34,22 +34,16 @@ pkg_set_deps_arch32() {
 			('gconf')
 				pkg_dep='lib32-gconf'
 			;;
-			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep='lib32-gdk-pixbuf2'
-			;;
-			('libc.so.6'|'glibc')
+			('glibc')
 				pkg_dep='lib32-glibc'
 			;;
-			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
-				pkg_dep='lib32-glib2'
-			;;
-			('glu'|'libGLU.so.1')
+			('glu')
 				pkg_dep='lib32-glu'
 			;;
-			('libGL.so.1'|'glx')
+			('glx')
 				pkg_dep='lib32-libgl'
 			;;
-			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
+			('gtk2')
 				pkg_dep='lib32-gtk2'
 			;;
 			('java')
@@ -58,35 +52,17 @@ pkg_set_deps_arch32() {
 			('json')
 				pkg_dep='lib32-json-c'
 			;;
-			('libasound.so.2')
-				pkg_dep='lib32-alsa-lib'
-			;;
-			('libasound_module_'*'.so')
-				pkg_dep='lib32-alsa-plugins'
-			;;
 			('libcurl')
 				pkg_dep='lib32-curl'
 			;;
 			('libcurl-gnutls')
 				pkg_dep='lib32-libcurl-gnutls'
 			;;
-			('libmbedtls.so.12')
-				warning_missing_library 'libmbedtls.so.12' 'Arch Linux' '32bits'
-			;;
-			('libpng16.so.16')
-				pkg_dep='lib32-libpng'
-			;;
-			('libpulse.so.0'|'libpulse-simple.so.0')
-				pkg_dep='lib32-libpulse'
-			;;
-			('libstdc++.so.6'|'libstdc++')
+			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
 			;;
-			('libudev1'|'libudev.so.1')
+			('libudev1')
 				pkg_dep='lib32-systemd'
-			;;
-			('libX11.so.6')
-				pkg_dep='lib32-libx11'
 			;;
 			('libxrandr')
 				pkg_dep='lib32-libxrandr'
@@ -94,7 +70,7 @@ pkg_set_deps_arch32() {
 			('nss')
 				pkg_dep='lib32-nss'
 			;;
-			('openal'|'libopenal.so.1')
+			('openal')
 				pkg_dep='lib32-openal'
 			;;
 			('pulseaudio')
@@ -103,10 +79,10 @@ pkg_set_deps_arch32() {
 			('renpy')
 				pkg_dep='renpy'
 			;;
-			('sdl1.2'|'libSDL-1.2.so.0')
+			('sdl1.2')
 				pkg_dep='lib32-sdl'
 			;;
-			('sdl2'|'libSDL2-2.0.so.0')
+			('sdl2')
 				pkg_dep='lib32-sdl2'
 			;;
 			('sdl2_image')
@@ -118,13 +94,7 @@ pkg_set_deps_arch32() {
 			('theora')
 				pkg_dep='lib32-libtheora'
 			;;
-			('libturbojpeg.so.0')
-				pkg_dep='lib32-libjpeg-turbo'
-			;;
-			('libuv.so.1')
-				warning_missing_library 'libuv.so.1' 'Arch Linux' '32bits'
-			;;
-			('vorbis'|'libvorbisfile.so.3')
+			('vorbis')
 				pkg_dep='lib32-libvorbis'
 			;;
 			('wine'|'wine32'|'wine64')
@@ -148,8 +118,33 @@ pkg_set_deps_arch32() {
 			('xrandr')
 				pkg_dep='xorg-xrandr'
 			;;
-			('libz.so.1')
-				pkg_dep='lib32-zlib'
+			( \
+				'libgdk_pixbuf-2.0.so.0' | \
+				'libc.so.6' | \
+				'libglib-2.0.so.0' | \
+				'libgobject-2.0.so.0' | \
+				'libGLU.so.1' | \
+				'libGL.so.1' | \
+				'libgdk-x11-2.0.so.0' | \
+				'libgtk-x11-2.0.so.0' | \
+				'libasound.so.2' | \
+				'libasound_module_'*'.so' | \
+				'libmbedtls.so.12' | \
+				'libpng16.so.16' | \
+				'libpulse.so.0' | \
+				'libpulse-simple.so.0' | \
+				'libstdc++.so.6' | \
+				'libudev.so.1' | \
+				'libX11.so.6' | \
+				'libopenal.so.1' | \
+				'libSDL-1.2.so.0' | \
+				'libSDL2-2.0.so.0' | \
+				'libturbojpeg.so.0' | \
+				'libuv.so.1' | \
+				'libvorbisfile.so.3' | \
+				'libz.so.1' \
+			)
+				pkg_dep=$(dependency_package_providing_library_arch32 "$dep")
 			;;
 			(*)
 				pkg_dep="$dep"
@@ -183,22 +178,16 @@ pkg_set_deps_arch64() {
 			('gconf')
 				pkg_dep='gconf'
 			;;
-			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep='gdk-pixbuf2'
-			;;
-			('libc.so.6'|'glibc')
+			('glibc')
 				pkg_dep='glibc'
 			;;
-			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
-				pkg_dep='glib2'
-			;;
-			('glu'|'libGLU.so.1')
+			('glu')
 				pkg_dep='glu'
 			;;
-			('libGL.so.1'|'glx')
+			('glx')
 				pkg_dep='libgl'
 			;;
-			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
+			('gtk2')
 				pkg_dep='gtk2'
 			;;
 			('java')
@@ -207,35 +196,17 @@ pkg_set_deps_arch64() {
 			('json')
 				pkg_dep='json-c'
 			;;
-			('libasound.so.2')
-				pkg_dep='alsa-lib'
-			;;
-			('libasound_module_'*'.so')
-				pkg_dep='alsa-plugins'
-			;;
 			('libcurl')
 				pkg_dep='curl'
 			;;
 			('libcurl-gnutls')
 				pkg_dep='libcurl-gnutls'
 			;;
-			('libmbedtls.so.12')
-				pkg_dep='mbedtls'
-			;;
-			('libpng16.so.16')
-				pkg_dep='libpng'
-			;;
-			('libpulse.so.0'|'libpulse-simple.so.0')
-				pkg_dep='libpulse'
-			;;
-			('libstdc++.so.6'|'libstdc++')
+			('libstdc++')
 				pkg_dep='gcc-libs'
 			;;
-			('libudev1'|'libudev.so.1')
+			('libudev1')
 				pkg_dep='libudev.so=1-64'
-			;;
-			('libX11.so.6')
-				pkg_dep='libx11'
 			;;
 			('libxrandr')
 				pkg_dep='libxrandr'
@@ -246,7 +217,7 @@ pkg_set_deps_arch64() {
 			('mono')
 				pkg_dep='mono'
 			;;
-			('openal'|'libopenal.so.1')
+			('openal')
 				pkg_dep='openal'
 			;;
 			('pulseaudio')
@@ -255,10 +226,10 @@ pkg_set_deps_arch64() {
 			('renpy')
 				pkg_dep='renpy'
 			;;
-			('sdl1.2'|'libSDL-1.2.so.0')
+			('sdl1.2')
 				pkg_dep='sdl'
 			;;
-			('sdl2'|'libSDL2-2.0.so.0')
+			('sdl2')
 				pkg_dep='sdl2'
 			;;
 			('sdl2_image')
@@ -270,13 +241,7 @@ pkg_set_deps_arch64() {
 			('theora')
 				pkg_dep='libtheora'
 			;;
-			('libturbojpeg.so.0')
-				pkg_dep='libjpeg-turbo'
-			;;
-			('libuv.so.1')
-				pkg_dep='libuv'
-			;;
-			('vorbis'|'libvorbisfile.so.3')
+			('vorbis')
 				pkg_dep='libvorbis'
 			;;
 			('wine'|'wine32'|'wine64')
@@ -297,8 +262,33 @@ pkg_set_deps_arch64() {
 			('xrandr')
 				pkg_dep='xorg-xrandr'
 			;;
-			('libz.so.1')
-				pkg_dep='zlib'
+			( \
+				'libgdk_pixbuf-2.0.so.0' | \
+				'libc.so.6' | \
+				'libglib-2.0.so.0' | \
+				'libgobject-2.0.so.0' | \
+				'libGLU.so.1' | \
+				'libGL.so.1' | \
+				'libgdk-x11-2.0.so.0' | \
+				'libgtk-x11-2.0.so.0' | \
+				'libasound.so.2' | \
+				'libasound_module_'*'.so' | \
+				'libmbedtls.so.12' | \
+				'libpng16.so.16' | \
+				'libpulse.so.0' | \
+				'libpulse-simple.so.0' | \
+				'libstdc++.so.6' | \
+				'libudev.so.1' | \
+				'libX11.so.6' | \
+				'libopenal.so.1' | \
+				'libSDL-1.2.so.0' | \
+				'libSDL2-2.0.so.0' | \
+				'libturbojpeg.so.0' | \
+				'libuv.so.1' | \
+				'libvorbisfile.so.3' | \
+				'libz.so.1' \
+			)
+				pkg_dep=$(dependency_package_providing_library_arch "$dep")
 			;;
 			(*)
 				pkg_dep="$dep"

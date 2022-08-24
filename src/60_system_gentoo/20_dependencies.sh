@@ -1,9 +1,9 @@
 # Gentoo - Set list of generic dependencies
 # USAGE: pkg_set_deps_gentoo $dep[…]
 pkg_set_deps_gentoo() {
-	local architecture_suffix
-	local architecture_suffix_use
-	case "$(package_get_architecture "$pkg")" in
+	local package_architecture architecture_suffix architecture_suffix_use
+	package_architecture=$(package_get_architecture "$pkg")
+	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
 			architecture_suffix_use=',abi_x86_32'
@@ -33,25 +33,19 @@ pkg_set_deps_gentoo() {
 			('gconf')
 				pkg_dep="gnome-base/gconf$architecture_suffix"
 			;;
-			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep="x11-libs/gdk-pixbuf:2$architecture_suffix"
-			;;
-			('libc.so.6'|'glibc')
+			('glibc')
 				pkg_dep="sys-libs/glibc"
 				if [ "$(package_get_architecture "$pkg")" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
 			;;
-			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
-				pkg_dep="dev-libs/glib:2$architecture_suffix"
-			;;
-			('glu'|'libGLU.so.1')
+			('glu')
 				pkg_dep="virtual/glu$architecture_suffix"
 			;;
-			('libGL.so.1'|'glx')
+			('glx')
 				pkg_dep="virtual/opengl$architecture_suffix"
 			;;
-			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
+			('gtk2')
 				pkg_dep="x11-libs/gtk+:2$architecture_suffix"
 			;;
 			('java')
@@ -60,12 +54,6 @@ pkg_set_deps_gentoo() {
 			('json')
 				pkg_dep="dev-libs/json-c$architecture_suffix"
 			;;
-			('libasound.so.2')
-				pkg_dep="media-libs/alsa-lib${architecture_suffix}"
-			;;
-			('libasound_module_'*'.so')
-				pkg_dep="media-plugins/alsa-plugins${architecture_suffix}"
-			;;
 			('libcurl')
 				pkg_dep="net-misc/curl$architecture_suffix"
 			;;
@@ -73,23 +61,11 @@ pkg_set_deps_gentoo() {
 				pkg_dep="net-libs/libcurl-debian$architecture_suffix"
 				pkg_overlay='steam-overlay'
 			;;
-			('libmbedtls.so.12')
-				pkg_dep="net-libs/mbedtls:0/12$architecture_suffix"
-			;;
-			('libpng16.so.16')
-				pkg_dep="media-libs/libpng:0/16$architecture_suffix"
-			;;
-			('libpulse.so.0'|'libpulse-simple.so.0')
-				pkg_dep="media-sound/pulseaudio${architecture_suffix}"
-			;;
-			('libstdc++.so.6'|'libstdc++')
+			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
 			;;
-			('libudev1'|'libudev.so.1')
+			('libudev1')
 				pkg_dep="virtual/libudev$architecture_suffix"
-			;;
-			('libX11.so.6')
-				pkg_dep="x11-libs/libX11${architecture_suffix}"
 			;;
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"
@@ -100,7 +76,7 @@ pkg_set_deps_gentoo() {
 			('nss')
 				pkg_dep="dev-libs/nss$architecture_suffix"
 			;;
-			('openal'|'libopenal.so.1')
+			('openal')
 				pkg_dep="media-libs/openal$architecture_suffix"
 			;;
 			('pulseaudio')
@@ -109,10 +85,10 @@ pkg_set_deps_gentoo() {
 			('renpy')
 				pkg_dep='games-engines/renpy'
 			;;
-			('sdl1.2'|'libSDL-1.2.so.0')
+			('sdl1.2')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;
-			('sdl2'|'libSDL2-2.0.so.0')
+			('sdl2')
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
 			;;
 			('sdl2_image')
@@ -127,13 +103,7 @@ pkg_set_deps_gentoo() {
 			('theora')
 				pkg_dep="media-libs/libtheora$architecture_suffix"
 			;;
-			('libturbojpeg.so.0')
-				pkg_dep="media-libs/libjpeg-turbo$architecture_suffix"
-			;;
-			('libuv.so.1')
-				pkg_dep="dev-libs/libuv:0/1$architecture_suffix"
-			;;
-			('vorbis'|'libvorbisfile.so.3')
+			('vorbis')
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
@@ -180,8 +150,40 @@ pkg_set_deps_gentoo() {
 			('xrandr')
 				pkg_dep='x11-apps/xrandr'
 			;;
-			('libz.so.1')
-				pkg_dep="sys-libs/zlib:0/1$architecture_suffix"
+			( \
+				'libgdk_pixbuf-2.0.so.0' | \
+				'libc.so.6' | \
+				'libglib-2.0.so.0' | \
+				'libgobject-2.0.so.0' | \
+				'libGLU.so.1' | \
+				'libGL.so.1' | \
+				'libgdk-x11-2.0.so.0' | \
+				'libgtk-x11-2.0.so.0' | \
+				'libasound.so.2' | \
+				'libasound_module_'*'.so' | \
+				'libmbedtls.so.12' | \
+				'libpng16.so.16' | \
+				'libpulse.so.0' | \
+				'libpulse-simple.so.0' | \
+				'libstdc++.so.6' | \
+				'libudev.so.1' | \
+				'libX11.so.6' | \
+				'libopenal.so.1' | \
+				'libSDL-1.2.so.0' | \
+				'libSDL2-2.0.so.0' | \
+				'libturbojpeg.so.0' | \
+				'libuv.so.1' | \
+				'libvorbisfile.so.3' | \
+				'libz.so.1' \
+			)
+				case "$package_architecture" in
+					('32')
+						pkg_dep=$(dependency_package_providing_library_gentoo32 "$dep")
+					;;
+					(*)
+						pkg_dep=$(dependency_package_providing_library_gentoo "$dep")
+					;;
+				esac
 			;;
 			(*)
 				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
