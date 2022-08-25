@@ -114,6 +114,7 @@ package_format_guess() {
 		;;
 		( \
 			'arch' | \
+			'artix' | \
 			'manjaro' | \
 			'manjarolinux' | \
 			'endeavouros' \
