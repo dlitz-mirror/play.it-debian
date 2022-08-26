@@ -89,7 +89,13 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Try to detect the host distribution if no package format has been explicitely set
 
-	[ "$OPTION_PACKAGE" ] || packages_guess_format 'OPTION_PACKAGE'
+	if [ -z "$OPTION_PACKAGE" ]; then
+		OPTION_PACKAGE=$(package_format_guess)
+	fi
+	if [ -z "$OPTION_PACKAGE" ]; then
+		warning_package_format_guessing_failed "$DEFAULT_OPTION_PACKAGE"
+		OPTION_PACKAGE="$DEFAULT_OPTION_PACKAGE"
+	fi
 
 	# Check option validity for the package format, since it will be used for the compression method
 

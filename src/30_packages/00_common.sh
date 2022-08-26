@@ -90,39 +90,47 @@ build_pkg() {
 	debug_leaving_function 'build_pkg'
 }
 
-# guess package format to build from host OS
-# USAGE: packages_guess_format $variable_name
-# NEEDED VARS: (LANG) DEFAULT_OPTION_PACKAGE
-packages_guess_format() {
+# Guess output package type based on current OS
+# USAGE: package_format_guess
+package_format_guess() {
+	# Get OS codename.
 	local guessed_host_os
-	local variable_name
-	eval variable_name=\"$1\"
 	if [ -e '/etc/os-release' ]; then
-		guessed_host_os="$(grep '^ID=' '/etc/os-release' | cut --delimiter='=' --fields=2)"
+		guessed_host_os=$(grep '^ID=' '/etc/os-release' | cut --delimiter='=' --fields=2)
 	elif command -v lsb_release >/dev/null 2>&1; then
-		guessed_host_os="$(lsb_release --id --short | tr '[:upper:]' '[:lower:]')"
+		guessed_host_os=$(lsb_release --id --short | tr '[:upper:]' '[:lower:]')
 	fi
+
+	# Return the most appropriate package type.
+	local package_type
 	case "$guessed_host_os" in
-		('debian'|\
-		 'ubuntu'|\
-		 'linuxmint'|\
-		 'handylinux')
-			eval $variable_name=\'deb\'
+		( \
+			'debian' | \
+			'ubuntu' | \
+			'linuxmint' | \
+			'handylinux' \
+		)
+			package_type='deb'
 		;;
-		('arch'|\
-		 'manjaro'|'manjarolinux'|\
-		 'endeavouros')
-			eval $variable_name=\'arch\'
+		( \
+			'arch' | \
+			'artix' | \
+			'manjaro' | \
+			'manjarolinux' | \
+			'endeavouros' \
+		)
+			package_type='arch'
 		;;
-		('gentoo')
-			eval $variable_name=\'gentoo\'
-		;;
-		(*)
-			warning_package_format_guessing_failed "$DEFAULT_OPTION_PACKAGE"
-			eval $variable_name=\'$DEFAULT_OPTION_PACKAGE\'
+		( \
+			'gentoo' \
+		)
+			package_type='gentoo'
 		;;
 	esac
-	export ${variable_name?}
+
+	# Print guessed package type.
+	# This is an empty string if the current OS is not known.
+	printf '%s' "$package_type"
 }
 
 # get the current package

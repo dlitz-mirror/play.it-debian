@@ -63,25 +63,26 @@ launcher_prefix_functions_localized_messages() {
 	EOF
 }
 
-# print function populating prefix symbolic links to all game file
-# USAGE: launcher_prefix_function_init_game_files
-launcher_prefix_function_init_game_files() {
+# Populate prefix with symbolic links to all game files
+# USAGE: prefix_generate_links_farm
+prefix_generate_links_farm() {
 	cat <<- 'EOF'
-	# populate prefix with symbolic links to all game file
-	# USAGE: prefix_init_game_files
-	prefix_init_game_files() {
-	    # remove symlinks to game directories
+	# Populate prefix with symbolic links to all game files
+	prefix_generate_links_farm() {
+	    # Remove links to game directories
 	    (
 	        cd "$PATH_GAME"
-	        find . -type d | while read -r dir; do
-	            if [ -h "$PATH_PREFIX/$dir" ]; then
-	                rm "$PATH_PREFIX/$dir"
+	        find . -type d | while read -r directory; do
+	            if [ -h "${PATH_PREFIX}/${directory}" ]; then
+	                rm "${PATH_PREFIX}/${directory}"
 	            fi
 	        done
 	    )
-	    # populate prefix with symlinks to all game file
-	    cp --recursive --remove-destination --symbolic-link --no-target-directory "$PATH_GAME" "$PATH_PREFIX"
-	    # remove dangling links and non-game empty directories
+	    # Populate prefix with links to all game files.
+	    cp \
+	        --dereference --no-target-directory --recursive --remove-destination --symbolic-link \
+	        "$PATH_GAME" "$PATH_PREFIX"
+	    # Remove dangling links and non-game empty directories.
 	    (
 	        cd "$PATH_PREFIX"
 	        find . -type l | while read -r link; do
@@ -89,9 +90,9 @@ launcher_prefix_function_init_game_files() {
 	                rm "$link"
 	            fi
 	        done
-	        find . -depth -type d | while read -r dir; do
-	            if [ ! -e "$PATH_GAME/$dir" ]; then
-	                rmdir --ignore-fail-on-non-empty "$dir"
+	        find . -depth -type d | while read -r directory; do
+	            if [ ! -e "${PATH_GAME}/${directory}" ]; then
+	                rmdir --ignore-fail-on-non-empty "$directory"
 	            fi
 	        done
 	    )
@@ -131,7 +132,7 @@ launcher_prefix_function_build() {
 	                "fr:Réponse invalide : '$reply'."
 	        done
 	    fi
-	    prefix_init_game_files
+	    prefix_generate_links_farm
 	    persistent_populate_prefix
 	    persistent_init_directories
 	    persistent_init_files
@@ -173,7 +174,7 @@ launcher_write_script_prefix_functions() {
 		EOF
 		prefix_function_prefix_path
 		launcher_prefix_functions_persistent
-		launcher_prefix_function_init_game_files
+		prefix_generate_links_farm
 		launcher_prefix_function_build
 		launcher_prefix_function_cleanup
 	} >> "$file"
