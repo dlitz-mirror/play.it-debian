@@ -1,3 +1,43 @@
+# WINE - Write full launcher script
+# USAGE: wine_launcher_write $application $target_file
+wine_launcher_write() {
+	local application target_file prefix_type
+	application="$1"
+	target_file="$2"
+	prefix_type=$(application_prefix_type "$application")
+
+	case "$prefix_type" in
+		('symlinks')
+			if [ "$(application_id "$application")" != "$(game_id)_winecfg" ]; then
+				launcher_write_script_wine_application_variables "$application" "$target_file"
+			fi
+			launcher_write_script_game_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
+			launcher_wine_command_path >> "$target_file"
+			launcher_write_script_prefix_functions "$target_file"
+			launcher_write_script_prefix_build "$target_file"
+			{
+				wine_winetricks_wrapper
+				wine_prefix_wineprefix_build
+				wine_prefix_persistent_links
+				wine_persistent_regedit_environment
+			} >> "$target_file"
+			if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
+				launcher_write_script_winecfg_run "$target_file"
+			else
+				wine_persistent_regedit_load >> "$target_file"
+				launcher_write_script_wine_run "$application" "$target_file"
+				wine_persistent_regedit_store >> "$target_file"
+			fi
+			launcher_write_script_prefix_cleanup "$target_file"
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+}
+
 # WINE - Compute path to WINE prefix
 # USAGE: wine_prefix_wineprefix_path
 wine_prefix_wineprefix_path() {
