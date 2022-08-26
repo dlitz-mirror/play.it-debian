@@ -1,3 +1,48 @@
+# WINE - Write full launcher script
+# USAGE: wine_launcher_write $application $target_file
+wine_launcher_write() {
+	local application target_file prefix_type
+	application="$1"
+	target_file="$2"
+	prefix_type=$(application_prefix_type "$application")
+
+	case "$prefix_type" in
+		('symlinks')
+			if [ "$(application_id "$application")" != "$(game_id)_winecfg" ]; then
+				launcher_write_script_wine_application_variables "$application" "$target_file"
+			fi
+			launcher_write_script_game_variables "$target_file"
+			launcher_print_persistent_paths >> "$target_file"
+			launcher_wine_command_path >> "$target_file"
+			launcher_write_script_prefix_functions "$target_file"
+			launcher_write_script_prefix_build "$target_file"
+			{
+				wine_winetricks_wrapper
+				wine_prefix_wineprefix_build
+				wine_prefix_persistent_links
+				wine_persistent_regedit_environment
+			} >> "$target_file"
+			if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
+				launcher_write_script_winecfg_run "$target_file"
+			else
+				wine_persistent_regedit_load >> "$target_file"
+				launcher_write_script_wine_run "$application" "$target_file"
+				wine_persistent_regedit_store >> "$target_file"
+			fi
+			launcher_write_script_prefix_cleanup "$target_file"
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+
+	# Automatically add required dependencies to the current package
+	local package
+	package=$(package_get_current)
+	dependencies_add_generic "$package" 'wine'
+}
+
 # WINE - Compute path to WINE prefix
 # USAGE: wine_prefix_wineprefix_path
 wine_prefix_wineprefix_path() {
@@ -80,23 +125,7 @@ wine_prefix_wineprefix_winetricks() {
 	# Run initial winetricks call
 	cat <<- EOF
 	# Run initial winetricks call
-	## Export custom paths to WINE commands
-	## so winetricks use them instead of the default paths
-	WINE=\$(wine_command)
-	WINESERVER=\$(wineserver_command)
-	WINEBOOT=\$(wineboot_command)
-	export WINE WINESERVER WINEBOOT
-	## Run winetricks, spawning a terminal if required
-	## to ensure it is not silently running in the background
-	if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-	    winetricks $*
-	elif command -v xterm >/dev/null; then
-	    xterm -e winetricks $*
-	else
-	    winetricks $*
-	fi
-	## Wait a bit for lingering WINE processes to terminate
-	sleep 1s
+	winetricks_wrapper $*
 	EOF
 }
 
@@ -137,6 +166,11 @@ wine_prefix_wineprefix_build() {
 	    mkdir --parents "$(dirname "$WINEPREFIX")"
 	    # Use LANG=C to avoid localized directory names
 	    LANG=C $(wineboot_command) --init 2>/dev/null
+	    # Wait until the WINE prefix creation is complete
+	    printf "Waiting for the WINE prefix initialization to complete, it might take a couple seconds…\\n"
+	    while [ ! -f "${WINEPREFIX}/system.reg" ]; do
+	        sleep 1s
+	    done
 	    # Link game prefix into WINE prefix
 	    ln --symbolic \
 	        "$PATH_PREFIX" \
@@ -155,6 +189,8 @@ wine_prefix_wineprefix_build() {
 	wine_prefix_wineprefix_winetricks $APP_WINETRICKS
 	# Load registry scripts
 	wine_prefix_wineprefix_regedit $APP_REGEDIT
+	# Set Direct3D renderer
+	wine_renderer_launcher_snippet
 	cat <<- 'EOF'
 	fi
 	EOF
@@ -363,4 +399,31 @@ launcher_write_script_winecfg_run() {
 	EOF
 
 	return 0
+}
+
+# WINE - Apply winetricks verbs, spawning a terminal if required
+# USAGE: wine_winetricks_wrapper
+wine_winetricks_wrapper() {
+	cat <<- 'EOF'
+	# Apply winetricks verbs, spawning a terminal if required
+	winetricks_wrapper() {
+	    # Export custom paths to WINE commands
+	    # so winetricks use them instead of the default paths
+	    WINE=$(wine_command)
+	    WINESERVER=$(wineserver_command)
+	    WINEBOOT=$(wineboot_command)
+	    export WINE WINESERVER WINEBOOT
+	    # Run winetricks, spawning a terminal if required
+	    # to ensure it is not silently running in the background
+	    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+	        winetricks "$@"
+	    elif command -v xterm >/dev/null; then
+	        xterm -e winetricks "$@"
+	    else
+	        winetricks "$@"
+	    fi
+	    ## Wait a bit for lingering WINE processes to terminate
+	    sleep 1s
+	}
+	EOF
 }
