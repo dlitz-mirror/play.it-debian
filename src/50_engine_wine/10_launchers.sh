@@ -36,6 +36,11 @@ wine_launcher_write() {
 			return 1
 		;;
 	esac
+
+	# Automatically add required dependencies to the current package
+	local package
+	package=$(package_get_current)
+	dependencies_add_generic "$package" 'wine'
 }
 
 # WINE - Compute path to WINE prefix

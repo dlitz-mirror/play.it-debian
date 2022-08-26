@@ -85,6 +85,20 @@ wine_renderer_launcher_snippet_wined3d() {
 	# Wait a bit to ensure there is no lingering wine process
 	sleep 1s
 	EOF
+
+	# Automatically add required dependencies to the current package
+	local package dependency_library
+	package=$(package_get_current)
+	case "$wined3d_backend" in
+		('gl')
+			dependency_library='libGL.so.1'
+		;;
+		('vulkan')
+			dependency_library='libvulkan.so.1'
+		;;
+	esac
+	dependencies_add_native_libraries "$package" "$dependency_library"
+	dependencies_add_generic "$package" 'winetricks'
 }
 
 # Print the snippet to include to launchers to use DXVK as the Direct3D renderer
@@ -114,6 +128,12 @@ wine_renderer_launcher_snippet_dxvk() {
 	# Wait a bit to ensure there is no lingering wine process
 	sleep 1s
 	EOF
+
+	# Automatically add required dependencies to the current package
+	local package
+	package=$(package_get_current)
+	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
+	dependencies_add_generic "$package" 'winetricks'
 }
 
 # Print the snippet to include to launchers to use vkd3d as the Direct3D renderer
@@ -132,4 +152,10 @@ wine_renderer_launcher_snippet_vkd3d() {
 	# Wait a bit to ensure there is no lingering wine process
 	sleep 1s
 	EOF
+
+	# Automatically add required dependencies to the current package
+	local package
+	package=$(package_get_current)
+	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
+	dependencies_add_generic "$package" 'winetricks'
 }
