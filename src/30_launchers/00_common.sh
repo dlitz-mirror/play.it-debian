@@ -1,9 +1,9 @@
-# write launcher script
-# USAGE: launcher_write_script $app
+# Write launcher script for the given application
+# USAGE: launcher_write_script $application
 launcher_write_script() {
-	# parse argument
 	local application
 	application="$1"
+	assert_not_empty 'application' 'launcher_write_script'
 	if ! testvar "$application" 'APP'; then
 		error_invalid_argument 'application' 'launcher_write_script'
 		return 1
@@ -428,13 +428,13 @@ launcher_desktop_exec() {
 	printf "$field_format" "$field_value"
 }
 
-# write both launcher script and menu entry for a single application
+# Write both the launcher script and menu entry for the given application
 # USAGE: launcher_write $application
-# CALLS: launcher_write_script launcher_write_desktop
-# CALLED BY: launchers_write
 launcher_write() {
 	local application
 	application="$1"
+	assert_not_empty 'application' 'launcher_write'
+
 	launcher_write_script "$application"
 	launcher_write_desktop "$application"
 	return 0
