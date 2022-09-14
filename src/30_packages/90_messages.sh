@@ -73,19 +73,26 @@ information_package_building() {
 	printf "$message" "$file"
 }
 
-# print package building message
-# USAGE: information_package_building $file
-information_package_building_done() {
-	local message
+# Display a list of unknown libraries from packages dependencies
+# USAGE: warning_dependencies_unknown_libraries
+warning_dependencies_unknown_libraries() {
+	local message1 message2
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Contruction terminée !'
+			message1='Certaines dépendances de ce jeu ne sont pas encore prises en charge par ./play.it'
+			message1="$message1"', voici la liste de celles qui ont été ignorées :'
+			message2='Merci de signaler cette liste sur notre système de suivi :'
 		;;
 		('en'|*)
-			message='Building done!'
+			message1='Some dependencies of this game are not supported by ./play.it yet'
+			message1="$message1"', here are the ones that have been skipped:'
+			message2='Please report this list on our issues tracker:'
 		;;
 	esac
-	printf '%s\n' "$message"
+	print_warning
+	printf '%s\n' "$message1"
+	# shellcheck disable=SC2046
+	printf -- '- %s\n' $(dependencies_unknown_libraries_list)
+	printf '%s\n%s\n' "$message2" "$PLAYIT_BUG_TRACKER_URL"
 }
-

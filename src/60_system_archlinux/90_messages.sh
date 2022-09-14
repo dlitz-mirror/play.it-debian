@@ -39,20 +39,3 @@ info_package_mtree_computation() {
 	# shellcheck disable=SC2059
 	printf "$message" "$pkg_name"
 }
-
-# print mtree computation success message
-# USAGE: info_package_mtree_computation_done
-info_package_mtree_computation_done() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Fichier .MTREE créé !'
-			;;
-		('en'|*)
-			message='.MTREE file created!'
-			;;
-	esac
-	printf '%s\n' "$message"
-}
-

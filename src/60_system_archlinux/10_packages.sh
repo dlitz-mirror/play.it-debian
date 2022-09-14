@@ -9,19 +9,6 @@ pkg_write_arch() {
 	local package_path
 	package_path=$(package_get_path "$pkg")
 
-	local pkg_deps dependencies_string
-	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
-	if [ -n "$dependencies_string" ]; then
-		# shellcheck disable=SC2046
-		pkg_set_deps_arch $dependencies_string
-	fi
-
-	local dependencies_string_arch
-	dependencies_string_arch=$(get_context_specific_value 'archive' "${pkg}_DEPS_ARCH")
-	if [ -n "$dependencies_string_arch" ]; then
-		pkg_deps="$pkg_deps $dependencies_string_arch"
-	fi
-
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 	local target
@@ -38,13 +25,8 @@ pkg_write_arch() {
 	size = $pkg_size
 	arch = $(package_get_architecture_string "$pkg")
 	pkgdesc = $(package_get_description "$pkg")
+	$(package_archlinux_fields_depend "$pkg")
 	EOF
-
-	for dep in $pkg_deps; do
-		cat >> "$target" <<- EOF
-		depend = $dep
-		EOF
-	done
 
 	if [ -n "$(package_get_provide "$pkg")" ]; then
 		cat >> "$target" <<- EOF
@@ -90,320 +72,6 @@ pkg_write_arch() {
 	if [ "$MTREE" -eq 1 ]; then
 		package_archlinux_create_mtree "$pkg"
 	fi
-}
-
-# set list or Arch Linux dependencies from generic names
-# USAGE: pkg_set_deps_arch $dep[…]
-# CALLS: pkg_set_deps_arch32 pkg_set_deps_arch64
-# CALLED BY: pkg_write_arch
-pkg_set_deps_arch() {
-	case "$(package_get_architecture "$pkg")" in
-		('32')
-			pkg_set_deps_arch32 "$@"
-		;;
-		(*)
-			pkg_set_deps_arch64 "$@"
-		;;
-	esac
-}
-
-# set list or Arch Linux 32-bit dependencies from generic names
-# USAGE: pkg_set_deps_arch32 $dep[…]
-# CALLS: warning_missing_library
-# CALLED BY: pkg_set_deps_arch
-pkg_set_deps_arch32() {
-	for dep in "$@"; do
-		case $dep in
-			('alsa')
-				pkg_dep='lib32-alsa-lib lib32-alsa-plugins'
-			;;
-			('bzip2')
-				pkg_dep='lib32-bzip2'
-			;;
-			('dosbox')
-				pkg_dep='dosbox'
-			;;
-			('freetype')
-				pkg_dep='lib32-freetype2'
-			;;
-			('gcc32')
-				pkg_dep='gcc-multilib lib32-gcc-libs'
-			;;
-			('gconf')
-				pkg_dep='lib32-gconf'
-			;;
-			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep='lib32-gdk-pixbuf2'
-			;;
-			('libc.so.6'|'glibc')
-				pkg_dep='lib32-glibc'
-			;;
-			('libglib-2.0.so.0'|'libgobject-2.0.so.0')
-				pkg_dep='lib32-glib2'
-			;;
-			('glu'|'libGLU.so.1')
-				pkg_dep='lib32-glu'
-			;;
-			('libGL.so.1'|'glx')
-				pkg_dep='lib32-libgl'
-			;;
-			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
-				pkg_dep='lib32-gtk2'
-			;;
-			('java')
-				pkg_dep='jre8-openjdk'
-			;;
-			('json')
-				pkg_dep='lib32-json-c'
-			;;
-			('libasound.so.2')
-				pkg_dep='lib32-alsa-lib'
-			;;
-			('libasound_module_'*'.so')
-				pkg_dep='lib32-alsa-plugins'
-			;;
-			('libcurl')
-				pkg_dep='lib32-curl'
-			;;
-			('libcurl-gnutls')
-				pkg_dep='lib32-libcurl-gnutls'
-			;;
-			('libmbedtls.so.12')
-				warning_missing_library 'libmbedtls.so.12' 'Arch Linux' '32bits'
-			;;
-			('libpng16.so.16')
-				pkg_dep='lib32-libpng'
-			;;
-			('libpulse.so.0'|'libpulse-simple.so.0')
-				pkg_dep='lib32-libpulse'
-			;;
-			('libstdc++.so.6'|'libstdc++')
-				pkg_dep='lib32-gcc-libs'
-			;;
-			('libudev1'|'libudev.so.1')
-				pkg_dep='lib32-systemd'
-			;;
-			('libX11.so.6')
-				pkg_dep='lib32-libx11'
-			;;
-			('libxrandr')
-				pkg_dep='lib32-libxrandr'
-			;;
-			('nss')
-				pkg_dep='lib32-nss'
-			;;
-			('openal'|'libopenal.so.1')
-				pkg_dep='lib32-openal'
-			;;
-			('pulseaudio')
-				pkg_dep='pulseaudio'
-			;;
-			('renpy')
-				pkg_dep='renpy'
-			;;
-			('sdl1.2'|'libSDL-1.2.so.0')
-				pkg_dep='lib32-sdl'
-			;;
-			('sdl2'|'libSDL2-2.0.so.0')
-				pkg_dep='lib32-sdl2'
-			;;
-			('sdl2_image')
-				pkg_dep='lib32-sdl2_image'
-			;;
-			('sdl2_mixer')
-				pkg_dep='lib32-sdl2_mixer'
-			;;
-			('theora')
-				pkg_dep='lib32-libtheora'
-			;;
-			('libturbojpeg.so.0')
-				pkg_dep='lib32-libjpeg-turbo'
-			;;
-			('libuv.so.1')
-				warning_missing_library 'libuv.so.1' 'Arch Linux' '32bits'
-			;;
-			('vorbis'|'libvorbisfile.so.3')
-				pkg_dep='lib32-libvorbis'
-			;;
-			('wine'|'wine32'|'wine64')
-				pkg_dep='wine'
-			;;
-			('wine-staging'|'wine32-staging'|'wine64-staging')
-				pkg_dep='wine-staging'
-			;;
-			('winetricks')
-				pkg_dep='winetricks xterm'
-			;;
-			('xcursor')
-				pkg_dep='lib32-libxcursor'
-			;;
-			('xft')
-				pkg_dep='lib32-libxft'
-			;;
-			('xgamma')
-				pkg_dep='xorg-xgamma'
-			;;
-			('xrandr')
-				pkg_dep='xorg-xrandr'
-			;;
-			('libz.so.1')
-				pkg_dep='lib32-zlib'
-			;;
-			(*)
-				pkg_dep="$dep"
-			;;
-		esac
-		pkg_deps="$pkg_deps $pkg_dep"
-	done
-}
-
-# set list or Arch Linux 64-bit dependencies from generic names
-# USAGE: pkg_set_deps_arch64 $dep[…]
-# CALLED BY: pkg_set_deps_arch
-pkg_set_deps_arch64() {
-	for dep in "$@"; do
-		case $dep in
-			('alsa')
-				pkg_dep='alsa-lib alsa-plugins'
-			;;
-			('bzip2')
-				pkg_dep='bzip2'
-			;;
-			('dosbox')
-				pkg_dep='dosbox'
-			;;
-			('freetype')
-				pkg_dep='freetype2'
-			;;
-			('gcc32')
-				pkg_dep='gcc-multilib lib32-gcc-libs'
-			;;
-			('gconf')
-				pkg_dep='gconf'
-			;;
-			('libgdk_pixbuf-2.0.so.0')
-				pkg_dep='gdk-pixbuf2'
-			;;
-			('libc.so.6'|'glibc')
-				pkg_dep='glibc'
-			;;
-			('libgobject-2.0.so.0'|'libglib-2.0.so.0')
-				pkg_dep='glib2'
-			;;
-			('glu'|'libGLU.so.1')
-				pkg_dep='glu'
-			;;
-			('libGL.so.1'|'glx')
-				pkg_dep='libgl'
-			;;
-			('libgdk-x11-2.0.so.0'|'libgtk-x11-2.0.so.0'|'gtk2')
-				pkg_dep='gtk2'
-			;;
-			('java')
-				pkg_dep='jre8-openjdk'
-			;;
-			('json')
-				pkg_dep='json-c'
-			;;
-			('libasound.so.2')
-				pkg_dep='alsa-lib'
-			;;
-			('libasound_module_'*'.so')
-				pkg_dep='alsa-plugins'
-			;;
-			('libcurl')
-				pkg_dep='curl'
-			;;
-			('libcurl-gnutls')
-				pkg_dep='libcurl-gnutls'
-			;;
-			('libmbedtls.so.12')
-				pkg_dep='mbedtls'
-			;;
-			('libpng16.so.16')
-				pkg_dep='libpng'
-			;;
-			('libpulse.so.0'|'libpulse-simple.so.0')
-				pkg_dep='libpulse'
-			;;
-			('libstdc++.so.6'|'libstdc++')
-				pkg_dep='gcc-libs'
-			;;
-			('libudev1'|'libudev.so.1')
-				pkg_dep='libudev.so=1-64'
-			;;
-			('libX11.so.6')
-				pkg_dep='libx11'
-			;;
-			('libxrandr')
-				pkg_dep='libxrandr'
-			;;
-			('nss')
-				pkg_dep='nss'
-			;;
-			('mono')
-				pkg_dep='mono'
-			;;
-			('openal'|'libopenal.so.1')
-				pkg_dep='openal'
-			;;
-			('pulseaudio')
-				pkg_dep='pulseaudio'
-			;;
-			('renpy')
-				pkg_dep='renpy'
-			;;
-			('sdl1.2'|'libSDL-1.2.so.0')
-				pkg_dep='sdl'
-			;;
-			('sdl2'|'libSDL2-2.0.so.0')
-				pkg_dep='sdl2'
-			;;
-			('sdl2_image')
-				pkg_dep='sdl2_image'
-			;;
-			('sdl2_mixer')
-				pkg_dep='sdl2_mixer'
-			;;
-			('theora')
-				pkg_dep='libtheora'
-			;;
-			('libturbojpeg.so.0')
-				pkg_dep='libjpeg-turbo'
-			;;
-			('libuv.so.1')
-				pkg_dep='libuv'
-			;;
-			('vorbis'|'libvorbisfile.so.3')
-				pkg_dep='libvorbis'
-			;;
-			('wine'|'wine32'|'wine64')
-				pkg_dep='wine'
-			;;
-			('winetricks')
-				pkg_dep='winetricks'
-			;;
-			('xcursor')
-				pkg_dep='libxcursor'
-			;;
-			('xft')
-				pkg_dep='libxft'
-			;;
-			('xgamma')
-				pkg_dep='xorg-xgamma'
-			;;
-			('xrandr')
-				pkg_dep='xorg-xrandr'
-			;;
-			('libz.so.1')
-				pkg_dep='zlib'
-			;;
-			(*)
-				pkg_dep="$dep"
-			;;
-		esac
-		pkg_deps="$pkg_deps $pkg_dep"
-	done
 }
 
 # build .pkg.tar package
@@ -482,8 +150,6 @@ pkg_build_arch() {
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
 	export ${pkg?}_PKG
-
-	information_package_building_done
 }
 
 # creates .MTREE in package
@@ -516,7 +182,21 @@ package_archlinux_create_mtree() {
 			--to-stdout \
 			> .MTREE
 	)
-	info_package_mtree_computation_done
+}
 
-	return 0
+# Arch Linux - Print list of "depend" fields
+# USAGE: package_archlinux_fields_depend $package
+package_archlinux_fields_depend() {
+	local package
+	package="$1"
+
+	local dependency_string
+	while read -r dependency_string; do
+		if [ -z "$dependency_string" ]; then
+			continue
+		fi
+		printf 'depend = %s\n' "$dependency_string"
+	done <<- EOL
+	$(dependencies_archlinux_full_list "$package")
+	EOL
 }

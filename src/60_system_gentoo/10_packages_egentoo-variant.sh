@@ -1,7 +1,6 @@
 # write .ebuild package meta-data
 # USAGE: pkg_write_egentoo PKG_xxx
 pkg_write_egentoo() {
-	local pkg_deps
 	local build_deps
 	local postinst_f
 	local package_filename
@@ -14,29 +13,6 @@ pkg_write_egentoo() {
 	assert_not_empty 'package' 'pkg_write_egentoo'
 
 	inherits="xdg"
-
-	local dependencies_string
-	dependencies_string=$(get_context_specific_value 'archive' "${package}_DEPS")
-	if [ -n "$dependencies_string" ]; then
-		# shellcheck disable=SC2046
-		pkg_set_deps_gentoo $dependencies_string
-	fi
-
-	local dependencies_string_gentoo
-	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
-	if [ -n "$dependencies_string_gentoo" ]; then
-		pkg_deps="$pkg_deps $dependencies_string_gentoo"
-	fi
-
-	if [ -n "$(package_get_provide "$package")" ]; then
-		pkg_deps="${pkg_deps} $(package_get_provide "$package")"
-	fi
-
-	# Gentoo policy is that dependencies should be displayed one per line, and
-	# indentation is to be done using tabulations.
-	local sed_expression
-	sed_expression='s/ /\n\t/g'
-	pkg_deps=$(printf '%s' "$pkg_deps" | sed --expression="$sed_expression")
 
 	package_filename="$(package_get_name "$package").tar"
 	case $OPTION_COMPRESSION in
@@ -99,7 +75,7 @@ DESCRIPTION="$(package_get_description "$package")"
 SRC_URI="$package_filename"
 SLOT="0"
 
-RDEPEND="$(printf "$pkg_deps")"
+RDEPEND="$(package_gentoo_field_rdepend "$package")"
 BDEPEND="$(printf "$build_deps")"
 
 S=\${WORKDIR}
@@ -226,6 +202,4 @@ pkg_build_egentoo() {
 
 	eval "${package}"_PKG=\""$package_filename"\"
 	export "${package}"_PKG
-
-	information_package_building_done
 }

@@ -173,22 +173,6 @@ information_archive_data_extraction() {
 	printf "$message" "$file"
 }
 
-# print data extraction success message
-# USAGE: information_archive_data_extraction_done
-information_archive_data_extraction_done() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Extraction réussie !'
-		;;
-		('en'|*)
-			message='Extraction done!'
-		;;
-	esac
-	printf '%s\n' "$message"
-}
-
 # print hash computation message
 # USAGE: info_archive_hash_computation $file
 info_archive_hash_computation() {
@@ -205,22 +189,6 @@ info_archive_hash_computation() {
 	esac
 	# shellcheck disable=SC2059
 	printf "$message" "$file"
-}
-
-# print hash computation success message
-# USAGE: info_archive_hash_computation_done
-info_archive_hash_computation_done() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Somme de contrôle calculée !'
-		;;
-		('en'|*)
-			message='Hashsum computed!'
-		;;
-	esac
-	printf '%s\n' "$message"
 }
 
 # display a list of archives, one per line, with their download URL if one is provided

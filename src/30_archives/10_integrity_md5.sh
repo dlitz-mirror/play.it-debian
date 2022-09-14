@@ -60,7 +60,6 @@ archive_integrity_check_md5() {
 	if ! archive_has_md5sum_cached "$name"; then
 		info_archive_hash_computation "$file"
 		archive_get_md5sum_computed "$name" "$file"
-		info_archive_hash_computation_done
 	fi
 
 	local archive_sum file_sum

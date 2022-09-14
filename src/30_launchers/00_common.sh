@@ -195,28 +195,7 @@ launcher_write_script() {
 			esac
 		;;
 		('wine')
-			case "$prefix_type" in
-				('symlinks')
-					if [ "$(application_id "$application")" != "$(game_id)_winecfg" ]; then
-						launcher_write_script_wine_application_variables "$application" "$target_file"
-					fi
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_wine_command_path >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_wine_prefix_build "$target_file"
-					if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
-						launcher_write_script_winecfg_run "$target_file"
-					else
-						launcher_write_script_wine_run "$application" "$target_file"
-					fi
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			wine_launcher_write "$application" "$target_file"
 		;;
 		('mono')
 			case "$prefix_type" in
@@ -237,7 +216,11 @@ launcher_write_script() {
 		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'
-	exit 0
+	if [ -n "$game_exit_status" ]; then
+	    exit $game_exit_status
+	else
+	    exit 0
+	fi
 	EOF
 
 	# for native applications, add execution permissions to the game binary file
