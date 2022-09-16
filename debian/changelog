@@ -1,8 +1,8 @@
-play.it (2.14.0-1) unstable; urgency=medium
+play.it (2.15.1-1) unstable; urgency=medium
 
-  * New upstream release
+  * New upstram release
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Wed, 15 Sep 2021 14:29:29 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 17 Sep 2022 00:26:37 +0200
 
 play.it (2.13.3-1) unstable; urgency=medium
 
