@@ -1,23 +1,23 @@
 # write .deb package meta-data
 # USAGE: pkg_write_deb
-# NEEDED VARS: GAME_NAME PKG_DEPS_DEB
-# CALLED BY: write_metadata
 pkg_write_deb() {
 	###
 	# TODO
 	# $pkg should be passed as a function argument, not inherited from the calling function
 	###
 
+	local package_path
+	package_path=$(package_get_path "$pkg")
+
 	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
 
-	control_directory="$(package_get_path "$pkg")/DEBIAN"
+	control_directory="${package_path}/DEBIAN"
 	control_file="$control_directory/control"
 	postinst_script="$control_directory/postinst"
 	prerm_script="$control_directory/prerm"
 
 	# Get package dependencies list
 
-	# shellcheck disable=SC2039
 	local dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -25,7 +25,6 @@ pkg_write_deb() {
 		pkg_set_deps_deb $dependencies_string
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string_deb
 	dependencies_string_deb=$(get_context_specific_value 'archive' "${pkg}_DEPS_DEB")
 	if [ -n "$dependencies_string_deb" ]; then
@@ -37,7 +36,7 @@ pkg_write_deb() {
 	fi
 
 	# Get package size
-	pkg_size=$(du --total --block-size=1K --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
+	pkg_size=$(du --total --block-size=1K --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 
 	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"
@@ -220,29 +219,21 @@ pkg_set_deps_deb() {
 			('vorbis'|'libvorbisfile.so.3')
 				pkg_dep='libvorbisfile3'
 			;;
-			('wine')
-				case "$(package_get_architecture "$pkg")" in
-					('32') pkg_set_deps_deb 'wine32' ;;
-					('64') pkg_set_deps_deb 'wine64' ;;
+			('wine'|'wine-staging')
+				###
+				# TODO
+				# $pkg should be computed here, not implicitely inherited from the calling function
+				###
+				local package_architecture
+				package_architecture=$(package_get_architecture "$pkg")
+				case "$package_architecture" in
+					('32')
+						pkg_dep='wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'
+					;;
+					('64')
+						pkg_dep='wine64 | wine64-development | wine-stable-amd64 | wine-devel-amd64 | wine-staging-amd64, wine'
+					;;
 				esac
-			;;
-			('wine32')
-				pkg_dep='wine32 | wine32-development | wine-bin | wine-i386 | wine-staging-i386, wine'
-			;;
-			('wine64')
-				pkg_dep='wine64 | wine64-development | wine64-bin | wine-amd64 | wine-staging-amd64, wine'
-			;;
-			('wine-staging')
-				case "$(package_get_architecture "$pkg")" in
-					('32') pkg_set_deps_deb 'wine32-staging' ;;
-					('64') pkg_set_deps_deb 'wine64-staging' ;;
-				esac
-			;;
-			('wine32-staging')
-				pkg_dep='wine-staging-i386, winehq-staging:amd64 | winehq-staging'
-			;;
-			('wine64-staging')
-				pkg_dep='wine-staging-amd64, winehq-staging'
 			;;
 			('winetricks')
 				pkg_dep='winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
@@ -292,6 +283,7 @@ pkg_build_deb() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_deb'
+			return 1
 		;;
 	esac
 

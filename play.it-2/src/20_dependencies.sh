@@ -102,9 +102,13 @@ check_deps() {
 			('fakeroot'*)
 				check_deps_fakeroot "$dep"
 			;;
+			('lzip')
+				get_lzip_implementation >/dev/null
+			;;
 			(*)
 				if ! command -v "$dep" >/dev/null 2>&1; then
 					error_dependency_not_found "$dep"
+					return 1
 				fi
 			;;
 		esac
@@ -118,6 +122,7 @@ check_deps() {
 			case "$OPTION_ICONS" in
 				('yes')
 					error_icon_dependency_not_found "$dep"
+					return 1
 				;;
 				('auto')
 					warning_icon_dependency_not_found "$dep"
@@ -140,6 +145,7 @@ check_deps_7z() {
 		fi
 	done
 	error_dependency_not_found '7zr'
+	return 1
 }
 
 # check presence of a software to handle LHA (.lzh) archives
@@ -153,6 +159,7 @@ check_deps_lha() {
 		fi
 	done
 	error_dependency_not_found 'lha'
+	return 1
 }
 
 # check presence of a software to handle .deb packages
@@ -173,6 +180,7 @@ check_deps_debian() {
 		done
 	fi
 	error_dependency_not_found 'dpkg-deb'
+	return 1
 }
 
 # check innoextract presence, optionally in a given minimum version
@@ -193,16 +201,17 @@ check_deps_innoextract() {
 	esac
 	if ! command -v 'innoextract' >/dev/null 2>&1; then
 		error_dependency_not_found "$name"
+		return 1
 	fi
 
 	# Check innoextract version
-	# shellcheck disable=SC2039
 	local innoextract_version
 	innoextract_version=$(LANG=C innoextract --version | head --lines=1 | cut --delimiter=' ' --fields=2)
 	case "$keyword" in
 		('innoextract1.7')
 			if ! version_is_at_least '1.7' "$innoextract_version"; then
 				error_dependency_not_found "$name"
+				return 1
 			fi
 		;;
 	esac
@@ -224,16 +233,17 @@ check_deps_fakeroot() {
 	esac
 	if ! command -v 'fakeroot' >/dev/null 2>&1; then
 		error_dependency_not_found "$name"
+		return 1
 	fi
 
 	# Check fakeroot version
-	# shellcheck disable=SC2039
 	local fakeroot_version
 	fakeroot_version="$(LANG=C fakeroot --version | cut --delimiter=' ' --fields=3)"
 	case "$keyword" in
 		('fakeroot:>=1.25.1')
 			if ! version_is_at_least '1.25.1' "$fakeroot_version"; then
 				error_dependency_not_found "$name"
+				return 1
 			fi
 		;;
 	esac

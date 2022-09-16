@@ -18,14 +18,12 @@ applications_list() {
 	fi
 
 	## Fallback, parse the game script
-	# shellcheck disable=SC2039
 	local game_script
 	game_script="$0"
 	# Try to generate a list from the following variables:
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
 	# - APP_xxx_RESIDUALID
-	# shellcheck disable=SC2039
 	local sed_expression application_id
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
@@ -36,7 +34,7 @@ applications_list() {
 }
 
 # print the type of the given application
-# USAGE: application_type $application
+# USAGE: application_type $application [$fallback_type]
 # RETURN: the application type keyword, from the supported values:
 #         - dosbox
 #         - java
@@ -47,15 +45,28 @@ applications_list() {
 #         - residualvm
 #         - scummvm
 #         - wine
+#         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
-	# shellcheck disable=SC2039
 	local application_type
 	application_type=$(get_value "${1}_TYPE")
 
-	# If not type has been explicitely set, try to guess one
-	if [ -n "$(unity3d_name)" ]; then
-		application_type='unity3d'
+	# If no type has been explicitely set, try to guess one
+	if [ -z "$application_type" ]; then
+		if [ -n "$(unity3d_name)" ]; then
+			application_type='unity3d'
+		fi
+	fi
+
+	# If no type has been found and a fallback has been provided,
+	# use the fallback.
+	local fallback_type
+	fallback_type="$2"
+	if \
+		[ -z "$application_type" ] \
+		&& [ -n "$fallback_type" ]
+	then
+		application_type="$fallback_type"
 	fi
 
 	# Check that a supported type has been fetched
@@ -75,8 +86,15 @@ application_type() {
 			printf '%s' "$application_type"
 			return 0
 		;;
+		('unknown')
+			# "unknown" is the only allowed invalid application type,
+			# to be used only as a fallback.
+			printf '%s' "$application_type"
+			return 0
+		;;
 		(*)
 			error_unknown_application_type "$application_type"
+			return 1
 		;;
 	esac
 }
@@ -87,12 +105,13 @@ application_type() {
 #         the id can not start nor end with a character from the set [-_]
 application_id() {
 	# Get the application type from its identifier
-	# shellcheck disable=SC2039
 	local application_id
 	application_id=$(get_value "${1}_ID")
 
-	# If no id is explicitely set, fall back on GAME_ID
-	: "${application_id:=$GAME_ID}"
+	# If no id is explicitely set, fall back on the game id
+	if [ -z "$application_id" ]; then
+		application_id=$(game_id)
+	fi
 
 	# Check that the id fits the format restrictions
 	if ! printf '%s' "$application_id" | \
@@ -111,21 +130,25 @@ application_id() {
 application_exe() {
 	# Use the package-specific value if it is available,
 	# falls back on the default value
-	# shellcheck disable=SC2039
 	local application application_exe
 	application="$1"
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
 
 	# If no value is set, try to find one based on the application type
-	case "$(application_type "$application")" in
-		('unity3d')
-			application_exe=$(application_unity3d_exe "$application")
-		;;
-	esac
+	if [ -z "$application_exe" ]; then
+		local application_type
+		application_type=$(application_type "$application")
+		case "$application_type" in
+			('unity3d')
+				application_exe=$(application_unity3d_exe "$application")
+			;;
+		esac
+	fi
 
 	# Check that the file name is not empty
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application" "$(application_type "$application")"
+		error_application_exe_empty "$application" "$application_type"
+		return 1
 	fi
 
 	printf '%s' "$application_exe"
@@ -136,12 +159,13 @@ application_exe() {
 # RETURN: the pretty version of the application name
 application_name() {
 	# Get the application name from its identifier
-	# shellcheck disable=SC2039
 	local application_name
 	application_name=$(get_value "${1}_NAME")
 
-	# If no name is explicitely set, fall back on GAME_NAME
-	: "${application_name:=$GAME_NAME}"
+	# If no name is explicitely set, fall back on the game name
+	if [ -z "$application_name" ]; then
+		application_name=$(game_name)
+	fi
 
 	printf '%s' "$application_name"
 }
@@ -151,7 +175,6 @@ application_name() {
 # RETURN: the application XDG menu category
 application_category() {
 	# Get the application category from its identifier
-	# shellcheck disable=SC2039
 	local application_category
 	application_category=$(get_value "${1}_CAT")
 
@@ -186,7 +209,6 @@ application_postrun() {
 #         or an empty string if no options are set
 application_options() {
 	# Get the application options string from its identifier
-	# shellcheck disable=SC2039
 	local application application_options
 	application="$1"
 	application_options=$(get_value "${application}_OPTIONS")
@@ -215,12 +237,10 @@ application_libs() {
 # RETURN: a space-separated list of icons identifiers,
 #         or an empty string if no icon seems to be set
 application_icons_list() {
-	# shellcheck disable=SC2039
 	local application
 	application="$1"
 
 	# Use the value of APP_xxx_ICONS_LIST if it is set
-	# shellcheck disable=SC2039
 	local icons_list
 	icons_list=$(get_value "${application}_ICONS_LIST")
 	if [ -n "$icons_list" ]; then
@@ -229,10 +249,10 @@ application_icons_list() {
 	fi
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
-	# shellcheck disable=SC2039
-	local default_icon
+	local default_icon application_type
 	default_icon="${application}_ICON"
-	case "$(application_type "$application")" in
+	application_type=$(application_type "$application" 'unknown')
+	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon
 			printf '%s' "$default_icon"

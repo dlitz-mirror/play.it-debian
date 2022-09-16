@@ -2,16 +2,18 @@
 # USAGE: launcher_write_script_wine_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_wine_application_variables() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
+	local application_exe application_options
+	application_exe=$(application_exe "$application")
+	application_options=$(application_options "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(application_exe "$application")'
-	APP_OPTIONS="$(application_options "$application")"
+	APP_EXE='$application_exe'
+	APP_OPTIONS="$application_options"
 	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
 
 	EOF
@@ -31,7 +33,6 @@ launcher_write_script_wine_prefix_build() {
 	package=$(package_get_current)
 
 	# compute WINE prefix architecture
-	# shellcheck disable=SC2039
 	local architecture winearch
 	architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 	case "$architecture" in
@@ -72,6 +73,12 @@ launcher_write_script_wine_prefix_build() {
 		    done
 		EOF
 	fi
+
+	{
+		# Set compatibility links to legacy user paths
+		launcher_wine_user_legacy_link 'AppData/Roaming' 'Application Data'
+		launcher_wine_user_legacy_link 'Documents' 'My Documents'
+	} >> "$file"
 
 	if [ "$APP_WINETRICKS" ]; then
 		cat >> "$file" <<- EOF
@@ -169,17 +176,13 @@ launcher_write_script_wine_prefix_build() {
 
 # WINE - write launcher script for winecfg
 # USAGE: launcher_write_script_wine_winecfg $application
-# NEEDED VARS: GAME_ID
-# CALLED BY: launcher_write_script_wine_winecfg
 launcher_write_script_wine_winecfg() {
 	local application
 	application="$1"
-	# shellcheck disable=SC2034
-	APP_WINECFG_ID="${GAME_ID}_winecfg"
-	# shellcheck disable=SC2034
-	APP_WINECFG_TYPE='wine'
-	# shellcheck disable=SC2034
-	APP_WINECFG_EXE='winecfg'
+	APP_WINECFG_ID="$(game_id)_winecfg"
+	export APP_WINECFG_ID
+	export APP_WINECFG_TYPE='wine'
+	export APP_WINECFG_EXE='winecfg'
 	launcher_write_script 'APP_WINECFG'
 	return 0
 }
@@ -230,5 +233,35 @@ launcher_write_script_winecfg_run() {
 	EOF
 
 	return 0
+}
+
+# WINE - Set compatibility link to legacy user path
+# USAGE: launcher_wine_user_legacy_link $path_current $path_legacy
+# RETURN: the code snippet setting the compatibility links,
+#         indented with 4 spaces
+launcher_wine_user_legacy_link() {
+	local path_current path_legacy
+	path_current="$1"
+	path_legacy="$2"
+	cat <<- 'EOF'
+	# Set compatibility link to a legacy user path
+	user_directory="${WINEPREFIX}/drive_c/users/${USER}"
+	EOF
+	cat <<- EOF
+	path_current='${path_current}'
+	path_legacy='${path_legacy}'
+	EOF
+	cat <<- 'EOF'
+	(
+	    cd "$user_directory"
+	    if [ ! -e "${user_directory}/${path_current}" ]; then
+	        path_current_parent=$(dirname "$path_current")
+	        mkdir --parents "$path_current_parent"
+	        mv "$path_legacy" "$path_current"
+	    fi
+	    ln --symbolic "$path_current" "$path_legacy"
+	)
+
+	EOF
 }
 

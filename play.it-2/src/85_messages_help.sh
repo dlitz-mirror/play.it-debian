@@ -40,6 +40,7 @@ help() {
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
+		help_show_game_script
 		return 0
 	fi
 
@@ -114,7 +115,6 @@ help_checksum() {
 # display --compression option usage
 # CALLED BY: help
 help_compression() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -311,6 +311,27 @@ help_debug() {
 	printf -- '--debug\n'
 	printf -- '--debug=N\n'
 	printf -- '--debug N\n\n'
+	printf "$message"
+
+	return 0
+}
+
+# display --show-game-script option usage
+# USAGE: help_show_game_script
+help_show_game_script() {
+	local message
+
+	#shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche uniquement le chemin vers le script à utiliser, sans le lancer.\n\n'
+			;;
+		('en'|*)
+			message='\tOnly displays the name of the script to use, without running it.\n\n'
+			;;
+	esac
+
+	printf -- '--show-game-script\n'
 	printf "$message"
 
 	return 0

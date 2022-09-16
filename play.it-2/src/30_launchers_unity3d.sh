@@ -1,7 +1,6 @@
 # Unity3D native game launcher - Run the game
 # USAGE: launcher_write_script_unity3d_run $application $launcher_file
 launcher_write_script_unity3d_run() {
-	# shellcheck disable=SC2039
 	local application launcher_file
 	application="$1"
 	launcher_file="$2"

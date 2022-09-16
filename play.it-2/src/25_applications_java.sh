@@ -4,8 +4,8 @@
 #         or an empty string if no options are set
 application_java_options() {
 	# Check that the application uses the java type
-	# shellcheck disable=SC2039
 	local application application_type
+	application="$1"
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'java' ]; then
 		error_application_wrong_type 'application_java_options' "$application_type"
@@ -13,7 +13,6 @@ application_java_options() {
 	fi
 
 	# Get the application Java options string from its identifier
-	# shellcheck disable=SC2039
 	local application_java_options
 	application_java_options=$(get_value "${application}_JAVA_OPTIONS")
 

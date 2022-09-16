@@ -1,7 +1,5 @@
 # write package meta-data
 # USAGE: write_metadata [$pkg…]
-# NEEDED VARS: (ARCHIVE) GAME_NAME (OPTION_PACKAGE) (PKG_ARCH) PKG_DEPS_ARCH PKG_DEPS_DEB PKG_DESCRIPTION PKG_ID PKG_PROVIDE
-# CALLS: pkg_write_arch pkg_write_deb pkg_write_gentoo testvar
 write_metadata() {
 	if [ $# -eq 0 ]; then
 		# shellcheck disable=SC2046
@@ -11,15 +9,17 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
 	for pkg in "$@"; do
 		if ! testvar "$pkg" 'PKG'; then
 			error_invalid_argument 'pkg' 'write_metadata'
+			return 1
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
+
+		# Check that the current package is part of the target architectures
+		if \
+			[ "$OPTION_ARCHITECTURE" != 'all' ] \
+			&& ! packages_get_list | grep --quiet "$pkg"
+		then
 			warning_skip_package 'write_metadata' "$pkg"
 			continue
 		fi
@@ -41,6 +41,7 @@ write_metadata() {
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
+				return 1
 			;;
 		esac
 	done
@@ -62,33 +63,47 @@ build_pkg() {
 
 	debug_entering_function 'build_pkg'
 
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
+	local package package_path
+	for package in "$@"; do
+		if ! testvar "$package" 'PKG'; then
+			error_invalid_argument 'package' 'build_pkg'
+			return 1
+		fi
 
-	for pkg in "$@"; do
-		if ! testvar "$pkg" 'PKG'; then
-			error_invalid_argument 'pkg' 'build_pkg'
+		# Check that the current package is part of the target architectures
+		if \
+			[ "$OPTION_ARCHITECTURE" != 'all' ] \
+			&& ! packages_get_list | grep --quiet "$package"
+		then
+			warning_skip_package 'build_pkg' "$package"
+			continue
 		fi
-		if [ "$OPTION_ARCHITECTURE" != all ] && [ -n "${packages_list##*$pkg*}" ]; then
-			warning_skip_package 'build_pkg' "$pkg"
-			return 0
-		fi
+
+		package_path=$(package_get_path "$package")
+
+		###
+		# TODO
+		# pkg_build_xxx implicitely depends on the target package being set as $pkg
+		# It should instead be passed as a mandatory argument.
+		###
+		export pkg="$package"
+
 		case $OPTION_PACKAGE in
 			('arch')
-				pkg_build_arch "$(package_get_path "$pkg")"
+				pkg_build_arch "$package_path"
 			;;
 			('deb')
-				pkg_build_deb "$(package_get_path "$pkg")"
+				pkg_build_deb "$package_path"
 			;;
 			('gentoo')
-				pkg_build_gentoo "$(package_get_path "$pkg")"
+				pkg_build_gentoo "$package_path"
 			;;
 			('egentoo')
-				pkg_build_egentoo "$pkg"
+				pkg_build_egentoo "$package"
 			;;
 			(*)
 				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
+				return 1
 			;;
 		esac
 	done
@@ -142,16 +157,20 @@ package_get_current() {
 		package='PKG_MAIN'
 	fi
 
-	printf '%s' "$package"
+	# If the current package is not part of the full list of packages,
+	# something went wrong
+	if ! packages_get_list | grep --quiet --fixed-strings --word-regexp "$package"; then
+		error_package_not_in_list "$package"
+		return 1
+	fi
 
-	return 0
+	printf '%s' "$package"
 }
 
 # get the full list of packages to generate
 # USAGE: packages_get_list
 # RETURN: a list of package identifiers
 packages_get_list() {
-	# shellcheck disable=SC2039
 	local packages_list
 	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
 
@@ -172,7 +191,6 @@ packages_get_list() {
 # RETURNS: package ID, as a non-empty string
 package_get_id() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -182,13 +200,12 @@ package_get_id() {
 	fi
 
 	# get package ID from its name
-	# shellcheck disable=SC2039
 	local package_id
 	package_id=$(get_context_specific_value 'archive' "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
-		package_id="$GAME_ID"
+		package_id=$(game_id)
 	fi
 
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
@@ -218,7 +235,6 @@ package_get_id() {
 # RETURNS: package architecture, as a non-empty string
 package_get_architecture() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -228,7 +244,6 @@ package_get_architecture() {
 	fi
 
 	# get package architecture from its name
-	# shellcheck disable=SC2039
 	local package_architecture
 	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 
@@ -246,7 +261,6 @@ package_get_architecture() {
 # RETURNS: package architecture, as a non-empty string, ready to include in package meta-data
 package_get_architecture_string() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -256,12 +270,10 @@ package_get_architecture_string() {
 	fi
 
 	# get package architecture
-	# shellcheck disable=SC2039
 	local package_architecture
 	package_architecture=$(package_get_architecture "$package")
 
 	# set package architecture string, based on its architecture and target package format
-	# shellcheck disable=SC2039
 	local package_architecture_string
 	case "$OPTION_PACKAGE" in
 		('arch')
@@ -302,6 +314,7 @@ package_get_architecture_string() {
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_architecture_string'
+			return 1
 		;;
 	esac
 
@@ -314,7 +327,6 @@ package_get_architecture_string() {
 # RETURNS: package description, as a non-empty string
 package_get_description() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -324,18 +336,16 @@ package_get_description() {
 	fi
 
 	# get package description from its name
-	# shellcheck disable=SC2039
 	local package_description
 	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
 
 	###
 	# TODO
-	# Check that $GAME_NAME and $script_version are non-empty strings
-	# Display an explicit error message if one is unset or empty
+	# Check that $script_version is a non-empty strings
+	# Display an explicit error message if it is unset or empty
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
-	# shellcheck disable=SC2039
 	local package_description_full
 	case "$OPTION_PACKAGE" in
 		('deb')
@@ -343,21 +353,21 @@ package_get_description() {
 				package_description_full='Description: %s - %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$package_description" "$script_version")
+				package_description_full=$(printf "$package_description_full" "$(game_name)" "$package_description" "$script_version")
 			else
 				package_description_full='Description: %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$GAME_NAME" "$script_version")
+				package_description_full=$(printf "$package_description_full" "$(game_name)" "$script_version")
 			fi
 		;;
 		('arch'|'gentoo')
 			if [ -n "$package_description" ]; then
 				# shellcheck disable=SC2154
-				package_description_full="$GAME_NAME - $package_description - ./play.it script version $script_version"
+				package_description_full="$(game_name) - $package_description - ./play.it script version $script_version"
 			else
 				# shellcheck disable=SC2154
-				package_description_full="$GAME_NAME - ./play.it script version $script_version"
+				package_description_full="$(game_name) - ./play.it script version $script_version"
 			fi
 		;;
 	esac
@@ -371,7 +381,6 @@ package_get_description() {
 # RETURNS: provided package ID as a non-empty string, or an empty string is none is provided
 package_get_provide() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -381,7 +390,6 @@ package_get_provide() {
 	fi
 
 	# get provided package ID from its name
-	# shellcheck disable=SC2039
 	local package_provide
 	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
 
@@ -393,9 +401,9 @@ package_get_provide() {
 	# on Gentoo, avoid mixups between numbers in package ID and version number
 	# and add the required "!!games-playit/" prefix to the package ID
 	case "$OPTION_PACKAGE" in
-		('gentoo')
+		('gentoo'|'egentoo')
 			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
-			package_provide="!!games-playit/${package_provide}"
+			package_provide="!games-playit/${package_provide}"
 		;;
 	esac
 
@@ -408,7 +416,6 @@ package_get_provide() {
 # RETURNS: path to a directory, it is not checked that it exists or is writable
 package_get_path() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -423,16 +430,17 @@ package_get_path() {
 	if [ -z "$ARCHIVE" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$ARCHIVE'
+		return 1
 	fi
 
 	# check that PLAYIT_WORKDIR is set by the global context
 	if [ -z "$PLAYIT_WORKDIR" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$PLAYIT_WORKDIR'
+		return 1
 	fi
 
 	# compute the package path from its identifier
-	# shellcheck disable=SC2039
 	local package_path
 	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
 
@@ -445,7 +453,6 @@ package_get_path() {
 # RETURNS: filename, without any suffix
 package_get_name() {
 	# single argument should be the package name
-	# shellcheck disable=SC2039
 	local package
 	package="$1"
 	if [ -z "$package" ]; then
@@ -459,20 +466,22 @@ package_get_name() {
 	if [ -z "$ARCHIVE" ]; then
 		# shellcheck disable=SC2016
 		error_empty_string 'package_get_name' '$ARCHIVE'
+		return 1
 	fi
 
 	# compute the package path from its identifier
-	# shellcheck disable=SC2039
-	local package_name
+	local package_name package_path
 	case "$OPTION_PACKAGE" in
 		('arch'|'deb')
-			package_name=$(basename "$(package_get_path "$package")")
+			package_path=$(package_get_path "$package")
+			package_name=$(basename "$package_path")
 		;;
 		('gentoo'|'egentoo')
 			package_name="$(package_get_id "$package")-$(packages_get_version "$ARCHIVE")"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
+			return 1
 		;;
 	esac
 
@@ -485,7 +494,6 @@ package_get_name() {
 # RETURNS: packages maintainer, as a non-empty string
 packages_get_maintainer() {
 	# get maintainer string from /etc/makepkg.conf
-	# shellcheck disable=SC2039
 	local maintainer
 	if \
 		[ -r '/etc/makepkg.conf' ] && \
@@ -508,7 +516,6 @@ packages_get_maintainer() {
 
 	# get current machine hostname
 	# falls back on using "localhost"
-	# shellcheck disable=SC2039
 	local hostname
 	if command -v 'hostname' >/dev/null 2>&1; then
 		hostname=$(hostname)
@@ -520,7 +527,6 @@ packages_get_maintainer() {
 
 	# get current user name
 	# falls back on "user"
-	# shellcheck disable=SC2039
 	local username
 	if [ -n "$USER" ]; then
 		username="$USER"
@@ -541,7 +547,6 @@ packages_get_maintainer() {
 # RETURNS: packages version, as a non-empty string
 packages_get_version() {
 	# single argument should be the archive name
-	# shellcheck disable=SC2039
 	local archive
 	archive="$1"
 	if [ -z "$archive" ]; then
@@ -558,7 +563,6 @@ packages_get_version() {
 
 	# get the version string for the current archive
 	# falls back on "1.0-1"
-	# shellcheck disable=SC2039
 	local packages_version
 	packages_version=$(get_value "${archive}_VERSION")
 	if [ -z "$packages_version" ]; then

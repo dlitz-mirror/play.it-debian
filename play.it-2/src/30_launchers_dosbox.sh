@@ -2,16 +2,18 @@
 # USAGE: launcher_write_script_dosbox_application_variables $application $file
 # CALLED BY: launcher_write_script
 launcher_write_script_dosbox_application_variables() {
-	# shellcheck disable=SC2039
 	local application file
 	application="$1"
 	file="$2"
+	local application_exe application_options
+	application_exe=$(application_exe "$application")
+	application_options=$(application_options "$application")
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
-	APP_EXE='$(application_exe "$application")'
-	APP_OPTIONS="$(application_options "$application")"
+	APP_EXE='$application_exe'
+	APP_OPTIONS="$application_options"
 
 	EOF
 	return 0
@@ -42,18 +44,24 @@ launcher_write_script_dosbox_run() {
 		case "$GAME_IMAGE_TYPE" in
 			('cdrom')
 				local image
-				local package
+				unset image
 
-				# Get packages list for the current game
-				local packages_list
+				# Loop over the list of packages, one should include the disk image
+				local package package_path packages_list
 				packages_list=$(packages_get_list)
-
 				for package in $packages_list; do
-					if [ -e "$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE" ]; then
-						image="$(package_get_path "$package")$PATH_GAME/$GAME_IMAGE"
+					package_path=$(package_get_path "$package")
+					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
+						image="${package_path}$PATH_GAME/$GAME_IMAGE"
 						break;
 					fi
 				done
+
+				###
+				# TODO
+				# If the disk image has not been found, an explicit error should be thrown.
+				###
+
 				if [ -d "$image" ]; then
 					cat >> "$file" <<- EOF
 					mount d $GAME_IMAGE -t cdrom

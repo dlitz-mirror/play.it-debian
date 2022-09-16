@@ -29,7 +29,7 @@ fi
 # shellcheck source=play.it-2/lib/libplayit2.sh
 . "$PLAYIT_LIB2"
 
-if [ "$#" = 0 ]; then
+if [ "$#" = 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
 	help
 	exit 0
 fi
@@ -43,6 +43,7 @@ INPUT_FILE="$1"
 
 if [ ! -f "$INPUT_FILE" ]; then
 	error_not_a_file "$INPUT_FILE"
+	exit 1
 fi
 
 # Locate script by file name
@@ -52,11 +53,18 @@ SCRIPT=$(games_find_script_for_archive "$FILE_NAME")
 # Exit with an error if the given archive is not supported
 if [ -z "$SCRIPT" ]; then
 	error_no_script_found_for_archive "$FILE_NAME"
+	exit 1
 fi
 
 export PLAYIT_LIB2
 
 shift 1
+
+if [ "$1" = "--show-game-script" ]; then
+	realpath "$SCRIPT"
+	exit 0
+fi
+
 "$SCRIPT" "$INPUT_FILE" "$@"
 
 exit 0

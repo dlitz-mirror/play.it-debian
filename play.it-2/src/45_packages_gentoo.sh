@@ -1,9 +1,14 @@
 # write .ebuild package meta-data
 # USAGE: pkg_write_gentoo
-# NEEDED VARS: GAME_NAME PKG_DEPS_GENTOO
-# CALLED BY: write_metadata
 pkg_write_gentoo() {
-	# shellcheck disable=SC2039
+	###
+	# TODO
+	# $pkg should be passed as a function argument, not inherited from the calling function
+	###
+
+	local package_path
+	package_path=$(package_get_path "$pkg")
+
 	local pkg_deps dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -12,7 +17,6 @@ pkg_write_gentoo() {
 		export GENTOO_OVERLAYS
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string_gentoo
 	dependencies_string_gentoo=$(get_context_specific_value 'archive' "${pkg}_DEPS_GENTOO")
 	if [ -n "$dependencies_string_gentoo" ]; then
@@ -29,7 +33,7 @@ pkg_write_gentoo() {
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files"
 	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
 	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
-	ln --symbolic --force --no-target-directory "$(package_get_path "$pkg")" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files/install"
+	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/files/install"
 	local target
 	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/$(package_get_id "$pkg")/$(package_get_id "$pkg")-$(packages_get_version "$ARCHIVE").ebuild"
 
@@ -278,9 +282,9 @@ pkg_set_deps_gentoo() {
 			;;
 			(*)
 				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-				# shellcheck disable=SC2039
-				local package
-				for package in $PACKAGES_LIST; do
+				local package packages_list
+				packages_list=$(packages_get_list)
+				for package in $packages_list; do
 					if [ "$package" != "$pkg" ]; then
 						if [ "$(package_get_provide "$package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
 							pkg_dep="|| ( ${pkg_dep} )"
@@ -289,7 +293,9 @@ pkg_set_deps_gentoo() {
 				done
 			;;
 		esac
-		pkg_deps="$pkg_deps $pkg_dep"
+		if [ -n "$pkg_dep" ]; then
+			pkg_deps="$pkg_deps $pkg_dep"
+		fi
 		if [ -n "$pkg_overlay" ]; then
 			if ! printf '%s' "$GENTOO_OVERLAYS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet "$pkg_overlay"; then
 				GENTOO_OVERLAYS="$GENTOO_OVERLAYS $pkg_overlay"

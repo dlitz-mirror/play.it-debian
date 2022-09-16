@@ -18,7 +18,6 @@ get_value() {
 # RETURN: the context-specific value for the given variable, or its default value
 get_context_specific_value() {
 	# Get the context suffix based on the context type
-	# shellcheck disable=SC2039
 	local context context_suffix
 	context="$1"
 	case "$context" in
@@ -27,11 +26,11 @@ get_context_specific_value() {
 		;;
 		(*)
 			error_context_invalid "$context"
+			return 1
 		;;
 	esac
 
 	# Try to find a context-specific value
-	# shellcheck disable=SC2039
 	local variable_name variable_name_with_suffix
 	variable_name="$2"
 	variable_name_with_suffix="${variable_name}_${context_suffix}"
@@ -55,7 +54,6 @@ get_context_specific_value() {
 # USAGE: get_context_suffix archive|package
 # RETURN: the context suffix, not including the leading underscore (_)
 get_context_suffix() {
-	# shellcheck disable=SC2039
 	local context context_suffix
 	context="$1"
 	case "$context" in
@@ -67,6 +65,7 @@ get_context_suffix() {
 		;;
 		(*)
 			error_context_invalid "$context"
+			return 1
 		;;
 	esac
 	printf '%s' "$context_suffix"
@@ -77,15 +76,14 @@ get_context_suffix() {
 # RETURN: the current archive suffix, not including the leading underscore (_)
 get_context_suffix_archive() {
 	# Get the current archive, check that it is set
-	# shellcheck disable=SC2039
 	local current_archive
 	current_archive="$ARCHIVE"
 	if [ -z "$current_archive" ]; then
 		error_archive_unset
+		return 1
 	fi
 
 	# Get the suffix from the full archive identifier
-	# shellcheck disable=SC2039
 	local archive_suffix
 	if \
 		# shellcheck disable=SC2154
@@ -105,12 +103,10 @@ get_context_suffix_archive() {
 # RETURN: the current package suffix, not including the leading underscore (_)
 get_context_suffix_package() {
 	# Get the current package
-	# shellcheck disable=SC2039
 	local current_package
 	current_package=$(package_get_current)
 
 	# Get the suffix from the full package identifier
-	# shellcheck disable=SC2039
 	local package_suffix
 	package_suffix=${current_package#PKG_}
 

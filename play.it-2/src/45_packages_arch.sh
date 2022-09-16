@@ -1,9 +1,14 @@
 # write .pkg.tar package meta-data
 # USAGE: pkg_write_arch
-# NEEDED VARS: GAME_NAME PKG_DEPS_ARCH
-# CALLED BY: write_metadata
 pkg_write_arch() {
-	# shellcheck disable=SC2039
+	###
+	# TODO
+	# $pkg should be passed as a function argument, not inherited from the calling function
+	###
+
+	local package_path
+	package_path=$(package_get_path "$pkg")
+
 	local pkg_deps dependencies_string
 	dependencies_string=$(get_context_specific_value 'archive' "${pkg}_DEPS")
 	if [ -n "$dependencies_string" ]; then
@@ -11,7 +16,6 @@ pkg_write_arch() {
 		pkg_set_deps_arch $dependencies_string
 	fi
 
-	# shellcheck disable=SC2039
 	local dependencies_string_arch
 	dependencies_string_arch=$(get_context_specific_value 'archive' "${pkg}_DEPS_ARCH")
 	if [ -n "$dependencies_string_arch" ]; then
@@ -19,9 +23,9 @@ pkg_write_arch() {
 	fi
 
 	local pkg_size
-	pkg_size=$(du --total --block-size=1 --summarize "$(package_get_path "$pkg")" | tail --lines=1 | cut --fields=1)
+	pkg_size=$(du --total --block-size=1 --summarize "$package_path" | tail --lines=1 | cut --fields=1)
 	local target
-	target="$(package_get_path "$pkg")/.PKGINFO"
+	target="${package_path}/.PKGINFO"
 
 	mkdir --parents "$(dirname "$target")"
 
@@ -56,7 +60,7 @@ pkg_write_arch() {
 		EOF
 	fi
 
-	target="$(package_get_path "$pkg")/.INSTALL"
+	target="${package_path}/.INSTALL"
 
 	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
 		cat >> "$target" <<- EOF
@@ -432,6 +436,7 @@ pkg_build_arch() {
 		;;
 		(*)
 			error_unknown_tar_implementation
+			return 1
 		;;
 	esac
 
@@ -456,6 +461,7 @@ pkg_build_arch() {
 		('none') ;;
 		(*)
 			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_arch'
+			return 1
 		;;
 	esac
 

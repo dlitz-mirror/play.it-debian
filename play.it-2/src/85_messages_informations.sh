@@ -71,7 +71,6 @@ information_file_integrity_check() {
 # print data extraction message
 # USAGE: information_archive_data_extraction $file
 information_archive_data_extraction() {
-	# shellcheck disable=SC2039
 	local message file
 	file="$1"
 	# shellcheck disable=SC2031
@@ -91,7 +90,6 @@ information_archive_data_extraction() {
 # print data extraction success message
 # USAGE: information_archive_data_extraction_done
 information_archive_data_extraction_done() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -109,7 +107,6 @@ information_archive_data_extraction_done() {
 # print package building message
 # USAGE: information_package_building $file
 information_package_building() {
-	# shellcheck disable=SC2039
 	local message file
 	file="$1"
 	# shellcheck disable=SC2031
@@ -129,7 +126,6 @@ information_package_building() {
 # print package building message
 # USAGE: information_package_building $file
 information_package_building_done() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -235,7 +231,6 @@ info_archive_integrity_check() {
 # print hash computation message
 # USAGE: info_archive_hash_computation $file
 info_archive_hash_computation() {
-	# shellcheck disable=SC2039
 	local file message
 	file=$(basename "$1")
 	# shellcheck disable=SC2031
@@ -255,7 +250,6 @@ info_archive_hash_computation() {
 # print hash computation success message
 # USAGE: info_archive_hash_computation_done
 info_archive_hash_computation_done() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -273,7 +267,6 @@ info_archive_hash_computation_done() {
 # inform the need of a local overlay on gentoo for ebuilds
 # USAGE: info_local_overlay_gentoo
 info_local_overlay_gentoo() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
@@ -294,7 +287,6 @@ info_local_overlay_gentoo() {
 # inform the need to move the packages to a distfile on egentoo
 # USAGE: info_package_to_distfiles
 info_package_to_distfiles() {
-	# shellcheck disable=SC2039
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in

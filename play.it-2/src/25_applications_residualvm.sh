@@ -3,8 +3,8 @@
 # RETURN: the ResidualVM id
 application_residualvm_residualid() {
 	# Check that the application uses the residualvm type
-	# shellcheck disable=SC2039
 	local application application_type
+	application="$1"
 	application_type=$(application_type "$application")
 	if [ "$application_type" != 'residualvm' ]; then
 		error_application_wrong_type 'application_residualvm_residualid' "$application_type"
@@ -12,7 +12,6 @@ application_residualvm_residualid() {
 	fi
 
 	# Get the application ResidualVM id from its identifier
-	# shellcheck disable=SC2039
 	local application_residualid
 	application_residualid=$(get_value "${application}_RESIDUALID")
 

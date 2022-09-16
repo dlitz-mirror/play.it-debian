@@ -42,7 +42,10 @@ debug_entering_function() {
 
 		case "$debug_level" in
 			([0-9]) ;;
-			(*) error_invalid_argument 'debug_level' 'debug_entering_function' ;;
+			(*)
+				error_invalid_argument 'debug_level' 'debug_entering_function'
+				return 1
+			;;
 		esac
 
 	else
@@ -78,7 +81,10 @@ debug_leaving_function() {
 
 		case "$debug_level" in
 			([0-9]) ;;
-			(*) error_invalid_argument 'debug_level' 'debug_entering_function' ;;
+			(*)
+				error_invalid_argument 'debug_level' 'debug_entering_function'
+				return 1
+			;;
 		esac
 
 	else
@@ -133,7 +139,6 @@ debug_using_directory() {
 		return 0
 	fi
 
-	# shecllcheck disable=SC2039
 	local dir_path
 	dir_path="$1"
 
@@ -262,7 +267,6 @@ debug_temp_dir_nonexistant() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -283,7 +287,6 @@ debug_temp_dir_nonwritable() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -304,7 +307,6 @@ debug_temp_dir_not_enough_space() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -325,7 +327,6 @@ debug_temp_dir_case_insensitive_not_supported() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 
@@ -346,7 +347,6 @@ debug_temp_dir_no_unix_permissions() {
 		return 0
 	fi
 
-	# shellcheck disable=SC2039
 	local directory
 	directory="$1"
 

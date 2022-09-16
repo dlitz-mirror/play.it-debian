@@ -1,9 +1,5 @@
 # set temporary directories
 # USAGE: set_temp_directories $pkg[…]
-# NEEDED VARS: (ARCHIVE_SIZE) GAME_ID (LANG) (PWD) (XDG_CACHE_HOME) (XDG_RUNTIME_DIR)
-# CALLS: testvar temporary_directories_find_base check_directory_is_case_sensitive
-#	check_directory_supports_unix_permissions
-# SETS: PLAYIT_WORKDIR postinst prerm
 set_temp_directories() {
 	local base_directory
 
@@ -13,11 +9,10 @@ set_temp_directories() {
 	[ "$PLAYIT_WORKDIR" ] && rm --force --recursive "$PLAYIT_WORKDIR"
 
 	# Look for a directory with enough free space to work in
-	# shellcheck disable=SC2039
 	base_directory=$(temporary_directories_find_base)
 
 	# Generate a directory with a unique name for the current instance
-	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "${GAME_ID}.XXXXX")"
+	PLAYIT_WORKDIR="$(mktemp --directory --tmpdir="$base_directory" "$(game_id).XXXXX")"
 	debug_option_value 'PLAYIT_WORKDIR'
 	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR
@@ -32,11 +27,11 @@ set_temp_directories() {
 	# Export the path to the packages to build as PKG_xxx_PATH
 	# Some game scripts are expecting this variable to be set
 	# These should be updated to call `package_get_path` instead
-	# shellcheck disable=SC2039
-	local package
+	local package package_path
 	for package in "$@"; do
 		testvar "$package" 'PKG'
-		eval "${package}_PATH='$(package_get_path "$package")'"
+		package_path=$(package_get_path "$package")
+		eval "${package}_PATH='${package_path}'"
 		export "${package?}_PATH"
 	done
 
@@ -63,10 +58,8 @@ temporary_directories_list_candidates() {
 temporary_directories_find_base() {
 	debug_entering_function 'temporary_directories_find_base' 2
 
-	# shellcheck disable=SC2039
 	local base_directory candidate_directory
 	if [ "$NO_FREE_SPACE_CHECK" -eq 0 ]; then
-		# shellcheck disable=SC2039
 		local free_space_required free_space_available
 		###
 		# TODO
@@ -82,7 +75,6 @@ temporary_directories_find_base() {
 	fi
 
 	# Scan candidate directories to find one with enough free space to use for storing temporary files
-	# shellcheck disable=SC2039
 	while read -r candidate_directory
 	do
 		if [ ! -d "$candidate_directory" ]; then
@@ -142,11 +134,11 @@ temporary_directories_find_base() {
 #         it ends with "/play.it" if the parent directory is owned by the current user,
 #         or with "/play.it-${USER}" otherwise, where "${USER}" is the current user name
 temporary_directories_full_path() {
-	# shellcheck disable=SC2039
 	local parent_dir
 	parent_dir="$1"
 	if [ ! -d "$parent_dir" ]; then
 		error_not_a_directory "$parent_dir"
+		return 1
 	fi
 
 	if [ "$(stat -c '%u' "$parent_dir")" -eq "$(id -u)" ]; then
