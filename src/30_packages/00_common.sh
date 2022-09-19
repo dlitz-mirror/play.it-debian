@@ -117,7 +117,8 @@ package_format_guess() {
 			'artix' | \
 			'manjaro' | \
 			'manjarolinux' | \
-			'endeavouros' \
+			'endeavouros' | \
+			'steamos' \
 		)
 			package_type='arch'
 		;;
