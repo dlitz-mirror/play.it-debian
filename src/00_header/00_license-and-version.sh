@@ -11,6 +11,7 @@
 # Copyright © 2020, macaron
 # Copyright © 2020, Hoël Bézier
 # Copyright © 2020, quinao
+# Copyright © 2022, JashinYoda
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
