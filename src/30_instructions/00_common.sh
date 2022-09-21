@@ -11,6 +11,9 @@ print_instructions() {
 	# Print the list of library dependencies that have been skipped
 	if [ -n "$(dependencies_unknown_libraries_list)" ]; then
 		warning_dependencies_unknown_libraries
+		# Clear list of skipped libraries dependencies,
+		# so it will not be shown again.
+		dependencies_unknown_libraries_clear
 	fi
 
 	# Sort packages by architecture

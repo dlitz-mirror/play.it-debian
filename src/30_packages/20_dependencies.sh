@@ -102,6 +102,15 @@ dependencies_unknown_libraries_list() {
 		grep --invert-match --regexp='^$'
 }
 
+# Clear the list of unknown libraries
+# USAGE: dependencies_unknown_libraries_clear
+dependencies_unknown_libraries_clear() {
+	local unknown_library unknown_libraries_list
+	unknown_libraries_list=$(dependencies_unknown_libraries_file)
+
+	rm --force "$unknown_libraries_list"
+}
+
 # Add a library to the list of unknown ones
 # USAGE: dependencies_unknown_libraries_add $unknown_library
 dependencies_unknown_libraries_add() {
