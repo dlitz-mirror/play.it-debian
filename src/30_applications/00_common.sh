@@ -2,9 +2,12 @@
 # USAGE: applications_list
 # RETURN: a space-separated list of application identifiers
 applications_list() {
-	# If APPLICATIONS_LIST is set, return it instead of trying to guess the list
-	if [ -n "$APPLICATIONS_LIST" ]; then
-		printf '%s' "$APPLICATIONS_LIST"
+	# Return APPLICATIONS_LIST value, if it is explicitly set.
+	# Archive-specific values are supported.
+	local applications_list
+	applications_list=$(get_context_specific_value 'archive' 'APPLICATIONS_LIST')
+	if [ -n "$applications_list" ]; then
+		printf '%s' "$applications_list"
 		return 0
 	fi
 
@@ -24,7 +27,7 @@ applications_list() {
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
 	# - APP_xxx_RESIDUALID
-	local sed_expression application_id applications_list
+	local sed_expression application_id
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
 		if [ -n "$application_id" ]; then
