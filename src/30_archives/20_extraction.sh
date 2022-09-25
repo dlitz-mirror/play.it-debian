@@ -1,9 +1,29 @@
-# Check that the tools required to extract the content of a given archive are available.
+# Check that the tools required to extract the content of a given archive are available,
+# including the archive extra parts.
 # USAGE: archive_dependencies_check $archive
 archive_dependencies_check() {
 	local archive
 	archive="$1"
 	assert_not_empty 'archive' 'archive_dependencies_check'
+
+	# Check extraction dependencies for main archive.
+	archive_dependencies_check_single "$archive"
+
+	# Check extraction dependencies for archive extra parts.
+	local archive_part
+	for i in $(seq 1 9); do
+		archive_part="${archive}_PART${i}"
+		test -z "$(get_value "$archive_part")" && break
+		archive_dependencies_check_single "$archive_part"
+	done
+}
+
+# Check that the tools required to extract the content of a given single archive are available.
+# USAGE: archive_dependencies_check_single $archive
+archive_dependencies_check_single() {
+	local archive
+	archive="$1"
+	assert_not_empty 'archive' 'archive_dependencies_check_single'
 
 	local archive_extractor
 	archive_extractor=$(archive_extractor "$archive")

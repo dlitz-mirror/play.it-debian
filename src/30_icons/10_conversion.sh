@@ -59,6 +59,12 @@ icons_inclusion() {
 	# try to fetch the icons for all applications.
 	if [ "$#" -eq 0 ]; then
 		applications_list=$(applications_list)
+		# If icons_inclusion has been called with no argument,
+		# the applications list should not be empty.
+		if [ -z "$applications_list" ]; then
+			error_applications_list_empty
+			return 1
+		fi
 		icons_inclusion $applications_list
 		return 0
 	fi

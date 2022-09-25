@@ -328,11 +328,17 @@ dependency_package_providing_library_arch() {
 		('libavutil.so.56')
 			package_name='ffmpeg'
 		;;
+		('libbz2.so.1.0')
+			package_name='bzip2'
+		;;
 		('libc.so.6')
 			package_name='glibc'
 		;;
 		('libcairo.so.2')
 			package_name='cairo'
+		;;
+		('libcom_err.so.2')
+			package_name='e2fsprogs'
 		;;
 		('libcrypto.so.1.1')
 			package_name='openssl'
@@ -385,6 +391,9 @@ dependency_package_providing_library_arch() {
 		('libgobject-2.0.so.0')
 			package_name='glib2'
 		;;
+		('libgssapi_krb5.so.2')
+			package_name='krb5'
+		;;
 		('libgthread-2.0.so.0')
 			package_name='glib2'
 		;;
@@ -394,6 +403,15 @@ dependency_package_providing_library_arch() {
 		('libICE.so.6')
 			package_name='libice'
 		;;
+		('libidn2.so.0')
+			package_name='libidn2'
+		;;
+		('libk5crypto.so.3')
+			package_name='krb5'
+		;;
+		('libkrb5.so.3')
+			package_name='krb5'
+		;;
 		('libm.so.6')
 			package_name='glibc'
 		;;
@@ -402,6 +420,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libminiupnpc.so.17')
 			package_name='miniupnpc'
+		;;
+		('libnghttp2.so.14')
+			package_name='libnghttp2'
 		;;
 		('libopenal.so.1')
 			package_name='openal'
@@ -418,6 +439,9 @@ dependency_package_providing_library_arch() {
 		('libpng16.so.16')
 			package_name='libpng'
 		;;
+		('libpsl.so.5')
+			package_name='libpsl'
+		;;
 		('libpthread.so.0')
 			package_name='glibc'
 		;;
@@ -433,6 +457,9 @@ dependency_package_providing_library_arch() {
 		('librt.so.1')
 			package_name='glibc'
 		;;
+		('librtmp.so.1')
+			package_name='rtmpdump'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='sdl'
 		;;
@@ -445,6 +472,9 @@ dependency_package_providing_library_arch() {
 		('libSDL2-2.0.so.0')
 			package_name='sdl2'
 		;;
+		('libSDL2_image-2.0.so.0')
+			package_name='sdl2_image'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='sdl2_ttf'
 		;;
@@ -454,6 +484,12 @@ dependency_package_providing_library_arch() {
 		('libsmpeg-0.4.so.0')
 			package_name='smpeg'
 		;;
+		('libsodium.so.23')
+			package_name='libsodium'
+		;;
+		('libssh2.so.1')
+			package_name='libssh2'
+		;;
 		('libssl.so.1.1')
 			package_name='openssl'
 		;;
@@ -462,6 +498,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libstdc++.so.6')
 			package_name='gcc-libs'
+		;;
+		('libthread_db.so.1')
+			package_name='glibc'
 		;;
 		('libturbojpeg.so.0')
 			package_name='libjpeg-turbo'
@@ -493,11 +532,20 @@ dependency_package_providing_library_arch() {
 		('libXft.so.2')
 			package_name='libxft'
 		;;
+		('libXi.so.6')
+			package_name='libxi'
+		;;
 		('libXinerama.so.1')
 			package_name='libxinerama'
 		;;
 		('libXrandr.so.2')
 			package_name='libxrandr'
+		;;
+		('libXrender.so.1')
+			package_name='libxrender'
+		;;
+		('libXtst.so.6')
+			package_name='libxtst'
 		;;
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm'
@@ -548,11 +596,17 @@ dependency_package_providing_library_arch32() {
 		('libavutil.so.56')
 			package_name='lib32-libffmpeg'
 		;;
+		('libbz2.so.1.0')
+			package_name='lib32-bzip2'
+		;;
 		('libc.so.6')
 			package_name='lib32-glibc'
 		;;
 		('libcairo.so.2')
 			package_name='lib32-cairo'
+		;;
+		('libcom_err.so.2')
+			package_name='lib32-e2fsprogs'
 		;;
 		('libcrypto.so.1.1')
 			package_name='lib32-openssl'
@@ -605,6 +659,9 @@ dependency_package_providing_library_arch32() {
 		('libgobject-2.0.so.0')
 			package_name='lib32-glib2'
 		;;
+		('libgssapi_krb5.so.2')
+			package_name='lib32-krb5'
+		;;
 		('libgthread-2.0.so.0')
 			package_name='lib32-glib2'
 		;;
@@ -613,6 +670,15 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libICE.so.6')
 			package_name='lib32-libice'
+		;;
+		('libidn2.so.0')
+			package_name='lib32-libidn2'
+		;;
+		('libk5crypto.so.3')
+			package_name='lib32-krb5'
+		;;
+		('libkrb5.so.3')
+			package_name='lib-32krb5'
 		;;
 		('libm.so.6')
 			package_name='lib32-glibc'
@@ -624,6 +690,9 @@ dependency_package_providing_library_arch32() {
 		('libminiupnpc.so.17')
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
+		;;
+		('libnghttp2.so.14')
+			package_name='lib32-libnghttp2'
 		;;
 		('libopenal.so.1')
 			package_name='lib32-openal'
@@ -640,6 +709,9 @@ dependency_package_providing_library_arch32() {
 		('libpng16.so.16')
 			package_name='lib32-libpng'
 		;;
+		('libpsl.so.5')
+			package_name='lib32-libpsl'
+		;;
 		('libpthread.so.0')
 			package_name='lib32-glibc'
 		;;
@@ -655,6 +727,9 @@ dependency_package_providing_library_arch32() {
 		('librt.so.1')
 			package_name='lib32-glibc'
 		;;
+		('librtmp.so.1')
+			package_name='lib32-rtmpdump'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='lib32-sdl'
 		;;
@@ -667,6 +742,9 @@ dependency_package_providing_library_arch32() {
 		('libSDL2-2.0.so.0')
 			package_name='lib32-sdl2'
 		;;
+		('libSDL2_image-2.0.so.0')
+			package_name='lib32-sdl2_image'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='lib32-sdl2_ttf'
 		;;
@@ -676,6 +754,12 @@ dependency_package_providing_library_arch32() {
 		('libsmpeg-0.4.so.0')
 			package_name='lib32-smpeg'
 		;;
+		('libsodium.so.23')
+			package_name='lib32-libsodium'
+		;;
+		('libssh2.so.1')
+			package_name='lib32-libssh2'
+		;;
 		('libssl.so.1.1')
 			package_name='lib32-openssl'
 		;;
@@ -684,6 +768,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libstdc++.so.6')
 			package_name='lib32-gcc-libs'
+		;;
+		('libthread_db.so.1')
+			package_name='lib32-glibc'
 		;;
 		('libturbojpeg.so.0')
 			package_name='lib32-libjpeg-turbo'
@@ -716,11 +803,20 @@ dependency_package_providing_library_arch32() {
 		('libXft.so.2')
 			package_name='lib32-libxft'
 		;;
+		('libXi.so.6')
+			package_name='lib32-libxi'
+		;;
 		('libXinerama.so.1')
 			package_name='lib32-libxinerama'
 		;;
 		('libXrandr.so.2')
 			package_name='lib32-libxrandr'
+		;;
+		('libXrender.so.1')
+			package_name='lib32-libxrender'
+		;;
+		('libXtst.so.6')
+			package_name='lib32-libxtst'
 		;;
 		('libXxf86vm.so.1')
 			package_name='lib32-libxxf86vm'

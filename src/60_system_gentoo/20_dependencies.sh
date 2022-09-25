@@ -240,11 +240,17 @@ dependency_package_providing_library_gentoo() {
 		('libavutil.so.56')
 			package_name='media-video/ffmpeg'
 		;;
+		('libbz2.so.1.0')
+			package_name='app-arch/bzip2'
+		;;
 		('libc.so.6')
 			package_name='sys-libs/glibc'
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo'
+		;;
+		('libcom_err.so.2')
+			package_name='sys-libs/e2fsprogs-libs'
 		;;
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl'
@@ -297,6 +303,9 @@ dependency_package_providing_library_gentoo() {
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2'
 		;;
+		('libgssapi_krb5.so.2')
+			package_name='app-crypt/mit-krb5'
+		;;
 		('libgthread-2.0.so.0')
 			package_name='dev-libs/glib:2'
 		;;
@@ -306,6 +315,15 @@ dependency_package_providing_library_gentoo() {
 		('libICE.so.6')
 			package_name='x11-libs/libICE'
 		;;
+		('libidn2.so.0')
+			package_name='net-dns/libidn2'
+		;;
+		('libk5crypto.so.3')
+			package_name='app-crypt/mit-krb5'
+		;;
+		('libkrb5.so.3')
+			package_name='app-crypt/mit-krb5'
+		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc'
 		;;
@@ -314,6 +332,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libminiupnpc.so.17')
 			package_name='net-libs/miniupnpc'
+		;;
+		('libnghttp2.so.14')
+			package_name='net-libs/nghttp2'
 		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal'
@@ -330,6 +351,9 @@ dependency_package_providing_library_gentoo() {
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16'
 		;;
+		('libpsl.so.5')
+			package_name='net-libs/libpsl'
+		;;
 		('libpthread.so.0')
 			package_name='sys-libs/glibc'
 		;;
@@ -345,6 +369,9 @@ dependency_package_providing_library_gentoo() {
 		('librt.so.1')
 			package_name='sys-libs/glibc'
 		;;
+		('librtmp.so.1')
+			package_name='media-video/rtmpdump'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl'
 		;;
@@ -357,6 +384,9 @@ dependency_package_providing_library_gentoo() {
 		('libSDL2-2.0.so.0')
 			package_name='media-libs/libsdl2'
 		;;
+		('libSDL2_image-2.0.so.0')
+			package_name='media-libs/sdl2-image'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf'
 		;;
@@ -366,6 +396,12 @@ dependency_package_providing_library_gentoo() {
 		('libsmpeg-0.4.so.0')
 			package_name='media-libs/smpeg'
 		;;
+		('libsodium.so.23')
+			package_name='dev-libs/libsodium'
+		;;
+		('libssh2.so.1')
+			package_name='net-libs/libssh2'
+		;;
 		('libssl.so.1.1')
 			package_name='dev-libs/openssl'
 		;;
@@ -374,6 +410,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++'
+		;;
+		('libthread_db.so.1')
+			package_name='sys-libs/glibc'
 		;;
 		('libturbojpeg.so.0')
 			package_name='media-libs/libjpeg-turbo'
@@ -405,11 +444,20 @@ dependency_package_providing_library_gentoo() {
 		('libXft.so.2')
 			package_name='x11-libs/libXft'
 		;;
+		('libXi.so.6')
+			package_name='x11-libs/libXi'
+		;;
 		('libXinerama.so.1')
 			package_name='x11-libs/libXinerama'
 		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr'
+		;;
+		('libXrender.so.1')
+			package_name='x11-libs/libXrender'
+		;;
+		('libXtst.so.6')
+			package_name='x11-libs/libXtst'
 		;;
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm'
@@ -460,11 +508,17 @@ dependency_package_providing_library_gentoo32() {
 		('libavutil.so.56')
 			package_name='media-video/ffmpeg[abi_x86_32]'
 		;;
+		('libbz2.so.1.0')
+			package_name='app-arch/bzip2[abi_x86_32]'
+		;;
 		('libc.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo[abi_x86_32]'
+		;;
+		('libcom_err.so.2')
+			package_name='sys-libs/e2fsprogs-libs[abi_x86_32]'
 		;;
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl[abi_x86_32]'
@@ -517,6 +571,9 @@ dependency_package_providing_library_gentoo32() {
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
 		;;
+		('libgssapi_krb5.so.2')
+			package_name='app-crypt/mit-krb5[abi_x86_32]'
+		;;
 		('libgthread-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
 		;;
@@ -526,6 +583,15 @@ dependency_package_providing_library_gentoo32() {
 		('libICE.so.6')
 			package_name='x11-libs/libICE[abi_x86_32]'
 		;;
+		('libidn2.so.0')
+			package_name='net-dns/libidn2[abi_x86_32]'
+		;;
+		('libk5crypto.so.3')
+			package_name='app-crypt/mit-krb5[abi_x86_32]'
+		;;
+		('libkrb5.so.3')
+			package_name='app-crypt/mit-krb5[abi_x86_32]'
+		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
@@ -534,6 +600,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libminiupnpc.so.17')
 			package_name='net-libs/miniupnpc[abi_x86_32]'
+		;;
+		('libnghttp2.so.14')
+			package_name='net-libs/nghttp2[abi_x86_32]'
 		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal[abi_x86_32]'
@@ -550,6 +619,9 @@ dependency_package_providing_library_gentoo32() {
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16[abi_x86_32]'
 		;;
+		('libpsl.so.5')
+			package_name='net-libs/libpsl[abi_x86_32]'
+		;;
 		('libpthread.so.0')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
@@ -565,6 +637,9 @@ dependency_package_providing_library_gentoo32() {
 		('librt.so.1')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
+		('librtmp.so.1')
+			package_name='media-video/rtmpdump[abi_x86_32]'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl[abi_x86_32]'
 		;;
@@ -577,6 +652,9 @@ dependency_package_providing_library_gentoo32() {
 		('libSDL2-2.0.so.0')
 			package_name='media-libs/libsdl2[abi_x86_32]'
 		;;
+		('libSDL2_image-2.0.so.0')
+			package_name='media-libs/sdl2-image[abi_x86_32]'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf[abi_x86_32]'
 		;;
@@ -586,6 +664,12 @@ dependency_package_providing_library_gentoo32() {
 		('libsmpeg-0.4.so.0')
 			package_name='media-libs/smpeg[abi_x86_32]'
 		;;
+		('libsodium.so.23')
+			package_name='dev-libs/libsodium[abi_x86_32]'
+		;;
+		('libssh2.so.1')
+			package_name='net-libs/libssh2[abi_x86_32]'
+		;;
 		('libssl.so.1.1')
 			package_name='dev-libs/openssl[abi_x86_32]'
 		;;
@@ -594,6 +678,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++[abi_x86_32]'
+		;;
+		('libthread_db.so.1')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
 		('libturbojpeg.so.0')
 			package_name='media-libs/libjpeg-turbo[abi_x86_32]'
@@ -625,11 +712,20 @@ dependency_package_providing_library_gentoo32() {
 		('libXft.so.2')
 			package_name='x11-libs/libXft[abi_x86_32]'
 		;;
+		('libXi.so.6')
+			package_name='x11-libs/libXi[abi_x86_32]'
+		;;
 		('libXinerama.so.1')
 			package_name='x11-libs/libXinerama[abi_x86_32]'
 		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr[abi_x86_32]'
+		;;
+		('libXrender.so.1')
+			package_name='x11-libs/libXrender[abi_x86_32]'
+		;;
+		('libXtst.so.6')
+			package_name='x11-libs/libXtst[abi_x86_32]'
 		;;
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm[abi_x86_32]'

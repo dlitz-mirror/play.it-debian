@@ -11,6 +11,7 @@
 # Copyright © 2020, macaron
 # Copyright © 2020, Hoël Bézier
 # Copyright © 2020, quinao
+# Copyright © 2022, JashinYoda
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,7 +42,7 @@
 # send your bug reports to contact@dotslashplay.it
 ###
 
-LIBRARY_VERSION=2.18.0
+LIBRARY_VERSION=2.18.1
 # shellcheck disable=SC2034
-library_revision=20220826.5
+library_revision=20220924.1
 

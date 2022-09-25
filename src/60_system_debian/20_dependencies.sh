@@ -185,11 +185,17 @@ dependency_package_providing_library_deb() {
 		('libavutil.so.56')
 			package_name='libavutil56'
 		;;
+		('libbz2.so.1.0')
+			package_name='libbz2-1.0'
+		;;
 		('libc.so.6')
 			package_name='libc6'
 		;;
 		('libcairo.so.2')
 			package_name='libcairo2'
+		;;
+		('libcom_err.so.2')
+			package_name='libcom-err2'
 		;;
 		('libcrypto.so.1.1')
 			package_name='libssl1.1'
@@ -244,6 +250,9 @@ dependency_package_providing_library_deb() {
 		('libgobject-2.0.so.0')
 			package_name='libglib2.0-0'
 		;;
+		('libgssapi_krb5.so.2')
+			package_name='libgssapi-krb5-2'
+		;;
 		('libgthread-2.0.so.0')
 			package_name='libglib2.0-0'
 		;;
@@ -253,6 +262,15 @@ dependency_package_providing_library_deb() {
 		('libICE.so.6')
 			package_name='libice6'
 		;;
+		('libidn2.so.0')
+			package_name='libidn2-0'
+		;;
+		('libk5crypto.so.3')
+			package_name='libk5crypto3'
+		;;
+		('libkrb5.so.3')
+			package_name='libkrb5-3'
+		;;
 		('libm.so.6')
 			package_name='libc6'
 		;;
@@ -261,6 +279,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libminiupnpc.so.17')
 			package_name='libminiupnpc17'
+		;;
+		('libnghttp2.so.14')
+			package_name='libnghttp2-14'
 		;;
 		('libopenal.so.1')
 			package_name='libopenal1'
@@ -277,6 +298,9 @@ dependency_package_providing_library_deb() {
 		('libpng16.so.16')
 			package_name='libpng16-16'
 		;;
+		('libpsl.so.5')
+			package_name='libpsl5'
+		;;
 		('libpthread.so.0')
 			package_name='libc6'
 		;;
@@ -292,6 +316,9 @@ dependency_package_providing_library_deb() {
 		('librt.so.1')
 			package_name='libc6'
 		;;
+		('librtmp.so.1')
+			package_name='librtmp1'
+		;;
 		('libSDL-1.2.so.0')
 			package_name='libsdl1.2debian'
 		;;
@@ -304,6 +331,9 @@ dependency_package_providing_library_deb() {
 		('libSDL2-2.0.so.0')
 			package_name='libsdl2-2.0-0'
 		;;
+		('libSDL2_image-2.0.so.0')
+			package_name='libsdl2-image-2.0-0'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='libsdl2-ttf-2.0-0'
 		;;
@@ -313,6 +343,12 @@ dependency_package_providing_library_deb() {
 		('libsmpeg-0.4.so.0')
 			package_name='libsmpeg0'
 		;;
+		('libsodium.so.23')
+			package_name='libsodium23'
+		;;
+		('libssh2.so.1')
+			package_name='libssh2-1'
+		;;
 		('libssl.so.1.1')
 			package_name='libssl1.1'
 		;;
@@ -321,6 +357,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libstdc++.so.6')
 			package_name='libstdc++6'
+		;;
+		('libthread_db.so.1')
+			package_name='libc6'
 		;;
 		('libturbojpeg.so.0')
 			package_name='libturbojpeg0'
@@ -354,11 +393,20 @@ dependency_package_providing_library_deb() {
 		('libXft.so.2')
 			package_name='libxft2'
 		;;
+		('libXi.so.6')
+			package_name='libxi6'
+		;;
 		('libXinerama.so.1')
 			package_name='libxinerama1'
 		;;
 		('libXrandr.so.2')
 			package_name='libxrandr2'
+		;;
+		('libXrender.so.1')
+			package_name='libxrender1'
+		;;
+		('libXtst.so.6')
+			package_name='libxtst6'
 		;;
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm1'
