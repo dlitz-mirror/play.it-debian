@@ -151,29 +151,29 @@ pkg_set_deps_gentoo() {
 				pkg_dep='x11-apps/xrandr'
 			;;
 			( \
-				'libgdk_pixbuf-2.0.so.0' | \
-				'libc.so.6' | \
-				'libglib-2.0.so.0' | \
-				'libgobject-2.0.so.0' | \
-				'libGLU.so.1' | \
-				'libGL.so.1' | \
-				'libgdk-x11-2.0.so.0' | \
-				'libgtk-x11-2.0.so.0' | \
 				'libasound.so.2' | \
 				'libasound_module_'*'.so' | \
+				'libc.so.6' | \
+				'libgdk_pixbuf-2.0.so.0' | \
+				'libgdk-x11-2.0.so.0' | \
+				'libGL.so.1' | \
+				'libglib-2.0.so.0' | \
+				'libGLU.so.1' | \
+				'libgobject-2.0.so.0' | \
+				'libgtk-x11-2.0.so.0' | \
 				'libmbedtls.so.12' | \
 				'libpng16.so.16' | \
 				'libpulse.so.0' | \
 				'libpulse-simple.so.0' | \
-				'libstdc++.so.6' | \
-				'libudev.so.1' | \
-				'libX11.so.6' | \
 				'libopenal.so.1' | \
 				'libSDL-1.2.so.0' | \
 				'libSDL2-2.0.so.0' | \
+				'libstdc++.so.6' | \
 				'libturbojpeg.so.0' | \
 				'libuv.so.1' | \
+				'libudev.so.1' | \
 				'libvorbisfile.so.3' | \
+				'libX11.so.6' | \
 				'libz.so.1' \
 			)
 				case "$package_architecture" in
