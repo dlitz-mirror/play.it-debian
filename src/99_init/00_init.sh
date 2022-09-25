@@ -65,10 +65,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_OPTION_COMPRESSION_DEB='none'
 	export DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	export DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
-	export DEFAULT_OPTION_PREFIX_DEB='/usr/local'
-	export DEFAULT_OPTION_PREFIX_ARCH='/usr'
-	export DEFAULT_OPTION_PREFIX_GENTOO='/usr'
-	export DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
+	export DEFAULT_OPTION_PREFIX='/usr'
 	export DEFAULT_OPTION_PACKAGE='deb'
 	export DEFAULT_OPTION_ICONS='yes'
 	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
@@ -107,8 +104,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ALLOWED_VALUES_COMPRESSION="$(get_value "ALLOWED_VALUES_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX="$(get_value "DEFAULT_OPTION_PREFIX_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 
 	# Set options not already set by script arguments to default values
 
