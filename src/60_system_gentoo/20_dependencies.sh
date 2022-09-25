@@ -1,8 +1,13 @@
 # Gentoo - Set list of generic dependencies
 # USAGE: pkg_set_deps_gentoo $dep[…]
 pkg_set_deps_gentoo() {
+	# $pkg is inherited from the calling function.
+	# It should be passed as a mandatory argument to this function instead.
+	local package
+	package="$pkg"
+
 	local package_architecture architecture_suffix architecture_suffix_use
-	package_architecture=$(package_get_architecture "$pkg")
+	package_architecture=$(package_get_architecture "$package")
 	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
@@ -35,7 +40,7 @@ pkg_set_deps_gentoo() {
 			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
-				if [ "$(package_get_architecture "$pkg")" = '32' ]; then
+				if [ "$(package_get_architecture "$package")" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
 			;;
@@ -58,8 +63,11 @@ pkg_set_deps_gentoo() {
 				pkg_dep="net-misc/curl$architecture_suffix"
 			;;
 			('libcurl-gnutls')
+				local architecture_string
 				pkg_dep="net-libs/libcurl-debian$architecture_suffix"
 				pkg_overlay='steam-overlay'
+				architecture_string="$(package_get_architecture_string "$package")"
+				dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir "$architecture_string")/debiancompat" "$package"
 			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
@@ -107,7 +115,7 @@ pkg_set_deps_gentoo() {
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
-				case "$(package_get_architecture "$pkg")" in
+				case "$(package_get_architecture "$package")" in
 					('32') pkg_set_deps_gentoo 'wine32' ;;
 					('64') pkg_set_deps_gentoo 'wine64' ;;
 				esac
@@ -119,7 +127,7 @@ pkg_set_deps_gentoo() {
 				pkg_dep='virtual/wine[abi_x86_64]'
 			;;
 			('wine-staging')
-				case "$(package_get_architecture "$pkg")" in
+				case "$(package_get_architecture "$package")" in
 					('32') pkg_set_deps_gentoo 'wine32-staging' ;;
 					('64') pkg_set_deps_gentoo 'wine64-staging' ;;
 				esac
@@ -178,20 +186,20 @@ pkg_set_deps_gentoo() {
 			)
 				case "$package_architecture" in
 					('32')
-						pkg_dep=$(dependency_package_providing_library_gentoo32 "$dep")
+						pkg_dep=$(dependency_package_providing_library_gentoo32 "$dep" "$package")
 					;;
 					(*)
-						pkg_dep=$(dependency_package_providing_library_gentoo "$dep")
+						pkg_dep=$(dependency_package_providing_library_gentoo "$dep" "$package")
 					;;
 				esac
 			;;
 			(*)
 				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-				local package packages_list
+				local tested_package packages_list
 				packages_list=$(packages_get_list)
-				for package in $packages_list; do
-					if [ "$package" != "$pkg" ]; then
-						if [ "$(package_get_provide "$package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
+				for tested_package in $packages_list; do
+					if [ "$tested_package" != "$package" ]; then
+						if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
 							pkg_dep="|| ( ${pkg_dep} )"
 						fi
 					fi
@@ -209,10 +217,11 @@ pkg_set_deps_gentoo() {
 }
 
 # Gentoo - Print the package name providing the given native library
-# USAGE: dependency_package_providing_library_gentoo $library
+# USAGE: dependency_package_providing_library_gentoo $library $package
 dependency_package_providing_library_gentoo() {
-	local library package_name pkg_overlay
+	local library package package_name pkg_overlay
 	library="$1"
+	package="$2"
 	case "$library" in
 		('ld-linux.so.2')
 			package_name='sys-libs/glibc'
@@ -259,6 +268,7 @@ dependency_package_providing_library_gentoo() {
 		('libcurl-gnutls.so.4')
 			package_name='net-libs/libcurl-debian'
 			pkg_overlay='steam-overlay'
+			dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir 'amd64')/debiancompat" "$package"
 			;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc'
@@ -538,10 +548,11 @@ dependency_package_providing_library_gentoo() {
 }
 
 # Gentoo - Print the package name providing the given native library in a 32-bit build
-# USAGE: dependency_package_providing_library_gentoo32 $library
+# USAGE: dependency_package_providing_library_gentoo32 $library $package
 dependency_package_providing_library_gentoo32() {
-	local library package_name pkg_overlay
+	local library package package_name pkg_overlay
 	library="$1"
+	package="$2"
 	case "$library" in
 		('ld-linux.so.2')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
@@ -588,6 +599,7 @@ dependency_package_providing_library_gentoo32() {
 		('libcurl-gnutls.so.4')
 			package_name='net-libs/libcurl-debian[abi_x86_32]'
 			pkg_overlay='steam-overlay'
+			dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir 'x86')/debiancompat" "$package"
 			;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
@@ -925,4 +937,49 @@ dependency_gentoo_overlays_add() {
 	fi
 
 	printf '%s\n' "$overlay" >> "$overlays_file"
+}
+
+# Gentoo - Print gentoo libdir name
+# USAGE: dependency_gentoo_libdir $arch_string
+# Note: This prints the name (ie. “lib”) not the path (ie. “/usr/lib”)
+dependency_gentoo_libdir() {
+	local arch_string="$1"
+	if command -v portageq >/dev/null 2>&1; then
+		print '%s' "$(portageq envvar "LIBDIR_${arch_string}")"
+	else
+		case "$arch_string" in
+			('amd64')
+				printf '%s' 'lib64'
+				;;
+			('x86')
+				printf '%s' 'lib'
+				;;
+			('x32')
+				printf '%s' 'libx32'
+				;;
+			(*)
+				error_unknown_gentoo_architecture_string "$arch_string" 'dependency_gentoo_libdir'
+				return 1
+				;;
+		esac
+	fi
+	return 0
+}
+
+# Gentoo - Link library installed in non-standard libdir to the game’s libdir
+# USAGE: dependencies_gentoo_link $libname $libdir $package
+# Note: $libdir is the library’s directory, not the game’s one!
+dependencies_gentoo_link() {
+	local libname libdir package game_libdir
+	libname="$1"
+	libdir="$2"
+	package="$3"
+	game_libdir="$(path_libraries)"
+
+	local package_path library_destination
+	package_path=$(package_get_path "$package")
+	library_destination="${package_path}${game_libdir}"
+
+	mkdir --parents "$library_destination"
+	ln -sft "$library_destination" "${libdir}/${libname}"
 }
