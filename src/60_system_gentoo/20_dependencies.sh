@@ -256,6 +256,10 @@ dependency_package_providing_library_gentoo() {
 		('libcurl.so.4')
 			package_name='net-misc/curl'
 		;;
+		('libcurl-gnutls.so.4')
+			package_name='net-libs/libcurl-debian'
+			pkg_overlay='steam-overlay'
+			;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc'
 		;;
@@ -581,6 +585,10 @@ dependency_package_providing_library_gentoo32() {
 		('libcurl.so.4')
 			package_name='net-misc/curl[abi_x86_32]'
 		;;
+		('libcurl-gnutls.so.4')
+			package_name='net-libs/libcurl-debian[abi_x86_32]'
+			pkg_overlay='steam-overlay'
+			;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
