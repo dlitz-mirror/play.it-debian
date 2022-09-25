@@ -7,8 +7,28 @@ content_inclusion_default() {
 
 	local package
 	for package in $packages_list; do
+		content_inclusion_default_libraries "$package"
 		content_inclusion_default_game_data "$package"
 		content_inclusion_default_documentation "$package"
+	done
+}
+
+# Fetch files from the archive, and include them into the package skeleton.
+# A list of default content identifiers is used, limited to native libraries for a single package.
+# USAGE: content_inclusion_default_libraries $package
+content_inclusion_default_libraries() {
+	local package package_suffix
+	package="$1"
+	assert_not_empty 'package' 'content_inclusion_default_libraries'
+	package_suffix="${package#PKG_}"
+
+	local target_directory
+	target_directory=$(path_libraries)
+
+	content_inclusion "LIBS_${package_suffix}" "$package" "$target_directory"
+	local index
+	for index in $(seq 0 9); do
+		content_inclusion "LIBS${index}_${package_suffix}" "$package" "$target_directory"
 	done
 }
 
