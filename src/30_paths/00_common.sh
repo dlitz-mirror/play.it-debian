@@ -92,3 +92,17 @@ path_icons() {
 
 	printf '%s/share/icons/hicolor' "$default_install_prefix"
 }
+
+# Print install path for native libraries.
+# USAGE: path_libraries
+path_libraries() {
+	local install_prefix
+	install_prefix="$OPTION_PREFIX"
+	assert_not_empty 'install_prefix' 'path_game_data'
+
+	local game_id
+	game_id=$(game_id)
+	assert_not_empty 'game_id' 'path_game_data'
+
+	printf '%s/lib/games/%s' "$install_prefix" "$game_id"
+}
