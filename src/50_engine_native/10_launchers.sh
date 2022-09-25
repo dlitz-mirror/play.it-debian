@@ -81,8 +81,6 @@ launcher_write_script_nativenoprefix_run() {
 
 # native - run the game (common part)
 # USAGE: launcher_write_script_native_run_common $application $file
-# CALLS: launcher_write_script_prerun launcher_write_script_postrun launcher_native_get_extra_library_path
-# CALLED BY: launcher_write_script_native_run launcher_write_script_nativenoprefix_run
 launcher_write_script_native_run_common() {
 	# parse arguments
 	local application
@@ -92,37 +90,8 @@ launcher_write_script_native_run_common() {
 
 	launcher_write_script_prerun "$application" "$file"
 
-	# Set path to extra libraries
-	case "$OPTION_PACKAGE" in
-		('gentoo'|'egentoo')
-			cat >> "$file" <<- 'EOF'
-			library_path=
-			if [ -n "$APP_LIBS" ]; then
-			    library_path="$APP_LIBS:"
-			fi
-			EOF
-			local extra_library_path
-			extra_library_path="$(launcher_native_get_extra_library_path)"
-			if [ -n "$extra_library_path" ]; then
-				cat >> "$file" <<- EOF
-				library_path="\${library_path}$extra_library_path"
-				EOF
-			fi
-			cat >> "$file" <<- 'EOF'
-			if [ -n "$library_path" ]; then
-			    LD_LIBRARY_PATH="${library_path}$LD_LIBRARY_PATH"
-			    export LD_LIBRARY_PATH
-			fi
-			EOF
-		;;
-		(*)
-			cat >> "$file" <<- 'EOF'
-			if [ -n "$APP_LIBS" ]; then
-			    export LD_LIBRARY_PATH="${APP_LIBS}:${LD_LIBRARY_PATH}"
-			fi
-			EOF
-		;;
-	esac
+	# Set loading paths for libraries
+	launcher_native_libraries_paths >> "$file"
 
 	cat >> "$file" <<- 'EOF'
 	"./$APP_EXE" $APP_OPTIONS "$@"
@@ -133,4 +102,34 @@ launcher_write_script_native_run_common() {
 
 	sed --in-place 's/    /\t/g' "$file"
 	return 0
+}
+
+# Linux native - Print libraries loading path.
+# USAGE: launcher_native_libraries_paths
+launcher_native_libraries_paths() {
+	local path_system
+	path_system=$(path_libraries)
+	assert_not_empty 'path_system' 'launcher_native_libraries_paths'
+
+	local path_user
+	path_user='${HOME}/.local/lib/games/${GAME_ID}'
+
+	cat <<- EOF
+	# Set loading paths for libraries
+	PLAYIT_LIBS_PATH_LEGACY="\$APP_LIBS"
+	PLAYIT_LIBS_PATH_SYSTEM='${path_system}'
+	PLAYIT_LIBS_PATH_USER="${path_user}"
+	EOF
+	cat <<- 'EOF'
+	if [ -n "$PLAYIT_LIBS_PATH_LEGACY" ]; then
+	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_LEGACY}:${LD_LIBRARY_PATH}"
+	fi
+	if [ -e "$PLAYIT_LIBS_PATH_SYSTEM" ]; then
+	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_SYSTEM}:${LD_LIBRARY_PATH}"
+	fi
+	if [ -e "$PLAYIT_LIBS_PATH_USER" ]; then
+	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_USER}:${LD_LIBRARY_PATH}"
+	fi
+	export LD_LIBRARY_PATH
+	EOF
 }
