@@ -202,9 +202,7 @@ pkg_set_deps_gentoo() {
 			pkg_deps="$pkg_deps $pkg_dep"
 		fi
 		if [ -n "$pkg_overlay" ]; then
-			if ! printf '%s' "$GENTOO_OVERLAYS" | sed --regexp-extended 's/\s+/\n/g' | grep --fixed-strings --line-regexp --quiet "$pkg_overlay"; then
-				GENTOO_OVERLAYS="$GENTOO_OVERLAYS $pkg_overlay"
-			fi
+			dependency_gentoo_overlays_add "$pkg_overlay"
 			pkg_overlay=''
 		fi
 	done
@@ -213,7 +211,7 @@ pkg_set_deps_gentoo() {
 # Gentoo - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_gentoo $library
 dependency_package_providing_library_gentoo() {
-	local library package_name
+	local library package_name pkg_overlay
 	library="$1"
 	case "$library" in
 		('ld-linux.so.2')
@@ -526,6 +524,9 @@ dependency_package_providing_library_gentoo() {
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
+		if [ -n "$pkg_overlay" ]; then
+			dependency_gentoo_overlays_add "$pkg_overlay"
+		fi
 		return 0
 	fi
 
@@ -535,7 +536,7 @@ dependency_package_providing_library_gentoo() {
 # Gentoo - Print the package name providing the given native library in a 32-bit build
 # USAGE: dependency_package_providing_library_gentoo32 $library
 dependency_package_providing_library_gentoo32() {
-	local library package_name
+	local library package_name pkg_overlay
 	library="$1"
 	case "$library" in
 		('ld-linux.so.2')
@@ -848,6 +849,9 @@ dependency_package_providing_library_gentoo32() {
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
+		if [ -n "$pkg_overlay" ]; then
+			dependency_gentoo_overlays_add "$pkg_overlay"
+		fi
 		return 0
 	fi
 
@@ -890,4 +894,27 @@ dependencies_gentoo_full_list() {
 			printf '%s\n' "$package_provide"
 		fi
 	} | sort --unique
+}
+
+# Gentoo - Print the path to a temporary file used for additional overlays listing
+# USAGE: dependency_gentoo_overlays_file
+dependency_gentoo_overlays_file() {
+	printf '%s/overlays' "$PLAYIT_WORKDIR"
+}
+
+# Gentoo - Add an overlay to the list of additional overlays
+# USAGE: dependency_gentoo_overlays_add $overlay
+dependency_gentoo_overlays_add() {
+	local overlay overlays_file
+	overlay="$1"
+	overlays_file="$(dependency_gentoo_overlays_file)"
+
+	# Do nothing if this overlay is already included in the list
+	if test -e "$overlays_file" \
+		&& grep --quiet --fixed-strings --word-regexp "$overlay" < "$overlays_file"
+	then
+		return 0
+	fi
+
+	printf '%s\n' "$overlay" >> "$overlays_file"
 }
