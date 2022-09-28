@@ -301,16 +301,6 @@ application_options() {
 	printf '%s' "$application_options"
 }
 
-# print the application libraries path, relative to the game root
-# USAGE: application_libs $application
-# RETURN: the application libraries path relative to the game root,
-#         or an empty string if none is set
-application_libs() {
-	# Use the package-specific value if it is available,
-	# falls back on the default value
-	get_context_specific_value 'package' "${1}_LIBS"
-}
-
 # print the list of icon identifiers for the given application
 # USAGE: application_icons_list $application
 # RETURN: a space-separated list of icons identifiers,
@@ -351,3 +341,14 @@ application_icons_list() {
 	return 0
 }
 
+# Legacy - Print the application libraries path, relative to the game root.
+# This function is deprecated, starting with ./play.it 2.19.
+# New game scripts should no longer rely on the APP_xxx_LIBS variable.
+# USAGE: application_libs $application
+# RETURN: the application libraries path relative to the game root,
+#         or an empty string if none is set
+application_libs() {
+	# Use the package-specific value if it is available,
+	# falls back on the default value
+	get_context_specific_value 'package' "${1}_LIBS"
+}

@@ -15,6 +15,7 @@ launcher_write_script_unity3d_run() {
 	launcher_write_script_prerun "$application" "$launcher_file"
 
 	# Include common pre-run tweaks
+	# shellcheck disable=SC2129
 	{
 		# Start pulseaudio if it is available
 		launcher_unity3d_pulseaudio_start
@@ -34,39 +35,8 @@ launcher_write_script_unity3d_run() {
 		launcher_unity3d_force_locale
 	} >> "$launcher_file"
 
-	# Set path to extra libraries
-	case "$OPTION_PACKAGE" in
-		###
-		# TODO
-		# Check that the Gentoo special case is useful for Unity3D games
-		###
-		('gentoo'|'egentoo')
-			cat >> "$launcher_file" <<- 'EOF'
-			library_path=
-			if [ -n "$APP_LIBS" ]; then
-			    library_path="$APP_LIBS:"
-			fi
-			EOF
-			if [ -n "$(launcher_native_get_extra_library_path)" ]; then
-				cat >> "$launcher_file" <<- EOF
-				library_path="\${library_path}$(launcher_native_get_extra_library_path)"
-				EOF
-			fi
-			cat >> "$launcher_file" <<- 'EOF'
-			if [ -n "$library_path" ]; then
-			    LD_LIBRARY_PATH="${library_path}$LD_LIBRARY_PATH"
-			    export LD_LIBRARY_PATH
-			fi
-			EOF
-		;;
-		(*)
-			cat >> "$launcher_file" <<- 'EOF'
-			if [ -n "$APP_LIBS" ]; then
-			    export LD_LIBRARY_PATH="${APP_LIBS}:${LD_LIBRARY_PATH}"
-			fi
-			EOF
-		;;
-	esac
+	# Set loading paths for libraries
+	launcher_native_libraries_paths >> "$launcher_file"
 
 	cat >> "$launcher_file" <<- 'EOF'
 	set +o errexit
