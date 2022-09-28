@@ -203,6 +203,9 @@ dependency_package_providing_library_deb() {
 		('libcurl.so.4')
 			package_name='libcurl4'
 		;;
+		('libcurl-gnutls.so.4')
+			package_name='libcurl3-gnutls'
+		;;
 		('libdl.so.2')
 			package_name='libc6'
 		;;
