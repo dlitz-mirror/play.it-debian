@@ -3,6 +3,7 @@
 dependencies_list_generic() {
 	local package
 	package="$1"
+	assert_not_empty 'package' 'dependencies_list_generic'
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_generic
@@ -25,6 +26,7 @@ dependencies_list_generic() {
 dependencies_list_native_libraries() {
 	local package
 	package="$1"
+	assert_not_empty 'package' 'dependencies_list_native_libraries'
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_libraries
