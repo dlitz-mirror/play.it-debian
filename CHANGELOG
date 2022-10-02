@@ -1,3 +1,10 @@
+2.18.2
+
+  * Add ability to get the name of a context-specific variable, using a new dedicated function: context_specific_name.
+    This new function should not be used from game scripts before ./play.it 2.19 release.
+  * Fix dependencies addition using dedicated functions.
+  * Extend the list of supported native libraries for packages dependencies declarations.
+
 2.18.1
 
   * Identify SteamOS as an Arch Linux derivative.
