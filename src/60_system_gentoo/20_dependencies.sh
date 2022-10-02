@@ -276,6 +276,9 @@ dependency_package_providing_library_gentoo() {
 		('libgcc_s.so.1')
 			package_name='sys-devel/gcc'
 		;;
+		('libgcrypt.so.11')
+			package_name='dev-libs/libgcrypt-compat'
+		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2'
 		;;
@@ -302,6 +305,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2'
+		;;
+		('libgpg-error.so.0')
+			package_name='dev-libs/libgpg-error'
 		;;
 		('libgssapi_krb5.so.2')
 			package_name='app-crypt/mit-krb5'
@@ -336,6 +342,15 @@ dependency_package_providing_library_gentoo() {
 		('libnghttp2.so.14')
 			package_name='net-libs/nghttp2'
 		;;
+		('libnspr4.so')
+			package_name='dev-libs/nspr'
+		;;
+		('libnss3.so')
+			package_name='dev-libs/nss'
+		;;
+		('libogg.so.0')
+			package_name='media-libs/libogg'
+		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal'
 		;;
@@ -347,6 +362,12 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango'
+		;;
+		('libplc4.so')
+			package_name='dev-libs/nspr'
+		;;
+		('libplds4.so')
+			package_name='dev-libs/nspr'
 		;;
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16'
@@ -387,11 +408,17 @@ dependency_package_providing_library_gentoo() {
 		('libSDL2_image-2.0.so.0')
 			package_name='media-libs/sdl2-image'
 		;;
+		('libSDL2_mixer-2.0.so.0')
+			package_name='media-libs/sdl2-mixer'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf'
 		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM'
+		;;
+		('libsmime3.so')
+			package_name='dev-libs/nss'
 		;;
 		('libsmpeg-0.4.so.0')
 			package_name='media-libs/smpeg'
@@ -405,11 +432,17 @@ dependency_package_providing_library_gentoo() {
 		('libssl.so.1.1')
 			package_name='dev-libs/openssl'
 		;;
+		('libssl3.so')
+			package_name='dev-libs/nss'
+		;;
 		('libstdc++.so.5')
 			package_name='sys-libs/libstdc++-v3'
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++'
+		;;
+		('libtheoradec.so.1')
+			package_name='media-libs/libtheora'
 		;;
 		('libthread_db.so.1')
 			package_name='sys-libs/glibc'
@@ -425,6 +458,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libuv.so.1')
 			package_name='dev-libs/libuv:0/1'
+		;;
+		('libvorbis.so.0')
+			package_name='media-libs/libvorbis'
 		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis'
@@ -455,6 +491,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libXrender.so.1')
 			package_name='x11-libs/libXrender'
+		;;
+		('libXt.so.6')
+			package_name='x11-libs/libXt'
 		;;
 		('libXtst.so.6')
 			package_name='x11-libs/libXtst'
@@ -544,6 +583,9 @@ dependency_package_providing_library_gentoo32() {
 		('libgcc_s.so.1')
 			package_name='sys-devel/gcc[abi_x86_32]'
 		;;
+		('libgcrypt.so.11')
+			package_name='dev-libs/libgcrypt-compat[abi_x86_32]'
+		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2[abi_x86_32]'
 		;;
@@ -570,6 +612,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
+		;;
+		('libgpg-error.so.0')
+			package_name='dev-libs/libgpg-error[abi_x86_32]'
 		;;
 		('libgssapi_krb5.so.2')
 			package_name='app-crypt/mit-krb5[abi_x86_32]'
@@ -604,6 +649,15 @@ dependency_package_providing_library_gentoo32() {
 		('libnghttp2.so.14')
 			package_name='net-libs/nghttp2[abi_x86_32]'
 		;;
+		('libnspr4.so')
+			package_name='dev-libs/nspr[abi_x86_32]'
+		;;
+		('libnss3.so')
+			package_name='dev-libs/nss[abi_x86_32]'
+		;;
+		('libogg.so.0')
+			package_name='media-libs/libogg[abi_x86_32]'
+		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal[abi_x86_32]'
 		;;
@@ -615,6 +669,12 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango[abi_x86_32]'
+		;;
+		('libplc4.so')
+			package_name='dev-libs/nspr[abi_x86_32]'
+		;;
+		('libplds4.so')
+			package_name='dev-libs/nspr[abi_x86_32]'
 		;;
 		('libpng16.so.16')
 			package_name='media-libs/libpng:0/16[abi_x86_32]'
@@ -655,11 +715,17 @@ dependency_package_providing_library_gentoo32() {
 		('libSDL2_image-2.0.so.0')
 			package_name='media-libs/sdl2-image[abi_x86_32]'
 		;;
+		('libSDL2_mixer-2.0.so.0')
+			package_name='media-libs/sdl2-mixer[abi_x86_32]'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf[abi_x86_32]'
 		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM[abi_x86_32]'
+		;;
+		('libsmime3.so')
+			package_name='dev-libs/nss[abi_x86_32]'
 		;;
 		('libsmpeg-0.4.so.0')
 			package_name='media-libs/smpeg[abi_x86_32]'
@@ -673,11 +739,17 @@ dependency_package_providing_library_gentoo32() {
 		('libssl.so.1.1')
 			package_name='dev-libs/openssl[abi_x86_32]'
 		;;
+		('libssl3.so')
+			package_name='dev-libs/nss[abi_x86_32]'
+		;;
 		('libstdc++.so.5')
 			package_name='sys-libs/libstdc++-v3[abi_x86_32]'
 		;;
 		('libstdc++.so.6')
 			package_name='virtual/libstdc++[abi_x86_32]'
+		;;
+		('libtheoradec.so.1')
+			package_name='media-libs/libtheora[abi_x86_32]'
 		;;
 		('libthread_db.so.1')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
@@ -693,6 +765,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libuv.so.1')
 			package_name='dev-libs/libuv:0/1[abi_x86_32]'
+		;;
+		('libvorbis.so.0')
+			package_name='media-libs/libvorbis[abi_x86_32]'
 		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis[abi_x86_32]'
@@ -723,6 +798,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libXrender.so.1')
 			package_name='x11-libs/libXrender[abi_x86_32]'
+		;;
+		('libXt.so.6')
+			package_name='x11-libs/libXt[abi_x86_32]'
 		;;
 		('libXtst.so.6')
 			package_name='x11-libs/libXtst[abi_x86_32]'
