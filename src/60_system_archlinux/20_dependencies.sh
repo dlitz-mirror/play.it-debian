@@ -364,6 +364,9 @@ dependency_package_providing_library_arch() {
 		('libgcc_s.so.1')
 			package_name='gcc-libs'
 		;;
+		('libgcrypt.so.11')
+			package_name='libgcrypt15'
+		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='gdk-pixbuf2'
 		;;
@@ -390,6 +393,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='glib2'
+		;;
+		('libgpg-error.so.0')
+			package_name='libgpg-error'
 		;;
 		('libgssapi_krb5.so.2')
 			package_name='krb5'
@@ -424,6 +430,15 @@ dependency_package_providing_library_arch() {
 		('libnghttp2.so.14')
 			package_name='libnghttp2'
 		;;
+		('libnspr4.so')
+			package_name='nspr'
+		;;
+		('libnss3.so')
+			package_name='nss'
+		;;
+		('libogg.so.0')
+			package_name='libogg'
+		;;
 		('libopenal.so.1')
 			package_name='openal'
 		;;
@@ -435,6 +450,12 @@ dependency_package_providing_library_arch() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='pango'
+		;;
+		('libplc4.so')
+			package_name='nspr'
+		;;
+		('libplds4.so')
+			package_name='nspr'
 		;;
 		('libpng16.so.16')
 			package_name='libpng'
@@ -475,11 +496,17 @@ dependency_package_providing_library_arch() {
 		('libSDL2_image-2.0.so.0')
 			package_name='sdl2_image'
 		;;
+		('libSDL2_mixer-2.0.so.0')
+			package_name='sdl2_mixer'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='sdl2_ttf'
 		;;
 		('libSM.so.6')
 			package_name='libsm'
+		;;
+		('libsmime3.so')
+			package_name='nss'
 		;;
 		('libsmpeg-0.4.so.0')
 			package_name='smpeg'
@@ -493,11 +520,17 @@ dependency_package_providing_library_arch() {
 		('libssl.so.1.1')
 			package_name='openssl'
 		;;
+		('libssl3.so')
+			package_name='nss'
+		;;
 		('libstdc++.so.5')
 			package_name='libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='gcc-libs'
+		;;
+		('libtheoradec.so.1')
+			package_name='libtheora'
 		;;
 		('libthread_db.so.1')
 			package_name='glibc'
@@ -513,6 +546,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libuv.so.1')
 			package_name='libuv'
+		;;
+		('libvorbis.so.0')
+			package_name='libvorbis'
 		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbis'
@@ -543,6 +579,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libXrender.so.1')
 			package_name='libxrender'
+		;;
+		('libXt.so.6')
+			package_name='libxt'
 		;;
 		('libXtst.so.6')
 			package_name='libxtst'
@@ -632,6 +671,9 @@ dependency_package_providing_library_arch32() {
 		('libgcc_s.so.1')
 			package_name='lib32-gcc-libs'
 		;;
+		('libgcrypt.so.11')
+			package_name='lib32-libgcrypt15'
+		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='lib32-gdk-pixbuf2'
 		;;
@@ -658,6 +700,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='lib32-glib2'
+		;;
+		('libgpg-error.so.0')
+			package_name='lib32-libgpg-error'
 		;;
 		('libgssapi_krb5.so.2')
 			package_name='lib32-krb5'
@@ -694,6 +739,15 @@ dependency_package_providing_library_arch32() {
 		('libnghttp2.so.14')
 			package_name='lib32-libnghttp2'
 		;;
+		('libnspr4.so')
+			package_name='lib32-nspr'
+		;;
+		('libnss3.so')
+			package_name='lib32-nss'
+		;;
+		('libogg.so.0')
+			package_name='lib32-libogg'
+		;;
 		('libopenal.so.1')
 			package_name='lib32-openal'
 		;;
@@ -705,6 +759,12 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='lib32-pango'
+		;;
+		('libplc4.so')
+			package_name='lib32-nspr'
+		;;
+		('libplds4.so')
+			package_name='lib32-nspr'
 		;;
 		('libpng16.so.16')
 			package_name='lib32-libpng'
@@ -745,11 +805,17 @@ dependency_package_providing_library_arch32() {
 		('libSDL2_image-2.0.so.0')
 			package_name='lib32-sdl2_image'
 		;;
+		('libSDL2_mixer-2.0.so.0')
+			package_name='lib32-sdl2_mixer'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='lib32-sdl2_ttf'
 		;;
 		('libSM.so.6')
 			package_name='lib32-libsm'
+		;;
+		('libsmime3.so')
+			package_name='lib32-nss'
 		;;
 		('libsmpeg-0.4.so.0')
 			package_name='lib32-smpeg'
@@ -763,11 +829,17 @@ dependency_package_providing_library_arch32() {
 		('libssl.so.1.1')
 			package_name='lib32-openssl'
 		;;
+		('libssl3.so')
+			package_name='lib32-nss'
+		;;
 		('libstdc++.so.5')
 			package_name='lib32-libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='lib32-gcc-libs'
+		;;
+		('libtheoradec.so.1')
+			package_name='lib32-libtheora'
 		;;
 		('libthread_db.so.1')
 			package_name='lib32-glibc'
@@ -784,6 +856,9 @@ dependency_package_providing_library_arch32() {
 		('libuv.so.1')
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
+		;;
+		('libvorbis.so.0')
+			package_name='lib32-libvorbis'
 		;;
 		('libvorbisfile.so.3')
 			package_name='lib32-libvorbis'
@@ -814,6 +889,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libXrender.so.1')
 			package_name='lib32-libxrender'
+		;;
+		('libXt.so.6')
+			package_name='lib32-libxt'
 		;;
 		('libXtst.so.6')
 			package_name='lib32-libxtst'

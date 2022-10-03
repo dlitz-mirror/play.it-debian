@@ -11,12 +11,11 @@ get_value() {
 	eval printf -- '%b' \"\$"$1"\"
 }
 
-# get the context-specific value of a variable and print it
-# the context can be either the current archive or the current package
-# if no context-specific value has been found, the default value is printed
-# USAGE: get_context_specific_value archive|package $variable_name
-# RETURN: the context-specific value for the given variable, or its default value
-get_context_specific_value() {
+# Print the context-specific name of a variable.
+# The context can be either the current archive or the current package.
+# If no context-specific name has been found, the default name is printed.
+# USAGE: context_specific_name archive|package $variable_name
+context_specific_name() {
 	local variable_name
 	variable_name="$2"
 
@@ -27,7 +26,7 @@ get_context_specific_value() {
 		('archive')
 			# Return early if no archive is explicitely set
 			if [ -z "$ARCHIVE" ]; then
-				get_value "$variable_name"
+				printf '%s' "$variable_name"
 				return 0
 			fi
 			context_suffix=$(get_context_suffix_archive)
@@ -35,7 +34,7 @@ get_context_specific_value() {
 		('package')
 			# Return early if no package is explicitely set
 			if [ -z "$PKG" ]; then
-				get_value "$variable_name"
+				printf '%s' "$variable_name"
 				return 0
 			fi
 			context_suffix=$(get_context_suffix_package)
@@ -46,23 +45,39 @@ get_context_specific_value() {
 		;;
 	esac
 
-	# Try to find a context-specific value
+	# Try to find a context-specific variable name with a value set.
 	local variable_name_with_suffix
 	variable_name_with_suffix="${variable_name}_${context_suffix}"
 	while [ "$variable_name_with_suffix" != "$variable_name" ]; do
-		context_specific_value=$(get_value "$variable_name_with_suffix")
-		# Exit the loop if a value has been found
-		[ -n "$context_specific_value" ] && break
-		# Drop one suffix level for the next loop iteration
+		# Exit the loop if the current variable name has a value set.
+		[ -n "$(get_value "$variable_name_with_suffix")" ] && break
+		# Drop one suffix level for the next loop iteration.
 		variable_name_with_suffix="${variable_name_with_suffix%_*}"
 	done
 
-	# Fall back on the default value
-	if [ -z "$context_specific_value" ]; then
-		context_specific_value=$(get_value "$variable_name")
-	fi
+	# If the whole while loop went through without finding a context-specific value,
+	# $variable_name_with_suffix is now equal to $variable_name.
+	printf '%s' "$variable_name_with_suffix"
+}
 
-	printf '%s' "$context_specific_value"
+# Print the context-specific value of a variable.
+# The context can be either the current archive or the current package.
+# If no context-specific value has been found, the default value is printed.
+# USAGE: context_specific_value archive|package $variable_name
+context_specific_value() {
+	local context variable_name
+	context="$1"
+	variable_name="$2"
+
+	local variable_name_with_context
+	variable_name_with_context=$(context_specific_name "$context" "$variable_name")
+
+	get_value "$variable_name_with_context"
+}
+# Legacy alias for context_specific_value
+# This should move into a compatibility source file at the next feature release.
+get_context_specific_value() {
+	context_specific_value "$1" "$2"
 }
 
 # get the current archive suffix and print it

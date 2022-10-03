@@ -221,6 +221,10 @@ dependency_package_providing_library_deb() {
 		('libgcc_s.so.1')
 			package_name='libgcc-s1'
 		;;
+		('libgcrypt.so.11')
+			# This old library is no longer available from Debian.
+			unset package_name
+		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
 		;;
@@ -249,6 +253,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='libglib2.0-0'
+		;;
+		('libgpg-error.so.0')
+			package_name='libgpg-error0'
 		;;
 		('libgssapi_krb5.so.2')
 			package_name='libgssapi-krb5-2'
@@ -283,6 +290,15 @@ dependency_package_providing_library_deb() {
 		('libnghttp2.so.14')
 			package_name='libnghttp2-14'
 		;;
+		('libnspr4.so')
+			package_name='libnspr4'
+		;;
+		('libnss3.so')
+			package_name='libnss3'
+		;;
+		('libogg.so.0')
+			package_name='libogg0'
+		;;
 		('libopenal.so.1')
 			package_name='libopenal1'
 		;;
@@ -294,6 +310,12 @@ dependency_package_providing_library_deb() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='libpangoft2-1.0-0'
+		;;
+		('libplc4.so')
+			package_name='libnspr4'
+		;;
+		('libplds4.so')
+			package_name='libnspr4'
 		;;
 		('libpng16.so.16')
 			package_name='libpng16-16'
@@ -334,11 +356,17 @@ dependency_package_providing_library_deb() {
 		('libSDL2_image-2.0.so.0')
 			package_name='libsdl2-image-2.0-0'
 		;;
+		('libSDL2_mixer-2.0.so.0')
+			package_name='libsdl2-mixer-2.0-0'
+		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='libsdl2-ttf-2.0-0'
 		;;
 		('libSM.so.6')
 			package_name='libsm6'
+		;;
+		('libsmime3.so')
+			package_name='libnss3'
 		;;
 		('libsmpeg-0.4.so.0')
 			package_name='libsmpeg0'
@@ -352,11 +380,17 @@ dependency_package_providing_library_deb() {
 		('libssl.so.1.1')
 			package_name='libssl1.1'
 		;;
+		('libssl3.so')
+			package_name='libnss3'
+		;;
 		('libstdc++.so.5')
 			package_name='libstdc++5'
 		;;
 		('libstdc++.so.6')
 			package_name='libstdc++6'
+		;;
+		('libtheoradec.so.1')
+			package_name='libtheora0'
 		;;
 		('libthread_db.so.1')
 			package_name='libc6'
@@ -372,6 +406,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libuv.so.1')
 			package_name='libuv1'
+		;;
+		('libvorbis.so.0')
+			package_name='libvorbis0a'
 		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbisfile3'
@@ -404,6 +441,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libXrender.so.1')
 			package_name='libxrender1'
+		;;
+		('libXt.so.6')
+			package_name='libxt6'
 		;;
 		('libXtst.so.6')
 			package_name='libxtst6'
