@@ -43,7 +43,7 @@ If your distribution does not already have a package for ./play.it, you can
 install it from this git repository.
 
 ```
-git clone --branch 2.18.3 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+git clone --branch 2.19.0 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
 cd play.it.git
 make
 make install
