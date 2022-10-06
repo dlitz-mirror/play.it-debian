@@ -10,11 +10,12 @@ launcher_write_script() {
 	fi
 
 	# compute file path
-	local package package_path application_id target_file
+	local package package_path path_binaries application_id target_file
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
+	path_binaries=$(path_binaries)
 	application_id=$(application_id "$application")
-	target_file="${package_path}${PATH_BIN}/${application_id}"
+	target_file="${package_path}${path_binaries}/${application_id}"
 
 	# Get application type and prefix type
 	local application_type prefix_type
@@ -22,7 +23,8 @@ launcher_write_script() {
 	prefix_type=$(application_prefix_type "$application")
 
 	# Check that the launcher target exists
-	local binary_path binary_found tested_package
+	local binary_path binary_found tested_package path_game_data
+	path_game_data=$(path_game_data)
 	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
@@ -33,21 +35,21 @@ launcher_write_script() {
 			packages_list=$(packages_get_list)
 			binary_found=0
 			for tested_package in $packages_list; do
-				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$(application_exe "$application")"
+				binary_path="$(package_get_path "$tested_package")${path_game_data}/$(application_exe "$application")"
 				if [ -f "$binary_path" ]; then
 					binary_found=1
 					break;
 				fi
 			done
 			if [ $binary_found -eq 0 ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+				binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
 				error_launcher_missing_binary "$binary_path"
 				return 1
 			fi
 		;;
 		('wine')
 			if [ "$(application_exe "$application")" != 'winecfg' ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+				binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
 				if [ ! -f "$binary_path" ]; then
 					error_launcher_missing_binary "$binary_path"
 					return 1
@@ -55,7 +57,7 @@ launcher_write_script() {
 			fi
 		;;
 		(*)
-			binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+			binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
 			if [ ! -f "$binary_path" ]; then
 				error_launcher_missing_binary "$binary_path"
 				return 1
@@ -226,8 +228,9 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'|'unity3d')
-			local binary_file
-			binary_file="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+			local binary_file path_game_data
+			path_game_data=$(path_game_data)
+			binary_file="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
 			chmod +x "$binary_file"
 		;;
 	esac
@@ -236,7 +239,7 @@ launcher_write_script() {
 	case "$application_type" in
 		('wine')
 			local winecfg_file
-			winecfg_file="$(package_get_path "$package")${PATH_BIN}/$(game_id)_winecfg"
+			winecfg_file="${package_path}${path_binaries}/$(game_id)_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
 				launcher_write_script_wine_winecfg "$application"
 			fi
@@ -271,7 +274,7 @@ launcher_write_script_game_variables() {
 	# Set game-specific values
 
 	GAME_ID='$(game_id)'
-	PATH_GAME='$PATH_GAME'
+	PATH_GAME='$(path_game_data)'
 
 	EOF
 	return 0
@@ -332,11 +335,12 @@ launcher_write_desktop() {
 		[ "$application_type" = 'wine' ] && \
 		[ "$application" != 'APP_WINECFG' ]
 	then
-		local package package_path winecfg_desktop
+		local package package_path path_xdg_desktop game_id winecfg_desktop
 		package=$(package_get_current)
 		package_path=$(package_get_path "$package")
+		path_xdg_desktop=$(path_xdg_desktop)
 		game_id=$(game_id)
-		winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
+		winecfg_desktop="${package_path}${path_xdg_desktop}/${game_id}_winecfg.desktop"
 		if [ ! -e "$winecfg_desktop" ]; then
 			APP_WINECFG_ID="$(game_id)_winecfg"
 			APP_WINECFG_NAME="$(game_name) - WINE configuration"
@@ -384,14 +388,15 @@ launcher_desktop() {
 # USAGE: launcher_desktop_filepath $application
 # RETURN: an absolute file path
 launcher_desktop_filepath() {
-	local application application_id package package_path
+	local application application_id package package_path path_xdg_desktop
 	application="$1"
 	application_id=$(application_id "$application")
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
+	path_xdg_desktop=$(path_xdg_desktop)
 
 	printf '%s/%s.desktop' \
-		"${package_path}${PATH_DESK}" \
+		"${package_path}${path_xdg_desktop}" \
 		"$application_id"
 }
 
@@ -414,13 +419,16 @@ launcher_desktop_exec() {
 	esac
 
 	# Use the full path for non-standard prefixes
-	local field_value
+	local field_value application_id
+	application_id=$(application_id "$application")
 	case "$OPTION_PREFIX" in
 		('/usr'|'/usr/local')
-			field_value=$(application_id "$application")
+			field_value="$application_id"
 		;;
 		(*)
-			field_value="$PATH_BIN/$(application_id "$application")"
+			local path_binaries
+			path_binaries=$(path_binaries)
+			field_value="${path_binaries}/${application_id}"
 		;;
 	esac
 

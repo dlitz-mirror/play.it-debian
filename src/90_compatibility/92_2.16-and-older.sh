@@ -1,10 +1,11 @@
 # Keep compatibility with 2.16 and older
 
 icons_get_from_package() {
-	local package package_path
+	local package package_path path_game_data
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
-	icon_source_directory="${package_path}/${PATH_GAME}"
+	path_game_data=$(path_game_data)
+	icon_source_directory="${package_path}${path_game_data}"
 	icons_get_from_legacy_path "$icon_source_directory" "$@"
 }
 
@@ -67,11 +68,12 @@ icons_move_to() {
 		return 0
 	fi
 
-	local source_package source_directory destination_package destination_directory
+	local source_package source_directory destination_package destination_directory path_icons
+	path_icons=$(path_icons)
 	source_package=$(package_get_current)
-	source_directory="$(package_get_path "$source_package")${PATH_ICON_BASE}"
+	source_directory="$(package_get_path "$source_package")${path_icons}"
 	destination_package="$1"
-	destination_directory="$(package_get_path "$destination_package")${PATH_ICON_BASE}"
+	destination_directory="$(package_get_path "$destination_package")${path_icons}"
 
 	# a basic `mv` call here would fail if the destination is not empty
 	mkdir --parents "$destination_directory"

@@ -283,8 +283,9 @@ icons_include_from_directory() {
 
 	# Get the icons from the given source directory,
 	# then move them to the current package
-	local source_directory source_file destination_name destination_directory destination_file
+	local source_directory source_file destination_name destination_directory destination_file path_icons
 	source_directory="$2"
+	path_icons=$(path_icons)
 	for source_file in \
 		"$source_directory"/*.png \
 		"$source_directory"/*.xpm
@@ -298,7 +299,7 @@ icons_include_from_directory() {
 		destination_name="${application_id}.${source_file##*.}"
 
 		# Compute icon path
-		destination_directory="$(package_get_path "$(package_get_current)")${PATH_ICON_BASE}/$(icon_get_resolution "$source_file")/apps"
+		destination_directory="$(package_get_path "$(package_get_current)")${path_icons}/$(icon_get_resolution "$source_file")/apps"
 
 		# Move current icon file to its destination
 		destination_file="${destination_directory}/${destination_name}"

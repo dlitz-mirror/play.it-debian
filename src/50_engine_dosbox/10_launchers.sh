@@ -21,9 +21,6 @@ launcher_write_script_dosbox_application_variables() {
 
 # DOSBox - run the game
 # USAGE: launcher_write_script_dosbox_run $application $file
-# NEEDED_VARS: GAME_IMAGE GAME_IMAGE_TYPE PATH_GAME
-# CALLS: launcher_write_script_prerun launcher_write_script_postrun
-# CALLED BY: launcher_write_script
 launcher_write_script_dosbox_run() {
 	# parse arguments
 	local application
@@ -47,12 +44,13 @@ launcher_write_script_dosbox_run() {
 				unset image
 
 				# Loop over the list of packages, one should include the disk image
-				local package package_path packages_list
+				local package package_path packages_list path_game_data
 				packages_list=$(packages_get_list)
+				path_game_data=$(path_game_data)
 				for package in $packages_list; do
 					package_path=$(package_get_path "$package")
-					if [ -e "${package_path}$PATH_GAME/$GAME_IMAGE" ]; then
-						image="${package_path}$PATH_GAME/$GAME_IMAGE"
+					if [ -e "${package_path}${path_game_data}/${GAME_IMAGE}" ]; then
+						image="${package_path}${path_game_data}/${GAME_IMAGE}"
 						break;
 					fi
 				done
