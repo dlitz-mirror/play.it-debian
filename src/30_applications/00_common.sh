@@ -100,7 +100,7 @@ application_prefix_type() {
 }
 
 # print the type of the given application
-# USAGE: application_type $application [$fallback_type]
+# USAGE: application_type $application
 # RETURN: the application type keyword, from the supported values:
 #         - dosbox
 #         - java
@@ -111,7 +111,6 @@ application_prefix_type() {
 #         - residualvm
 #         - scummvm
 #         - wine
-#         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
 	local application application_type
@@ -125,15 +124,9 @@ application_type() {
 		fi
 	fi
 
-	# If no type has been found and a fallback has been provided,
-	# use the fallback.
-	local fallback_type
-	fallback_type="$2"
-	if \
-		[ -z "$application_type" ] \
-		&& [ -n "$fallback_type" ]
-	then
-		application_type="$fallback_type"
+	# Return early if no type has been found
+	if [ -z "$application_type" ]; then
+		return 0
 	fi
 
 	# Check that a supported type has been fetched
@@ -153,10 +146,6 @@ application_type() {
 		;;
 		('native_no-prefix')
 			## WARNING - This archive type is deprecated.
-		;;
-		('unknown')
-			## "unknown" is the only allowed invalid application type,
-			## to be used only as a fallback.
 		;;
 		(*)
 			error_unknown_application_type "$application_type"
@@ -320,7 +309,7 @@ application_icons_list() {
 	# Fall back on the default value of a single APP_xxx_ICON icon
 	local default_icon application_type
 	default_icon="${application}_ICON"
-	application_type=$(application_type "$application" 'unknown')
+	application_type=$(application_type "$application")
 	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon

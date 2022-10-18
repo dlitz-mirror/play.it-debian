@@ -334,7 +334,7 @@ launcher_write_desktop() {
 
 	# WINE - Write XDG desktop file for winecfg
 	local application_type
-	application_type=$(application_type "$application" 'unknown')
+	application_type=$(application_type "$application")
 	if \
 		[ "$application_type" = 'wine' ] && \
 		[ "$application" != 'APP_WINECFG' ]
