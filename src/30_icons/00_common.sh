@@ -44,6 +44,9 @@ icon_path() {
 			('unity3d')
 				icon_path=$(icon_unity3d_path "$icon")
 			;;
+			('wine')
+				icon_path=$(icon_wine_path "$icon")
+			;;
 		esac
 	fi
 
