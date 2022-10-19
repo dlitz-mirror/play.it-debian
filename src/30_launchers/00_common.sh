@@ -93,12 +93,12 @@ launcher_write_script() {
 		('java')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_java_application_variables "$application" "$target_file"
+					java_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_java_run "$application" "$target_file"
+					java_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
