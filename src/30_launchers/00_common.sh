@@ -75,13 +75,13 @@ launcher_write_script() {
 		('dosbox')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_dosbox_application_variables "$application" "$target_file"
+					dosbox_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					dosbox_prefix_function_toupper >> "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_dosbox_run "$application" "$target_file"
+					dosbox_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
