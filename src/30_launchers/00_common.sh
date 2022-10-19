@@ -159,7 +159,7 @@ launcher_write_script() {
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_renpy_run "$application" "$target_file"
+					renpy_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)

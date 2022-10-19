@@ -1,30 +1,19 @@
-# Ren'Py - run the game
-# USAGE: launcher_write_script_renpy_run $application $file
-# CALLED BY: launcher_write_script
-launcher_write_script_renpy_run() {
-	# parse arguments
+# Ren'Py - Print the actual call to the game binary
+# USAGE: renpy_launcher_run $application
+renpy_launcher_run() {
 	local application
-	local file
 	application="$1"
-	file="$2"
 
-	cat >> "$file" <<- 'EOF'
+	cat <<- EOF
 	# Run the game
-
-	cd "$PATH_PREFIX"
-
+	cd "\$PATH_PREFIX"
+	$(application_prerun "$application")
+	## Do not exit on application failure,
+	## to ensure post-run commands are run.
+	set +o errexit
+	renpy . "\$@"
+	game_exit_status=\$?
+	set -o errexit
+	$(application_postrun "$application")
 	EOF
-
-	launcher_write_script_prerun "$application" "$file"
-
-	cat >> "$file" <<- 'EOF'
-	renpy . "$@"
-
-	EOF
-
-	launcher_write_script_postrun "$application" "$file"
-
-	sed --in-place 's/    /\t/g' "$file"
-	return 0
 }
-
