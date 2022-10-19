@@ -140,9 +140,11 @@ launcher_write_script() {
 		('scummvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_scummvm_application_variables "$application" "$target_file"
+					scummvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_scummvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					scummvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -169,9 +171,11 @@ launcher_write_script() {
 		('residualvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_residualvm_application_variables "$application" "$target_file"
+					residualvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_residualvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					residualvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
