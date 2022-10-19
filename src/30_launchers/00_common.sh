@@ -202,12 +202,12 @@ launcher_write_script() {
 		('mono')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_mono_application_variables "$application" "$target_file"
+					mono_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_mono_run "$application" "$target_file"
+					mono_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
