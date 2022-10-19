@@ -110,18 +110,18 @@ launcher_write_script() {
 		('native')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_native_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				('none')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_nativenoprefix_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -182,7 +182,7 @@ launcher_write_script() {
 		('unity3d')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
