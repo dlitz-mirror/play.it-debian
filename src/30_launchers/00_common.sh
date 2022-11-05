@@ -75,13 +75,13 @@ launcher_write_script() {
 		('dosbox')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_dosbox_application_variables "$application" "$target_file"
+					dosbox_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					dosbox_prefix_function_toupper >> "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_dosbox_run "$application" "$target_file"
+					dosbox_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -93,12 +93,12 @@ launcher_write_script() {
 		('java')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_java_application_variables "$application" "$target_file"
+					java_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_java_run "$application" "$target_file"
+					java_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -110,18 +110,18 @@ launcher_write_script() {
 		('native')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_native_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				('none')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_nativenoprefix_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -140,9 +140,11 @@ launcher_write_script() {
 		('scummvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_scummvm_application_variables "$application" "$target_file"
+					scummvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_scummvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					scummvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -157,7 +159,7 @@ launcher_write_script() {
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_renpy_run "$application" "$target_file"
+					renpy_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -169,9 +171,11 @@ launcher_write_script() {
 		('residualvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_residualvm_application_variables "$application" "$target_file"
+					residualvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_residualvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					residualvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -182,7 +186,7 @@ launcher_write_script() {
 		('unity3d')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
@@ -202,12 +206,12 @@ launcher_write_script() {
 		('mono')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_mono_application_variables "$application" "$target_file"
+					mono_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_mono_run "$application" "$target_file"
+					mono_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)

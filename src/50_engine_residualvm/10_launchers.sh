@@ -1,47 +1,25 @@
-# ResidualVM - write application-specific variables
-# USAGE: launcher_write_script_residualvm_application_variables $application $file
-# CALLED BY: launcher_write_script
-launcher_write_script_residualvm_application_variables() {
-	local application file
-	application="$1"
-	file="$2"
-	local application_residualvm_residualid
-	application_residualvm_residualid=$(application_residualvm_residualid "$application")
-
-	cat >> "$file" <<- EOF
-	# Set application-specific values
-
-	RESIDUALVM_ID='$application_residualvm_residualid'
-
-	EOF
-	return 0
-}
-
-# ResidualVM - run the game
-# USAGE: launcher_write_script_residualvm_run $application $file
-# CALLS: launcher_write_script_prerun launcher_write_script_postrun
-# CALLED BY: launcher_write_script
-launcher_write_script_residualvm_run() {
-	# parse arguments
+# ResidualVM - Print application-specific variables
+# USAGE: residualvm_launcher_application_variables $application
+residualvm_launcher_application_variables() {
 	local application
-	local file
 	application="$1"
-	file="$2"
 
-	cat >> "$file" <<- 'EOF'
-	# Run the game
+	local application_residualid application_options
+	application_residualid=$(application_residualvm_residualid "$application")
+	application_options=$(application_options "$application")
 
+	cat <<- EOF
+	# Set application-specific values
+	RESIDUALVM_ID='$application_residualid'
+	APP_OPTIONS="$application_options"
 	EOF
-
-	launcher_write_script_prerun "$application" "$file"
-
-	cat >> "$file" <<- 'EOF'
-	residualvm -p "$PATH_GAME" "$@" "$RESIDUALVM_ID"
-
-	EOF
-
-	launcher_write_script_postrun "$application" "$file"
-
-	return 0
 }
 
+# ResidualVM - Print the actual call to residualvm
+# USAGE: residualvm_launcher_run
+residualvm_launcher_run() {
+	cat <<- 'EOF'
+	# Run the game
+	residualvm --path="$PATH_GAME" $APP_OPTIONS "$@" "$RESIDUALVM_ID"
+	EOF
+}
