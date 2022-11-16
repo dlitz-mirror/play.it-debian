@@ -100,7 +100,7 @@ application_prefix_type() {
 }
 
 # print the type of the given application
-# USAGE: application_type $application [$fallback_type]
+# USAGE: application_type $application
 # RETURN: the application type keyword, from the supported values:
 #         - dosbox
 #         - java
@@ -111,7 +111,6 @@ application_prefix_type() {
 #         - residualvm
 #         - scummvm
 #         - wine
-#         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
 	local application application_type
@@ -125,15 +124,9 @@ application_type() {
 		fi
 	fi
 
-	# If no type has been found and a fallback has been provided,
-	# use the fallback.
-	local fallback_type
-	fallback_type="$2"
-	if \
-		[ -z "$application_type" ] \
-		&& [ -n "$fallback_type" ]
-	then
-		application_type="$fallback_type"
+	# Return early if no type has been found
+	if [ -z "$application_type" ]; then
+		return 0
 	fi
 
 	# Check that a supported type has been fetched
@@ -153,10 +146,6 @@ application_type() {
 		;;
 		('native_no-prefix')
 			## WARNING - This archive type is deprecated.
-		;;
-		('unknown')
-			## "unknown" is the only allowed invalid application type,
-			## to be used only as a fallback.
 		;;
 		(*)
 			error_unknown_application_type "$application_type"
@@ -196,11 +185,21 @@ application_id() {
 # USAGE: application_exe $application
 # RETURN: the application file name
 application_exe() {
-	# Use the package-specific value if it is available,
-	# falls back on the default value
-	local application application_exe
+	# The following values a checked in order,
+	# the first one found is used:
+	# - package-specific value
+	# - archive-specific value
+	# - default value
+	local application application_exe application_exe_default
 	application="$1"
+	application_exe_default=$(get_value "${application}_EXE")
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+	if \
+		[ -z "$application_exe" ] || \
+		[ "$application_exe" = "$application_exe_default" ]
+	then
+		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
+	fi
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$application_exe" ]; then
@@ -318,22 +317,29 @@ application_icons_list() {
 	fi
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
-	local default_icon application_type
+	local default_icon
 	default_icon="${application}_ICON"
-	application_type=$(application_type "$application" 'unknown')
+	## If a value is explicitly set for APP_xxx_ICON,
+	## we assume this is the only icon for the current application.
+	if [ -n "$(get_value "$default_icon")" ]; then
+		printf '%s' "$default_icon"
+		return 0
+	fi
+	## If no value is set for APP_xxx_ICON,
+	## the behaviour depends on the application type.
+	local application_type
+	application_type=$(application_type "$application")
 	case "$application_type" in
 		('unity3d')
-			# It is expected that Unity3D games always come with a single icon
+			# It is expected that Unity3D games always come with a single icon.
 			printf '%s' "$default_icon"
 			return 0
 		;;
-		(*)
-			# If a value is explicitely set for APP_xxx_ICON,
-			# we assume this is the only icon for the current application
-			if [ -n "$(get_value "$default_icon")" ]; then
-				printf '%s' "$default_icon"
-				return 0
-			fi
+		('wine')
+			# If no value is explicitly set for the icon of a WINE application,
+			# we will fall back to extracting one from the binary.
+			printf '%s' "$default_icon"
+			return 0
 		;;
 	esac
 
