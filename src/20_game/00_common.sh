@@ -9,7 +9,7 @@ game_id() {
 
 	# Check that the id fits the format restrictions
 	if ! printf '%s' "$game_id" | \
-		grep --quiet --regexp='^[0-9a-z][-_0-9a-z]\+[0-9a-z]$'
+		grep --quiet --regexp='^[0-9a-z][-0-9a-z]\+[0-9a-z]$'
 	then
 		error_game_id_invalid "$game_id"
 		return 1
