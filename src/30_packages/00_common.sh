@@ -192,6 +192,14 @@ package_get_id() {
 		package_id=$(game_id)
 	fi
 
+	# Check that the id fits the format restrictions
+	if ! printf '%s' "$package_id" | \
+		grep --quiet --regexp='^[0-9a-z][-0-9a-z]\+[0-9a-z]$'
+	then
+		error_package_id_invalid "$package_id"
+		return 1
+	fi
+
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
 	case "$OPTION_PACKAGE" in
 		('arch')

@@ -96,3 +96,27 @@ warning_dependencies_unknown_libraries() {
 	printf -- '- %s\n' $(dependencies_unknown_libraries_list)
 	printf '%s\n%s\n' "$message2" "$PLAYIT_BUG_TRACKER_URL"
 }
+
+# Display an error when using an invalid format for package id.
+# USAGE: error_package_id_invalid $package_id
+error_package_id_invalid() {
+	local package_id message
+	package_id="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼid de paquet fourni ne correspond pas au format attendu : "%s"\n'
+			message="$message"'Cette valeur ne peut utiliser que des caractères du set [-a-z0-9],'
+			message="$message"' et ne peut ni débuter ni sʼachever par un tiret.\n'
+		;;
+		('en'|*)
+			message='The provided package id is not using the expected format: "%s"\n'
+			message="$message"'The value should only include characters from the set [-a-z0-9],'
+			message="$message"' and can not begin nor end with an hyphen.\n'
+		;;
+	esac
+
+	print_error
+	# shellcheck disable=SC2059
+	printf "$message" "$package_id"
+}
