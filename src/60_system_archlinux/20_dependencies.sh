@@ -379,6 +379,9 @@ dependency_package_providing_library_arch() {
 		('libGL.so.1')
 			package_name='libgl'
 		;;
+		('libGLEW.so.2.2')
+			package_name='glew'
+		;;
 		('libglfw.so.3')
 			package_name='glfw'
 		;;
@@ -387,6 +390,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libGLU.so.1')
 			package_name='glu'
+		;;
+		('libGLX.so.0')
+			package_name='libglvnd'
 		;;
 		('libgmodule-2.0.so.0')
 			package_name='glib2'
@@ -418,6 +424,9 @@ dependency_package_providing_library_arch() {
 		('libkrb5.so.3')
 			package_name='krb5'
 		;;
+		('libluajit-5.1.so.2')
+			package_name='luajit'
+		;;
 		('libm.so.6')
 			package_name='glibc'
 		;;
@@ -441,6 +450,12 @@ dependency_package_providing_library_arch() {
 		;;
 		('libopenal.so.1')
 			package_name='openal'
+		;;
+		('libOpenGL.so.0')
+			package_name='libglvnd'
+		;;
+		('libopenmpt.so.0')
+			package_name='libopenmpt'
 		;;
 		('libpango-1.0.so.0')
 			package_name='pango'
@@ -686,6 +701,9 @@ dependency_package_providing_library_arch32() {
 		('libGL.so.1')
 			package_name='lib32-libgl'
 		;;
+		('libGLEW.so.2.2')
+			package_name='lib32-glew'
+		;;
 		('libglfw.so.3')
 			package_name='lib32-glfw'
 		;;
@@ -694,6 +712,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libGLU.so.1')
 			package_name='lib32-glu'
+		;;
+		('libGLX.so.0')
+			package_name='lib32-libglvnd'
 		;;
 		('libgmodule-2.0.so.0')
 			package_name='lib32-glib2'
@@ -725,6 +746,9 @@ dependency_package_providing_library_arch32() {
 		('libkrb5.so.3')
 			package_name='lib-32krb5'
 		;;
+		('libluajit-5.1.so.2')
+			package_name='lib32-luajit'
+		;;
 		('libm.so.6')
 			package_name='lib32-glibc'
 		;;
@@ -750,6 +774,13 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libopenal.so.1')
 			package_name='lib32-openal'
+		;;
+		('libOpenGL.so.0')
+			package_name='lib32-libglvnd'
+		;;
+		('libopenmpt.so.0')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
 		;;
 		('libpango-1.0.so.0')
 			package_name='lib32-pango'

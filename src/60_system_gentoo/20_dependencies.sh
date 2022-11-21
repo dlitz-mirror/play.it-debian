@@ -291,6 +291,9 @@ dependency_package_providing_library_gentoo() {
 		('libGL.so.1')
 			package_name='virtual/opengl'
 		;;
+		('libGLEW.so.2.2')
+			package_name='media-libs/glew'
+		;;
 		('libglfw.so.3')
 			package_name='media-libs/glfw'
 		;;
@@ -299,6 +302,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libGLU.so.1')
 			package_name='virtual/glu'
+		;;
+		('libGLX.so.0')
+			package_name='media-libs/libglvnd'
 		;;
 		('libgmodule-2.0.so.0')
 			package_name='dev-libs/glib:2'
@@ -330,6 +336,9 @@ dependency_package_providing_library_gentoo() {
 		('libkrb5.so.3')
 			package_name='app-crypt/mit-krb5'
 		;;
+		('libluajit-5.1.so.2')
+			package_name='dev-lang/luajit'
+		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc'
 		;;
@@ -353,6 +362,12 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal'
+		;;
+		('libOpenGL.so.0')
+			package_name='media-libs/libglvnd'
+		;;
+		('libopenmpt.so.0')
+			package_name='media-libs/libopenmpt'
 		;;
 		('libpango-1.0.so.0')
 			package_name='x11-libs/pango'
@@ -598,6 +613,9 @@ dependency_package_providing_library_gentoo32() {
 		('libGL.so.1')
 			package_name='virtual/opengl[abi_x86_32]'
 		;;
+		('libGLEW.so.2.2')
+			package_name='media-libs/glew[abi_x86_32]'
+		;;
 		('libglfw.so.3')
 			package_name='media-libs/glfw[abi_x86_32]'
 		;;
@@ -606,6 +624,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libGLU.so.1')
 			package_name='virtual/glu[abi_x86_32]'
+		;;
+		('libGLX.so.0')
+			package_name='media-libs/libglvnd[abi_x86_32]'
 		;;
 		('libgmodule-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
@@ -637,6 +658,9 @@ dependency_package_providing_library_gentoo32() {
 		('libkrb5.so.3')
 			package_name='app-crypt/mit-krb5[abi_x86_32]'
 		;;
+		('libluajit-5.1.so.2')
+			package_name='dev-lang/luajit[abi_x86_32]'
+		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
@@ -660,6 +684,12 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libopenal.so.1')
 			package_name='media-libs/openal[abi_x86_32]'
+		;;
+		('libOpenGL.so.0')
+			package_name='media-libs/libglvnd[abi_x86_32]'
+		;;
+		('libopenmpt.so.0')
+			package_name='media-libs/libopenmpt[abi_x86_32]'
 		;;
 		('libpango-1.0.so.0')
 			package_name='x11-libs/pango[abi_x86_32]'
