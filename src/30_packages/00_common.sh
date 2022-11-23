@@ -192,6 +192,14 @@ package_get_id() {
 		package_id=$(game_id)
 	fi
 
+	# Check that the id fits the format restrictions
+	if ! printf '%s' "$package_id" | \
+		grep --quiet --regexp='^[0-9a-z][-0-9a-z]\+[0-9a-z]$'
+	then
+		error_package_id_invalid "$package_id"
+		return 1
+	fi
+
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
 	case "$OPTION_PACKAGE" in
 		('arch')
@@ -395,8 +403,9 @@ package_get_path() {
 	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
 
 	# compute the package path from its identifier
-	local package_path
-	package_path="${PLAYIT_WORKDIR}/$(package_get_id "$package")_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
+	local package_path package_id
+	package_id=$(package_get_id "$package")
+	package_path="${PLAYIT_WORKDIR}/${package_id}_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
 
 	printf '%s' "$package_path"
 	return 0
@@ -415,14 +424,15 @@ package_get_name() {
 	assert_not_empty 'ARCHIVE' 'package_get_name'
 
 	# compute the package path from its identifier
-	local package_name package_path
+	local package_name package_path package_id
 	case "$OPTION_PACKAGE" in
 		('arch'|'deb')
 			package_path=$(package_get_path "$package")
 			package_name=$(basename "$package_path")
 		;;
 		('gentoo'|'egentoo')
-			package_name="$(package_get_id "$package")-$(packages_get_version "$ARCHIVE")"
+			package_id=$(package_get_id "$package")
+			package_name="${package_id}-$(packages_get_version "$ARCHIVE")"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'

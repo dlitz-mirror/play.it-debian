@@ -24,8 +24,10 @@ pkg_write_deb() {
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
+	local package_id
+	package_id=$(package_get_id "$pkg")
 	cat > "$control_file" <<- EOF
-	Package: $(package_get_id "$pkg")
+	Package: $package_id
 	Version: $(packages_get_version "$ARCHIVE")
 	Architecture: $(package_get_architecture_string "$pkg")
 	Multi-Arch: foreign
