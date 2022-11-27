@@ -23,47 +23,21 @@ launcher_write_script() {
 	prefix_type=$(application_prefix_type "$application")
 
 	# Check that the launcher target exists
-	local binary_path binary_found tested_package path_game_data
-	path_game_data=$(path_game_data)
-	case "$application_type" in
-		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
-		;;
-		('mono')
-			# Game binary for Mono games may be included in another package than the binaries one
-			local packages_list
-			packages_list=$(packages_get_list)
-			binary_found=0
-			for tested_package in $packages_list; do
-				binary_path="$(package_get_path "$tested_package")${path_game_data}/$(application_exe "$application")"
-				if [ -f "$binary_path" ]; then
-					binary_found=1
-					break;
-				fi
-			done
-			if [ $binary_found -eq 0 ]; then
-				binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
-				error_launcher_missing_binary "$binary_path"
+	local application_exe_path
+	application_exe_path=$(application_exe_path "$application")
+	if [ -z "$application_exe_path" ]; then
+		case "$application_type" in
+			('residualvm'|'scummvm'|'renpy')
+				# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
+			;;
+			(*)
+				local application_exe
+				application_exe=$(application_exe "$application")
+				error_launcher_missing_binary "$application_exe"
 				return 1
-			fi
-		;;
-		('wine')
-			if [ "$(application_exe "$application")" != 'winecfg' ]; then
-				binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
-				if [ ! -f "$binary_path" ]; then
-					error_launcher_missing_binary "$binary_path"
-					return 1
-				fi
-			fi
-		;;
-		(*)
-			binary_path="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
-			if [ ! -f "$binary_path" ]; then
-				error_launcher_missing_binary "$binary_path"
-				return 1
-			fi
-		;;
-	esac
+			;;
+		esac
+	fi
 
 	# write launcher script
 	debug_write_launcher "$application_type" "$binary_file"
