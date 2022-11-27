@@ -23,20 +23,11 @@ launcher_write_script() {
 	prefix_type=$(application_prefix_type "$application")
 
 	# Check that the launcher target exists
-	local application_exe_path
-	application_exe_path=$(application_exe_path "$application")
-	if [ -z "$application_exe_path" ]; then
-		case "$application_type" in
-			('residualvm'|'scummvm'|'renpy')
-				# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
-			;;
-			(*)
-				local application_exe
-				application_exe=$(application_exe "$application")
-				error_launcher_missing_binary "$application_exe"
-				return 1
-			;;
-		esac
+	if ! launcher_target_presence_check "$application"; then
+		local application_exe
+		application_exe=$(application_exe "$application")
+		error_launcher_missing_binary "$application_exe"
+		return 1
 	fi
 
 	# write launcher script
@@ -225,6 +216,25 @@ launcher_write_script() {
 	esac
 
 	return 0
+}
+
+# Check that the launcher target exists.
+# USAGE: launcher_target_presence_check $application
+launcher_target_presence_check() {
+	local application application_type application_exe_path
+	application="$1"
+	application_type=$(application_type "$application")
+
+	case "$application_type" in
+		('residualvm'|'scummvm'|'renpy')
+			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
+			return 0
+		;;
+	esac
+
+	local application_exe_path
+	application_exe_path=$(application_exe_path "$application")
+	test -f "$application_exe_path"
 }
 
 # write launcher script headers
