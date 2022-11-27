@@ -20,6 +20,10 @@ launcher_write_script() {
 	# Get application type and prefix type
 	local application_type prefix_type
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	prefix_type=$(application_prefix_type "$application")
 
 	# Check that the launcher target exists
@@ -224,6 +228,10 @@ launcher_target_presence_check() {
 	local application application_type
 	application="$1"
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 
 	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
@@ -328,6 +336,10 @@ launcher_write_desktop() {
 	# WINE - Write XDG desktop file for winecfg
 	local application_type
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if \
 		[ "$application_type" = 'wine' ] && \
 		[ "$application" != 'APP_WINECFG' ]

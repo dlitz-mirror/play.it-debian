@@ -6,6 +6,10 @@ application_scummvm_scummid() {
 	local application application_type
 	application="$1"
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if [ "$application_type" != 'scummvm' ]; then
 		error_application_wrong_type 'application_scummvm_scummid' "$application_type"
 		return 1

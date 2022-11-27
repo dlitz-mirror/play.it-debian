@@ -67,6 +67,10 @@ application_prefix_type() {
 	# ScummVM and ResidualVM applications default to "none".
 	local application_type
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	case "$application_type" in
 		('scummvm'|'residualvm')
 			prefix_type='none'
@@ -266,6 +270,10 @@ application_exe() {
 	if [ -z "$application_exe" ]; then
 		local application_type
 		application_type=$(application_type "$application")
+		if [ -z "$application_type" ]; then
+			error_no_application_type "$application"
+			return 1
+		fi
 		case "$application_type" in
 			('unity3d')
 				application_exe=$(application_unity3d_exe "$application")
