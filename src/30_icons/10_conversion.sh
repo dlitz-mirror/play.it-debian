@@ -144,13 +144,6 @@ icons_inclusion_single_icon() {
 	unset WRESTOOL_OPTIONS
 }
 
-# Return the MIME type of a given icon file
-# USAGE: icon_file_type $icon_file
-# RETURNS: the MIME type, as a string
-icon_file_type() {
-	file --brief --dereference --mime-type "$1"
-}
-
 # extract .png file(s) from target file
 # USAGE: icon_extract_png_from_file $file $destination
 # RETURNS: nothing
@@ -159,7 +152,7 @@ icon_extract_png_from_file() {
 	local icon_file destination icon_type
 	icon_file="$1"
 	destination="$2"
-	icon_type=$(icon_file_type "$icon_file")
+	icon_type=$(file_type "$icon_file")
 	mkdir --parents "$destination"
 	case "$icon_type" in
 		('application/x-dosexec')
