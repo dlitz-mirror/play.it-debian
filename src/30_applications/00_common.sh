@@ -121,6 +121,8 @@ application_type() {
 	if [ -z "$application_type" ]; then
 		if [ -n "$(unity3d_name)" ]; then
 			application_type='unity3d'
+		else
+			application_type=$(application_type_guess_from_file "$application")
 		fi
 	fi
 
@@ -150,6 +152,65 @@ application_type() {
 		(*)
 			error_unknown_application_type "$application_type"
 			return 1
+		;;
+	esac
+
+	printf '%s' "$application_type"
+}
+
+# Try to find the application type from the MIME type of its binary file
+# USAGE: application_type_guess_from_file $application
+# RETURN: the guessed application type,
+#         or an empty string if none could be guessed
+application_type_guess_from_file() {
+	# Compute path to application binary
+	local application application_exe application_exe_path
+	application="$1"
+	## application_exe can not be used here, as it relies on application_type.
+	## This could lead to a loop where application_type relies on itself.
+	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+	if [ -z "$application_exe" ]; then
+		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
+	fi
+	application_exe_path=$(application_exe_path "$application_exe")
+
+	# Return early if no binary file can be found for the given application.
+	if [ -z "$application_exe_path" ]; then
+		return 0
+	fi
+
+	local file_type application_type
+	file_type=$(file_type "$application_exe_path")
+	case "$file_type" in
+		( \
+			'application/x-executable' | \
+			'application/x-pie-executable' \
+		)
+			application_type='native'
+		;;
+		('application/x-dosexec')
+			local file_type_extended
+			file_type_extended=$( \
+				LANG=C file --brief --dereference "$application_exe_path" | \
+				cut --delimiter=',' --fields=1 \
+			)
+			case "$file_type_extended" in
+				('MS-DOS executable')
+					application_type='dosbox'
+				;;
+				( \
+					'PE32 executable (GUI) Intel 80386' | \
+					'PE32+ executable (GUI) x86-64' \
+				)
+					application_type='wine'
+				;;
+				( \
+					'PE32 executable (GUI) Intel 80386 Mono/.Net assembly' | \
+					'PE32+ executable (GUI) x86-64 Mono/.Net assembly' \
+				)
+					application_type='mono'
+				;;
+			esac
 		;;
 	esac
 
