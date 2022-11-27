@@ -204,9 +204,21 @@ wine_prefix_persistent_links() {
 	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
 	    prefix_dir="$PATH_PREFIX/${line%%:*}"
 	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
+	    mkdir --parents "$prefix_dir"
 	    if [ ! -h "$wine_dir" ]; then
 	        if [ -d "$wine_dir" ]; then
-	            mv --no-target-directory "$wine_dir" "$prefix_dir"
+	            # A basic recursive cp will not work due to the presence of symbolic links to directories in the destination.
+	            (
+	                cd "$prefix_dir"
+	                find . -type l
+	            ) | while read -r link; do
+	                if [ -e "${wine_dir}/${link}" ]; then
+	                    cp --no-clobber --recursive "${wine_dir}/${link}"/* "${prefix_dir}/${link}"/
+	                    rm --force --recursive "${wine_dir:?}/${link}"
+	                fi
+	            done
+	            cp --no-clobber --no-target-directory --recursive "$wine_dir" "$prefix_dir"
+	            rm --force --recursive "$wine_dir"
 	        fi
 	        if [ ! -d "$prefix_dir" ]; then
 	            mkdir --parents "$prefix_dir"

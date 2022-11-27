@@ -23,9 +23,13 @@ content_inclusion() {
 	package="$2"
 	target_path="$3"
 
-	# Return early if the content source path does not exist.
+	# Return early if the content source path is not set.
 	local content_path
 	content_path=$(content_path "$content_id")
+	if [ -z "$content_path" ]; then
+		return 0
+	fi
+	# Return early if the content source path does not exist.
 	content_path_full="${PLAYIT_WORKDIR}/gamedata/${content_path}"
 	if [ ! -e "$content_path_full" ]; then
 		return 0

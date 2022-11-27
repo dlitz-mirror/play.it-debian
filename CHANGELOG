@@ -1,3 +1,10 @@
+2.18.3
+
+  * content_path_default - Do not throw an error if no default path is set.
+  * Extend the list of supported native libraries for packages dependencies declarations.
+  * Add a format check for package id.
+  * WINE: Fix APP_WINE_LINK_DIRS failure on non-empty target.
+
 2.18.2
 
   * Add ability to get the name of a context-specific variable, using a new dedicated function: context_specific_name.

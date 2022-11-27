@@ -239,6 +239,9 @@ dependency_package_providing_library_deb() {
 			libgl1 | libgl1-mesa-glx
 			libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
 		;;
+		('libGLEW.so.2.2')
+			package_name='libglew2.2'
+		;;
 		('libglfw.so.3')
 			package_name='libglfw3 | libglfw3-wayland'
 		;;
@@ -247,6 +250,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libGLU.so.1')
 			package_name='libglu1-mesa | libglu1'
+		;;
+		('libGLX.so.0')
+			package_name='libglx0'
 		;;
 		('libgmodule-2.0.so.0')
 			package_name='libglib2.0-0'
@@ -278,6 +284,9 @@ dependency_package_providing_library_deb() {
 		('libkrb5.so.3')
 			package_name='libkrb5-3'
 		;;
+		('libluajit-5.1.so.2')
+			package_name='libluajit-5.1-2'
+		;;
 		('libm.so.6')
 			package_name='libc6'
 		;;
@@ -301,6 +310,12 @@ dependency_package_providing_library_deb() {
 		;;
 		('libopenal.so.1')
 			package_name='libopenal1'
+		;;
+		('libOpenGL.so.0')
+			package_name='libopengl0'
+		;;
+		('libopenmpt.so.0')
+			package_name='libopenmpt0'
 		;;
 		('libpango-1.0.so.0')
 			package_name='libpango-1.0-0'
