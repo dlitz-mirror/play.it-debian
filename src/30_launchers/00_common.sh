@@ -221,19 +221,28 @@ launcher_write_script() {
 # Check that the launcher target exists.
 # USAGE: launcher_target_presence_check $application
 launcher_target_presence_check() {
-	local application application_type application_exe_path
+	local application application_type
 	application="$1"
 	application_type=$(application_type "$application")
 
 	case "$application_type" in
 		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
+			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
 			return 0
+		;;
+		('wine')
+			# winecfg is provided by WINE itself, not the game archive.
+			local application_exe
+			application_exe=$(application_exe "$application")
+			if [ "$application_exe" = 'winecfg' ]; then
+				return 0
+			fi
 		;;
 	esac
 
-	local application_exe_path
-	application_exe_path=$(application_exe_path "$application")
+	local application_exe application_exe_path
+	application_exe=$(application_exe "$application")
+	application_exe_path=$(application_exe_path "$application_exe")
 	test -f "$application_exe_path"
 }
 

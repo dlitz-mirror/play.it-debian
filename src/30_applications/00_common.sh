@@ -233,56 +233,44 @@ application_exe_escaped() {
 }
 
 # Print the full path to the application binary.
-# USAGE: application_exe_path $application
+# USAGE: application_exe_path $application_exe
 # RETURN: the full path to the application binary,
 #         or an empty string if it could not be found.
 application_exe_path() {
-	local application application_exe application_type
-	application="$1"
-	application_exe=$(application_exe "$application")
-	application_type=$(application_type "$application")
+	local application_exe
+	application_exe="$1"
 
+	# Look for the application binary in the temporary path for archive content.
+	local content_path application_exe_path
+	content_path=$(content_path_default)
+	application_exe_path="${PLAYIT_WORKDIR}/gamedata/${content_path}/${application_exe}"
+	if [ -f "$application_exe_path" ]; then
+		printf '%s' "$application_exe_path"
+		return 0
+	fi
+
+	# Look for the application binary in the current package.
 	local package package_path path_game_data
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
 	path_game_data=$(path_game_data)
+	application_exe_path="${package_path}${path_game_data}/${application_exe}"
+	if [ -f "$application_exe_path" ]; then
+		printf '%s' "$application_exe_path"
+		return 0
+	fi
 
-	local application_exe_path
-	case "$application_type" in
-		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
-		;;
-		('mono')
-			# Game binary for Mono games may be included in another package than the binaries one
-			local packages_list
-			packages_list=$(packages_get_list)
-			for package in $packages_list; do
-				package_path=$(package_get_path "$package")
-				application_exe_path="${package_path}${path_game_data}/${application_exe}"
-				if [ ! -f "$application_exe_path" ]; then
-					unset application_exe_path
-				else
-					break
-				fi
-			done
-		;;
-		('wine')
-			if [ "$application_exe" != 'winecfg' ]; then
-				application_exe_path="${package_path}${path_game_data}/${application_exe}"
-				if [ ! -f "$application_exe_path" ]; then
-					unset application_exe_path
-				fi
-			fi
-		;;
-		(*)
-			application_exe_path="${package_path}${path_game_data}/${application_exe}"
-			if [ ! -f "$application_exe_path" ]; then
-				unset application_exe_path
-			fi
-		;;
-	esac
-
-	printf '%s' "$application_exe_path"
+	# Look for the application binary in all packages.
+	local packages_list
+	packages_list=$(packages_get_list)
+	for package in $packages_list; do
+		package_path=$(package_get_path "$package")
+		application_exe_path="${package_path}${path_game_data}/${application_exe}"
+		if [ -f "$application_exe_path" ]; then
+			printf '%s' "$application_exe_path"
+			return 0
+		fi
+	done
 }
 
 # print the name of the given application, for display in menus
