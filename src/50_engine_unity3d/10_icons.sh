@@ -8,6 +8,10 @@ icon_unity3d_path() {
 	icon="$1"
 	application=$(icon_application "$icon")
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if [ "$application_type" != 'unity3d' ]; then
 		error_application_wrong_type 'icon_unity3d_path' "$application_type"
 		return 1

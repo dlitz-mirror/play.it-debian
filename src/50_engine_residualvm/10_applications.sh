@@ -6,6 +6,10 @@ application_residualvm_residualid() {
 	local application application_type
 	application="$1"
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if [ "$application_type" != 'residualvm' ]; then
 		error_application_wrong_type 'application_residualvm_residualid' "$application_type"
 		return 1

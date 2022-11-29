@@ -7,6 +7,10 @@ application_mono_options() {
 	local application application_type
 	application="$1"
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if [ "$application_type" != 'mono' ]; then
 		error_application_wrong_type 'application_mono_options' "$application_type"
 		return 1
