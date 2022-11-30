@@ -36,7 +36,7 @@ application_icons_list() {
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
 	local default_icon
-	default_icon="${application}_ICON"
+	default_icon=$(context_specific_name 'archive' "${application}_ICON")
 	## If a value is explicitly set for APP_xxx_ICON,
 	## we assume this is the only icon for the current application.
 	if [ -n "$(get_value "$default_icon")" ]; then
