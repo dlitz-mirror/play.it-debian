@@ -192,6 +192,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
 
+	# Set path to working directory
+	set_temp_directories
+
 	# Check the presence of required tools
 
 	check_deps
@@ -206,7 +209,4 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	PATH_GAME=$(path_game_data)
 	PATH_ICON_BASE=$(path_icons)
 	export PATH_BIN PATH_DESK PATH_DOC PATH_GAME PATH_ICON_BASE
-
-	# Set path to working directory
-	set_temp_directories
 fi
