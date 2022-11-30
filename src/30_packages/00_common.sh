@@ -134,22 +134,17 @@ package_format_guess() {
 	printf '%s' "$package_type"
 }
 
-# get the current package
+# Print the identifier of the current package
 # USAGE: package_get_current
+# RETURN: a single package identifier
 package_get_current() {
 	local package
 	package="$PKG"
 
-	# Fall back on a default value if $PKG is not set
+	# If $PKG is not explictly set,
+	# return the first package from the list of packages to build.
 	if [ -z "$package" ]; then
-		package='PKG_MAIN'
-	fi
-
-	# If the current package is not part of the full list of packages,
-	# something went wrong
-	if ! packages_get_list | grep --quiet --fixed-strings --word-regexp "$package"; then
-		error_package_not_in_list "$package"
-		return 1
+		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
 	fi
 
 	printf '%s' "$package"
