@@ -41,6 +41,9 @@ wine_launcher_write() {
 	local package
 	package=$(package_get_current)
 	dependencies_add_generic "$package" 'wine'
+	if [ -n "$APP_WINETRICKS" ]; then
+		dependencies_add_generic "$package" 'winetricks'
+	fi
 }
 
 # WINE - Compute path to WINE prefix
