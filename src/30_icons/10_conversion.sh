@@ -1,43 +1,33 @@
-# update dependencies list with commands needed for icons extraction
+# Print the list of dependencies required to handle the provided icons.
 # USAGE: icons_list_dependencies
-# RETURNS: nothing
-# SIDE EFFECT: export $ICONS_DEPS, a variable including a space-separated list of required commands to handle the icons of the current game
+# RETURNS: a list of required commands, one per line
 icons_list_dependencies() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
 	if [ "$SKIP_ICONS" -eq 1 ]; then
 		return 0
 	fi
 
-	# Get list of applications
-	local applications_list
-	applications_list=$(applications_list)
-
-	# Return early if there is no application for the current game script
-	if [ -z "$applications_list" ]; then
+	# Get list of icons
+	local icons_list
+	icons_list=$(icons_list_all)
+	## Return early if there is no icon for the current game script
+	if [ -z "$icons_list" ]; then
 		return 0
 	fi
 
-	# Get list of icons
-	local application application_icons_list full_icons_list
-	for application in $applications_list; do
-		application_icons_list=$(application_icons_list "$application")
-		full_icons_list="$full_icons_list $application_icons_list"
-	done
-
-	# Get dependencies for each icon
-	local icon
-	for icon in $full_icons_list; do
-		case "$icon" in
-			('*.bmp'|'*.ico')
-				ICONS_DEPS="$ICONS_DEPS identify convert"
+	# Print requirement for each icon.
+	local icon icon_filename
+	for icon in $icons_list; do
+		icon_filename=$(get_value "$icon")
+		case "$icon_filename" in
+			(*'.bmp'|*'.ico')
+				printf '%s\n' 'identify' 'convert'
 			;;
-			('*.exe')
-				ICONS_DEPS="$ICONS_DEPS identify convert wrestool"
+			(*'.exe')
+				printf '%s\n' 'identify' 'convert' 'wrestool'
 			;;
 		esac
 	done
-
-	export ICONS_DEPS
 }
 
 # Fetch icon from the archive contents,

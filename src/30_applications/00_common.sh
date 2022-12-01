@@ -410,53 +410,6 @@ application_options() {
 	printf '%s' "$application_options"
 }
 
-# print the list of icon identifiers for the given application
-# USAGE: application_icons_list $application
-# RETURN: a space-separated list of icons identifiers,
-#         or an empty string if no icon seems to be set
-application_icons_list() {
-	local application
-	application="$1"
-
-	# Use the value of APP_xxx_ICONS_LIST if it is set
-	local icons_list
-	icons_list=$(get_value "${application}_ICONS_LIST")
-	if [ -n "$icons_list" ]; then
-		printf '%s' "$icons_list"
-		return 0
-	fi
-
-	# Fall back on the default value of a single APP_xxx_ICON icon
-	local default_icon
-	default_icon="${application}_ICON"
-	## If a value is explicitly set for APP_xxx_ICON,
-	## we assume this is the only icon for the current application.
-	if [ -n "$(get_value "$default_icon")" ]; then
-		printf '%s' "$default_icon"
-		return 0
-	fi
-	## If no value is set for APP_xxx_ICON,
-	## the behaviour depends on the application type.
-	local application_type
-	application_type=$(application_type "$application")
-	case "$application_type" in
-		('unity3d')
-			# It is expected that Unity3D games always come with a single icon.
-			printf '%s' "$default_icon"
-			return 0
-		;;
-		('wine')
-			# If no value is explicitly set for the icon of a WINE application,
-			# we will fall back to extracting one from the binary.
-			printf '%s' "$default_icon"
-			return 0
-		;;
-	esac
-
-	# If no icon has been found, there is nothing to print
-	return 0
-}
-
 # Legacy - Print the application libraries path, relative to the game root.
 # This function is deprecated, starting with ./play.it 2.19.
 # New game scripts should no longer rely on the APP_xxx_LIBS variable.

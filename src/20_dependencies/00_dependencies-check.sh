@@ -70,17 +70,17 @@ check_deps() {
 	done
 
 	# Check for the dependencies required to extract the icons
-	unset ICONS_DEPS
-	icons_list_dependencies
-	for dep in $ICONS_DEPS; do
-		if ! command -v "$dep" >/dev/null 2>&1; then
+	local icons_requirements requirement
+	icons_requirements=$(icons_list_dependencies)
+	for requirement in $icons_requirements; do
+		if ! command -v "$requirement" >/dev/null 2>&1; then
 			case "$OPTION_ICONS" in
 				('yes')
-					error_icon_dependency_not_found "$dep"
+					error_icon_dependency_not_found "$requirement"
 					return 1
 				;;
 				('auto')
-					warning_icon_dependency_not_found "$dep"
+					warning_icon_dependency_not_found "$requirement"
 					export SKIP_ICONS=1
 					break
 				;;
