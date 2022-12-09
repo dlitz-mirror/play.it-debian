@@ -25,6 +25,10 @@ error_launchers_prefix_type_unsupported() {
 	local application application_type prefix_type
 	application="$1"
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	prefix_type=$(application_prefix_type "$application")
 
 	local message

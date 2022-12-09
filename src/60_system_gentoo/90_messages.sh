@@ -1,18 +1,19 @@
 # print notification about required overlays when building Gentoo packages
 # USAGE: information_required_gentoo_overlays $overlays
 information_required_gentoo_overlays() {
-	local message overlays
-	overlays="$1"
+	local message overlays_file
+	overlays_file="$(dependency_gentoo_overlays_file)"
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='\nVous pouvez avoir besoin des overlays suivants pour installer ces paquets : %s\n'
+			message='Vous pourriez avoir besoin des overlays suivants pour installer ces paquets :'
 		;;
 		('en'|*)
-			message='\nYou may need the following overlays to install these packages: %s\n'
+			message='You may need the following overlays to install these packages:'
 		;;
 	esac
-	printf "$message" "$overlays"
+	printf '\n%s\n' "$message"
+	printf '\t%s\n' "$(cat "$overlays_file")"
 }
 
 # add comment to packages installation instructions on Gentoo
@@ -69,3 +70,21 @@ info_package_to_distfiles() {
 	printf "$message"
 }
 
+# Display an error when an unknown architecture string is used
+# USAGE: error_unknown_gentoo_architecture_string $arch_string $caller
+error_unknown_gentoo_architecture_string() {
+	local message arch_string caller
+	arch_string="$1"
+	caller="$2"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼarchitecture « %s », utilisée dans %s, est inconnue sous Gentoo.\n'
+			;;
+		('en'|*)
+			message='“%s” architecture, used in %s, is unknown on Gentoo.\n'
+			;;
+	esac
+	print_error
+	printf "$message" "$arch_string" "$caller"
+}

@@ -10,58 +10,29 @@ launcher_write_script() {
 	fi
 
 	# compute file path
-	local package package_path application_id target_file
+	local package package_path path_binaries application_id target_file
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
+	path_binaries=$(path_binaries)
 	application_id=$(application_id "$application")
-	target_file="${package_path}${PATH_BIN}/${application_id}"
+	target_file="${package_path}${path_binaries}/${application_id}"
 
 	# Get application type and prefix type
 	local application_type prefix_type
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	prefix_type=$(application_prefix_type "$application")
 
 	# Check that the launcher target exists
-	local binary_path binary_found tested_package
-	case "$application_type" in
-		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary
-		;;
-		('mono')
-			# Game binary for Mono games may be included in another package than the binaries one
-			local packages_list
-			packages_list=$(packages_get_list)
-			binary_found=0
-			for tested_package in $packages_list; do
-				binary_path="$(package_get_path "$tested_package")${PATH_GAME}/$(application_exe "$application")"
-				if [ -f "$binary_path" ]; then
-					binary_found=1
-					break;
-				fi
-			done
-			if [ $binary_found -eq 0 ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
-				error_launcher_missing_binary "$binary_path"
-				return 1
-			fi
-		;;
-		('wine')
-			if [ "$(application_exe "$application")" != 'winecfg' ]; then
-				binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
-				if [ ! -f "$binary_path" ]; then
-					error_launcher_missing_binary "$binary_path"
-					return 1
-				fi
-			fi
-		;;
-		(*)
-			binary_path="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
-			if [ ! -f "$binary_path" ]; then
-				error_launcher_missing_binary "$binary_path"
-				return 1
-			fi
-		;;
-	esac
+	if ! launcher_target_presence_check "$application"; then
+		local application_exe
+		application_exe=$(application_exe "$application")
+		error_launcher_missing_binary "$application_exe"
+		return 1
+	fi
 
 	# write launcher script
 	debug_write_launcher "$application_type" "$binary_file"
@@ -73,13 +44,13 @@ launcher_write_script() {
 		('dosbox')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_dosbox_application_variables "$application" "$target_file"
+					dosbox_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					dosbox_prefix_function_toupper >> "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_dosbox_run "$application" "$target_file"
+					dosbox_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -91,12 +62,12 @@ launcher_write_script() {
 		('java')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_java_application_variables "$application" "$target_file"
+					java_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_java_run "$application" "$target_file"
+					java_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -108,18 +79,18 @@ launcher_write_script() {
 		('native')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_native_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				('none')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_nativenoprefix_run "$application" "$target_file"
+					native_launcher_run "$application" >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -138,9 +109,11 @@ launcher_write_script() {
 		('scummvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_scummvm_application_variables "$application" "$target_file"
+					scummvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_scummvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					scummvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -155,7 +128,7 @@ launcher_write_script() {
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_renpy_run "$application" "$target_file"
+					renpy_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -167,9 +140,11 @@ launcher_write_script() {
 		('residualvm')
 			case "$prefix_type" in
 				('none')
-					launcher_write_script_residualvm_application_variables "$application" "$target_file"
+					residualvm_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_residualvm_run "$application" "$target_file"
+					launcher_write_script_prerun "$application" "$target_file"
+					residualvm_launcher_run >> "$target_file"
+					launcher_write_script_postrun "$application" "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -180,7 +155,7 @@ launcher_write_script() {
 		('unity3d')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_native_application_variables "$application" "$target_file"
+					native_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
@@ -200,12 +175,12 @@ launcher_write_script() {
 		('mono')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_mono_application_variables "$application" "$target_file"
+					mono_launcher_application_variables "$application" >> "$target_file"
 					launcher_write_script_game_variables "$target_file"
 					launcher_print_persistent_paths >> "$target_file"
 					launcher_write_script_prefix_functions "$target_file"
 					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_mono_run "$application" "$target_file"
+					mono_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
 				(*)
@@ -226,8 +201,9 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'|'unity3d')
-			local binary_file
-			binary_file="$(package_get_path "$package")${PATH_GAME}/$(application_exe "$application")"
+			local binary_file path_game_data
+			path_game_data=$(path_game_data)
+			binary_file="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
 			chmod +x "$binary_file"
 		;;
 	esac
@@ -236,7 +212,7 @@ launcher_write_script() {
 	case "$application_type" in
 		('wine')
 			local winecfg_file
-			winecfg_file="$(package_get_path "$package")${PATH_BIN}/$(game_id)_winecfg"
+			winecfg_file="${package_path}${path_binaries}/$(game_id)_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
 				launcher_write_script_wine_winecfg "$application"
 			fi
@@ -244,6 +220,38 @@ launcher_write_script() {
 	esac
 
 	return 0
+}
+
+# Check that the launcher target exists.
+# USAGE: launcher_target_presence_check $application
+launcher_target_presence_check() {
+	local application application_type
+	application="$1"
+	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
+
+	case "$application_type" in
+		('residualvm'|'scummvm'|'renpy')
+			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
+			return 0
+		;;
+		('wine')
+			# winecfg is provided by WINE itself, not the game archive.
+			local application_exe
+			application_exe=$(application_exe "$application")
+			if [ "$application_exe" = 'winecfg' ]; then
+				return 0
+			fi
+		;;
+	esac
+
+	local application_exe application_exe_path
+	application_exe=$(application_exe "$application")
+	application_exe_path=$(application_exe_path "$application_exe")
+	test -f "$application_exe_path"
 }
 
 # write launcher script headers
@@ -271,7 +279,7 @@ launcher_write_script_game_variables() {
 	# Set game-specific values
 
 	GAME_ID='$(game_id)'
-	PATH_GAME='$PATH_GAME'
+	PATH_GAME='$(path_game_data)'
 
 	EOF
 	return 0
@@ -327,16 +335,21 @@ launcher_write_desktop() {
 
 	# WINE - Write XDG desktop file for winecfg
 	local application_type
-	application_type=$(application_type "$application" 'unknown')
+	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	if \
 		[ "$application_type" = 'wine' ] && \
 		[ "$application" != 'APP_WINECFG' ]
 	then
-		local package package_path winecfg_desktop
+		local package package_path path_xdg_desktop game_id winecfg_desktop
 		package=$(package_get_current)
 		package_path=$(package_get_path "$package")
+		path_xdg_desktop=$(path_xdg_desktop)
 		game_id=$(game_id)
-		winecfg_desktop="${package_path}${PATH_DESK}/${game_id}_winecfg.desktop"
+		winecfg_desktop="${package_path}${path_xdg_desktop}/${game_id}_winecfg.desktop"
 		if [ ! -e "$winecfg_desktop" ]; then
 			APP_WINECFG_ID="$(game_id)_winecfg"
 			APP_WINECFG_NAME="$(game_name) - WINE configuration"
@@ -384,14 +397,15 @@ launcher_desktop() {
 # USAGE: launcher_desktop_filepath $application
 # RETURN: an absolute file path
 launcher_desktop_filepath() {
-	local application application_id package package_path
+	local application application_id package package_path path_xdg_desktop
 	application="$1"
 	application_id=$(application_id "$application")
 	package=$(package_get_current)
 	package_path=$(package_get_path "$package")
+	path_xdg_desktop=$(path_xdg_desktop)
 
 	printf '%s/%s.desktop' \
-		"${package_path}${PATH_DESK}" \
+		"${package_path}${path_xdg_desktop}" \
 		"$application_id"
 }
 
@@ -414,13 +428,16 @@ launcher_desktop_exec() {
 	esac
 
 	# Use the full path for non-standard prefixes
-	local field_value
+	local field_value application_id
+	application_id=$(application_id "$application")
 	case "$OPTION_PREFIX" in
 		('/usr'|'/usr/local')
-			field_value=$(application_id "$application")
+			field_value="$application_id"
 		;;
 		(*)
-			field_value="$PATH_BIN/$(application_id "$application")"
+			local path_binaries
+			path_binaries=$(path_binaries)
+			field_value="${path_binaries}/${application_id}"
 		;;
 	esac
 

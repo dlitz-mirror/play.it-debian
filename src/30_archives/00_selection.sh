@@ -71,7 +71,7 @@ archive_initialize() {
 	fi
 
 	# Check dependencies
-	check_deps
+	archive_dependencies_check "$archive_candidate"
 
 	# Update total size of all archives
 	archive_add_size_to_total "$archive_name"

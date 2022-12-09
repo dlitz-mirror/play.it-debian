@@ -33,8 +33,8 @@ print_instructions() {
 		esac
 	done
 
-	if [ "$OPTION_PACKAGE" = 'gentoo' ] && [ -n "$GENTOO_OVERLAYS" ]; then
-		information_required_gentoo_overlays "$GENTOO_OVERLAYS"
+	if [ -s "$(dependency_gentoo_overlays_file)" ]; then
+		information_required_gentoo_overlays
 	fi
 	if [ "$OPTION_PACKAGE" = 'egentoo' ]; then
 		info_local_overlay_gentoo

@@ -2,16 +2,71 @@
 # A list of default content identifiers is used.
 # USAGE: content_inclusion_default
 content_inclusion_default() {
-	local packages_list package package_suffix index
+	local packages_list
 	packages_list=$(packages_get_list)
+
+	local package
 	for package in $packages_list; do
-		package_suffix=${package#PKG_}
-		content_inclusion "GAME_${package_suffix}" "$package" "$PATH_GAME"
-		content_inclusion "DOC_${package_suffix}" "$package" "$PATH_DOC"
-		for index in $(seq 0 9); do
-			content_inclusion "GAME${index}_${package_suffix}" "$package" "$PATH_GAME"
-			content_inclusion "DOC${index}_${package_suffix}" "$package" "$PATH_DOC"
-		done
+		content_inclusion_default_libraries "$package"
+		content_inclusion_default_game_data "$package"
+		content_inclusion_default_documentation "$package"
+	done
+}
+
+# Fetch files from the archive, and include them into the package skeleton.
+# A list of default content identifiers is used, limited to native libraries for a single package.
+# USAGE: content_inclusion_default_libraries $package
+content_inclusion_default_libraries() {
+	local package package_suffix
+	package="$1"
+	assert_not_empty 'package' 'content_inclusion_default_libraries'
+	package_suffix="${package#PKG_}"
+
+	local target_directory
+	target_directory=$(path_libraries)
+
+	content_inclusion "LIBS_${package_suffix}" "$package" "$target_directory"
+	local index
+	for index in $(seq 0 9); do
+		content_inclusion "LIBS${index}_${package_suffix}" "$package" "$target_directory"
+	done
+}
+
+# Fetch files from the archive, and include them into the package skeleton.
+# A list of default content identifiers is used, limited to game data files for a single package.
+# USAGE: content_inclusion_default_game_data $package
+content_inclusion_default_game_data() {
+	local package package_suffix
+	package="$1"
+	assert_not_empty 'package' 'content_inclusion_default_game_data'
+	package_suffix="${package#PKG_}"
+
+	local target_directory
+	target_directory=$(path_game_data)
+
+	content_inclusion "GAME_${package_suffix}" "$package" "$target_directory"
+	local index
+	for index in $(seq 0 9); do
+		content_inclusion "GAME${index}_${package_suffix}" "$package" "$target_directory"
+	done
+}
+
+# Fetch files from the archive, and include them into the package skeleton.
+# A list of default content identifiers is used, limited to documentation files for a single package.
+# USAGE: content_inclusion_default_documentation $package
+content_inclusion_default_documentation() {
+	local package package_suffix
+	package="$1"
+	assert_not_empty 'package' 'content_inclusion_default_documentation'
+	package_suffix="${package#PKG_}"
+
+	local target_directory
+	target_directory=$(path_documentation)
+
+	content_inclusion "DOC_${package_suffix}" "$package" "$target_directory"
+	local index
+	for index in $(seq 0 9); do
+		content_inclusion "DOC${index}_${package_suffix}" "$package" "$target_directory"
 	done
 }
 

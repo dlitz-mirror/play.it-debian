@@ -2,9 +2,12 @@
 # USAGE: applications_list
 # RETURN: a space-separated list of application identifiers
 applications_list() {
-	# If APPLICATIONS_LIST is set, return it instead of trying to guess the list
-	if [ -n "$APPLICATIONS_LIST" ]; then
-		printf '%s' "$APPLICATIONS_LIST"
+	# Return APPLICATIONS_LIST value, if it is explicitly set.
+	# Archive-specific values are supported.
+	local applications_list
+	applications_list=$(get_context_specific_value 'archive' 'APPLICATIONS_LIST')
+	if [ -n "$applications_list" ]; then
+		printf '%s' "$applications_list"
 		return 0
 	fi
 
@@ -24,7 +27,7 @@ applications_list() {
 	# - APP_xxx_EXE
 	# - APP_xxx_SCUMMID
 	# - APP_xxx_RESIDUALID
-	local sed_expression application_id applications_list
+	local sed_expression application_id
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
 		if [ -n "$application_id" ]; then
@@ -64,6 +67,10 @@ application_prefix_type() {
 	# ScummVM and ResidualVM applications default to "none".
 	local application_type
 	application_type=$(application_type "$application")
+	if [ -z "$application_type" ]; then
+		error_no_application_type "$application"
+		return 1
+	fi
 	case "$application_type" in
 		('scummvm'|'residualvm')
 			prefix_type='none'
@@ -97,7 +104,7 @@ application_prefix_type() {
 }
 
 # print the type of the given application
-# USAGE: application_type $application [$fallback_type]
+# USAGE: application_type $application
 # RETURN: the application type keyword, from the supported values:
 #         - dosbox
 #         - java
@@ -108,7 +115,6 @@ application_prefix_type() {
 #         - residualvm
 #         - scummvm
 #         - wine
-#         or the fallback value if provided and no type is set
 application_type() {
 	# Get the application type from its identifier
 	local application application_type
@@ -119,18 +125,14 @@ application_type() {
 	if [ -z "$application_type" ]; then
 		if [ -n "$(unity3d_name)" ]; then
 			application_type='unity3d'
+		else
+			application_type=$(application_type_guess_from_file "$application")
 		fi
 	fi
 
-	# If no type has been found and a fallback has been provided,
-	# use the fallback.
-	local fallback_type
-	fallback_type="$2"
-	if \
-		[ -z "$application_type" ] \
-		&& [ -n "$fallback_type" ]
-	then
-		application_type="$fallback_type"
+	# Return early if no type has been found
+	if [ -z "$application_type" ]; then
+		return 0
 	fi
 
 	# Check that a supported type has been fetched
@@ -151,13 +153,68 @@ application_type() {
 		('native_no-prefix')
 			## WARNING - This archive type is deprecated.
 		;;
-		('unknown')
-			## "unknown" is the only allowed invalid application type,
-			## to be used only as a fallback.
-		;;
 		(*)
 			error_unknown_application_type "$application_type"
 			return 1
+		;;
+	esac
+
+	printf '%s' "$application_type"
+}
+
+# Try to find the application type from the MIME type of its binary file
+# USAGE: application_type_guess_from_file $application
+# RETURN: the guessed application type,
+#         or an empty string if none could be guessed
+application_type_guess_from_file() {
+	# Compute path to application binary
+	local application application_exe application_exe_path
+	application="$1"
+	## application_exe can not be used here, as it relies on application_type.
+	## This could lead to a loop where application_type relies on itself.
+	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+	if [ -z "$application_exe" ]; then
+		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
+	fi
+	application_exe_path=$(application_exe_path "$application_exe")
+
+	# Return early if no binary file can be found for the given application.
+	if [ -z "$application_exe_path" ]; then
+		return 0
+	fi
+
+	local file_type application_type
+	file_type=$(file_type "$application_exe_path")
+	case "$file_type" in
+		( \
+			'application/x-executable' | \
+			'application/x-pie-executable' \
+		)
+			application_type='native'
+		;;
+		('application/x-dosexec')
+			local file_type_extended
+			file_type_extended=$( \
+				LANG=C file --brief --dereference "$application_exe_path" | \
+				cut --delimiter=',' --fields=1 \
+			)
+			case "$file_type_extended" in
+				('MS-DOS executable')
+					application_type='dosbox'
+				;;
+				( \
+					'PE32 executable (GUI) Intel 80386' | \
+					'PE32+ executable (GUI) x86-64' \
+				)
+					application_type='wine'
+				;;
+				( \
+					'PE32 executable (GUI) Intel 80386 Mono/.Net assembly' | \
+					'PE32+ executable (GUI) x86-64 Mono/.Net assembly' \
+				)
+					application_type='mono'
+				;;
+			esac
 		;;
 	esac
 
@@ -193,16 +250,30 @@ application_id() {
 # USAGE: application_exe $application
 # RETURN: the application file name
 application_exe() {
-	# Use the package-specific value if it is available,
-	# falls back on the default value
-	local application application_exe
+	# The following values a checked in order,
+	# the first one found is used:
+	# - package-specific value
+	# - archive-specific value
+	# - default value
+	local application application_exe application_exe_default
 	application="$1"
+	application_exe_default=$(get_value "${application}_EXE")
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+	if \
+		[ -z "$application_exe" ] || \
+		[ "$application_exe" = "$application_exe_default" ]
+	then
+		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
+	fi
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$application_exe" ]; then
 		local application_type
 		application_type=$(application_type "$application")
+		if [ -z "$application_type" ]; then
+			error_no_application_type "$application"
+			return 1
+		fi
 		case "$application_type" in
 			('unity3d')
 				application_exe=$(application_unity3d_exe "$application")
@@ -228,6 +299,47 @@ application_exe_escaped() {
 	application="$1"
 	# If the file name includes single quotes, replace each one with: '\''
 	application_exe "$application" | sed "s/'/'\\\''/g"
+}
+
+# Print the full path to the application binary.
+# USAGE: application_exe_path $application_exe
+# RETURN: the full path to the application binary,
+#         or an empty string if it could not be found.
+application_exe_path() {
+	local application_exe
+	application_exe="$1"
+
+	# Look for the application binary in the temporary path for archive content.
+	local content_path application_exe_path
+	content_path=$(content_path_default)
+	application_exe_path="${PLAYIT_WORKDIR}/gamedata/${content_path}/${application_exe}"
+	if [ -f "$application_exe_path" ]; then
+		printf '%s' "$application_exe_path"
+		return 0
+	fi
+
+	# Look for the application binary in the current package.
+	local package package_path path_game_data
+	package=$(package_get_current)
+	package_path=$(package_get_path "$package")
+	path_game_data=$(path_game_data)
+	application_exe_path="${package_path}${path_game_data}/${application_exe}"
+	if [ -f "$application_exe_path" ]; then
+		printf '%s' "$application_exe_path"
+		return 0
+	fi
+
+	# Look for the application binary in all packages.
+	local packages_list
+	packages_list=$(packages_get_list)
+	for package in $packages_list; do
+		package_path=$(package_get_path "$package")
+		application_exe_path="${package_path}${path_game_data}/${application_exe}"
+		if [ -f "$application_exe_path" ]; then
+			printf '%s' "$application_exe_path"
+			return 0
+		fi
+	done
 }
 
 # print the name of the given application, for display in menus
@@ -298,7 +410,9 @@ application_options() {
 	printf '%s' "$application_options"
 }
 
-# print the application libraries path, relative to the game root
+# Legacy - Print the application libraries path, relative to the game root.
+# This function is deprecated, starting with ./play.it 2.19.
+# New game scripts should no longer rely on the APP_xxx_LIBS variable.
 # USAGE: application_libs $application
 # RETURN: the application libraries path relative to the game root,
 #         or an empty string if none is set
@@ -307,44 +421,3 @@ application_libs() {
 	# falls back on the default value
 	get_context_specific_value 'package' "${1}_LIBS"
 }
-
-# print the list of icon identifiers for the given application
-# USAGE: application_icons_list $application
-# RETURN: a space-separated list of icons identifiers,
-#         or an empty string if no icon seems to be set
-application_icons_list() {
-	local application
-	application="$1"
-
-	# Use the value of APP_xxx_ICONS_LIST if it is set
-	local icons_list
-	icons_list=$(get_value "${application}_ICONS_LIST")
-	if [ -n "$icons_list" ]; then
-		printf '%s' "$icons_list"
-		return 0
-	fi
-
-	# Fall back on the default value of a single APP_xxx_ICON icon
-	local default_icon application_type
-	default_icon="${application}_ICON"
-	application_type=$(application_type "$application" 'unknown')
-	case "$application_type" in
-		('unity3d')
-			# It is expected that Unity3D games always come with a single icon
-			printf '%s' "$default_icon"
-			return 0
-		;;
-		(*)
-			# If a value is explicitely set for APP_xxx_ICON,
-			# we assume this is the only icon for the current application
-			if [ -n "$(get_value "$default_icon")" ]; then
-				printf '%s' "$default_icon"
-				return 0
-			fi
-		;;
-	esac
-
-	# If no icon has been found, there is nothing to print
-	return 0
-}
-

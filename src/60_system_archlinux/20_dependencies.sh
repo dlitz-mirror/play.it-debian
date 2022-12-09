@@ -346,6 +346,9 @@ dependency_package_providing_library_arch() {
 		('libcurl.so.4')
 			package_name='curl'
 		;;
+		('libcurl-gnutls.so.4')
+			package_name='libcurl-gnutls'
+		;;
 		('libdl.so.2')
 			package_name='glibc'
 		;;
@@ -667,6 +670,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libcurl.so.4')
 			package_name='lib32-curl'
+		;;
+		('libcurl-gnutls.so.4')
+			package_name='lib32-libcurl-gnutls'
 		;;
 		('libdl.so.2')
 			package_name='lib32-glibc'

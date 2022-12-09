@@ -1,3 +1,89 @@
+2.19.0
+
+  * Deprecation warnings:
+    * The legacy variables for content inclusion are no longer supported for game scripts targeting ./play.it ≥ 2.19:
+      - ARCHIVE_xxx_PATH
+      - ARCHIVE_xxx_FILES
+      The new variables introduced with ./play.it 2.18 must be used instead:
+      - CONTENT_xxx_PATH
+      - CONTENT_xxx_FILES
+      The legacy ones can still be used only from game scripts targeting ./play.it ≤ 2.18.
+    * The following global variables are still available, but are deprecated:
+      - PATH_BIN
+      - PATH_DESK
+      - PATH_DOC
+      - PATH_GAME
+      - PATH_ICON_BASE
+    * "APP_xxx_LIBS" is deprecated, game scripts should no longer rely on it.
+      Libraries installed under /usr/lib/games/${GAME_ID} are automatically added to LD_LIBRARY_PATH.
+    * The following internal functions are dropped:
+      - launcher_write_script_dosbox_application_variables
+      - launcher_write_script_dosbox_run
+      - launcher_write_script_java_application_variables
+      - launcher_write_script_java_run
+      - launcher_write_script_mono_application_variables
+      - launcher_write_script_mono_run
+      - launcher_write_script_native_application_variables
+      - launcher_write_script_native_run
+      - launcher_write_script_nativenoprefix_run
+      - launcher_write_script_native_run_common
+      - launcher_write_script_renpy_run
+      - launcher_write_script_residualvm_application_variables
+      - launcher_write_script_residualvm_run
+      - launcher_write_script_scummvm_application_variables
+      - launcher_write_script_scummvm_run
+    * "application_type" no longer fails if no type could be found.
+      Support for the special fallback value "unknown" is dropped, as its only purpose was to avoid the error on empty application type.
+    * "package_get_current" no longer falls back on "PKG_MAIN", see "Changes related to packages" below for more details.
+
+  * Improved integration of shipped libraries
+    * In addition to standard system paths, libraries are loaded from the following paths, ordered from lower priority to higher priority:
+      - APP_xxx_LIBS (deprecated)
+      - /usr/lib/games/${GAME_ID} (/usr is replaced by the custom install prefix)
+      - ${HOME}/.local/lib/games/${GAME_ID}
+    * In addition to game data files and documentation files, "content_inclusion_default" now automatically fetches listed native libraries and put them into a specific install path.
+      The native libraries can be listed using global variables similar to the ones already in use:
+      - CONTENT_LIBS_xxx_PATH
+      - CONTENT_LIBS_xxx_FILES
+      As with game data files and documentation files, as single-digit number can be appended to "LIBS":
+      - CONTENT_LIBS0_xxx_FILES
+      - CONTENT_LIBS1_xxx_FILES
+      - (…)
+      - CONTENT_LIBS9_xxx_FILES
+
+  * New dedicated functions printing install paths are available:
+    - path_binaries
+    - path_xdg_desktop
+    - path_documentation
+    - path_game_data
+    - path_icons
+    - path_libraries
+    These should be used instead of the deprecated "PATH_xxx" variables.
+
+  * Rework launchers generation
+    * Game execution failure no longer prevents the execution of post-run actions.
+    * The late extra eval step of JAVA_OPTIONS and MONO_OPTIONS is dropped, no current game script was relying on these.
+    * APP_xxx_OPTIONS support is added to ResidualVM and ScummVM launchers.
+
+  * Changes related to icons integration:
+    * Rework icons requirement check to no longer rely on applications.
+    * Add support for archive context to application_icons_list.
+    * If no icon is set for a WINE application, try to extract one from the game binary.
+
+  * Changes related to applications:
+    * Update applications_list to follow the archive context.
+    * Add automatic application type detection based on file type, APP_xxx_TYPE declaration is now optional in more cases.
+
+  * Changes related to packages:
+    * Extend the list of supported native libraries for packages dependencies declarations.
+    * package_get_current returns the first package of the list of packages to build if no value is explicitly set, instead of the previously hardcoded value "PKG_MAIN".
+
+  * Other changes:
+    * Drop system-specific install prefix. The default install prefix is now the same for all supported systems: /usr
+    * Do not run a full dependencies check when initializing an archive, only the presence of the dependencies required to handle the current archive is tested.
+    * Set working directory path as soon as the archive is found.
+    * Automatically add dependency on winetricks if APP_WINETRICKS is set.
+
 2.18.3
 
   * content_path_default - Do not throw an error if no default path is set.

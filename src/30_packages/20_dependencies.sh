@@ -69,10 +69,10 @@ dependencies_list_native_libraries_packages() {
 			('gentoo'|'egentoo')
 				case "$package_architecture" in
 					('32')
-						dependency_package_providing_library_gentoo32 "$library"
+						dependency_package_providing_library_gentoo32 "$library" "$package"
 					;;
 					(*)
-						dependency_package_providing_library_gentoo "$library"
+						dependency_package_providing_library_gentoo "$library" "$package"
 					;;
 				esac
 			;;

@@ -175,3 +175,10 @@ get_lzip_implementation() {
 	error_dependency_not_found 'lzip'
 	return 1
 }
+
+# Return the MIME type of a given file
+# USAGE: file_type $file
+# RETURNS: the MIME type, as a string
+file_type() {
+	file --brief --dereference --mime-type "$1"
+}

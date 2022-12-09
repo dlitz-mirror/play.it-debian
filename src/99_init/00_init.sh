@@ -65,10 +65,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_OPTION_COMPRESSION_DEB='none'
 	export DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
 	export DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
-	export DEFAULT_OPTION_PREFIX_DEB='/usr/local'
-	export DEFAULT_OPTION_PREFIX_ARCH='/usr'
-	export DEFAULT_OPTION_PREFIX_GENTOO='/usr'
-	export DEFAULT_OPTION_PREFIX_EGENTOO='/usr'
+	export DEFAULT_OPTION_PREFIX='/usr'
 	export DEFAULT_OPTION_PACKAGE='deb'
 	export DEFAULT_OPTION_ICONS='yes'
 	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
@@ -107,8 +104,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ALLOWED_VALUES_COMPRESSION="$(get_value "ALLOWED_VALUES_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 	# shellcheck disable=SC2034
 	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_PREFIX="$(get_value "DEFAULT_OPTION_PREFIX_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
 
 	# Set options not already set by script arguments to default values
 
@@ -197,35 +192,21 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
 	export ARCHIVE
 
+	# Set path to working directory
+	set_temp_directories
+
 	# Check the presence of required tools
 
 	check_deps
 	archive_dependencies_check "$ARCHIVE"
 
-	# Set package paths
-
-	case $OPTION_PACKAGE in
-		('arch'|'gentoo'|'egentoo')
-			PATH_BIN="$OPTION_PREFIX/bin"
-			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
-			PATH_DOC="$OPTION_PREFIX/share/doc/$(game_id)"
-			PATH_GAME="$OPTION_PREFIX/share/$(game_id)"
-			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
-		;;
-		('deb')
-			PATH_BIN="$OPTION_PREFIX/games"
-			PATH_DESK="$DEFAULT_OPTION_PREFIX/share/applications"
-			PATH_DOC="$OPTION_PREFIX/share/doc/$(game_id)"
-			PATH_GAME="$OPTION_PREFIX/share/games/$(game_id)"
-			PATH_ICON_BASE="$DEFAULT_OPTION_PREFIX/share/icons/hicolor"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' "$0"
-			exit 1
-		;;
-	esac
+	# Legacy - Export install paths as global variables.
+	# Pre-2.19 game scripts might rely on the availability of these global variables.
+	# New game scripts should not rely on these, as they are deprecated and will be dropped in some future release.
+	PATH_BIN=$(path_binaries)
+	PATH_DESK=$(path_xdg_desktop)
+	PATH_DOC=$(path_documentation)
+	PATH_GAME=$(path_game_data)
+	PATH_ICON_BASE=$(path_icons)
 	export PATH_BIN PATH_DESK PATH_DOC PATH_GAME PATH_ICON_BASE
-
-	# Set path to working directory
-	set_temp_directories
 fi
