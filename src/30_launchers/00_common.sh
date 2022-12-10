@@ -211,8 +211,9 @@ launcher_write_script() {
 	# for WINE applications, write launcher script for winecfg
 	case "$application_type" in
 		('wine')
-			local winecfg_file
-			winecfg_file="${package_path}${path_binaries}/$(game_id)_winecfg"
+			local game_id winecfg_file
+			game_id=$(game_id)
+			winecfg_file="${package_path}${path_binaries}/${game_id}_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
 				launcher_write_script_wine_winecfg "$application"
 			fi
@@ -275,10 +276,13 @@ launcher_write_script_headers() {
 launcher_write_script_game_variables() {
 	local file
 	file="$1"
+
+	local game_id
+	game_id=$(game_id)
 	cat >> "$file" <<- EOF
 	# Set game-specific values
 
-	GAME_ID='$(game_id)'
+	GAME_ID='${game_id}'
 	PATH_GAME='$(path_game_data)'
 
 	EOF

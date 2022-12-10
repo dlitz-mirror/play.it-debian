@@ -11,7 +11,9 @@ set_temp_directories() {
 	temporary_directory_checks "$temporary_directory_path"
 
 	# Generate a directory with a unique name for the current instance
-	PLAYIT_WORKDIR=$(mktemp --directory --tmpdir="$temporary_directory_path" "$(game_id).XXXXX")
+	local game_id
+	game_id=$(game_id)
+	PLAYIT_WORKDIR=$(mktemp --directory --tmpdir="$temporary_directory_path" "${game_id}.XXXXX")
 	debug_option_value 'PLAYIT_WORKDIR'
 	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR
