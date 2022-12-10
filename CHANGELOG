@@ -1,3 +1,9 @@
+2.19.1
+
+  * Ensure errors during calls to "game_id" are always blocking.
+  * Gentoo: Fix dependencies handling.
+  * Gentoo: Ensure libstdc++.so.6 is provided by the correct package.
+
 2.19.0
 
   * Deprecation warnings:
