@@ -14,26 +14,26 @@ write_metadata() {
 			error_invalid_argument 'pkg' 'write_metadata'
 			return 1
 		fi
-
-		case $OPTION_PACKAGE in
-			('arch')
-				pkg_write_arch
-			;;
-			('deb')
-				pkg_write_deb
-			;;
-			('gentoo')
-				pkg_write_gentoo
-			;;
-			('egentoo')
-				pkg_write_egentoo $pkg
-			;;
-			(*)
-				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
-				return 1
-			;;
-		esac
 	done
+
+	case $OPTION_PACKAGE in
+		('arch')
+			for pkg in "$@"; do pkg_write_arch; done
+		;;
+		('deb')
+			for pkg in "$@"; do pkg_write_deb; done
+		;;
+		('gentoo')
+			for pkg in "$@"; do pkg_write_gentoo; done
+		;;
+		('egentoo')
+			for pkg in "$@"; do pkg_write_egentoo $pkg; done
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
+			return 1
+		;;
+	esac
 
 	debug_leaving_function 'write_metadata'
 }
@@ -57,35 +57,44 @@ build_pkg() {
 			error_invalid_argument 'package' 'build_pkg'
 			return 1
 		fi
-
-		package_path=$(package_get_path "$package")
-
-		###
-		# TODO
-		# pkg_build_xxx implicitely depends on the target package being set as $pkg
-		# It should instead be passed as a mandatory argument.
-		###
-		export pkg="$package"
-
-		case $OPTION_PACKAGE in
-			('arch')
-				pkg_build_arch "$package_path"
-			;;
-			('deb')
-				pkg_build_deb "$package_path"
-			;;
-			('gentoo')
-				pkg_build_gentoo "$package_path"
-			;;
-			('egentoo')
-				pkg_build_egentoo "$package"
-			;;
-			(*)
-				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
-				return 1
-			;;
-		esac
 	done
+
+	###
+	# TODO
+	# pkg_build_xxx implicitely depends on the target package being set as $pkg
+	# It should instead be passed as a mandatory argument.
+	###
+
+	case $OPTION_PACKAGE in
+		('arch')
+			for package in "$@"; do
+				package_path=$(package_get_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_arch "$package_path"
+			done
+		;;
+		('deb')
+			for package in "$@"; do
+				package_path=$(package_get_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_deb "$package_path"
+			done
+		;;
+		('gentoo')
+			for package in "$@"; do
+				package_path=$(package_get_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_gentoo "$package_path"
+			done
+		;;
+		('egentoo')
+			for package in "$@"; do pkg_build_egentoo "$package"; done
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
+			return 1
+		;;
+	esac
 
 	debug_leaving_function 'build_pkg'
 }
