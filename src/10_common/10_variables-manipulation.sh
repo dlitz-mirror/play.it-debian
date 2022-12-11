@@ -33,7 +33,7 @@ context_specific_name() {
 	case "$context" in
 		('archive')
 			# Return early if no archive is explicitely set
-			if [ -z "$ARCHIVE" ]; then
+			if variable_is_empty 'ARCHIVE'; then
 				printf '%s' "$variable_name"
 				return 0
 			fi
@@ -41,7 +41,7 @@ context_specific_name() {
 		;;
 		('package')
 			# Return early if no package is explicitely set
-			if [ -z "$PKG" ]; then
+			if variable_is_empty 'PKG'; then
 				printf '%s' "$variable_name"
 				return 0
 			fi
@@ -58,7 +58,9 @@ context_specific_name() {
 	variable_name_with_suffix="${variable_name}_${context_suffix}"
 	while [ "$variable_name_with_suffix" != "$variable_name" ]; do
 		# Exit the loop if the current variable name has a value set.
-		[ -n "$(get_value "$variable_name_with_suffix")" ] && break
+		if ! variable_is_empty "$variable_name_with_suffix"; then
+			break
+		fi
 		# Drop one suffix level for the next loop iteration.
 		variable_name_with_suffix="${variable_name_with_suffix%_*}"
 	done
@@ -80,7 +82,10 @@ context_specific_value() {
 	local variable_name_with_context
 	variable_name_with_context=$(context_specific_name "$context" "$variable_name")
 
-	get_value "$variable_name_with_context"
+	# Only return a value if one is actually set.
+	if ! variable_is_empty "$variable_name_with_context"; then
+		get_value "$variable_name_with_context"
+	fi
 }
 # Legacy alias for context_specific_value
 # This should move into a compatibility source file at the next feature release.
