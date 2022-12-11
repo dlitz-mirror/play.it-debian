@@ -466,7 +466,7 @@ dependency_package_providing_library_gentoo() {
 			package_name='sys-libs/libstdc++-v3'
 		;;
 		('libstdc++.so.6')
-			package_name='virtual/libstdc++'
+			package_name='sys-devel/gcc'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora'
