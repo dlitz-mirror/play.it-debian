@@ -88,7 +88,7 @@ build_pkg() {
 			done
 		;;
 		('egentoo')
-			for package in "$@"; do pkg_build_egentoo "$package"; done
+			pkg_build_egentoo "$@"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'

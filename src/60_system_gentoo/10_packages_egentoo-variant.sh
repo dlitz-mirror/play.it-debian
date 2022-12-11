@@ -95,23 +95,21 @@ EOF
 # builds dummy egentoo package
 # USAGE: pkg_build_egentoo PKG_xxx
 pkg_build_egentoo() {
-	local package_filename
 	local tar_command
 	local tar_options
 	local compression_command
 	local compression_options
+	local packages_paths
+
+	if [ $# -eq 0 ]; then
+		error_no_arguments 'pkg_build_egentoo'
+	fi
 
 	tar_command="tar"
 
-	local package
-	package="$1"
-	assert_not_empty 'package' 'pkg_build_egentoo'
-
-	local package_path package_name
-	package_path=$(package_get_path "$package")
-	package_name="$(package_get_name "$package")"
-
+	local package_name package_filename
 	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
+	package_name="$(egentoo_package_name)"
 	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/${package_name}.tar")
 
 	case $OPTION_COMPRESSION in
@@ -169,24 +167,40 @@ pkg_build_egentoo() {
 
 	compression_options="${compression_options} --stdout --quiet"
 
+	local package package_path
 	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
+		for package in "$@"; do
+			eval "${package}"_PKG=\""$package_filename"\"
+			export "${package}"_PKG
+		done
+		return 0
+	else
+		rm -f "$package_filename"
+	fi
+
+	for package in "$@"; do
+		package_path=$(package_get_path "$package")
+		packages_paths="$packages_paths $package_path"
+
+		case "$(package_get_architecture "$package")" in
+			('64') tar_options="$tar_options --xform=s:^${package_path#/}:./amd64:x" ;;
+			('32') tar_options="$tar_options --xform=s:^${package_path#/}:./x86:x" ;;
+			(*)    tar_options="$tar_options --xform=s:^${package_path#/}:./data:x" ;;
+		esac
+
 		eval "${package}"_PKG=\""$package_filename"\"
 		export "${package}"_PKG
-		return 0
-	fi
+	done
 
 	information_package_building "$(basename "$package_filename")"
 
-	if [ -z "$compression_command" ]; then
-		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options --file \"$package_filename\" ."
-		# shellcheck disable=SC2046
-		"$tar_command" --directory "$package_path" $tar_options --file "$package_filename" .
-	else
-		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options . | \"$compression_command\" $compression_options > \"$package_filename\""
-		"$tar_command" --directory "$package_path" $tar_options . | "$compression_command" $compression_options > "$package_filename"
-	fi
-
-	eval "${package}"_PKG=\""$package_filename"\"
-	export "${package}"_PKG
-}
+		if [ -z "$compression_command" ]; then
+			debug_external_command "\"$tar_command\" $tar_options --file \"$package_filename\" $packages_paths"
+			# shellcheck disable=SC2046
+			"$tar_command" $tar_options --file "$package_filename" $packages_paths
+		else
+			debug_external_command "\"$tar_command\" $tar_options $packages_paths | \"$compression_command\" $compression_options > \"$package_filename\""
+			"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
+		fi
+	}
