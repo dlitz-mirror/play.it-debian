@@ -891,7 +891,7 @@ dependencies_gentoo_full_list() {
 			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
 			# we prevent it from leaking using unset.
 			unset pkg_deps
-			pkg_set_deps_gentoo $dependencies_generic
+			pkg_set_deps_gentoo $dependency_generic
 			printf '%s\n' "$pkg_deps"
 			unset pkg_deps
 		done <<- EOL
