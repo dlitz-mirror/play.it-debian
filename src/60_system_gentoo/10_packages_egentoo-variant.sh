@@ -58,8 +58,8 @@ pkg_write_egentoo() {
 		postinst_f="$(get_value "${package}_POSTINST_RUN")"
 	fi
 
-	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").ebuild")
+	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/$(package_get_id "$package")"
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/$(package_get_id "$package")/$(package_get_name "$package").ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -123,9 +123,8 @@ pkg_build_egentoo() {
 	local package_path
 	package_path=$(package_get_path "$package")
 
-	# We don’t want both binary packages to overwrite each other
-	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
-	package_filename=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").tar")
+	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
+	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/$(package_get_name "$package").tar")
 
 	case $OPTION_COMPRESSION in
 		('gzip')
