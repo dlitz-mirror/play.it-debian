@@ -27,7 +27,7 @@ write_metadata() {
 			for pkg in "$@"; do pkg_write_gentoo; done
 		;;
 		('egentoo')
-			for pkg in "$@"; do pkg_write_egentoo $pkg; done
+			pkg_write_egentoo "$@"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
