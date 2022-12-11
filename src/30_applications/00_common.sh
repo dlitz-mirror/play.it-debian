@@ -5,7 +5,11 @@ applications_list() {
 	# Return APPLICATIONS_LIST value, if it is explicitly set.
 	# Archive-specific values are supported.
 	local applications_list
-	applications_list=$(get_context_specific_value 'archive' 'APPLICATIONS_LIST')
+	if variable_is_empty 'APPLICATIONS_LIST'; then
+		applications_list=''
+	else
+		applications_list=$(get_context_specific_value 'archive' 'APPLICATIONS_LIST')
+	fi
 	if [ -n "$applications_list" ]; then
 		printf '%s' "$applications_list"
 		return 0
@@ -78,13 +82,17 @@ application_prefix_type() {
 	esac
 
 	# Override default with explicitely set prefix type for the current game.
-	if [ -n "$APPLICATIONS_PREFIX_TYPE" ]; then
+	if ! variable_is_empty 'APPLICATIONS_PREFIX_TYPE'; then
 		prefix_type="$APPLICATIONS_PREFIX_TYPE"
 	fi
 
 	# Override default with explicitely set prefix type for the given application.
 	local prefix_type_override
-	prefix_type_override=$(get_value "${application}_PREFIX_TYPE")
+	if variable_is_empty "${application}_PREFIX_TYPE"; then
+		prefix_type_override=''
+	else
+		prefix_type_override=$(get_value "${application}_PREFIX_TYPE")
+	fi
 	if [ -n "$prefix_type_override" ]; then
 		prefix_type="$prefix_type_override"
 	fi
@@ -226,13 +234,16 @@ application_type_guess_from_file() {
 # RETURN: the application id, limited to the characters set [-_0-9a-z]
 #         the id can not start nor end with a character from the set [-_]
 application_id() {
+	local application
+	application="$1"
+
 	# Get the application type from its identifier
 	local application_id
-	application_id=$(get_value "${1}_ID")
-
-	# If no id is explicitely set, fall back on the game id
-	if [ -z "$application_id" ]; then
+	if variable_is_empty "${application}_ID"; then
+		# If no id is explicitely set, fall back on the game id
 		application_id=$(game_id)
+	else
+		application_id=$(get_value "${application}_ID")
 	fi
 
 	# Check that the id fits the format restrictions
@@ -257,7 +268,11 @@ application_exe() {
 	# - default value
 	local application application_exe application_exe_default
 	application="$1"
-	application_exe_default=$(get_value "${application}_EXE")
+	if variable_is_empty "${application}_EXE"; then
+		application_exe_default=''
+	else
+		application_exe_default=$(get_value "${application}_EXE")
+	fi
 	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
 	if \
 		[ -z "$application_exe" ] || \
@@ -346,13 +361,16 @@ application_exe_path() {
 # USAGE: application_name $application
 # RETURN: the pretty version of the application name
 application_name() {
+	local application
+	application="$1"
+
 	# Get the application name from its identifier
 	local application_name
-	application_name=$(get_value "${1}_NAME")
-
-	# If no name is explicitely set, fall back on the game name
-	if [ -z "$application_name" ]; then
+	if variable_is_empty "${application}_NAME"; then
+		# If no name is explicitely set, fall back on the game name
 		application_name=$(game_name)
+	else
+		application_name=$(get_value "${application}_NAME")
 	fi
 
 	printf '%s' "$application_name"
@@ -362,12 +380,17 @@ application_name() {
 # USAGE: application_category $application
 # RETURN: the application XDG menu category
 application_category() {
+	local application
+	application="$1"
+
 	# Get the application category from its identifier
 	local application_category
-	application_category=$(get_value "${1}_CAT")
-
-	# If no category is explicitely set, fall back on "Game"
-	: "${application_category:=Game}"
+	if variable_is_empty "${application}_CAT"; then
+		# If no category is explicitely set, fall back on "Game"
+		application_category='Game'
+	else
+		application_category=$(get_value "${application}_CAT")
+	fi
 
 	# TODO - We could check that the category is part of the 1.0 XDG spec:
 	# https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html#category-registry
@@ -380,7 +403,12 @@ application_category() {
 # RETURN: the pre-run actions, can span over multiple lines,
 #         or an empty string if there are none
 application_prerun() {
-	get_value "${1}_PRERUN"
+	local application
+	application="$1"
+
+	if ! variable_is_empty "${application}_PRERUN"; then
+		get_value "${application}_PRERUN"
+	fi
 }
 
 # print the post-run actions for the given application
@@ -388,7 +416,12 @@ application_prerun() {
 # RETURN: the post-run actions, can span over multiple lines,
 #         or an empty string if there are none
 application_postrun() {
-	get_value "${1}_POSTRUN"
+	local application
+	application="$1"
+
+	if ! variable_is_empty "${application}_POSTRUN"; then
+		get_value "${application}_POSTRUN"
+	fi
 }
 
 # print the options string for the given application
