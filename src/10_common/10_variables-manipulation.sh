@@ -122,3 +122,12 @@ get_context_suffix_package() {
 	printf '%s' "$package_suffix"
 }
 
+# Check if the given variable is set.
+# Warning: a variable can be set but empty.
+# USAGE: variable_is_set $variable_name
+# RETURN: 0 if the variable is set, 1 if it is unset
+variable_is_set() {
+	local variable_name
+	variable_name="$1"
+	set | grep --quiet --regexp="^${variable_name}="
+}
