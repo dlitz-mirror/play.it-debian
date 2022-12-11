@@ -17,7 +17,7 @@ pkg_write_egentoo() {
 		build_deps=''
 	fi
 
-	package_filename="$(egentoo_package_id).tar"
+	package_filename="$(egentoo_package_name).tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			package_filename="${package_filename}.gz"
