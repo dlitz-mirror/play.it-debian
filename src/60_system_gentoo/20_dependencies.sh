@@ -207,7 +207,11 @@ pkg_set_deps_gentoo() {
 			;;
 		esac
 		if [ -n "$pkg_dep" ]; then
-			pkg_deps="$pkg_deps $pkg_dep"
+			if variable_is_empty 'pkg_deps'; then
+				pkg_deps="$pkg_dep"
+			else
+				pkg_deps="$pkg_deps $pkg_dep"
+			fi
 		fi
 		if [ -n "$pkg_overlay" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
@@ -889,11 +893,10 @@ dependencies_gentoo_full_list() {
 		local dependency_generic
 		while read -r dependency_generic; do
 			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
-			# we prevent it from leaking using unset.
-			unset pkg_deps
+			# we prevent it from leaking by setting it to an empty value.
+			pkg_deps=''
 			pkg_set_deps_gentoo $dependency_generic
 			printf '%s\n' "$pkg_deps"
-			unset pkg_deps
 		done <<- EOL
 		$(dependencies_list_generic "$package")
 		EOL

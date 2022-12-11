@@ -139,12 +139,12 @@ package_format_guess() {
 # RETURN: a single package identifier
 package_get_current() {
 	local package
-	package="$PKG"
-
-	# If $PKG is not explictly set,
-	# return the first package from the list of packages to build.
-	if [ -z "$package" ]; then
+	if variable_is_empty 'PKG'; then
+		# If $PKG is not explictly set,
+		# return the first package from the list of packages to build.
 		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
+	else
+		package="$PKG"
 	fi
 
 	printf '%s' "$package"
@@ -159,7 +159,9 @@ packages_get_list() {
 
 	# If PACKAGES_LIST is not set,
 	# falls back on a list of a single "PKG_MAIN" package
-	: "${packages_list:=PKG_MAIN}"
+	if [ -z "$packages_list" ]; then
+		packages_list='PKG_MAIN'
+	fi
 
 	###
 	# TODO
@@ -321,28 +323,29 @@ package_get_description() {
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
-	local package_description_full
+	local package_description_full game_name
+	game_name=$(game_name)
 	case "$OPTION_PACKAGE" in
 		('deb')
 			if [ -n "$package_description" ]; then
 				package_description_full='Description: %s - %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$(game_name)" "$package_description" "$script_version")
+				package_description_full=$(printf "$package_description_full" "${game_name}" "$package_description" "$script_version")
 			else
 				package_description_full='Description: %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$(game_name)" "$script_version")
+				package_description_full=$(printf "$package_description_full" "${game_name}" "$script_version")
 			fi
 		;;
 		('arch'|'gentoo')
 			if [ -n "$package_description" ]; then
 				# shellcheck disable=SC2154
-				package_description_full="$(game_name) - $package_description - ./play.it script version $script_version"
+				package_description_full="${game_name} - $package_description - ./play.it script version $script_version"
 			else
 				# shellcheck disable=SC2154
-				package_description_full="$(game_name) - ./play.it script version $script_version"
+				package_description_full="${game_name} - ./play.it script version $script_version"
 			fi
 		;;
 	esac
@@ -398,9 +401,11 @@ package_get_path() {
 	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
 
 	# compute the package path from its identifier
-	local package_path package_id
+	local package_path package_id package_version package_architecture
 	package_id=$(package_get_id "$package")
-	package_path="${PLAYIT_WORKDIR}/${package_id}_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_path="${PLAYIT_WORKDIR}/${package_id}_${package_version}_${package_architecture}"
 
 	printf '%s' "$package_path"
 	return 0
@@ -415,9 +420,6 @@ package_get_name() {
 	package="$1"
 	assert_not_empty 'package' 'package_get_name'
 
-	# check that an archive is set by the global context
-	assert_not_empty 'ARCHIVE' 'package_get_name'
-
 	# compute the package path from its identifier
 	local package_name package_path package_id
 	case "$OPTION_PACKAGE" in
@@ -426,8 +428,11 @@ package_get_name() {
 			package_name=$(basename "$package_path")
 		;;
 		('gentoo'|'egentoo')
+			local package_version
+			assert_not_empty 'ARCHIVE' 'package_get_name'
+			package_version=$(packages_get_version "$ARCHIVE")
 			package_id=$(package_get_id "$package")
-			package_name="${package_id}-$(packages_get_version "$ARCHIVE")"
+			package_name="${package_id}-${package_version}"
 		;;
 		(*)
 			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
@@ -446,8 +451,8 @@ packages_get_maintainer() {
 	# get maintainer string from /etc/makepkg.conf
 	local maintainer
 	if \
-		[ -r '/etc/makepkg.conf' ] && \
-		grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
+		[ -r '/etc/makepkg.conf' ] \
+		&& grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
 	then
 		if grep --quiet '^PACKAGER=".*"' '/etc/makepkg.conf'; then
 			maintainer=$(sed 's/^PACKAGER="\(.*\)"/\1/' '/etc/makepkg.conf')
@@ -456,6 +461,8 @@ packages_get_maintainer() {
 		else
 			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
 		fi
+	else
+		maintainer=''
 	fi
 
 	# return early if we already have a maintainer string
@@ -510,9 +517,10 @@ packages_get_version() {
 	# get the version string for the current archive
 	# falls back on "1.0-1"
 	local packages_version
-	packages_version=$(get_value "${archive}_VERSION")
-	if [ -z "$packages_version" ]; then
+	if variable_is_empty "${archive}_VERSION"; then
 		packages_version='1.0-1'
+	else
+		packages_version=$(get_value "${archive}_VERSION")
 	fi
 	packages_version="${packages_version}+${script_version}"
 
@@ -532,4 +540,3 @@ packages_get_version() {
 	printf '%s' "$packages_version"
 	return 0
 }
-
