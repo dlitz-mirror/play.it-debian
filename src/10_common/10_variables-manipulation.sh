@@ -8,7 +8,15 @@ testvar() {
 # USAGE: get_value $variable_name
 # RETURN: the variable value
 get_value() {
-	eval printf -- '%b' \"\$"$1"\"
+	local variable_name
+	variable_name="$1"
+
+	if ! variable_is_set "$variable_name"; then
+		error_variable_not_set "$variable_name"
+		return 1
+	fi
+
+	eval printf -- '%b' \"\$"${variable_name}"\"
 }
 
 # Print the context-specific name of a variable.
