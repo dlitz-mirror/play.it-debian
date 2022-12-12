@@ -37,7 +37,7 @@ set_temp_directories() {
 # USAGE: temporary_directory_path
 temporary_directory_path() {
 	# Use the value set through --tmpdir if it is set
-	if [ -n "$OPTION_TMPDIR" ]; then
+	if ! variable_is_empty 'OPTION_TMPDIR'; then
 		printf '%s' "$OPTION_TMPDIR"
 		return 0
 	fi
