@@ -58,8 +58,11 @@ pkg_write_egentoo() {
 		postinst_f="$(get_value "${package}_POSTINST_RUN")"
 	fi
 
-	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/$(package_get_id "$package")"
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/$(package_get_id "$package")/$(package_get_name "$package").ebuild")
+	local package_id package_name
+	package_id=$(package_get_id "$package")
+	package_name=$(package_get_name "$package")
+	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}"
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}/${package_name}.ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -120,11 +123,12 @@ pkg_build_egentoo() {
 	package="$1"
 	assert_not_empty 'package' 'pkg_build_egentoo'
 
-	local package_path
+	local package_path package_name
 	package_path=$(package_get_path "$package")
+	package_name="$(package_get_name "$package")"
 
 	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
-	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/$(package_get_name "$package").tar")
+	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/${package_name}.tar")
 
 	case $OPTION_COMPRESSION in
 		('gzip')
