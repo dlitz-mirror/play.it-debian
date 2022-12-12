@@ -1,3 +1,35 @@
+2.20.0
+
+  * Deprecation warnings:
+    * APP_xxx_PRERUN/APP_xxx_POSTRUN behaviour is changed for DOSBox game scripts targeting ./play.it ≥ 2.20. See "Changes specific to DOSBox" below for more details.
+    * "package_get_path" is now a compatibility wrapper around "package_path". See "Changes related to packages" below for more details
+
+  * Codebase improvements:
+    * Provide new variable manipulation helpers:
+      - variable_is_set
+      - variable_is_empty
+    * Rework multiple functions to avoid querying unset variables.
+
+  * Changes related to packages:
+    * A new function "package_name" is provided, returning the file name of a given package.
+    * Packages are prepared in "${PLAYIT_WORKDIR}/packages" instead of the root of "$PLAYIT_WORKDIR".
+    * The function returning the path to the directory where a given package is prepared is renamed from "package_get_path" to "package_path".
+
+  * Changes specific to DOSBox:
+    * Drop special behaviour when using APP_xxx_PRERUN/APP_xxx_POSTRUN.
+      Game scripts targeting ./play.it < 2.20 are unaffected, commands set using APP_xxx_PRERUN/APP_xxx_POSTRUN are still run from inside DOSBox.
+      For games scripts targeting ./play.it ≥ 2.20, commands set using APP_xxx_PRERUN are run before spawning DOSBox, and commands set using APP_xxx_POSTRUN are run after exiting DOSBox.
+      Two new variables are provided to set commands that should be run inside DOSBox:
+      - APP_xxx_DOSBOX_PRERUN
+      - APP_xxx_DOSBOX_POSTRUN
+
+  * Changes specific to Mono:
+    * Add ability to run games without a local user prefix.
+
+  * Changes specific to Gentoo:
+    * Change egentoo output paths. Instead of making packages in data, amd64 and x86 directories, ebuilds are now created in an overlay/games-playit directory and packages in a packages directory.
+    * With egentoo variant, generate only one ebuild and one tar archive, with a bit more complexity in the ebuild, in order to decide which content to install.
+
 2.19.1
 
   * Ensure errors during calls to "game_id" are always blocking.
