@@ -797,7 +797,7 @@ dependency_package_providing_library_gentoo32() {
 			package_name='sys-libs/libstdc++-v3[abi_x86_32]'
 		;;
 		('libstdc++.so.6')
-			package_name='virtual/libstdc++[abi_x86_32]'
+			package_name='sys-devel/gcc amd64? ( sys-devel/gcc[multilib] )'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora[abi_x86_32]'
