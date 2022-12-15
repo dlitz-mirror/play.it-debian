@@ -25,3 +25,7 @@ dosbox_postrun_legacy() {
 	dosbox_postrun=$(get_value "${application}_POSTRUN")
 	printf '%s' "$dosbox_postrun"
 }
+
+package_get_path() {
+	package_path "$1"
+}

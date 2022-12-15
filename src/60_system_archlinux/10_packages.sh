@@ -242,3 +242,18 @@ package_name_archlinux() {
 
 	printf '%s' "$package_name"
 }
+
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_archlinux $package
+# RETURNS: relative path to a directory, as a string
+package_path_archlinux() {
+	local package
+	package="$1"
+
+	local package_name package_path
+	package_name=$(package_name "$package")
+	package_path="${package_name%.tar*}"
+
+	printf '%s' "$package_path"
+}

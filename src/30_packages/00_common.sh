@@ -426,30 +426,37 @@ package_name() {
 	printf '%s' "$package_name"
 }
 
-# get path to the directory where the given package is prepared
-# USAGE: package_get_path $package
+# Get the path to the directory where the given package is prepared.
+# USAGE: package_path $package
 # RETURNS: path to a directory, it is not checked that it exists or is writable
-package_get_path() {
-	# single argument should be the package name
+package_path() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_path'
 
-	# check that an archive is set by the global context
-	assert_not_empty 'ARCHIVE' 'package_get_path'
+	assert_not_empty 'OPTION_PACKAGE' 'package_path'
+	assert_not_empty 'PLAYIT_WORKDIR' 'package_path'
 
-	# check that PLAYIT_WORKDIR is set by the global context
-	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
+	local package_name package_path
+	case "$OPTION_PACKAGE" in
+		('arch')
+			package_path=$(package_path_archlinux "$package")
+		;;
+		('deb')
+			package_path=$(package_path_debian "$package")
+		;;
+		('gentoo')
+			package_path=$(package_path_gentoo "$package")
+		;;
+		('egentoo')
+			package_path=$(package_path_egentoo "$package")
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_path'
+			return 1
+		;;
+	esac
 
-	# compute the package path from its identifier
-	local package_path package_id package_version package_architecture
-	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$ARCHIVE")
-	package_architecture=$(package_get_architecture_string "$package")
-	package_path="${PLAYIT_WORKDIR}/${package_id}_${package_version}_${package_architecture}"
-
-	printf '%s' "$package_path"
-	return 0
+	printf '%s/packages/%s' "$PLAYIT_WORKDIR" "$package_path"
 }
 
 # get the maintainer string
