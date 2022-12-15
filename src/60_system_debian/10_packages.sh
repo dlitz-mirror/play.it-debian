@@ -129,3 +129,21 @@ package_debian_field_depends() {
 	$(dependencies_debian_full_list "$package")
 	EOF
 }
+
+# Print the file name of the given package
+# USAGE: package_name_debian $package
+# RETURNS: the file name, as a string
+package_name_debian() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_name'
+
+	local package_id package_version package_architecture package_name
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_name="${package_id}_${package_version}_${package_architecture}.deb"
+
+	printf '%s' "$package_name"
+}

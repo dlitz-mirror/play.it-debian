@@ -394,6 +394,38 @@ package_get_provide() {
 	return 0
 }
 
+# Print the file name of the given package
+# USAGE: package_name $package
+# RETURNS: the file name, as a string
+package_name() {
+	local package
+	package="$1"
+
+	assert_not_empty 'OPTION_PACKAGE' 'package_name'
+
+	local package_name
+	case "$OPTION_PACKAGE" in
+		('arch')
+			package_name=$(package_name_archlinux "$package")
+		;;
+		('deb')
+			package_name=$(package_name_debian "$package")
+		;;
+		('gentoo')
+			package_name=$(package_name_gentoo "$package")
+		;;
+		('egentoo')
+			package_name=$(egentoo_package_name)
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_name'
+			return 1
+		;;
+	esac
+
+	printf '%s' "$package_name"
+}
+
 # get path to the directory where the given package is prepared
 # USAGE: package_get_path $package
 # RETURNS: path to a directory, it is not checked that it exists or is writable

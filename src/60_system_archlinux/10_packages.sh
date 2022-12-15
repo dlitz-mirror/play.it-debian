@@ -202,3 +202,43 @@ package_archlinux_fields_depend() {
 	$(dependencies_archlinux_full_list "$package")
 	EOL
 }
+
+# Print the file name of the given package
+# USAGE: package_name_archlinux $package
+# RETURNS: the file name, as a string
+package_name_archlinux() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_name_archlinux'
+	assert_not_empty 'OPTION_COMPRESSION' 'package_name_archlinux'
+
+	local package_id package_version package_architecture package_name
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_name="${package_id}_${package_version}_${package_architecture}.tar"
+	case "$OPTION_COMPRESSION" in
+		('gzip')
+			package_name="${package_name}.gz"
+		;;
+		('xz')
+			package_name="${package_name}.xz"
+		;;
+		('bzip2')
+			package_name="${package_name}.bz2"
+		;;
+		('zstd')
+			package_name="${package_name}.zst"
+		;;
+		('none')
+			# No compression extension to append.
+		;;
+		(*)
+			error_invalid_argument 'OPTION_COMPRESSION' 'package_name_archlinux'
+			return 1
+		;;
+	esac
+
+	printf '%s' "$package_name"
+}
