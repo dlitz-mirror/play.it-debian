@@ -7,7 +7,7 @@ pkg_write_deb() {
 	###
 
 	local package_path
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 
 	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
 

@@ -7,7 +7,7 @@ pkg_write_arch() {
 	###
 
 	local package_path
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$package_path" | tail --lines=1 | cut --fields=1)
@@ -158,14 +158,15 @@ pkg_build_arch() {
 # USAGE: package_archlinux_create_mtree $pkg_path
 # RETURNS: nothing
 package_archlinux_create_mtree() {
-	local pkg
-	local pkg_path
-	pkg="$1"
-	pkg_path="$(package_get_path "$pkg")"
+	local package
+	package="$1"
 
-	info_package_mtree_computation "$pkg"
+	local package_path
+	package_path=$(package_path "$package")
+
+	info_package_mtree_computation "$package"
 	(
-		cd "$pkg_path"
+		cd "$package_path"
 		# shellcheck disable=SC2030
 		export LANG=C
 		# shellcheck disable=SC2094

@@ -180,7 +180,7 @@ pkg_build_egentoo() {
 	fi
 
 	for package in "$@"; do
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		packages_paths="$packages_paths $package_path"
 
 		case "$(package_get_architecture "$package")" in

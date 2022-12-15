@@ -989,7 +989,7 @@ dependencies_gentoo_link() {
 	game_libdir="$(path_libraries)"
 
 	local package_path library_destination
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	library_destination="${package_path}${game_libdir}"
 
 	mkdir --parents "$library_destination"

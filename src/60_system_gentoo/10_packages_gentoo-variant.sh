@@ -7,7 +7,7 @@ pkg_write_gentoo() {
 	###
 
 	local package_path package_id
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 	package_id=$(package_get_id "$pkg")
 
 	mkdir --parents \

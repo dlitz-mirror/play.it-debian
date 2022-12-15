@@ -68,21 +68,21 @@ build_pkg() {
 	case $OPTION_PACKAGE in
 		('arch')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_arch "$package_path"
 			done
 		;;
 		('deb')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_deb "$package_path"
 			done
 		;;
 		('gentoo')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_gentoo "$package_path"
 			done

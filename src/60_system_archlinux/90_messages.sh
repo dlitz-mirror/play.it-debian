@@ -27,8 +27,8 @@ info_package_mtree_computation() {
 	local package
 	package="$1"
 
-	local package_path
-	package_path=$(package_get_path "$package")
+	local package_name
+	package_name=$(package_path "$package")
 
 	local message
 	# shellcheck disable=SC2031
@@ -40,5 +40,5 @@ info_package_mtree_computation() {
 			message='Creating .MTREE file for %s…\n'
 			;;
 	esac
-	printf "$message" "$package_path"
+	printf "$message" "$package_name"
 }

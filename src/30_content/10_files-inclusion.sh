@@ -93,7 +93,7 @@ content_inclusion() {
 	# Set path to destination,
 	# ensuring it is an absolute path.
 	local package_path destination_path
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	destination_path=$(realpath --canonicalize-missing "${package_path}${target_path}")
 
 	# Proceed with the actual files inclusion

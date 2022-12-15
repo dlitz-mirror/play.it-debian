@@ -336,7 +336,7 @@ application_exe_path() {
 	# Look for the application binary in the current package.
 	local package package_path path_game_data
 	package=$(package_get_current)
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)
 	application_exe_path="${package_path}${path_game_data}/${application_exe}"
 	if [ -f "$application_exe_path" ]; then
@@ -348,7 +348,7 @@ application_exe_path() {
 	local packages_list
 	packages_list=$(packages_get_list)
 	for package in $packages_list; do
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		application_exe_path="${package_path}${path_game_data}/${application_exe}"
 		if [ -f "$application_exe_path" ]; then
 			printf '%s' "$application_exe_path"
