@@ -22,6 +22,7 @@
 .Op Fl -skip-free-space-check
 .Op Fl -show-game-script
 .Op Fl -config-file Ar chemin
+.Op Fl -list-packages
 .Sh DESCRIPTION
 .Nm
 est un logiciel libre qui automatise la construction de paquets natifs pour
@@ -135,6 +136,8 @@ Le fichier de configuration contient une liste de paramètres qui seront passés
 à
 .Nm
 comme s’ils lui avaient été donnés sur la ligne de commande.
+.It Fl -list-packages
+Affiche la liste des paquets à construire.
 .El
 .Sh ENVIRONNEMENT
 .Bl -tag -width DS

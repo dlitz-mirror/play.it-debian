@@ -38,6 +38,7 @@ help() {
 	help_tmpdir
 	help_skipfreespacecheck
 	help_configfile
+	help_listpackages
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -354,4 +355,21 @@ help_configfile() {
 	esac
 	printf -- '--config-file\n\n'
 	printf "$message" "$config_file_path"
+}
+
+# Display --list-packages option usage
+# USAGE: help_listpackages
+help_listpackages() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des paquets à construire.\n\n'
+			;;
+		('en'|*)
+			message='\tPrint the list of packages to build.\n\n'
+			;;
+	esac
+	printf -- '--list-packages\n\n'
+	printf "$message"
 }

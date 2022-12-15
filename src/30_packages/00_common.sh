@@ -163,6 +163,34 @@ packages_get_list() {
 	printf '%s' "$packages_list"
 }
 
+# Print the list of the packages that would be generated from the given archive.
+# USAGE: packages_print_list $archive
+# RETURN: a list of package file names, one per line
+packages_print_list() {
+	local archive
+	archive="$1"
+
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE="$archive"
+		case "$OPTION_PACKAGE" in
+			('egentoo')
+				local package_name
+				package_name=$(egentoo_package_name)
+				printf '%s\n' "$package_name"
+			;;
+			(*)
+				local packages_list package package_name
+				packages_list=$(packages_get_list)
+				for package in $packages_list; do
+					package_name=$(package_name "$package")
+					printf '%s\n' "$package_name"
+				done
+			;;
+		esac
+	)
+}
+
 # get ID of given package
 # USAGE: package_get_id $package
 # RETURNS: package ID, as a non-empty string

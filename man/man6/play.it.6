@@ -20,6 +20,7 @@
 .Op Fl -skip-free-space-check
 .Op Fl -show-game-script
 .Op Fl -config-file Ar path
+.Op Fl -list-packages
 .Sh DESCRIPTION
 .Nm
 is a free software building native packages from installers for Windows or
@@ -129,6 +130,8 @@ Configuration file contains list of additional command-line parameters that
 will be passed to
 .Nm
 as if they were given on the command-line.
+.It Fl -list-packages
+Print the list of packages to build.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width DS

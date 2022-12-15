@@ -150,6 +150,10 @@ parse_arguments() {
 					shift 1
 				fi
 			;;
+			('--list-packages')
+				PRINT_LIST_OF_PACKAGES=1
+				export PRINT_LIST_OF_PACKAGES
+			;;
 			('--'*)
 				error_option_unknown "$1"
 				return 1

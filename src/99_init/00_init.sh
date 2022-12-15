@@ -17,6 +17,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	unset winecfg_desktop
 	unset winecfg_launcher
 
+	# Set default values
+
+	PRINT_LIST_OF_PACKAGES=0
+
 	# Set URLs for error messages
 
 	PLAYIT_GAMES_BUG_TRACKER_URL='https://forge.dotslashplay.it/play.it/games/issues'
@@ -163,6 +167,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		debug_option_value "OPTION_$option"
 		true
 	done
+
+	# If called with --list-packages,
+	# print the list of packages that would be generated from the given archive
+	# then exit early.
+
+	if [ $PRINT_LIST_OF_PACKAGES -eq 1 ]; then
+		archives_list=$(archives_return_list)
+		archive=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
+		packages_print_list "$archive"
+		exit 0
+	fi
 
 	# Make sure the output directory exists and is writable
 
