@@ -420,39 +420,6 @@ package_get_path() {
 	return 0
 }
 
-# get name of the given package’s archive without suffix
-# USAGE: package_get_name $package
-# RETURNS: filename, without any suffix
-package_get_name() {
-	# single argument should be the package name
-	local package
-	package="$1"
-	assert_not_empty 'package' 'package_get_name'
-
-	# compute the package path from its identifier
-	local package_name package_path package_id
-	case "$OPTION_PACKAGE" in
-		('arch'|'deb')
-			package_path=$(package_get_path "$package")
-			package_name=$(basename "$package_path")
-		;;
-		('gentoo'|'egentoo')
-			local package_version
-			assert_not_empty 'ARCHIVE' 'package_get_name'
-			package_version=$(packages_get_version "$ARCHIVE")
-			package_id=$(package_get_id "$package")
-			package_name="${package_id}-${package_version}"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
-			return 1
-		;;
-	esac
-
-	printf '%s' "$package_name"
-	return 0
-}
-
 # get the maintainer string
 # USAGE: packages_get_maintainer
 # RETURNS: packages maintainer, as a non-empty string

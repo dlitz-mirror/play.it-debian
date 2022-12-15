@@ -24,9 +24,13 @@ warning_missing_library() {
 # print mtree computation message
 # USAGE: info_package_mtree_computation $package
 info_package_mtree_computation() {
-	local pkg pkg_name message
-	pkg="$1"
-	pkg_name="$(package_get_name "$pkg")"
+	local package
+	package="$1"
+
+	local package_path
+	package_path=$(package_get_path "$package")
+
+	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
@@ -36,6 +40,5 @@ info_package_mtree_computation() {
 			message='Creating .MTREE file for %s…\n'
 			;;
 	esac
-	# shellcheck disable=SC2059
-	printf "$message" "$pkg_name"
+	printf "$message" "$package_path"
 }
