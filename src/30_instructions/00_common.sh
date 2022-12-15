@@ -18,6 +18,9 @@ print_instructions() {
 
 	# Sort packages by architecture
 	local package package_architecture packages_list_32 packages_list_64 packages_list_all
+	packages_list_32=''
+	packages_list_64=''
+	packages_list_all=''
 	for package in "$@"; do
 		package_architecture=$(package_get_architecture "$package")
 		case "$package_architecture" in

@@ -54,7 +54,7 @@ pkg_write_gentoo() {
 	}
 	EOF
 
-	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		cat >> "$target" <<- EOF
 		pkg_postinst() {
 		$(get_value "${pkg}_POSTINST_RUN")
@@ -62,7 +62,7 @@ pkg_write_gentoo() {
 		EOF
 	fi
 
-	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat >> "$target" <<- EOF
 		pkg_prerm() {
 		$(get_value "${pkg}_PRERM_RUN")

@@ -14,6 +14,11 @@ pkg_write_egentoo() {
 
 	inherits="xdg"
 
+	# Ensure that $build_deps is set.
+	if ! variable_is_set 'build_deps'; then
+		build_deps=''
+	fi
+
 	package_filename="$(package_get_name "$package").tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
@@ -54,7 +59,7 @@ pkg_write_egentoo() {
 		;;
 	esac
 
-	if [ -n "$(get_value "${package}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		postinst_f="$(get_value "${package}_POSTINST_RUN")"
 	fi
 
@@ -98,7 +103,7 @@ pkg_postinst() {
 }
 EOF
 
-	if [ -n "$(get_value "${package}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat >> "$ebuild_path" << EOF
 
 pkg_prerm() {

@@ -3,6 +3,10 @@
 # NEEDED VARS: (ARCHIVE) (OPTION_CHECKSUM) (OPTION_PACKAGE) (SCRIPT_DEPS)
 # CALLS: check_deps_7z error_dependency_not_found icons_list_dependencies
 check_deps() {
+	if variable_is_empty 'SCRIPT_DEPS'; then
+		SCRIPT_DEPS=''
+	fi
+
 	case "$OPTION_COMPRESSION" in
 		('gzip')
 			SCRIPT_DEPS="$SCRIPT_DEPS gzip"

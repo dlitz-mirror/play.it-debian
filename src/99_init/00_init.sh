@@ -86,10 +86,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Try to detect the host distribution if no package format has been explicitely set
 
-	if [ -z "$OPTION_PACKAGE" ]; then
+	if variable_is_empty 'OPTION_PACKAGE'; then
 		OPTION_PACKAGE=$(package_format_guess)
 	fi
-	if [ -z "$OPTION_PACKAGE" ]; then
+	if variable_is_empty 'OPTION_PACKAGE'; then
 		warning_package_format_guessing_failed "$DEFAULT_OPTION_PACKAGE"
 		OPTION_PACKAGE="$DEFAULT_OPTION_PACKAGE"
 	fi
@@ -107,31 +107,24 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Set options not already set by script arguments to default values
 
-	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS' 'OUTPUT_DIR' 'PREFIX'; do
-		if
-			[ -z "$(get_value "OPTION_$option")" ] && \
-			[ -n "$(get_value "DEFAULT_OPTION_$option")" ]
-		then
-			# shellcheck disable=SC2046
-			eval OPTION_$option=\"$(get_value "DEFAULT_OPTION_$option")\"
-			export OPTION_$option
-		fi
-	done
-
 	for option in \
+		'OPTION_CHECKSUM' \
+		'OPTION_COMPRESSION' \
+		'OPTION_ICONS' \
+		'OPTION_OUTPUT_DIR' \
+		'OPTION_PREFIX' \
 		'NO_FREE_SPACE_CHECK' \
 		'SKIP_ICONS' \
 		'OVERWRITE_PACKAGES' \
 		'DEBUG' \
 		'MTREE'
 	do
-		if
-			[ -z "$(get_value "$option")" ] && \
-			[ -n "$(get_value "DEFAULT_$option")" ]
+		if \
+			variable_is_empty "$option" \
+			&& ! variable_is_empty "DEFAULT_$option"
 		then
-			# shellcheck disable=SC2046
-			eval $option=\"$(get_value "DEFAULT_$option")\"
-			export ${option?}
+			option_default_value=$(get_value "DEFAULT_$option")
+			export $option="$option_default_value"
 		fi
 	done
 

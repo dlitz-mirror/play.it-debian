@@ -147,10 +147,10 @@ pkg_set_deps_deb() {
 				pkg_dep="$dep"
 			;;
 		esac
-		if [ -n "$pkg_deps" ]; then
-			pkg_deps="$pkg_deps, $pkg_dep"
-		else
+		if variable_is_empty 'pkg_deps'; then
 			pkg_deps="$pkg_dep"
+		else
+			pkg_deps="$pkg_deps, $pkg_dep"
 		fi
 	done
 }
@@ -495,14 +495,13 @@ dependencies_debian_full_list() {
 
 	{
 		# Include generic dependencies
-		local dependency_generic
+		local dependency_generic pkg_deps
 		while read -r dependency_generic; do
 			# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
-			# we prevent it from leaking using unset.
-			unset pkg_deps
+			# we prevent it from leaking by setting it to an empty value.
+			pkg_deps=''
 			pkg_set_deps_deb $dependency_generic
 			printf '%s\n' "$pkg_deps"
-			unset pkg_deps
 		done <<- EOL
 		$(dependencies_list_generic "$package")
 		EOL

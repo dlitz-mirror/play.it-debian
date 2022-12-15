@@ -55,7 +55,7 @@ pkg_write_deb() {
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
-	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
@@ -66,7 +66,7 @@ pkg_write_deb() {
 		chmod 755 "$postinst_script"
 	fi
 
-	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 

@@ -18,7 +18,12 @@ application_java_options() {
 
 	# Get the application Java options string from its identifier
 	local application_java_options
-	application_java_options=$(get_value "${application}_JAVA_OPTIONS")
+	if variable_is_empty "${application}_JAVA_OPTIONS"; then
+		# Return early if no options string is set.
+		return 0
+	else
+		application_java_options=$(get_value "${application}_JAVA_OPTIONS")
+	fi
 
 	# Check that the options string does not span multiple lines
 	if [ "$(printf '%s' "$application_java_options" | wc --lines)" -gt 1 ]; then

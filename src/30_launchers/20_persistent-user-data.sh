@@ -3,19 +3,19 @@
 # RETURNS: a list of paths to directories, one per line
 #          glob patterns can be included
 persistent_list_directories() {
-	if [ -n "$USER_PERSISTENT_DIRECTORIES" ]; then
+	if ! variable_is_empty 'USER_PERSISTENT_DIRECTORIES'; then
 		printf '%s' "$USER_PERSISTENT_DIRECTORIES" | \
 			grep --invert-match --regexp='^$'
 	fi
 
 	# If USER_PERSISTENT_DIRECTORIES is not set, try to fall back on legacy variables
 	set +o noglob
-	if [ -n "$CONFIG_DIRS" ]; then
+	if ! variable_is_empty 'CONFIG_DIRS'; then
 		for directory in $CONFIG_DIRS; do
 			printf '%s\n' "$directory"
 		done
 	fi
-	if [ -n "$DATA_DIRS" ]; then
+	if ! variable_is_empty 'DATA_DIRS'; then
 		for directory in $DATA_DIRS; do
 			printf '%s\n' "$directory"
 		done
@@ -28,19 +28,19 @@ persistent_list_directories() {
 # RETURNS: a list of paths to files, one per line
 #          glob patterns can be included
 persistent_list_files() {
-	if [ -n "$USER_PERSISTENT_FILES" ]; then
+	if ! variable_is_empty 'USER_PERSISTENT_FILES'; then
 		printf '%s' "$USER_PERSISTENT_FILES" | \
 			grep --invert-match --regexp='^$'
 	fi
 
 	# If USER_PERSISTENT_FILES is not set, try to fall back on legacy variables
 	set +o noglob
-	if [ -n "$CONFIG_FILES" ]; then
+	if ! variable_is_empty 'CONFIG_FILES'; then
 		for file in $CONFIG_FILES; do
 			printf '%s\n' "$file"
 		done
 	fi
-	if [ -n "$DATA_FILES" ]; then
+	if ! variable_is_empty 'DATA_FILES'; then
 		for file in $DATA_FILES; do
 			printf '%s\n' "$file"
 		done

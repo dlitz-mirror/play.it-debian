@@ -46,7 +46,7 @@ pkg_write_arch() {
 
 	target="${package_path}/.INSTALL"
 
-	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		cat >> "$target" <<- EOF
 		post_install() {
 		$(get_value "${pkg}_POSTINST_RUN")
@@ -58,7 +58,7 @@ pkg_write_arch() {
 		EOF
 	fi
 
-	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat >> "$target" <<- EOF
 		pre_remove() {
 		$(get_value "${pkg}_PRERM_RUN")

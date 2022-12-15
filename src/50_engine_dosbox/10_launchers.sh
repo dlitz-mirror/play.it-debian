@@ -54,12 +54,15 @@ dosbox_launcher_instructions() {
 # USAGE: dosbox_mount_disk_image
 dosbox_mount_disk_image() {
 	# Return early if no disk image is set
-	if [ -z "$GAME_IMAGE" ]; then
+	if variable_is_empty 'GAME_IMAGE'; then
 		return 0
 	fi
 
 	local disk_image
 	disk_image=$(dosbox_disk_image_path)
+	if variable_is_empty 'GAME_IMAGE_TYPE'; then
+		GAME_IMAGE_TYPE='iso'
+	fi
 	case "$GAME_IMAGE_TYPE" in
 		('cdrom')
 			if [ -d "$disk_image" ]; then
@@ -72,7 +75,7 @@ dosbox_mount_disk_image() {
 				EOF
 			fi
 		;;
-		('iso'|*)
+		('iso')
 			cat <<- EOF
 			imgmount d $GAME_IMAGE -t iso -fs iso
 			EOF

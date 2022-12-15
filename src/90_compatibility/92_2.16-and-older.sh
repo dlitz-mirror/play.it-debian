@@ -19,7 +19,7 @@ icons_get_from_legacy_path() {
 	local icon_source_directory_legacy
 	icon_source_directory_legacy="$1"
 	shift 1
-	if [ -z "$CONTENT_PATH_DEFAULT" ]; then
+	if variable_is_empty 'CONTENT_PATH_DEFAULT'; then
 		local CONTENT_PATH_DEFAULT
 		CONTENT_PATH_DEFAULT='.'
 	fi

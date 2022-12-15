@@ -66,7 +66,7 @@ archive_initialize() {
 	archive_set_properties_from_candidate "$archive_name" "$archive_candidate"
 
 	# Check archive integrity if it comes with a MD5 hash
-	if [ -n "$(get_value "${archive_name}_MD5")" ]; then
+	if ! variable_is_empty "${archive_name}_MD5"; then
 		archive_integrity_check "$archive_candidate" "$archive_path" "$archive_name"
 	fi
 
@@ -80,7 +80,10 @@ archive_initialize() {
 	for i in $(seq 1 9); do
 		archive_part_name="${archive_name}_PART${i}"
 		archive_part_candidate="${archive_candidate}_PART${i}"
-		test -z "$(get_value "$archive_part_candidate")" && break
+		# Stop looking at the first unset archive extra part.
+		if variable_is_empty "$archive_part_candidate"; then
+			break
+		fi
 		archive_initialize_required "$archive_part_name" "$archive_part_candidate"
 	done
 
@@ -91,27 +94,32 @@ archive_initialize() {
 # USAGE: archive_find_from_candidates $archive_name $archive_candidate[…]
 # RETURNS: an archive identifier, or nothing
 archive_find_from_candidates() {
-	local archive_name archive_candidate file_name file_path current_archive_path
+	local archive_name
 	archive_name="$1"
 	shift 1
 
 	# An archive path might already be set, if it has been passed on the command line
-	if [ -n "$(get_value $archive_name)" ]; then
-		current_archive_path="$(get_value $archive_name)"
+	local current_archive_path
+	current_archive_path=''
+	if ! variable_is_empty "$archive_name"; then
+		current_archive_path=$(get_value $archive_name)
 	fi
 
 	# Loop around archive candidates, stopping on the first one found
+	local archive_candidate file_name file_path
+	file_path=''
 	for archive_candidate in "$@"; do
 		if [ -n "$current_archive_path" ]; then
 			file_name=$(get_value "$archive_candidate")
 			if [ "$(basename "$current_archive_path")" = "$file_name" ]; then
 				file_path=$(realpath "$current_archive_path")
 			fi
-
 		else
 			file_path=$(archive_find_path "$archive_candidate")
 		fi
-		test -n "$file_path" && break
+		if [ -n "$file_path" ]; then
+			break
+		fi
 	done
 
 	# Return early if no archive candidate has been found
@@ -164,7 +172,7 @@ archive_find_path_from_name() {
 	fi
 
 	# Look for the archive in the same directory than the main archive
-	if [ -n "$SOURCE_ARCHIVE" ]; then
+	if ! variable_is_empty 'SOURCE_ARCHIVE'; then
 		local source_directory
 		source_directory=$(dirname "$SOURCE_ARCHIVE")
 		archive_path="${source_directory}/${archive_name}"
@@ -200,6 +208,10 @@ archive_set_properties_from_candidate() {
 
 	# Set list of extra archive parts
 	for i in $(seq 1 9); do
+		# Stop looking at the first unset archive extra part.
+		if variable_is_empty "${archive_candidate}_PART${i}"; then
+			break
+		fi
 		export "${archive_name}_PART${i}=$(get_value "${archive_candidate}_PART${i}")"
 	done
 
@@ -213,7 +225,9 @@ archive_set_properties_from_candidate() {
 		'SIZE' \
 		'VERSION'
 	do
-		export "${archive_name}_${property}=$(get_value "${archive_candidate}_${property}")"
+		if ! variable_is_empty "${archive_candidate}_${property}"; then
+			export "${archive_name}_${property}=$(get_value "${archive_candidate}_${property}")"
+		fi
 	done
 
 	return 0
@@ -229,11 +243,15 @@ archive_add_size_to_total() {
 
 	# Get the given archive size, defaults to a size of 0
 	local archive_size
-	archive_size=$(get_value "${archive}_SIZE")
-	: "${archive_size:=0}"
+	archive_size='0'
+	if ! variable_is_empty "${archive}_SIZE"; then
+		archive_size=$(get_value "${archive}_SIZE")
+	fi
 
 	# Update the total size of all archives in use
-	: "${ARCHIVE_SIZE:=0}"
+	if variable_is_empty 'ARCHIVE_SIZE'; then
+		ARCHIVE_SIZE='0'
+	fi
 	ARCHIVE_SIZE=$((ARCHIVE_SIZE + archive_size))
 	export ARCHIVE_SIZE
 
@@ -251,7 +269,11 @@ archive_get_type() {
 
 	# Return archive type early if it is already set
 	local archive_type
-	archive_type=$(get_value "${archive_identifier}_TYPE")
+	if variable_is_empty "${archive_identifier}_TYPE"; then
+		archive_type=''
+	else
+		archive_type=$(get_value "${archive_identifier}_TYPE")
+	fi
 	if [ -n "$archive_type" ]; then
 		printf '%s' "$archive_type"
 		return 0
@@ -336,7 +358,11 @@ archive_extractor() {
 
 	# Return archive extractor early if it is already set
 	local archive_extractor
-	archive_extractor=$(get_value "${archive_identifier}_EXTRACTOR")
+	if variable_is_empty "${archive_identifier}_EXTRACTOR"; then
+		archive_extractor=''
+	else
+		archive_extractor=$(get_value "${archive_identifier}_EXTRACTOR")
+	fi
 	if [ -n "$archive_extractor" ]; then
 		printf '%s' "$archive_extractor"
 		return 0
@@ -368,7 +394,10 @@ archive_extractor_options() {
 	local archive
 	archive="$1"
 
-	get_value "${archive}_EXTRACTOR_OPTIONS"
+	# Only display an options string if one is set.
+	if ! variable_is_empty "${archive}_EXTRACTOR_OPTIONS"; then
+		get_value "${archive}_EXTRACTOR_OPTIONS"
+	fi
 }
 
 # check integrity of target file
@@ -401,8 +430,8 @@ archive_integrity_check() {
 #          as a list of strings separated by spaces or line breaks
 archives_return_list() {
 	# If a list is already explicitely set, return early
-	# shellcheck disable=SC2153
-	if [ -n "$ARCHIVES_LIST" ]; then
+	if ! variable_is_empty 'ARCHIVES_LIST'; then
+		# shellcheck disable=SC2153
 		printf '%s' "$ARCHIVES_LIST"
 		return 0
 	fi
