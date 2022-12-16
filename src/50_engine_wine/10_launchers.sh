@@ -10,9 +10,7 @@ wine_launcher_write() {
 		('symlinks')
 			local game_id
 			game_id=$(game_id)
-			if [ "$(application_id "$application")" != "${game_id}_winecfg" ]; then
-				launcher_write_script_wine_application_variables "$application" "$target_file"
-			fi
+			launcher_write_script_wine_application_variables "$application" "$target_file"
 			launcher_write_script_game_variables "$target_file"
 			launcher_print_persistent_paths >> "$target_file"
 			launcher_wine_command_path >> "$target_file"
@@ -24,13 +22,9 @@ wine_launcher_write() {
 				wine_prefix_persistent_links
 				wine_persistent_regedit_environment
 			} >> "$target_file"
-			if [ "$(application_id "$application")" = "${game_id}_winecfg" ]; then
-				launcher_write_script_winecfg_run "$target_file"
-			else
-				wine_persistent_regedit_load >> "$target_file"
-				launcher_write_script_wine_run "$application" "$target_file"
-				wine_persistent_regedit_store >> "$target_file"
-			fi
+			wine_persistent_regedit_load >> "$target_file"
+			launcher_write_script_wine_run "$application" "$target_file"
+			wine_persistent_regedit_store >> "$target_file"
 			launcher_write_script_prefix_cleanup "$target_file"
 		;;
 		(*)
@@ -334,9 +328,6 @@ launcher_wine_command_path() {
 	    fi
 	    printf '%s' "$PLAYIT_WINE_CMD"
 	}
-	winecfg_command() {
-	    wine_command | sed 's#/wine$#/winecfg#'
-	}
 	wineboot_command() {
 	    wine_command | sed 's#/wine$#/wineboot#'
 	}
@@ -377,22 +368,6 @@ launcher_write_script_wine_application_variables() {
 	return 0
 }
 
-# WINE - write launcher script for winecfg
-# USAGE: launcher_write_script_wine_winecfg $application
-launcher_write_script_wine_winecfg() {
-	local application
-	application="$1"
-
-	local game_id
-	game_id=$(game_id)
-	APP_WINECFG_ID="${game_id}_winecfg"
-	export APP_WINECFG_ID
-	export APP_WINECFG_TYPE='wine'
-	export APP_WINECFG_EXE='winecfg'
-	launcher_write_script 'APP_WINECFG'
-	return 0
-}
-
 # WINE - run the game
 # USAGE: launcher_write_script_wine_run $application $file
 launcher_write_script_wine_run() {
@@ -415,24 +390,6 @@ launcher_write_script_wine_run() {
 	set -o errexit
 	EOF
 	launcher_write_script_postrun "$application" "$file"
-}
-
-# WINE - run winecfg
-# USAGE: launcher_write_script_winecfg_run $file
-# CALLED BY: launcher_write_script
-launcher_write_script_winecfg_run() {
-	# parse arguments
-	local file
-	file="$1"
-
-	cat >> "$file" <<- 'EOF'
-	# Run WINE configuration
-
-	$(winecfg_command)
-
-	EOF
-
-	return 0
 }
 
 # WINE - Apply winetricks verbs, spawning a terminal if required

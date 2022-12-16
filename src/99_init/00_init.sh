@@ -14,8 +14,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	unset OPTION_PACKAGE
 	unset SOURCE_ARCHIVE
 	unset PLAYIT_WORKDIR
-	unset winecfg_desktop
-	unset winecfg_launcher
 
 	# Set default values
 

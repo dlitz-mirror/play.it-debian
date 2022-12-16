@@ -210,23 +210,6 @@ launcher_write_script() {
 			chmod +x "$application_exe_path"
 		;;
 	esac
-
-	# for WINE applications, write launcher script for winecfg
-	case "$application_type" in
-		('wine')
-			local package package_path path_binaries game_id winecfg_file
-			package=$(context_package)
-			package_path=$(package_path "$package")
-			path_binaries=$(path_binaries)
-			game_id=$(game_id)
-			winecfg_file="${package_path}${path_binaries}/${game_id}_winecfg"
-			if [ ! -e "$winecfg_file" ]; then
-				launcher_write_script_wine_winecfg "$application"
-			fi
-		;;
-	esac
-
-	return 0
 }
 
 # Check that the launcher target exists.
@@ -244,14 +227,6 @@ launcher_target_presence_check() {
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
 			return 0
-		;;
-		('wine')
-			# winecfg is provided by WINE itself, not the game archive.
-			local application_exe
-			application_exe=$(application_exe "$application")
-			if [ "$application_exe" = 'winecfg' ]; then
-				return 0
-			fi
 		;;
 	esac
 
@@ -342,30 +317,6 @@ launcher_write_desktop() {
 	desktop_file=$(launcher_desktop_filepath "$application")
 	mkdir --parents "$(dirname "$desktop_file")"
 	launcher_desktop "$application" > "$desktop_file"
-
-	# WINE - Write XDG desktop file for winecfg
-	local application_type
-	application_type=$(application_type "$application")
-	if \
-		[ "$application_type" = 'wine' ] && \
-		[ "$application" != 'APP_WINECFG' ]
-	then
-		local package package_path path_xdg_desktop game_id winecfg_desktop
-		package=$(context_package)
-		package_path=$(package_path "$package")
-		path_xdg_desktop=$(path_xdg_desktop)
-		game_id=$(game_id)
-		winecfg_desktop="${package_path}${path_xdg_desktop}/${game_id}_winecfg.desktop"
-		if [ ! -e "$winecfg_desktop" ]; then
-			APP_WINECFG_ID="$(game_id)_winecfg"
-			APP_WINECFG_NAME="$(game_name) - WINE configuration"
-			APP_WINECFG_CAT='Settings'
-			export APP_WINECFG_ID APP_WINECFG_NAME APP_WINECFG_CAT
-			launcher_write_desktop 'APP_WINECFG'
-		fi
-	fi
-
-	return 0
 }
 
 # print the content of the XDG desktop file for the given application
@@ -375,18 +326,8 @@ launcher_desktop() {
 	local application
 	application="$1"
 
-	###
-	# TODO
-	# This should be moved to a dedicated function,
-	# probably in a 20_icons.sh source file
-	###
-	# get icon name
 	local application_icon
-	if [ "$application" = 'APP_WINECFG' ]; then
-		application_icon='winecfg'
-	else
-		application_icon=$(application_id "$application")
-	fi
+	application_icon=$(application_id "$application")
 
 	cat <<- EOF
 	[Desktop Entry]
