@@ -24,7 +24,6 @@ set_temp_directories() {
 	local packages_list package package_path
 	packages_list=$(packages_get_list)
 	for package in $packages_list; do
-		testvar "$package" 'PKG'
 		package_path=$(package_path "$package")
 		eval "${package}_PATH='${package_path}'"
 		export "${package?}_PATH"

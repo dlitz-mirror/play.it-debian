@@ -1,9 +1,3 @@
-# test the validity of the argument given to parent function
-# USAGE: testvar $var_name $pattern
-testvar() {
-	test "${1%%_*}" = "$2"
-}
-
 # expand the given variable name and print its value
 # USAGE: get_value $variable_name
 # RETURN: the variable value

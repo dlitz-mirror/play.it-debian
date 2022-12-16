@@ -9,13 +9,6 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	for pkg in "$@"; do
-		if ! testvar "$pkg" 'PKG'; then
-			error_invalid_argument 'pkg' 'write_metadata'
-			return 1
-		fi
-	done
-
 	case $OPTION_PACKAGE in
 		('arch')
 			for pkg in "$@"; do pkg_write_arch; done
@@ -38,10 +31,8 @@ write_metadata() {
 	debug_leaving_function 'write_metadata'
 }
 
-# build .pkg.tar or .deb package
+# Build the final packages.
 # USAGE: build_pkg [$pkg…]
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) (PKG_PATH) PLAYIT_WORKDIR
-# CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
 		# shellcheck disable=SC2046
@@ -52,19 +43,11 @@ build_pkg() {
 	debug_entering_function 'build_pkg'
 
 	local package package_path
-	for package in "$@"; do
-		if ! testvar "$package" 'PKG'; then
-			error_invalid_argument 'package' 'build_pkg'
-			return 1
-		fi
-	done
-
 	###
 	# TODO
 	# pkg_build_xxx implicitely depends on the target package being set as $pkg
 	# It should instead be passed as a mandatory argument.
 	###
-
 	case $OPTION_PACKAGE in
 		('arch')
 			for package in "$@"; do

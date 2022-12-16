@@ -4,10 +4,6 @@ launcher_write_script() {
 	local application
 	application="$1"
 	assert_not_empty 'application' 'launcher_write_script'
-	if ! testvar "$application" 'APP'; then
-		error_invalid_argument 'application' 'launcher_write_script'
-		return 1
-	fi
 
 	# compute file path
 	local package package_path path_binaries application_id target_file
