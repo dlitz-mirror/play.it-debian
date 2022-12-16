@@ -46,7 +46,6 @@ path_documentation() {
 
 	local game_id
 	game_id=$(game_id)
-	assert_not_empty 'game_id' 'path_documentation'
 
 	printf '%s/share/doc/%s' "$install_prefix" "$game_id"
 }
@@ -60,7 +59,6 @@ path_game_data() {
 
 	local game_id
 	game_id=$(game_id)
-	assert_not_empty 'game_id' 'path_game_data'
 
 	local target_system
 	target_system="$OPTION_PACKAGE"
@@ -102,7 +100,6 @@ path_libraries() {
 
 	local game_id
 	game_id=$(game_id)
-	assert_not_empty 'game_id' 'path_game_data'
 
 	printf '%s/lib/games/%s' "$install_prefix" "$game_id"
 }

@@ -133,6 +133,7 @@ package_gentoo_field_rdepend() {
 		# and indentation is to be done using tabulations.
 		if [ "$first_item_displayed" -eq 0 ]; then
 			printf '%s' "$dependency_string"
+			first_item_displayed=1
 		else
 			printf '\n\t%s' "$dependency_string"
 		fi

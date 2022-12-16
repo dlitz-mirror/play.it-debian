@@ -8,7 +8,9 @@ wine_launcher_write() {
 
 	case "$prefix_type" in
 		('symlinks')
-			if [ "$(application_id "$application")" != "$(game_id)_winecfg" ]; then
+			local game_id
+			game_id=$(game_id)
+			if [ "$(application_id "$application")" != "${game_id}_winecfg" ]; then
 				launcher_write_script_wine_application_variables "$application" "$target_file"
 			fi
 			launcher_write_script_game_variables "$target_file"
@@ -22,7 +24,7 @@ wine_launcher_write() {
 				wine_prefix_persistent_links
 				wine_persistent_regedit_environment
 			} >> "$target_file"
-			if [ "$(application_id "$application")" = "$(game_id)_winecfg" ]; then
+			if [ "$(application_id "$application")" = "${game_id}_winecfg" ]; then
 				launcher_write_script_winecfg_run "$target_file"
 			else
 				wine_persistent_regedit_load >> "$target_file"
@@ -366,7 +368,10 @@ launcher_write_script_wine_application_variables() {
 launcher_write_script_wine_winecfg() {
 	local application
 	application="$1"
-	APP_WINECFG_ID="$(game_id)_winecfg"
+
+	local game_id
+	game_id=$(game_id)
+	APP_WINECFG_ID="${game_id}_winecfg"
 	export APP_WINECFG_ID
 	export APP_WINECFG_TYPE='wine'
 	export APP_WINECFG_EXE='winecfg'

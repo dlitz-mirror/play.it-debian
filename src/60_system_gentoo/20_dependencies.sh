@@ -466,7 +466,7 @@ dependency_package_providing_library_gentoo() {
 			package_name='sys-libs/libstdc++-v3'
 		;;
 		('libstdc++.so.6')
-			package_name='virtual/libstdc++'
+			package_name='sys-devel/gcc'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora'
@@ -797,7 +797,7 @@ dependency_package_providing_library_gentoo32() {
 			package_name='sys-libs/libstdc++-v3[abi_x86_32]'
 		;;
 		('libstdc++.so.6')
-			package_name='virtual/libstdc++[abi_x86_32]'
+			package_name='sys-devel/gcc amd64? ( sys-devel/gcc[multilib] )'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora[abi_x86_32]'
@@ -891,7 +891,7 @@ dependencies_gentoo_full_list() {
 			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
 			# we prevent it from leaking using unset.
 			unset pkg_deps
-			pkg_set_deps_gentoo $dependencies_generic
+			pkg_set_deps_gentoo $dependency_generic
 			printf '%s\n' "$pkg_deps"
 			unset pkg_deps
 		done <<- EOL
