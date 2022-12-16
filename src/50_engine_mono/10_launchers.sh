@@ -25,19 +25,26 @@ mono_launcher_run() {
 	local application
 	application="$1"
 
+	local exec_path application_prerun application_postrun libraries_paths launcher_tweaks
+	exec_path=$(mono_launcher_exec_path "$application")
+	application_prerun=$(application_prerun "$application")
+	application_postrun=$(application_postrun "$application")
+	libraries_paths=$(launcher_native_libraries_paths)
+	launcher_tweaks=$(mono_launcher_tweaks)
+
 	cat <<- EOF
 	# Run the game
-	cd "\$PATH_PREFIX"
-	$(application_prerun "$application")
-	$(launcher_native_libraries_paths)
-	$(mono_launcher_tweaks)
+	cd "$exec_path"
+	$application_prerun
+	$libraries_paths
+	$launcher_tweaks
     ## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
 	mono \$MONO_OPTIONS "\$APP_EXE" \$APP_OPTIONS "\$@"
 	game_exit_status=\$?
 	set -o errexit
-	$(application_postrun "$application")
+	$application_postrun
 	EOF
 }
 
@@ -51,4 +58,27 @@ mono_launcher_tweaks() {
 	## Work around Mono unpredictable behaviour with non-US locales
 	export LANG=C
 	EOF
+}
+
+# Mono - Print the path from where the game binary is called.
+# USAGE: mono_launcher_exec_path $application
+mono_launcher_exec_path() {
+	local application
+	application="$1"
+
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('symlinks')
+			printf '$PATH_PREFIX'
+			return 0
+		;;
+		('none')
+			printf '$PATH_GAME'
+			return 0
+		;;
+		(*)
+			return 1
+		;;
+	esac
 }

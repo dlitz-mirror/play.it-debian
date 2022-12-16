@@ -183,6 +183,11 @@ launcher_write_script() {
 					mono_launcher_run "$application" >> "$target_file"
 					launcher_write_script_prefix_cleanup "$target_file"
 				;;
+				('none')
+					mono_launcher_application_variables "$application" >> "$target_file"
+					launcher_write_script_game_variables "$target_file"
+					mono_launcher_run "$application" >> "$target_file"
+				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
 					return 1
