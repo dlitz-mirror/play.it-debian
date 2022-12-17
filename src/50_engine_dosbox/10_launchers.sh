@@ -15,37 +15,49 @@ dosbox_launcher_application_variables() {
 	EOF
 }
 
-# DOSBox - Print the actual call to dosbox
+# DOSBox - Print the actual call to dosbox,
 # USAGE: dosbox_launcher_run $application
 dosbox_launcher_run() {
 	local application
 	application="$1"
 
+	local application_prerun application_postrun dosbox_instructions
+	application_prerun=$(application_prerun "$application")
+	application_postrun=$(application_postrun "$application")
+	dosbox_instructions=$(dosbox_launcher_instructions "$application")
+
 	cat <<- EOF
 	# Run the game
 	cd "\$PATH_PREFIX"
+	$application_prerun
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
-	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "$(dosbox_launcher_instructions "$application")"
+	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "$dosbox_instructions"
 	game_exit_status=\$?
 	set -o errexit
+	$application_postrun
 	EOF
 }
 
-# DOSBox - Print the list of commands executed by dosbox
+# DOSBox - Print the list of commands executed by dosbox.
 # USAGE: dosbox_launcher_instructions $application
 dosbox_launcher_instructions() {
 	local application
 	application="$1"
 
+	local mount_disk_image dosbox_prerun dosbox_postrun
+	mount_disk_image=$(dosbox_mount_disk_image)
+	dosbox_prerun=$(dosbox_prerun "$application")
+	dosbox_postrun=$(dosbox_postrun "$application")
+
 	cat <<- EOF
 	mount c .
 	c:
-	$(dosbox_mount_disk_image)
-	$(application_prerun "$application")
+	$mount_disk_image
+	$dosbox_prerun
 	\$APP_EXE \$APP_OPTIONS \$@
-	$(application_postrun "$application")
+	$dosbox_postrun
 	exit
 	EOF
 }

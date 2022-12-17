@@ -398,7 +398,7 @@ application_category() {
 	printf '%s' "$application_category"
 }
 
-# print the pre-run actions for the given application
+# Print the pre-run actions for the given application.
 # USAGE: application_prerun $application
 # RETURN: the pre-run actions, can span over multiple lines,
 #         or an empty string if there are none
@@ -406,12 +406,25 @@ application_prerun() {
 	local application
 	application="$1"
 
-	if ! variable_is_empty "${application}_PRERUN"; then
-		get_value "${application}_PRERUN"
+	if variable_is_empty "${application}_PRERUN"; then
+		return 0
 	fi
+
+	local application_type application_prerun
+	application_type=$(application_type "$application")
+	case "$application_type" in
+		('dosbox')
+			application_prerun=$(application_prerun_dosbox "$application")
+		;;
+		(*)
+			application_prerun=$(get_value "${application}_PRERUN")
+		;;
+	esac
+
+	printf '%s' "$application_prerun"
 }
 
-# print the post-run actions for the given application
+# Print the post-run actions for the given application.
 # USAGE: application_postrun $application
 # RETURN: the post-run actions, can span over multiple lines,
 #         or an empty string if there are none
@@ -419,9 +432,22 @@ application_postrun() {
 	local application
 	application="$1"
 
-	if ! variable_is_empty "${application}_POSTRUN"; then
-		get_value "${application}_POSTRUN"
+	if variable_is_empty "${application}_POSTRUN"; then
+		return 0
 	fi
+
+	local application_type application_postrun
+	application_type=$(application_type "$application")
+	case "$application_type" in
+		('dosbox')
+			application_postrun=$(application_postrun_dosbox "$application")
+		;;
+		(*)
+			application_postrun=$(get_value "${application}_POSTRUN")
+		;;
+	esac
+
+	printf '%s' "$application_postrun"
 }
 
 # print the options string for the given application
