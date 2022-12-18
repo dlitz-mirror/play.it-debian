@@ -148,7 +148,7 @@ pkg_build_egentoo() {
 		;;
 	esac
 
-	tar_options='--create'
+	tar_options='--create -P'
 	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
 		guess_tar_implementation
 	fi
@@ -184,9 +184,9 @@ pkg_build_egentoo() {
 		packages_paths="$packages_paths $package_path"
 
 		case "$(package_get_architecture "$package")" in
-			('64') tar_options="$tar_options --xform=s:^${package_path#/}:./amd64:x" ;;
-			('32') tar_options="$tar_options --xform=s:^${package_path#/}:./x86:x" ;;
-			(*)    tar_options="$tar_options --xform=s:^${package_path#/}:./data:x" ;;
+			('64') tar_options="$tar_options --xform=s:^${package_path}:./amd64:x" ;;
+			('32') tar_options="$tar_options --xform=s:^${package_path}:./x86:x" ;;
+			(*)    tar_options="$tar_options --xform=s:^${package_path}:./data:x" ;;
 		esac
 
 		eval "${package}"_PKG=\""$package_filename"\"
