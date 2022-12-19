@@ -194,17 +194,26 @@ pkg_set_deps_gentoo() {
 				esac
 			;;
 			(*)
-				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-				local tested_package packages_list
-				packages_list=$(packages_get_list)
-				for tested_package in $packages_list; do
-					if [ "$tested_package" != "$package" ]; then
-						if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
-							pkg_dep="|| ( ${pkg_dep} )"
-						fi
-					fi
-				done
-			;;
+				case "$OPTION_PACKAGE" in
+					('gentoo')
+						pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
+						local tested_package packages_list
+						packages_list=$(packages_get_list)
+						for tested_package in $packages_list; do
+							if [ "$tested_package" != "$package" ]; then
+								if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
+									pkg_dep="|| ( ${pkg_dep} )"
+								fi
+							fi
+						done
+						;;
+					('egentoo') ;;
+					(*)
+						error_invalid_argument 'OPTION_PACKAGE' 'pkg_set_deps_gentoo'
+						return 1
+						;;
+				esac
+				;;
 		esac
 		if [ -n "$pkg_dep" ]; then
 			if variable_is_empty 'pkg_deps'; then
