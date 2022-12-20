@@ -180,7 +180,7 @@ pkg_build_egentoo() {
 	fi
 
 	for package in "$@"; do
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		packages_paths="$packages_paths $package_path"
 
 		case "$(package_get_architecture "$package")" in
@@ -204,3 +204,22 @@ pkg_build_egentoo() {
 			"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
 		fi
 	}
+
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_egentoo $package
+# RETURNS: relative path to a directory, as a string
+package_path_egentoo() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_path'
+
+	local package_id package_version package_architecture package_path
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_path="${package_id}_${package_version}_${package_architecture}"
+
+	printf '%s' "$package_path"
+}

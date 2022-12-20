@@ -105,7 +105,7 @@ dosbox_disk_image_path() {
 	# Loop over the list of packages, one should include the disk image.
 	local package package_path image_path
 	for package in $packages_list; do
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		image_path="${package_path}${path_game_data}/${GAME_IMAGE}"
 		if [ -e "$image_path" ]; then
 			printf '%s' "$image_path"

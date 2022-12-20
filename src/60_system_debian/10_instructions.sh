@@ -4,10 +4,9 @@ print_instructions_deb() {
 	printf 'apt install'
 	local package
 	for package in "$@"; do
-		local package_path package_name package_output
-		package_path=$(package_get_path "$package")
-		package_name=$(basename "$package_path")
-		package_output=$(realpath "${OPTION_OUTPUT_DIR}/${package_name}.deb")
+		local package_name package_output
+		package_name=$(package_name "$package")
+		package_output=$(realpath "${OPTION_OUTPUT_DIR}/${package_name}")
 		local string_format
 		if printf '%s' "$package_output" | grep --quiet ' '; then
 			string_format=' "%s"'

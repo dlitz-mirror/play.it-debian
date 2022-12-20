@@ -68,21 +68,21 @@ build_pkg() {
 	case $OPTION_PACKAGE in
 		('arch')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_arch "$package_path"
 			done
 		;;
 		('deb')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_deb "$package_path"
 			done
 		;;
 		('gentoo')
 			for package in "$@"; do
-				package_path=$(package_get_path "$package")
+				package_path=$(package_path "$package")
 				export pkg="$package" # See TODO
 				pkg_build_gentoo "$package_path"
 			done
@@ -394,63 +394,69 @@ package_get_provide() {
 	return 0
 }
 
-# get path to the directory where the given package is prepared
-# USAGE: package_get_path $package
-# RETURNS: path to a directory, it is not checked that it exists or is writable
-package_get_path() {
-	# single argument should be the package name
+# Print the file name of the given package
+# USAGE: package_name $package
+# RETURNS: the file name, as a string
+package_name() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_path'
 
-	# check that an archive is set by the global context
-	assert_not_empty 'ARCHIVE' 'package_get_path'
+	assert_not_empty 'OPTION_PACKAGE' 'package_name'
 
-	# check that PLAYIT_WORKDIR is set by the global context
-	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
-
-	# compute the package path from its identifier
-	local package_path package_id package_version package_architecture
-	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$ARCHIVE")
-	package_architecture=$(package_get_architecture_string "$package")
-	package_path="${PLAYIT_WORKDIR}/${package_id}_${package_version}_${package_architecture}"
-
-	printf '%s' "$package_path"
-	return 0
-}
-
-# get name of the given package’s archive without suffix
-# USAGE: package_get_name $package
-# RETURNS: filename, without any suffix
-package_get_name() {
-	# single argument should be the package name
-	local package
-	package="$1"
-	assert_not_empty 'package' 'package_get_name'
-
-	# compute the package path from its identifier
-	local package_name package_path package_id
+	local package_name
 	case "$OPTION_PACKAGE" in
-		('arch'|'deb')
-			package_path=$(package_get_path "$package")
-			package_name=$(basename "$package_path")
+		('arch')
+			package_name=$(package_name_archlinux "$package")
 		;;
-		('gentoo'|'egentoo')
-			local package_version
-			assert_not_empty 'ARCHIVE' 'package_get_name'
-			package_version=$(packages_get_version "$ARCHIVE")
-			package_id=$(package_get_id "$package")
-			package_name="${package_id}-${package_version}"
+		('deb')
+			package_name=$(package_name_debian "$package")
+		;;
+		('gentoo')
+			package_name=$(package_name_gentoo "$package")
+		;;
+		('egentoo')
+			package_name=$(egentoo_package_name)
 		;;
 		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
+			error_invalid_argument 'OPTION_PACKAGE' 'package_name'
 			return 1
 		;;
 	esac
 
 	printf '%s' "$package_name"
-	return 0
+}
+
+# Get the path to the directory where the given package is prepared.
+# USAGE: package_path $package
+# RETURNS: path to a directory, it is not checked that it exists or is writable
+package_path() {
+	local package
+	package="$1"
+
+	assert_not_empty 'OPTION_PACKAGE' 'package_path'
+	assert_not_empty 'PLAYIT_WORKDIR' 'package_path'
+
+	local package_name package_path
+	case "$OPTION_PACKAGE" in
+		('arch')
+			package_path=$(package_path_archlinux "$package")
+		;;
+		('deb')
+			package_path=$(package_path_debian "$package")
+		;;
+		('gentoo')
+			package_path=$(package_path_gentoo "$package")
+		;;
+		('egentoo')
+			package_path=$(package_path_egentoo "$package")
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_path'
+			return 1
+		;;
+	esac
+
+	printf '%s/packages/%s' "$PLAYIT_WORKDIR" "$package_path"
 }
 
 # get the maintainer string

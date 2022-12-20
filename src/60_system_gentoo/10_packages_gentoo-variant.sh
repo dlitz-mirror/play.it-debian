@@ -7,7 +7,7 @@ pkg_write_gentoo() {
 	###
 
 	local package_path package_id
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 	package_id=$(package_get_id "$pkg")
 
 	mkdir --parents \
@@ -140,4 +140,51 @@ package_gentoo_field_rdepend() {
 	done <<- EOL
 	$(dependencies_gentoo_full_list "$package")
 	EOL
+}
+
+# Print the file name of the given package
+# USAGE: package_name_gentoo $package
+# RETURNS: the file name, as a string
+package_name_gentoo() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_name'
+
+	local package_id package_version package_name
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_name="${package_id}-${package_version}.tbz2"
+
+	local packages_list current_package current_package_id
+	packages_list=$(packages_get_list)
+	for current_package in $packages_list; do
+		current_package_id=$(package_get_id "$current_package")
+		if \
+			[ "$current_package" != "$package" ] \
+			&& [ "$current_package_id" = "$package_id" ]
+		then
+			local package_architecture
+			package_architecture=$(package_get_architecture_string "$package")
+			package_name="${package_architecture}/${package_name}"
+			break
+		fi
+	done
+
+	printf '%s' "$package_name"
+}
+
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_gentoo $package
+# RETURNS: relative path to a directory, as a string
+package_path_gentoo() {
+	local package
+	package="$1"
+
+	local package_name package_path
+	package_name=$(package_name "$package")
+	package_path="${package_name%.tbz2}"
+
+	printf '%s' "$package_path"
 }

@@ -12,7 +12,7 @@ launcher_write_script() {
 	# compute file path
 	local package package_path path_binaries application_id target_file
 	package=$(package_get_current)
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	path_binaries=$(path_binaries)
 	application_id=$(application_id "$application")
 	target_file="${package_path}${path_binaries}/${application_id}"
@@ -206,9 +206,11 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'|'unity3d')
-			local binary_file path_game_data
+			local binary_file path_game_data package_path application_exe
 			path_game_data=$(path_game_data)
-			binary_file="$(package_get_path "$package")${path_game_data}/$(application_exe "$application")"
+			package_path=$(package_path "$package")
+			application_exe=$(application_exe "$application")
+			binary_file="${package_path}${path_game_data}/${application_exe}"
 			chmod +x "$binary_file"
 		;;
 	esac
@@ -355,7 +357,7 @@ launcher_write_desktop() {
 	then
 		local package package_path path_xdg_desktop game_id winecfg_desktop
 		package=$(package_get_current)
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		path_xdg_desktop=$(path_xdg_desktop)
 		game_id=$(game_id)
 		winecfg_desktop="${package_path}${path_xdg_desktop}/${game_id}_winecfg.desktop"
@@ -410,7 +412,7 @@ launcher_desktop_filepath() {
 	application="$1"
 	application_id=$(application_id "$application")
 	package=$(package_get_current)
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	path_xdg_desktop=$(path_xdg_desktop)
 
 	printf '%s/%s.desktop' \
