@@ -37,6 +37,7 @@ help() {
 	help_no_mtree
 	help_tmpdir
 	help_skipfreespacecheck
+	help_configfile
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -331,4 +332,26 @@ help_skipfreespacecheck() {
 	esac
 	printf -- '--skip-free-space-check\n\n'
 	printf "$message"
+}
+
+# Display --config-file option usage
+# USAGE: help_configfile
+help_configfile() {
+	local config_file_path
+	config_file_path=$(configuration_file_default_path)
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tDéfinit le fichier de configuration à utiliser.\n'
+			message="$message"'\tLe fichier par défaut est : %s\n\n'
+			;;
+		('en'|*)
+			message='\tSet the configuration file to use.\n'
+			message="$message"'\tDefault file is: %s\n\n'
+			;;
+	esac
+	printf -- '--config-file\n\n'
+	printf "$message" "$config_file_path"
 }
