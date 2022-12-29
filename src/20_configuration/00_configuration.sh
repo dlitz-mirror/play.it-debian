@@ -61,7 +61,7 @@ find_configuration_file() {
 
 	# Fall back on the default path is not custom one is set.
 	if [ -z "$config_file_path" ]; then
-		config_file_path="${XDG_CONFIG_HOME:="$HOME/.config"}/play.it/config"
+		config_file_path=$(configuration_file_default_path)
 	fi
 
 	printf '%s' "$config_file_path"
@@ -168,4 +168,18 @@ parse_arguments() {
 	done
 
 	return 0
+}
+
+# Print the default path to the configuration file
+# USAGE: configuration_file_default_path
+# RETURN: a string representing a path to a file,
+#         no check of the file actual existence is done
+configuration_file_default_path() {
+	local configuration_path
+	if variable_is_empty 'XDG_CONFIG_HOME'; then
+		configuration_path="${HOME}/.config"
+	else
+		configuration_path="$XDG_CONFIG_HOME"
+	fi
+	printf '%s/play.it/config' "$configuration_path"
 }

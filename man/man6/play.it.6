@@ -16,9 +16,10 @@
 .Op Fl -output-dir Ar path
 .Op Fl -debug Op Ar N
 .Op Fl -no-mtree
-.Op Fl -tmpdir
+.Op Fl -tmpdir Ar path
 .Op Fl -skip-free-space-check
 .Op Fl -show-game-script
+.Op Fl -config-file Ar path
 .Sh DESCRIPTION
 .Nm
 is a free software building native packages from installers for Windows or
@@ -116,6 +117,18 @@ Default value is:
 Do not check for free space.
 .It Fl -show-game-script
 Only display the name of the game script to use, without running it.
+.It Fl -config-file Ar path
+Set the configuration file path. Default path is
+.Ar $XDG_CONFIG_HOME/play.it/config
+or
+.Ar $HOME/config/play.it/config
+if
+.Ev XDG_CONFIG_HOME
+is unset.
+Configuration file contains list of additional command-line parameters that
+will be passed to
+.Nm
+as if they were given on the command-line.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width DS
@@ -127,6 +140,15 @@ If set, overrides the provided version of
 .It Ev TMPDIR
 Default place where temporary files are processed.
 (default: /tmp)
+.It Ev XDG_CONFIG_HOME
+Used in the configuration file default path.
+.Sh FILES
+.Bl -tag -width DS
+.It Ar $XDG_CONFIG_HOME/play.it/config
+Default path to the configuration file. This file contains a list of additional
+command-line parameters that will be passed to
+.Nm
+as if they were given on the command-line.
 .Sh DIAGNOSTICS
 .Ss Arch Linux
 .Bl -ohang
