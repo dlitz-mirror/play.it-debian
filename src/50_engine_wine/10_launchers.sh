@@ -43,7 +43,7 @@ wine_launcher_write() {
 	local package
 	package=$(package_get_current)
 	dependencies_add_generic "$package" 'wine'
-	if [ -n "$APP_WINETRICKS" ]; then
+	if ! variable_is_empty 'APP_WINETRICKS'; then
 		dependencies_add_generic "$package" 'winetricks'
 	fi
 }
@@ -191,9 +191,13 @@ wine_prefix_wineprefix_build() {
 	wine_prefix_wineprefix_legacy_link 'AppData/Roaming' 'Application Data'
 	wine_prefix_wineprefix_legacy_link 'Documents' 'My Documents'
 	# Run initial winetricks call
-	wine_prefix_wineprefix_winetricks $APP_WINETRICKS
+	if ! variable_is_empty 'APP_WINETRICKS'; then
+		wine_prefix_wineprefix_winetricks $APP_WINETRICKS
+	fi
 	# Load registry scripts
-	wine_prefix_wineprefix_regedit $APP_REGEDIT
+	if ! variable_is_empty 'APP_REGEDIT'; then
+		wine_prefix_wineprefix_regedit $APP_REGEDIT
+	fi
 	# Set Direct3D renderer
 	wine_renderer_launcher_snippet
 	cat <<- 'EOF'
@@ -238,6 +242,11 @@ wine_prefix_persistent_links() {
 # WINE - Set environment for registry keys persistent storage
 # USAGE: wine_persistent_regedit_environment
 wine_persistent_regedit_environment() {
+	# Return early if no persistent registry keys are listed
+	if variable_is_empty 'WINE_REGEDIT_PERSISTENT_KEYS'; then
+		return 0
+	fi
+
 	cat <<- 'EOF'
 	# Set environment for registry keys persistent storage
 	USER_PERSISTENT_PATH_REGEDIT="${USER_PERSISTENT_PATH}/wine/regedit"
@@ -348,9 +357,14 @@ launcher_write_script_wine_application_variables() {
 	local application file
 	application="$1"
 	file="$2"
+
 	local application_exe application_options
 	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
+
+	if ! variable_is_set 'APP_WINE_LINK_DIRS'; then
+		APP_WINE_LINK_DIRS=''
+	fi
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values

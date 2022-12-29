@@ -7,7 +7,7 @@ pkg_write_arch() {
 	###
 
 	local package_path
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 
 	local pkg_size
 	pkg_size=$(du --total --block-size=1 --summarize "$package_path" | tail --lines=1 | cut --fields=1)
@@ -46,7 +46,7 @@ pkg_write_arch() {
 
 	target="${package_path}/.INSTALL"
 
-	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		cat >> "$target" <<- EOF
 		post_install() {
 		$(get_value "${pkg}_POSTINST_RUN")
@@ -58,7 +58,7 @@ pkg_write_arch() {
 		EOF
 	fi
 
-	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat >> "$target" <<- EOF
 		pre_remove() {
 		$(get_value "${pkg}_PRERM_RUN")
@@ -158,14 +158,15 @@ pkg_build_arch() {
 # USAGE: package_archlinux_create_mtree $pkg_path
 # RETURNS: nothing
 package_archlinux_create_mtree() {
-	local pkg
-	local pkg_path
-	pkg="$1"
-	pkg_path="$(package_get_path "$pkg")"
+	local package
+	package="$1"
 
-	info_package_mtree_computation "$pkg"
+	local package_path
+	package_path=$(package_path "$package")
+
+	info_package_mtree_computation "$package"
 	(
-		cd "$pkg_path"
+		cd "$package_path"
 		# shellcheck disable=SC2030
 		export LANG=C
 		# shellcheck disable=SC2094
@@ -201,4 +202,59 @@ package_archlinux_fields_depend() {
 	done <<- EOL
 	$(dependencies_archlinux_full_list "$package")
 	EOL
+}
+
+# Print the file name of the given package
+# USAGE: package_name_archlinux $package
+# RETURNS: the file name, as a string
+package_name_archlinux() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_name_archlinux'
+	assert_not_empty 'OPTION_COMPRESSION' 'package_name_archlinux'
+
+	local package_id package_version package_architecture package_name
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_name="${package_id}_${package_version}_${package_architecture}.tar"
+	case "$OPTION_COMPRESSION" in
+		('gzip')
+			package_name="${package_name}.gz"
+		;;
+		('xz')
+			package_name="${package_name}.xz"
+		;;
+		('bzip2')
+			package_name="${package_name}.bz2"
+		;;
+		('zstd')
+			package_name="${package_name}.zst"
+		;;
+		('none')
+			# No compression extension to append.
+		;;
+		(*)
+			error_invalid_argument 'OPTION_COMPRESSION' 'package_name_archlinux'
+			return 1
+		;;
+	esac
+
+	printf '%s' "$package_name"
+}
+
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_archlinux $package
+# RETURNS: relative path to a directory, as a string
+package_path_archlinux() {
+	local package
+	package="$1"
+
+	local package_name package_path
+	package_name=$(package_name "$package")
+	package_path="${package_name%.tar*}"
+
+	printf '%s' "$package_path"
 }

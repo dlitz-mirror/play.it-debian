@@ -37,6 +37,23 @@ print_warning() {
 	printf '\n\033[1;33m%s\033[0m\n' "$string"
 }
 
+# display an error when a function has been called without arguments
+# USAGE: error_no_arguments $called_function
+error_no_arguments() {
+	local called_function="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='%s ne peut pas être appelée sans arguments.\n'
+			;;
+		('en'|*)
+			message='%s can not be called without arguments.\n'
+			;;
+	esac
+	print_error
+	printf "$message" "$called_function"
+}
+
 # display an error when a function has been called with an invalid argument
 # USAGE: error_invalid_argument $var_name $calling_function
 error_invalid_argument() {
@@ -580,4 +597,25 @@ error_temporary_path_not_enough_space() {
 
 	print_error
 	printf "$message" "$temporary_directory_path"
+}
+
+# Display an error when trying to get the value of an unset variable.
+# USAGE: error_variable_not_set $variable_name
+error_variable_not_set() {
+	local variable_name
+	variable_name="$1"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La valeur de la variable suivante a été demandée, mais elle nʼa pas été définie : %s\n'
+		;;
+		('en'|*)
+			message='The value of the following variable has been queried, but it has not been set: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$variable_name"
 }

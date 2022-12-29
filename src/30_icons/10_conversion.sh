@@ -282,7 +282,11 @@ icons_include_from_directory() {
 		destination_name="${application_id}.${source_file##*.}"
 
 		# Compute icon path
-		destination_directory="$(package_get_path "$(package_get_current)")${path_icons}/$(icon_get_resolution "$source_file")/apps"
+		local package package_path icon_resolution
+		package=$(package_get_current)
+		package_path=$(package_path "$package")
+		icon_resolution=$(icon_get_resolution "$source_file")
+		destination_directory="${package_path}${path_icons}/${icon_resolution}/apps"
 
 		# Move current icon file to its destination
 		destination_file="${destination_directory}/${destination_name}"

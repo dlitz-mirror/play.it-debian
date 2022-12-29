@@ -94,7 +94,7 @@ launcher_write_script_prefix_prepare() {
 	local file
 	file="$1"
 
-	if [ "$PREFIX_PREPARE" ]; then
+	if ! variable_is_empty 'PREFIX_PREPARE'; then
 		cat >> "$file" <<- EOF
 		$PREFIX_PREPARE
 

@@ -4,7 +4,10 @@ wine_renderer_name() {
 	# Fetch the preferred renderer from the game script,
 	# if it is explicitely set.
 	local direct3d_renderer
-	direct3d_renderer="$WINE_DIRECT3D_RENDERER"
+	direct3d_renderer=''
+	if ! variable_is_empty 'WINE_DIRECT3D_RENDERER'; then
+		direct3d_renderer="$WINE_DIRECT3D_RENDERER"
+	fi
 
 	# Fall back to using the default renderer
 	if [ -z "$direct3d_renderer" ]; then

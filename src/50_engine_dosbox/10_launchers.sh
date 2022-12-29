@@ -15,37 +15,49 @@ dosbox_launcher_application_variables() {
 	EOF
 }
 
-# DOSBox - Print the actual call to dosbox
+# DOSBox - Print the actual call to dosbox,
 # USAGE: dosbox_launcher_run $application
 dosbox_launcher_run() {
 	local application
 	application="$1"
 
+	local application_prerun application_postrun dosbox_instructions
+	application_prerun=$(application_prerun "$application")
+	application_postrun=$(application_postrun "$application")
+	dosbox_instructions=$(dosbox_launcher_instructions "$application")
+
 	cat <<- EOF
 	# Run the game
 	cd "\$PATH_PREFIX"
+	$application_prerun
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
-	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "$(dosbox_launcher_instructions "$application")"
+	"\${PLAYIT_DOSBOX_BINARY:-dosbox}" -c "$dosbox_instructions"
 	game_exit_status=\$?
 	set -o errexit
+	$application_postrun
 	EOF
 }
 
-# DOSBox - Print the list of commands executed by dosbox
+# DOSBox - Print the list of commands executed by dosbox.
 # USAGE: dosbox_launcher_instructions $application
 dosbox_launcher_instructions() {
 	local application
 	application="$1"
 
+	local mount_disk_image dosbox_prerun dosbox_postrun
+	mount_disk_image=$(dosbox_mount_disk_image)
+	dosbox_prerun=$(dosbox_prerun "$application")
+	dosbox_postrun=$(dosbox_postrun "$application")
+
 	cat <<- EOF
 	mount c .
 	c:
-	$(dosbox_mount_disk_image)
-	$(application_prerun "$application")
+	$mount_disk_image
+	$dosbox_prerun
 	\$APP_EXE \$APP_OPTIONS \$@
-	$(application_postrun "$application")
+	$dosbox_postrun
 	exit
 	EOF
 }
@@ -54,12 +66,15 @@ dosbox_launcher_instructions() {
 # USAGE: dosbox_mount_disk_image
 dosbox_mount_disk_image() {
 	# Return early if no disk image is set
-	if [ -z "$GAME_IMAGE" ]; then
+	if variable_is_empty 'GAME_IMAGE'; then
 		return 0
 	fi
 
 	local disk_image
 	disk_image=$(dosbox_disk_image_path)
+	if variable_is_empty 'GAME_IMAGE_TYPE'; then
+		GAME_IMAGE_TYPE='iso'
+	fi
 	case "$GAME_IMAGE_TYPE" in
 		('cdrom')
 			if [ -d "$disk_image" ]; then
@@ -72,7 +87,7 @@ dosbox_mount_disk_image() {
 				EOF
 			fi
 		;;
-		('iso'|*)
+		('iso')
 			cat <<- EOF
 			imgmount d $GAME_IMAGE -t iso -fs iso
 			EOF
@@ -90,7 +105,7 @@ dosbox_disk_image_path() {
 	# Loop over the list of packages, one should include the disk image.
 	local package package_path image_path
 	for package in $packages_list; do
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		image_path="${package_path}${path_game_data}/${GAME_IMAGE}"
 		if [ -e "$image_path" ]; then
 			printf '%s' "$image_path"

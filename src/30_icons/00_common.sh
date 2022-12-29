@@ -28,7 +28,11 @@ application_icons_list() {
 
 	# Use the value of APP_xxx_ICONS_LIST if it is set
 	local icons_list
-	icons_list=$(get_value "${application}_ICONS_LIST")
+	if variable_is_empty "${application}_ICONS_LIST"; then
+		icons_list=''
+	else
+		icons_list=$(get_value "${application}_ICONS_LIST")
+	fi
 	if [ -n "$icons_list" ]; then
 		printf '%s' "$icons_list"
 		return 0
@@ -36,10 +40,14 @@ application_icons_list() {
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
 	local default_icon
-	default_icon=$(context_specific_name 'archive' "${application}_ICON")
+	if variable_is_empty "${application}_ICON"; then
+		default_icon=''
+	else
+		default_icon=$(context_specific_name 'archive' "${application}_ICON")
+	fi
 	## If a value is explicitly set for APP_xxx_ICON,
 	## we assume this is the only icon for the current application.
-	if [ -n "$(get_value "$default_icon")" ]; then
+	if [ -n "$default_icon" ]; then
 		printf '%s' "$default_icon"
 		return 0
 	fi
@@ -50,13 +58,13 @@ application_icons_list() {
 	case "$application_type" in
 		('unity3d')
 			# It is expected that Unity3D games always come with a single icon.
-			printf '%s' "$default_icon"
+			printf '%s' "${application}_ICON"
 			return 0
 		;;
 		('wine')
 			# If no value is explicitly set for the icon of a WINE application,
 			# we will fall back to extracting one from the binary.
-			printf '%s' "$default_icon"
+			printf '%s' "${application}_ICON"
 			return 0
 		;;
 	esac
@@ -144,17 +152,18 @@ icon_wrestool_options() {
 	fi
 
 	# Fetch the custom options string
-	wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
-
-	# If no custom value is set, falls back to defaults
-	: "${wrestool_options:=--type=14}"
+	local wrestool_options
+	wrestool_options='--type=14'
+	if ! variable_is_empty "${icon}_WRESTOOL_OPTIONS"; then
+		wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+	fi
 
 	###
 	# TODO
 	# This should be deprecated
 	###
 	# Check for an explicit wrestool id
-	if [ -n "$(get_value "${icon}_ID")" ]; then
+	if ! variable_is_empty "${icon}_ID"; then
 		wrestool_options="$wrestool_options --name=$(get_value "${icon}_ID")"
 	fi
 

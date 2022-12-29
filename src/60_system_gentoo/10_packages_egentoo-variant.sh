@@ -2,19 +2,22 @@
 # USAGE: pkg_write_egentoo PKG_xxx
 pkg_write_egentoo() {
 	local build_deps
-	local postinst_f
 	local package_filename
-	local package_architectures
 	local ebuild_path
 	local inherits
 
-	local package
-	package="$1"
-	assert_not_empty 'package' 'pkg_write_egentoo'
+	if [ $# -eq 0 ]; then
+		error_no_arguments 'pkg_write_egentoo'
+	fi
 
 	inherits="xdg"
 
-	package_filename="$(package_get_name "$package").tar"
+	# Ensure that $build_deps is set.
+	if ! variable_is_set 'build_deps'; then
+		build_deps=''
+	fi
+
+	package_filename="$(egentoo_package_name).tar"
 	case $OPTION_COMPRESSION in
 		('gzip')
 			package_filename="${package_filename}.gz"
@@ -42,24 +45,11 @@ pkg_write_egentoo() {
 		;;
 	esac
 
-	case "$(package_get_architecture "$package")" in
-		('32')
-			package_architectures='-* x86 amd64'
-		;;
-		('64')
-			package_architectures='-* amd64'
-		;;
-		(*)
-			package_architectures='x86 amd64' # data packages
-		;;
-	esac
-
-	if [ -n "$(get_value "${package}_POSTINST_RUN")" ]; then
-		postinst_f="$(get_value "${package}_POSTINST_RUN")"
-	fi
-
-	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").ebuild")
+	local package_id package_name
+	package_id="$(egentoo_package_id)"
+	package_name="$(egentoo_package_name)"
+	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}"
+	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}/${package_name}.ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -70,12 +60,13 @@ RESTRICT="fetch strip binchecks"
 
 inherit $inherits
 
-KEYWORDS="$package_architectures"
-DESCRIPTION="$(package_get_description "$package")"
+KEYWORDS="$(egentoo_field_keywords "$@")"
+DESCRIPTION="Ebuild automatically generated with ./play.it"
+HOMEPAGE="https://forge.dotslashplay.it/play.it"
 SRC_URI="$package_filename"
 SLOT="0"
 
-RDEPEND="$(package_gentoo_field_rdepend "$package")"
+RDEPEND="$(egentoo_field_rdepend "$@")"
 BDEPEND="$(printf "$build_deps")"
 
 S=\${WORKDIR}
@@ -86,46 +77,40 @@ pkg_nofetch() {
 }
 
 src_install() {
-	cp --recursive --link --verbose \$S/* \$D || die
-}
+	cp --recursive --link --verbose \$S/data/* \$D || die
 
-pkg_postinst() {
-	xdg_pkg_postinst
-	$postinst_f
-}
-EOF
-
-	if [ -n "$(get_value "${package}_PRERM_RUN")" ]; then
-		cat >> "$ebuild_path" << EOF
-
-pkg_prerm() {
-	$(get_value "${package}_PRERM_RUN")
-}
-EOF
+	if use x86 && test -d \$S/x86; then
+		cp --recursive --link --verbose \$S/x86/* \$D || die
+	elif use amd64; then
+		if test -d \$S/amd64; then
+			cp --recursive --link --verbose \$S/amd64/* \$D || die
+		elif test -d \$S/x86; then
+			cp --recursive --link --verbose \$S/x86/* \$D || die
+		fi
 	fi
+}
+EOF
 }
 
 # builds dummy egentoo package
 # USAGE: pkg_build_egentoo PKG_xxx
 pkg_build_egentoo() {
-	local package_filename
 	local tar_command
 	local tar_options
 	local compression_command
 	local compression_options
+	local packages_paths
+
+	if [ $# -eq 0 ]; then
+		error_no_arguments 'pkg_build_egentoo'
+	fi
 
 	tar_command="tar"
 
-	local package
-	package="$1"
-	assert_not_empty 'package' 'pkg_build_egentoo'
-
-	local package_path
-	package_path=$(package_get_path "$package")
-
-	# We don’t want both binary packages to overwrite each other
-	mkdir --parents "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")"
-	package_filename=$(realpath "$OPTION_OUTPUT_DIR/$(package_get_architecture_string "$package")/$(package_get_name "$package").tar")
+	local package_name package_filename
+	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
+	package_name="$(egentoo_package_name)"
+	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/${package_name}.tar")
 
 	case $OPTION_COMPRESSION in
 		('gzip')
@@ -163,7 +148,7 @@ pkg_build_egentoo() {
 		;;
 	esac
 
-	tar_options='--create'
+	tar_options='--create -P'
 	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
 		guess_tar_implementation
 	fi
@@ -182,24 +167,59 @@ pkg_build_egentoo() {
 
 	compression_options="${compression_options} --stdout --quiet"
 
+	local package package_path
 	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
+		for package in "$@"; do
+			eval "${package}"_PKG=\""$package_filename"\"
+			export "${package}"_PKG
+		done
+		return 0
+	else
+		rm -f "$package_filename"
+	fi
+
+	for package in "$@"; do
+		package_path=$(package_path "$package")
+		packages_paths="$packages_paths $package_path"
+
+		case "$(package_get_architecture "$package")" in
+			('64') tar_options="$tar_options --xform=s:^${package_path}:./amd64:x" ;;
+			('32') tar_options="$tar_options --xform=s:^${package_path}:./x86:x" ;;
+			(*)    tar_options="$tar_options --xform=s:^${package_path}:./data:x" ;;
+		esac
+
 		eval "${package}"_PKG=\""$package_filename"\"
 		export "${package}"_PKG
-		return 0
-	fi
+	done
 
 	information_package_building "$(basename "$package_filename")"
 
-	if [ -z "$compression_command" ]; then
-		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options --file \"$package_filename\" ."
-		# shellcheck disable=SC2046
-		"$tar_command" --directory "$package_path" $tar_options --file "$package_filename" .
-	else
-		debug_external_command "\"$tar_command\" --directory \"$package_path\" $tar_options . | \"$compression_command\" $compression_options > \"$package_filename\""
-		"$tar_command" --directory "$package_path" $tar_options . | "$compression_command" $compression_options > "$package_filename"
-	fi
+		if [ -z "$compression_command" ]; then
+			debug_external_command "\"$tar_command\" $tar_options --file \"$package_filename\" $packages_paths"
+			# shellcheck disable=SC2046
+			"$tar_command" $tar_options --file "$package_filename" $packages_paths
+		else
+			debug_external_command "\"$tar_command\" $tar_options $packages_paths | \"$compression_command\" $compression_options > \"$package_filename\""
+			"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
+		fi
+	}
 
-	eval "${package}"_PKG=\""$package_filename"\"
-	export "${package}"_PKG
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_egentoo $package
+# RETURNS: relative path to a directory, as a string
+package_path_egentoo() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_path'
+
+	local package_id package_version package_architecture package_path
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_path="${package_id}_${package_version}_${package_architecture}"
+
+	printf '%s' "$package_path"
 }

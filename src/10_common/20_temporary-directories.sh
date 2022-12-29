@@ -20,12 +20,12 @@ set_temp_directories() {
 
 	# Export the path to the packages to build as PKG_xxx_PATH
 	# Some game scripts are expecting this variable to be set
-	# These should be updated to call `package_get_path` instead
+	# These should be updated to call `package_path` instead
 	local packages_list package package_path
 	packages_list=$(packages_get_list)
 	for package in $packages_list; do
 		testvar "$package" 'PKG'
-		package_path=$(package_get_path "$package")
+		package_path=$(package_path "$package")
 		eval "${package}_PATH='${package_path}'"
 		export "${package?}_PATH"
 	done
@@ -37,7 +37,7 @@ set_temp_directories() {
 # USAGE: temporary_directory_path
 temporary_directory_path() {
 	# Use the value set through --tmpdir if it is set
-	if [ -n "$OPTION_TMPDIR" ]; then
+	if ! variable_is_empty 'OPTION_TMPDIR'; then
 		printf '%s' "$OPTION_TMPDIR"
 		return 0
 	fi

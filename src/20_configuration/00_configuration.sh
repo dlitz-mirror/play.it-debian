@@ -1,20 +1,25 @@
-# load configuration file options values
+# Load options values from the configuration file.
 # USAGE: load_configuration_file $config_file_path
 load_configuration_file() {
 	local config_file_path
-	local arguments
-
 	config_file_path="$1"
 
-	# Default config file may not exist, ignoring this then
+	# Default configuration file may not exist, ignoring this then.
 	if [ ! -f "$config_file_path" ]; then
 		return 0
 	fi
 
+	# Parse the configuration file.
+	local arguments
+	arguments=''
 	while read -r line; do
 		case $line in
-			('#'*) ;;
-			(*) arguments="$arguments $line" ;;
+			('#'*)
+				# Ignore commented lines.
+			;;
+			(*)
+				arguments="$arguments $line"
+			;;
 		esac
 	done <<- EOF
 		$(cat "$config_file_path")
@@ -23,11 +28,13 @@ load_configuration_file() {
 	parse_arguments $arguments
 }
 
-# print configuration file path
+# Print the configuration file path.
 # USAGE: find_configuration_file $arguments[…]
 find_configuration_file() {
 	local config_file_path
+	config_file_path=''
 
+	# Override the default path if another one has been specified.
 	while [ $# -gt 0 ]; do
 		case "$1" in
 			('--config-file='*|\
@@ -44,12 +51,16 @@ find_configuration_file() {
 		shift 1
 	done
 
-	if [ -n "$config_file_path" ]; then
-		if [ ! -f "$config_file_path" ]; then
-			error_config_file_not_found "$config_file_path"
-			return 1
-		fi
-	else
+	if \
+		[ -n "$config_file_path" ] \
+		&& [ ! -f "$config_file_path" ]
+	then
+		error_config_file_not_found "$config_file_path"
+		return 1
+	fi
+
+	# Fall back on the default path is not custom one is set.
+	if [ -z "$config_file_path" ]; then
 		config_file_path="${XDG_CONFIG_HOME:="$HOME/.config"}/play.it/config"
 	fi
 

@@ -18,7 +18,12 @@ application_mono_options() {
 
 	# Get the application Mono options string from its identifier
 	local application_mono_options
-	application_mono_options=$(get_value "${application}_MONO_OPTIONS")
+	if variable_is_empty "${application}_MONO_OPTIONS"; then
+		# Return early if no options string is set.
+		return 0
+	else
+		application_mono_options=$(get_value "${application}_MONO_OPTIONS")
+	fi
 
 	# Check that the options string does not span multiple lines
 	if [ "$(printf '%s' "$application_mono_options" | wc --lines)" -gt 1 ]; then

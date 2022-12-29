@@ -14,26 +14,26 @@ write_metadata() {
 			error_invalid_argument 'pkg' 'write_metadata'
 			return 1
 		fi
-
-		case $OPTION_PACKAGE in
-			('arch')
-				pkg_write_arch
-			;;
-			('deb')
-				pkg_write_deb
-			;;
-			('gentoo')
-				pkg_write_gentoo
-			;;
-			('egentoo')
-				pkg_write_egentoo $pkg
-			;;
-			(*)
-				error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
-				return 1
-			;;
-		esac
 	done
+
+	case $OPTION_PACKAGE in
+		('arch')
+			for pkg in "$@"; do pkg_write_arch; done
+		;;
+		('deb')
+			for pkg in "$@"; do pkg_write_deb; done
+		;;
+		('gentoo')
+			for pkg in "$@"; do pkg_write_gentoo; done
+		;;
+		('egentoo')
+			pkg_write_egentoo "$@"
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
+			return 1
+		;;
+	esac
 
 	debug_leaving_function 'write_metadata'
 }
@@ -57,35 +57,44 @@ build_pkg() {
 			error_invalid_argument 'package' 'build_pkg'
 			return 1
 		fi
-
-		package_path=$(package_get_path "$package")
-
-		###
-		# TODO
-		# pkg_build_xxx implicitely depends on the target package being set as $pkg
-		# It should instead be passed as a mandatory argument.
-		###
-		export pkg="$package"
-
-		case $OPTION_PACKAGE in
-			('arch')
-				pkg_build_arch "$package_path"
-			;;
-			('deb')
-				pkg_build_deb "$package_path"
-			;;
-			('gentoo')
-				pkg_build_gentoo "$package_path"
-			;;
-			('egentoo')
-				pkg_build_egentoo "$package"
-			;;
-			(*)
-				error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
-				return 1
-			;;
-		esac
 	done
+
+	###
+	# TODO
+	# pkg_build_xxx implicitely depends on the target package being set as $pkg
+	# It should instead be passed as a mandatory argument.
+	###
+
+	case $OPTION_PACKAGE in
+		('arch')
+			for package in "$@"; do
+				package_path=$(package_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_arch "$package_path"
+			done
+		;;
+		('deb')
+			for package in "$@"; do
+				package_path=$(package_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_deb "$package_path"
+			done
+		;;
+		('gentoo')
+			for package in "$@"; do
+				package_path=$(package_path "$package")
+				export pkg="$package" # See TODO
+				pkg_build_gentoo "$package_path"
+			done
+		;;
+		('egentoo')
+			pkg_build_egentoo "$@"
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
+			return 1
+		;;
+	esac
 
 	debug_leaving_function 'build_pkg'
 }
@@ -139,12 +148,12 @@ package_format_guess() {
 # RETURN: a single package identifier
 package_get_current() {
 	local package
-	package="$PKG"
-
-	# If $PKG is not explictly set,
-	# return the first package from the list of packages to build.
-	if [ -z "$package" ]; then
+	if variable_is_empty 'PKG'; then
+		# If $PKG is not explictly set,
+		# return the first package from the list of packages to build.
 		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
+	else
+		package="$PKG"
 	fi
 
 	printf '%s' "$package"
@@ -159,7 +168,9 @@ packages_get_list() {
 
 	# If PACKAGES_LIST is not set,
 	# falls back on a list of a single "PKG_MAIN" package
-	: "${packages_list:=PKG_MAIN}"
+	if [ -z "$packages_list" ]; then
+		packages_list='PKG_MAIN'
+	fi
 
 	###
 	# TODO
@@ -321,28 +332,29 @@ package_get_description() {
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
-	local package_description_full
+	local package_description_full game_name
+	game_name=$(game_name)
 	case "$OPTION_PACKAGE" in
 		('deb')
 			if [ -n "$package_description" ]; then
 				package_description_full='Description: %s - %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$(game_name)" "$package_description" "$script_version")
+				package_description_full=$(printf "$package_description_full" "${game_name}" "$package_description" "$script_version")
 			else
 				package_description_full='Description: %s'
 				package_description_full="${package_description_full}"'\n ./play.it script version %s'
 				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "$(game_name)" "$script_version")
+				package_description_full=$(printf "$package_description_full" "${game_name}" "$script_version")
 			fi
 		;;
 		('arch'|'gentoo')
 			if [ -n "$package_description" ]; then
 				# shellcheck disable=SC2154
-				package_description_full="$(game_name) - $package_description - ./play.it script version $script_version"
+				package_description_full="${game_name} - $package_description - ./play.it script version $script_version"
 			else
 				# shellcheck disable=SC2154
-				package_description_full="$(game_name) - ./play.it script version $script_version"
+				package_description_full="${game_name} - ./play.it script version $script_version"
 			fi
 		;;
 	esac
@@ -382,61 +394,69 @@ package_get_provide() {
 	return 0
 }
 
-# get path to the directory where the given package is prepared
-# USAGE: package_get_path $package
-# RETURNS: path to a directory, it is not checked that it exists or is writable
-package_get_path() {
-	# single argument should be the package name
+# Print the file name of the given package
+# USAGE: package_name $package
+# RETURNS: the file name, as a string
+package_name() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_path'
 
-	# check that an archive is set by the global context
-	assert_not_empty 'ARCHIVE' 'package_get_path'
+	assert_not_empty 'OPTION_PACKAGE' 'package_name'
 
-	# check that PLAYIT_WORKDIR is set by the global context
-	assert_not_empty 'PLAYIT_WORKDIR' 'package_get_path'
-
-	# compute the package path from its identifier
-	local package_path package_id
-	package_id=$(package_get_id "$package")
-	package_path="${PLAYIT_WORKDIR}/${package_id}_$(packages_get_version "$ARCHIVE")_$(package_get_architecture_string "$package")"
-
-	printf '%s' "$package_path"
-	return 0
-}
-
-# get name of the given package’s archive without suffix
-# USAGE: package_get_name $package
-# RETURNS: filename, without any suffix
-package_get_name() {
-	# single argument should be the package name
-	local package
-	package="$1"
-	assert_not_empty 'package' 'package_get_name'
-
-	# check that an archive is set by the global context
-	assert_not_empty 'ARCHIVE' 'package_get_name'
-
-	# compute the package path from its identifier
-	local package_name package_path package_id
+	local package_name
 	case "$OPTION_PACKAGE" in
-		('arch'|'deb')
-			package_path=$(package_get_path "$package")
-			package_name=$(basename "$package_path")
+		('arch')
+			package_name=$(package_name_archlinux "$package")
 		;;
-		('gentoo'|'egentoo')
-			package_id=$(package_get_id "$package")
-			package_name="${package_id}-$(packages_get_version "$ARCHIVE")"
+		('deb')
+			package_name=$(package_name_debian "$package")
+		;;
+		('gentoo')
+			package_name=$(package_name_gentoo "$package")
+		;;
+		('egentoo')
+			package_name=$(egentoo_package_name)
 		;;
 		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_get_name'
+			error_invalid_argument 'OPTION_PACKAGE' 'package_name'
 			return 1
 		;;
 	esac
 
 	printf '%s' "$package_name"
-	return 0
+}
+
+# Get the path to the directory where the given package is prepared.
+# USAGE: package_path $package
+# RETURNS: path to a directory, it is not checked that it exists or is writable
+package_path() {
+	local package
+	package="$1"
+
+	assert_not_empty 'OPTION_PACKAGE' 'package_path'
+	assert_not_empty 'PLAYIT_WORKDIR' 'package_path'
+
+	local package_name package_path
+	case "$OPTION_PACKAGE" in
+		('arch')
+			package_path=$(package_path_archlinux "$package")
+		;;
+		('deb')
+			package_path=$(package_path_debian "$package")
+		;;
+		('gentoo')
+			package_path=$(package_path_gentoo "$package")
+		;;
+		('egentoo')
+			package_path=$(package_path_egentoo "$package")
+		;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'package_path'
+			return 1
+		;;
+	esac
+
+	printf '%s/packages/%s' "$PLAYIT_WORKDIR" "$package_path"
 }
 
 # get the maintainer string
@@ -446,8 +466,8 @@ packages_get_maintainer() {
 	# get maintainer string from /etc/makepkg.conf
 	local maintainer
 	if \
-		[ -r '/etc/makepkg.conf' ] && \
-		grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
+		[ -r '/etc/makepkg.conf' ] \
+		&& grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
 	then
 		if grep --quiet '^PACKAGER=".*"' '/etc/makepkg.conf'; then
 			maintainer=$(sed 's/^PACKAGER="\(.*\)"/\1/' '/etc/makepkg.conf')
@@ -456,6 +476,8 @@ packages_get_maintainer() {
 		else
 			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
 		fi
+	else
+		maintainer=''
 	fi
 
 	# return early if we already have a maintainer string
@@ -510,9 +532,10 @@ packages_get_version() {
 	# get the version string for the current archive
 	# falls back on "1.0-1"
 	local packages_version
-	packages_version=$(get_value "${archive}_VERSION")
-	if [ -z "$packages_version" ]; then
+	if variable_is_empty "${archive}_VERSION"; then
 		packages_version='1.0-1'
+	else
+		packages_version=$(get_value "${archive}_VERSION")
 	fi
 	packages_version="${packages_version}+${script_version}"
 
@@ -532,4 +555,3 @@ packages_get_version() {
 	printf '%s' "$packages_version"
 	return 0
 }
-

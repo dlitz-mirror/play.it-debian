@@ -7,7 +7,7 @@ pkg_write_deb() {
 	###
 
 	local package_path
-	package_path=$(package_get_path "$pkg")
+	package_path=$(package_path "$pkg")
 
 	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
 
@@ -55,7 +55,7 @@ pkg_write_deb() {
 	chmod 644 "$control_file"
 
 	# Write postinst/prerm scripts, enforce correct permissions
-	if [ -n "$(get_value "${pkg}_POSTINST_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
@@ -66,7 +66,7 @@ pkg_write_deb() {
 		chmod 755 "$postinst_script"
 	fi
 
-	if [ -n "$(get_value "${pkg}_PRERM_RUN")" ]; then
+	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
@@ -128,4 +128,37 @@ package_debian_field_depends() {
 	done <<- EOF
 	$(dependencies_debian_full_list "$package")
 	EOF
+}
+
+# Print the file name of the given package
+# USAGE: package_name_debian $package
+# RETURNS: the file name, as a string
+package_name_debian() {
+	local package
+	package="$1"
+
+	assert_not_empty 'ARCHIVE' 'package_name'
+
+	local package_id package_version package_architecture package_name
+	package_id=$(package_get_id "$package")
+	package_version=$(packages_get_version "$ARCHIVE")
+	package_architecture=$(package_get_architecture_string "$package")
+	package_name="${package_id}_${package_version}_${package_architecture}.deb"
+
+	printf '%s' "$package_name"
+}
+
+# Get the path to the directory where the given package is prepared,
+# relative to the directory where all packages are stored
+# USAGE: package_path_debian $package
+# RETURNS: relative path to a directory, as a string
+package_path_debian() {
+	local package
+	package="$1"
+
+	local package_name package_path
+	package_name=$(package_name "$package")
+	package_path="${package_name%.deb}"
+
+	printf '%s' "$package_path"
 }

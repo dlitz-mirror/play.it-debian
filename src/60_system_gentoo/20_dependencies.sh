@@ -194,20 +194,33 @@ pkg_set_deps_gentoo() {
 				esac
 			;;
 			(*)
-				pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-				local tested_package packages_list
-				packages_list=$(packages_get_list)
-				for tested_package in $packages_list; do
-					if [ "$tested_package" != "$package" ]; then
-						if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
-							pkg_dep="|| ( ${pkg_dep} )"
-						fi
-					fi
-				done
-			;;
+				case "$OPTION_PACKAGE" in
+					('gentoo')
+						pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
+						local tested_package packages_list
+						packages_list=$(packages_get_list)
+						for tested_package in $packages_list; do
+							if [ "$tested_package" != "$package" ]; then
+								if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
+									pkg_dep="|| ( ${pkg_dep} )"
+								fi
+							fi
+						done
+						;;
+					('egentoo') ;;
+					(*)
+						error_invalid_argument 'OPTION_PACKAGE' 'pkg_set_deps_gentoo'
+						return 1
+						;;
+				esac
+				;;
 		esac
 		if [ -n "$pkg_dep" ]; then
-			pkg_deps="$pkg_deps $pkg_dep"
+			if variable_is_empty 'pkg_deps'; then
+				pkg_deps="$pkg_dep"
+			else
+				pkg_deps="$pkg_deps $pkg_dep"
+			fi
 		fi
 		if [ -n "$pkg_overlay" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
@@ -889,11 +902,10 @@ dependencies_gentoo_full_list() {
 		local dependency_generic
 		while read -r dependency_generic; do
 			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
-			# we prevent it from leaking using unset.
-			unset pkg_deps
+			# we prevent it from leaking by setting it to an empty value.
+			pkg_deps=''
 			pkg_set_deps_gentoo $dependency_generic
 			printf '%s\n' "$pkg_deps"
-			unset pkg_deps
 		done <<- EOL
 		$(dependencies_list_generic "$package")
 		EOL
@@ -977,7 +989,7 @@ dependencies_gentoo_link() {
 	game_libdir="$(path_libraries)"
 
 	local package_path library_destination
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	library_destination="${package_path}${game_libdir}"
 
 	mkdir --parents "$library_destination"

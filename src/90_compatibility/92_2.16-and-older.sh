@@ -3,7 +3,7 @@
 icons_get_from_package() {
 	local package package_path path_game_data
 	package=$(package_get_current)
-	package_path=$(package_get_path "$package")
+	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)
 	icon_source_directory="${package_path}${path_game_data}"
 	icons_get_from_legacy_path "$icon_source_directory" "$@"
@@ -19,7 +19,7 @@ icons_get_from_legacy_path() {
 	local icon_source_directory_legacy
 	icon_source_directory_legacy="$1"
 	shift 1
-	if [ -z "$CONTENT_PATH_DEFAULT" ]; then
+	if variable_is_empty 'CONTENT_PATH_DEFAULT'; then
 		local CONTENT_PATH_DEFAULT
 		CONTENT_PATH_DEFAULT='.'
 	fi
@@ -68,12 +68,16 @@ icons_move_to() {
 		return 0
 	fi
 
-	local source_package source_directory destination_package destination_directory path_icons
+	local path_icons
 	path_icons=$(path_icons)
+	local source_package source_package_path source_directory
 	source_package=$(package_get_current)
-	source_directory="$(package_get_path "$source_package")${path_icons}"
+	source_package_path=$(package_path "$source_package")
+	source_directory="${source_package_path}${path_icons}"
+	local destination_package destination_package_path destination_directory
 	destination_package="$1"
-	destination_directory="$(package_get_path "$destination_package")${path_icons}"
+	destination_package_path=$(package_path "$destination_package")
+	destination_directory="${destination_package_path}${path_icons}"
 
 	# a basic `mv` call here would fail if the destination is not empty
 	mkdir --parents "$destination_directory"

@@ -13,7 +13,10 @@ archive_dependencies_check() {
 	local archive_part
 	for i in $(seq 1 9); do
 		archive_part="${archive}_PART${i}"
-		test -z "$(get_value "$archive_part")" && break
+		# Stop looking at the first unset archive extra part.
+		if variable_is_empty "$archive_part"; then
+			break
+		fi
 		archive_dependencies_check_single "$archive_part"
 	done
 }
