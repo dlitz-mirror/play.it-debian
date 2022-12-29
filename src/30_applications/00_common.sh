@@ -35,14 +35,20 @@ applications_list() {
 	sed_expression='s/^\(APP_[0-9A-Z]\+\)_\(EXE\|SCUMMID\|RESIDUALID\)\(_[0-9A-Z]\+\)\?=.*/\1/p'
 	while read -r application_id; do
 		if [ -n "$application_id" ]; then
-			applications_list="$applications_list $application_id"
+			# Do not add duplicates
+			if \
+				! printf '%s' "$applications_list" | \
+				grep --quiet --fixed-strings --word-regexp "$application_id"
+			then
+				applications_list="$applications_list $application_id"
+			fi
 		fi
 	done <<- EOF
 	$(sed --silent --expression="$sed_expression" "$game_script")
 	EOF
 
 	if [ -n "$applications_list" ]; then
-		printf '%s\n' "$applications_list"
+		printf '%s\n' "$applications_list" | sort --unique
 		return 0
 	fi
 
