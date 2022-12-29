@@ -1,3 +1,12 @@
+2.20.1
+
+  * Drop duplicate declaration of message function "error_variable_not_set".
+  * Update documentation with the "--config-file" option.
+  * application_icons_list - Fix support for archive context.
+  * applications_list - When parsing the game script, avoid printing duplicates.
+  * debian_dependencies_full_list - Fix listing when both PKG_xxx_DEPS_DEB and PKG_xxx_DEPENDENCIES_LIBRARIES are set.
+  * Add support for MIME type "application/vnd.microsoft.portable-executable".
+
 2.20.0
 
   * Deprecation warnings:
