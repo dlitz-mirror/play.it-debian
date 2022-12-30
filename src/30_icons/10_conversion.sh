@@ -145,7 +145,10 @@ icon_extract_png_from_file() {
 	icon_type=$(file_type "$icon_file")
 	mkdir --parents "$destination"
 	case "$icon_type" in
-		('application/x-dosexec')
+		( \
+			'application/x-dosexec' | \
+			'application/vnd.microsoft.portable-executable' \
+		)
 			icon_extract_png_from_exe "$icon_file" "$destination"
 		;;
 		('image/png')

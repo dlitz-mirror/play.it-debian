@@ -367,25 +367,6 @@ error_compression_invalid() {
 	printf "$message" "$compression_method" "$package_format" "$allowed_values"
 }
 
-# display an error when a variable required by the calling function is not set
-# USAGE: error_variable_not_set $function $variable
-error_variable_not_set() {
-	local message function variable
-	function="$1"
-	variable="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La fonction "%s" ne peut pas être appelée lorsque "%s" nʼa pas de valeur définie.\n'
-		;;
-		('en'|*)
-			message='"%s" function can not be called when "%s" is not set.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$function" "$variable"
-}
-
 # display an error when trying to get the current archive but none is set
 # USAGE: error_archive_unset
 error_archive_unset() {
