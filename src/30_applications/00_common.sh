@@ -206,7 +206,10 @@ application_type_guess_from_file() {
 		)
 			application_type='native'
 		;;
-		('application/x-dosexec')
+		( \
+			'application/x-dosexec' | \
+			'application/vnd.microsoft.portable-executable' \
+		)
 			local file_type_extended
 			file_type_extended=$( \
 				LANG=C file --brief --dereference "$application_exe_path" | \
