@@ -510,7 +510,7 @@ dependencies_debian_full_list() {
 		local dependencies_specific
 		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_DEB")
 		if [ -n "$dependencies_specific" ]; then
-			printf '%s' "$dependencies_specific" | sed 's/,/\n/g'
+			printf '%s\n' "$dependencies_specific" | sed 's/, \?/\n/g'
 		fi
 
 		# Include dependencies on native libraries
