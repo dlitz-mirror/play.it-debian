@@ -202,7 +202,8 @@ application_type_guess_from_file() {
 	case "$file_type" in
 		( \
 			'application/x-executable' | \
-			'application/x-pie-executable' \
+			'application/x-pie-executable' | \
+			'application/x-sharedlib' \
 		)
 			application_type='native'
 		;;
