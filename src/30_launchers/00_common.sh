@@ -1,17 +1,25 @@
+# Print the path to the launcher script for the given application
+# USAGE: launcher_path $application
+# RETURN: The absolute path to the launcher
+launcher_path() {
+	local application
+	application="$1"
+
+	local package package_path path_binaries application_id target_file
+	package=$(package_get_current)
+	package_path=$(package_path "$package")
+	path_binaries=$(path_binaries)
+	application_id=$(application_id "$application")
+
+	printf '%s%s/%s' "$package_path" "$path_binaries" "$application_id"
+}
+
 # Write launcher script for the given application
 # USAGE: launcher_write_script $application
 launcher_write_script() {
 	local application
 	application="$1"
 	assert_not_empty 'application' 'launcher_write_script'
-
-	# compute file path
-	local package package_path path_binaries application_id target_file
-	package=$(package_get_current)
-	package_path=$(package_path "$package")
-	path_binaries=$(path_binaries)
-	application_id=$(application_id "$application")
-	target_file="${package_path}${path_binaries}/${application_id}"
 
 	# Get application type and prefix type
 	local application_type prefix_type
@@ -31,7 +39,9 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
+	local target_file
 	debug_write_launcher "$application_type" "$binary_file"
+	target_file=$(launcher_path "$application")
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
@@ -202,9 +212,10 @@ launcher_write_script() {
 	# for native applications, add execution permissions to the game binary file
 	case "$application_type" in
 		('native'|'unity3d')
-			local binary_file path_game_data package_path application_exe
-			path_game_data=$(path_game_data)
+			local package package_path path_game_data application_exe bianry_file
+			package=$(package_get_current)
 			package_path=$(package_path "$package")
+			path_game_data=$(path_game_data)
 			application_exe=$(application_exe "$application")
 			binary_file="${package_path}${path_game_data}/${application_exe}"
 			chmod +x "$binary_file"
@@ -214,7 +225,10 @@ launcher_write_script() {
 	# for WINE applications, write launcher script for winecfg
 	case "$application_type" in
 		('wine')
-			local game_id winecfg_file
+			local package package_path path_binaries game_id winecfg_file
+			package=$(package_get_current)
+			package_path=$(package_path "$package")
+			path_binaries=$(path_binaries)
 			game_id=$(game_id)
 			winecfg_file="${package_path}${path_binaries}/${game_id}_winecfg"
 			if [ ! -e "$winecfg_file" ]; then
