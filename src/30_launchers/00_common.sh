@@ -104,14 +104,6 @@ launcher_write_script() {
 				;;
 			esac
 		;;
-		('native_no-prefix')
-			# WARNING - This archive type is deprecated.
-			(
-				export ${application}_TYPE='native'
-				export ${application}_PREFIX_TYPE='none'
-				launcher_write_script "$@"
-			)
-		;;
 		('scummvm')
 			case "$prefix_type" in
 				('none')
