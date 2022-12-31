@@ -180,5 +180,16 @@ get_lzip_implementation() {
 # USAGE: file_type $file
 # RETURNS: the MIME type, as a string
 file_type() {
-	file --brief --dereference --mime-type "$1"
+	local file
+	file="$1"
+
+	local file_type
+	file_type=$(file --brief --dereference --mime-type "$file")
+
+	# Everything behind the first ";" is removed,
+	# so "application/x-executable; charset=binary"
+	# would be returned as "application/x-executable".
+	file_type=$(printf '%s' "$file_type" | cut --delimiter=';' --fields=1)
+
+	printf '%s' "$file_type"
 }
