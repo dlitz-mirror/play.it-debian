@@ -220,17 +220,14 @@ application_type_guess_from_file() {
 				('MS-DOS executable')
 					application_type='dosbox'
 				;;
-				( \
-					'PE32 executable (GUI) Intel 80386' | \
-					'PE32+ executable (GUI) x86-64' \
-				)
-					application_type='wine'
+				(*'Mono/.Net assembly')
+					application_type='mono'
 				;;
 				( \
-					'PE32 executable (GUI) Intel 80386 Mono/.Net assembly' | \
-					'PE32+ executable (GUI) x86-64 Mono/.Net assembly' \
+					'PE32 executable'* | \
+					'PE32+ executable'* \
 				)
-					application_type='mono'
+					application_type='wine'
 				;;
 			esac
 		;;
