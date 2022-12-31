@@ -69,6 +69,12 @@ pkg_set_deps_deb() {
 			('renpy')
 				pkg_dep='renpy'
 			;;
+			('residualvm')
+				pkg_dep='residualvm'
+			;;
+			('scummvm')
+				pkg_dep='scummvm'
+			;;
 			('sdl1.2')
 				pkg_dep='libsdl1.2debian'
 			;;

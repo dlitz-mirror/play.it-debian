@@ -79,6 +79,12 @@ pkg_set_deps_arch32() {
 			('renpy')
 				pkg_dep='renpy'
 			;;
+			('residualvm')
+				pkg_dep='residualvm'
+			;;
+			('scummvm')
+				pkg_dep='scummvm'
+			;;
 			('sdl1.2')
 				pkg_dep='lib32-sdl'
 			;;
@@ -229,6 +235,12 @@ pkg_set_deps_arch64() {
 			;;
 			('renpy')
 				pkg_dep='renpy'
+			;;
+			('residualvm')
+				pkg_dep='residualvm'
+			;;
+			('scummvm')
+				pkg_dep='scummvm'
 			;;
 			('sdl1.2')
 				pkg_dep='sdl'

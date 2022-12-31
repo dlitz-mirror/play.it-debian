@@ -93,6 +93,12 @@ pkg_set_deps_gentoo() {
 			('renpy')
 				pkg_dep='games-engines/renpy'
 			;;
+			('residualvm')
+				pkg_dep='games-engines/residualvm'
+			;;
+			('scummvm')
+				pkg_dep='games-engines/scummvm'
+			;;
 			('sdl1.2')
 				pkg_dep="media-libs/libsdl$architecture_suffix"
 			;;
