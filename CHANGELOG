@@ -1,3 +1,13 @@
+2.20.2
+
+  * Display an error when a DOSBox image disk was not found.
+  * Gentoo (egentoo variant): Install data files only if present.
+  * Gentoo: Use correct documentation paths.
+  * Add support for more native libraries.
+  * New generic dependencies:
+    - residualvm
+    - scummvm
+
 2.20.1
 
   * Drop duplicate declaration of message function "error_variable_not_set".
