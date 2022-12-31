@@ -1,4 +1,4 @@
-# Print the path to the launcher script for the given application
+# Print the path to the launcher script for the given application.
 # USAGE: launcher_path $application
 # RETURN: The absolute path to the launcher
 launcher_path() {
@@ -209,16 +209,13 @@ launcher_write_script() {
 	fi
 	EOF
 
-	# for native applications, add execution permissions to the game binary file
+	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
 		('native'|'unity3d')
-			local package package_path path_game_data application_exe bianry_file
-			package=$(package_get_current)
-			package_path=$(package_path "$package")
-			path_game_data=$(path_game_data)
+			local application_exe application_exe_path
 			application_exe=$(application_exe "$application")
-			binary_file="${package_path}${path_game_data}/${application_exe}"
-			chmod +x "$binary_file"
+			application_exe_path=$(application_exe_path "$application_exe")
+			chmod +x "$application_exe_path"
 		;;
 	esac
 
