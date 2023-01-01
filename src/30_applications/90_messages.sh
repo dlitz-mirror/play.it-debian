@@ -30,11 +30,11 @@ error_no_application_type() {
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='Le type de lʼapplication "%s" nʼest pas défini.\n'
+			message='Le type de lʼapplication "%s" nʼest pas défini, et nʼa pas pu être détecté automatiquement.\n'
 			message="$message"'Merci de signaler cette erreur sur notre outil de suivi des problèmes : %s\n'
 		;;
 		('en'|*)
-			message='The type of application "%s" is not set.\n'
+			message='The type of application "%s" is not set, and could not be guessed.\n'
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
