@@ -77,7 +77,9 @@ pkg_nofetch() {
 }
 
 src_install() {
-	cp --recursive --link --verbose \$S/data/* \$D || die
+	if test -d \$S/data; then
+		cp --recursive --link --verbose \$S/data/* \$D || die
+	fi
 
 	if use x86 && test -d \$S/x86; then
 		cp --recursive --link --verbose \$S/x86/* \$D || die
