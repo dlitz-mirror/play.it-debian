@@ -256,7 +256,7 @@ dependencies_gentoo_full_list() {
 	local dependencies_specific
 	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
 	if [ -n "$dependencies_specific" ]; then
-		printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
+		printf '%s\n' "$dependencies_specific"
 	fi
 
 	{
