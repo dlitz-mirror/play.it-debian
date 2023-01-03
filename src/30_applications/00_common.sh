@@ -124,7 +124,6 @@ application_prefix_type() {
 #         - java
 #         - mono
 #         - native
-#         - native_no-prefix (deprecated)
 #         - renpy
 #         - residualvm
 #         - scummvm
@@ -163,9 +162,6 @@ application_type() {
 			'wine' \
 		)
 			## This is a supported type, no error to throw.
-		;;
-		('native_no-prefix')
-			## WARNING - This archive type is deprecated.
 		;;
 		(*)
 			error_unknown_application_type "$application_type"
