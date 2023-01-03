@@ -44,10 +44,22 @@ path_documentation() {
 	install_prefix="$OPTION_PREFIX"
 	assert_not_empty 'install_prefix' 'path_documentation'
 
-	local game_id
-	game_id=$(game_id)
-
-	printf '%s/share/doc/%s' "$install_prefix" "$game_id"
+	case "$OPTION_PACKAGE" in
+		('deb'|'arch')
+			local game_id
+			game_id=$(game_id)
+			printf '%s/share/doc/%s' "$install_prefix" "$game_id"
+			;;
+		('gentoo'|'egentoo')
+			local package_name
+			package_name=$(egentoo_package_name)
+			printf '%s/share/doc/%s' "$install_prefix" "$package_name"
+			;;
+		(*)
+			error_invalid_argument 'OPTION_PACKAGE' 'path_documentation'
+			return 1
+			;;
+	esac
 }
 
 # Print install path for game files.

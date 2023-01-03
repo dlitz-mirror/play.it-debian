@@ -114,5 +114,6 @@ dosbox_disk_image_path() {
 	done
 
 	# Exit with a failure state if the disk image has not been found.
+	error_dosbox_disk_image_no_found "$GAME_IMAGE"
 	return 1
 }
