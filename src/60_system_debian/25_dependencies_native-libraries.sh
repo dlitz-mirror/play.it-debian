@@ -10,6 +10,9 @@ dependency_package_providing_library_deb() {
 		('ld-linux-x86-64.so.2')
 			package_name='libc6'
 		;;
+		('liballeg.so.4.4')
+			package_name='liballegro4.4'
+		;;
 		('libasound.so.2')
 			package_name='libasound2'
 		;;
@@ -43,11 +46,17 @@ dependency_package_providing_library_deb() {
 		('libcrypto.so.1.1')
 			package_name='libssl1.1'
 		;;
+		('libcups.so.2')
+			package_name='libcups2'
+		;;
 		('libcurl.so.4')
 			package_name='libcurl4'
 		;;
 		('libcurl-gnutls.so.4')
 			package_name='libcurl3-gnutls'
+		;;
+		('libdbus-1.so.3')
+			package_name='libdbus-1-3'
 		;;
 		('libdl.so.2')
 			package_name='libc6'
@@ -66,6 +75,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libgcc_s.so.1')
 			package_name='libgcc-s1'
+		;;
+		('libgconf-2.so.4')
+			package_name='libgconf-2-4'
 		;;
 		('libgcrypt.so.11')
 			# This old library is no longer available from Debian.
@@ -124,6 +136,9 @@ dependency_package_providing_library_deb() {
 		('libidn2.so.0')
 			package_name='libidn2-0'
 		;;
+		('libjpeg.so.62')
+			package_name='libjpeg62-turbo | libjpeg62'
+		;;
 		('libk5crypto.so.3')
 			package_name='libk5crypto3'
 		;;
@@ -142,6 +157,12 @@ dependency_package_providing_library_deb() {
 		('libminiupnpc.so.17')
 			package_name='libminiupnpc17'
 		;;
+		('libmodplug.so.1')
+			package_name='libmodplug1'
+		;;
+		('libmpg123.so.0')
+			package_name='libmpg123-0'
+		;;
 		('libnghttp2.so.14')
 			package_name='libnghttp2-14'
 		;;
@@ -149,6 +170,9 @@ dependency_package_providing_library_deb() {
 			package_name='libnspr4'
 		;;
 		('libnss3.so')
+			package_name='libnss3'
+		;;
+		('libnssutil3.so')
 			package_name='libnss3'
 		;;
 		('libogg.so.0')
@@ -171,6 +195,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='libpangoft2-1.0-0'
+		;;
+		('libphysfs.so.1')
+			package_name='libphysfs1'
 		;;
 		('libplc4.so')
 			package_name='libnspr4'
@@ -223,6 +250,9 @@ dependency_package_providing_library_deb() {
 		('libSDL2_ttf-2.0.so.0')
 			package_name='libsdl2-ttf-2.0-0'
 		;;
+		('libsecret-1.so.0')
+			package_name='libsecret-1-0'
+		;;
 		('libSM.so.6')
 			package_name='libsm6'
 		;;
@@ -249,6 +279,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libstdc++.so.6')
 			package_name='libstdc++6'
+		;;
+		('libtheora.so.0')
+			package_name='libtheora0'
 		;;
 		('libtheoradec.so.1')
 			package_name='libtheora0'
@@ -282,11 +315,20 @@ dependency_package_providing_library_deb() {
 		('libX11.so.6')
 			package_name='libx11-6'
 		;;
+		('libXcomposite.so.1')
+			package_name='libxcomposite1'
+		;;
 		('libXcursor.so.1')
 			package_name='libxcursor1'
 		;;
+		('libXdamage.so.1')
+			package_name='libxdamage1'
+		;;
 		('libXext.so.6')
 			package_name='libxext6'
+		;;
+		('libXfixes.so.3')
+			package_name='libxfixes3'
 		;;
 		('libXft.so.2')
 			package_name='libxft2'
@@ -297,11 +339,23 @@ dependency_package_providing_library_deb() {
 		('libXinerama.so.1')
 			package_name='libxinerama1'
 		;;
+		('libxml2.so.2')
+			package_name='libxml2'
+		;;
+		('libxmp.so.4')
+			package_name='libxmp4'
+		;;
 		('libXrandr.so.2')
 			package_name='libxrandr2'
 		;;
 		('libXrender.so.1')
 			package_name='libxrender1'
+		;;
+		('libxslt.so.1')
+			package_name='libxslt1.1'
+		;;
+		('libXss.so.1')
+			package_name='libxss1'
 		;;
 		('libXt.so.6')
 			package_name='libxt6'
@@ -311,9 +365,6 @@ dependency_package_providing_library_deb() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm1'
-		;;
-		('libxmp.so.4')
-			package_name='libxmp4'
 		;;
 		('libz.so.1')
 			package_name='zlib1g'

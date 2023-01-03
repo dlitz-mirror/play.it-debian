@@ -11,6 +11,9 @@ dependency_package_providing_library_gentoo() {
 		('ld-linux-x86-64.so.2')
 			package_name='sys-libs/glibc'
 		;;
+		('liballeg.so.4.4')
+			package_name='media-libs/allegro'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib'
 		;;
@@ -44,6 +47,9 @@ dependency_package_providing_library_gentoo() {
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl'
 		;;
+		('libcups.so.2')
+			package_name='net-print/cups'
+		;;
 		('libcurl.so.4')
 			package_name='net-misc/curl'
 		;;
@@ -52,6 +58,9 @@ dependency_package_providing_library_gentoo() {
 			pkg_overlay='steam-overlay'
 			dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir 'amd64')/debiancompat" "$package"
 			;;
+		('libdbus-1.so.3')
+			package_name='sys-apps/dbus'
+		;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc'
 		;;
@@ -69,6 +78,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libgcc_s.so.1')
 			package_name='sys-devel/gcc'
+		;;
+		('libgconf-2.so.4')
+			package_name='gnome-base/gconf'
 		;;
 		('libgcrypt.so.11')
 			package_name='dev-libs/libgcrypt-compat'
@@ -124,6 +136,9 @@ dependency_package_providing_library_gentoo() {
 		('libidn2.so.0')
 			package_name='net-dns/libidn2'
 		;;
+		('libjpeg.so.62')
+			package_name='media-libs/libjpeg-turbo'
+		;;
 		('libk5crypto.so.3')
 			package_name='app-crypt/mit-krb5'
 		;;
@@ -142,6 +157,12 @@ dependency_package_providing_library_gentoo() {
 		('libminiupnpc.so.17')
 			package_name='net-libs/miniupnpc'
 		;;
+		('libmodplug.so.1')
+			package_name='media-libs/libmodplug'
+		;;
+		('libmpg123.so.0')
+			package_name='media-sound/mpg123'
+		;;
 		('libnghttp2.so.14')
 			package_name='net-libs/nghttp2'
 		;;
@@ -149,6 +170,9 @@ dependency_package_providing_library_gentoo() {
 			package_name='dev-libs/nspr'
 		;;
 		('libnss3.so')
+			package_name='dev-libs/nss'
+		;;
+		('libnssutil3.so')
 			package_name='dev-libs/nss'
 		;;
 		('libogg.so.0')
@@ -171,6 +195,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango'
+		;;
+		('libphysfs.so.1')
+			package_name='dev-games/physfs'
 		;;
 		('libplc4.so')
 			package_name='dev-libs/nspr'
@@ -223,6 +250,9 @@ dependency_package_providing_library_gentoo() {
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf'
 		;;
+		('libsecret-1.so.0')
+			package_name='app-crypt/libsecret'
+		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM'
 		;;
@@ -249,6 +279,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libstdc++.so.6')
 			package_name='sys-devel/gcc'
+		;;
+		('libtheora.so.0')
+			package_name='media-libs/libtheora'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora'
@@ -280,11 +313,20 @@ dependency_package_providing_library_gentoo() {
 		('libX11.so.6')
 			package_name='x11-libs/libX11'
 		;;
+		('libXcomposite.so.1')
+			package_name='x11-libs/libXcomposite'
+		;;
 		('libXcursor.so.1')
 			package_name='x11-libs/libXcursor'
 		;;
+		('libXdamage.so.1')
+			package_name='x11-libs/libXdamage'
+		;;
 		('libXext.so.6')
 			package_name='x11-libs/libXext'
+		;;
+		('libXfixes.so.3')
+			package_name='x11-libs/libXfixes'
 		;;
 		('libXft.so.2')
 			package_name='x11-libs/libXft'
@@ -295,11 +337,23 @@ dependency_package_providing_library_gentoo() {
 		('libXinerama.so.1')
 			package_name='x11-libs/libXinerama'
 		;;
+		('libxml2.so.2')
+			package_name='dev-libs/libxml2'
+		;;
+		('libxmp.so.4')
+			package_name='media-libs/libxmp'
+		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr'
 		;;
 		('libXrender.so.1')
 			package_name='x11-libs/libXrender'
+		;;
+		('libxslt.so.1')
+			package_name='dev-libs/libxslt'
+		;;
+		('libXss.so.1')
+			package_name='x11-libs/libXScrnSaver'
 		;;
 		('libXt.so.6')
 			package_name='x11-libs/libXt'
@@ -309,9 +363,6 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm'
-		;;
-		('libxmp.so.4')
-			package_name='media-libs/libxmp'
 		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1'
@@ -341,6 +392,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('ld-linux-x86-64.so.2')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
+		('liballeg.so.4.4')
+			package_name='media-libs/allegro[abi_x86_32]'
 		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib[abi_x86_32]'
@@ -375,6 +429,9 @@ dependency_package_providing_library_gentoo32() {
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl[abi_x86_32]'
 		;;
+		('libcups.so.2')
+			package_name='net-print/cups[abi_x86_32]'
+		;;
 		('libcurl.so.4')
 			package_name='net-misc/curl[abi_x86_32]'
 		;;
@@ -383,6 +440,9 @@ dependency_package_providing_library_gentoo32() {
 			pkg_overlay='steam-overlay'
 			dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir 'x86')/debiancompat" "$package"
 			;;
+		('libdbus-1.so.3')
+			package_name='sys-apps/dbus[abi_x86_32]'
+		;;
 		('libdl.so.2')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
@@ -400,6 +460,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgcc_s.so.1')
 			package_name='sys-devel/gcc[abi_x86_32]'
+		;;
+		('libgconf-2.so.4')
+			package_name='gnome-base/gconf[abi_x86_32]'
 		;;
 		('libgcrypt.so.11')
 			package_name='dev-libs/libgcrypt-compat[abi_x86_32]'
@@ -455,6 +518,9 @@ dependency_package_providing_library_gentoo32() {
 		('libidn2.so.0')
 			package_name='net-dns/libidn2[abi_x86_32]'
 		;;
+		('libjpeg.so.62')
+			package_name='media-libs/libjpeg-turbo[abi_x86_32]'
+		;;
 		('libk5crypto.so.3')
 			package_name='app-crypt/mit-krb5[abi_x86_32]'
 		;;
@@ -473,6 +539,12 @@ dependency_package_providing_library_gentoo32() {
 		('libminiupnpc.so.17')
 			package_name='net-libs/miniupnpc[abi_x86_32]'
 		;;
+		('libmodplug.so.1')
+			package_name='media-libs/libmodplug[abi_x86_32]'
+		;;
+		('libmpg123.so.0')
+			package_name='media-sound/mpg123[abi_x86_32]'
+		;;
 		('libnghttp2.so.14')
 			package_name='net-libs/nghttp2[abi_x86_32]'
 		;;
@@ -480,6 +552,9 @@ dependency_package_providing_library_gentoo32() {
 			package_name='dev-libs/nspr[abi_x86_32]'
 		;;
 		('libnss3.so')
+			package_name='dev-libs/nss[abi_x86_32]'
+		;;
+		('libnssutil3.so')
 			package_name='dev-libs/nss[abi_x86_32]'
 		;;
 		('libogg.so.0')
@@ -502,6 +577,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango[abi_x86_32]'
+		;;
+		('libphysfs.so.1')
+			package_name='dev-games/physfs[abi_x86_32]'
 		;;
 		('libplc4.so')
 			package_name='dev-libs/nspr[abi_x86_32]'
@@ -554,6 +632,9 @@ dependency_package_providing_library_gentoo32() {
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf[abi_x86_32]'
 		;;
+		('libsecret-1.so.0')
+			package_name='app-crypt/libsecret[abi_x86_32]'
+		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM[abi_x86_32]'
 		;;
@@ -580,6 +661,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libstdc++.so.6')
 			package_name='sys-devel/gcc amd64? ( sys-devel/gcc[multilib] )'
+		;;
+		('libtheora.so.0')
+			package_name='media-libs/libtheora[abi_x86_32]'
 		;;
 		('libtheoradec.so.1')
 			package_name='media-libs/libtheora[abi_x86_32]'
@@ -611,11 +695,20 @@ dependency_package_providing_library_gentoo32() {
 		('libX11.so.6')
 			package_name='x11-libs/libX11[abi_x86_32]'
 		;;
+		('libXcomposite.so.1')
+			package_name='x11-libs/libXcomposite[abi_x86_32'
+		;;
 		('libXcursor.so.1')
 			package_name='x11-libs/libXcursor[abi_x86_32]'
 		;;
+		('libXdamage.so.1')
+			package_name='x11-libs/libXdamage[abi_x86_32]'
+		;;
 		('libXext.so.6')
 			package_name='x11-libs/libXext[abi_x86_32]'
+		;;
+		('libXfixes.so.3')
+			package_name='x11-libs/libXfixes[abi_x86_32]'
 		;;
 		('libXft.so.2')
 			package_name='x11-libs/libXft[abi_x86_32]'
@@ -626,11 +719,23 @@ dependency_package_providing_library_gentoo32() {
 		('libXinerama.so.1')
 			package_name='x11-libs/libXinerama[abi_x86_32]'
 		;;
+		('libxml2.so.2')
+			package_name='dev-libs/libxml2[abi_x86_32]'
+		;;
+		('libxmp.so.4')
+			package_name='media-libs/libxmp[abi_x86_32]'
+		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr[abi_x86_32]'
 		;;
 		('libXrender.so.1')
 			package_name='x11-libs/libXrender[abi_x86_32]'
+		;;
+		('libxslt.so.1')
+			package_name='dev-libs/libxslt[abi_x86_32]'
+		;;
+		('libXss.so.1')
+			package_name='x11-libs/libXScrnSaver[abi_x86_32]'
 		;;
 		('libXt.so.6')
 			package_name='x11-libs/libXt[abi_x86_32]'
@@ -640,9 +745,6 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm[abi_x86_32]'
-		;;
-		('libxmp.so.4')
-			package_name='media-libs/libxmp[abi_x86_32]'
 		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1[abi_x86_32]'

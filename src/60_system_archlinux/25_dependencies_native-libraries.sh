@@ -10,6 +10,9 @@ dependency_package_providing_library_arch() {
 		('ld-linux-x86-64.so.2')
 			package_name='glibc'
 		;;
+		('liballeg.so.4.4')
+			package_name='allegro4'
+		;;
 		('libasound.so.2')
 			package_name='alsa-lib'
 		;;
@@ -43,11 +46,17 @@ dependency_package_providing_library_arch() {
 		('libcrypto.so.1.1')
 			package_name='openssl'
 		;;
+		('libcups.so.2')
+			package_name='libcups'
+		;;
 		('libcurl.so.4')
 			package_name='curl'
 		;;
 		('libcurl-gnutls.so.4')
 			package_name='libcurl-gnutls'
+		;;
+		('libdbus-1.so.3')
+			package_name='dbus'
 		;;
 		('libdl.so.2')
 			package_name='glibc'
@@ -66,6 +75,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libgcc_s.so.1')
 			package_name='gcc-libs'
+		;;
+		('libgconf-2.so.4')
+			package_name='gconf'
 		;;
 		('libgcrypt.so.11')
 			package_name='libgcrypt15'
@@ -121,6 +133,9 @@ dependency_package_providing_library_arch() {
 		('libidn2.so.0')
 			package_name='libidn2'
 		;;
+		('libjpeg.so.62')
+			package_name='libjpeg6-turbo'
+		;;
 		('libk5crypto.so.3')
 			package_name='krb5'
 		;;
@@ -139,6 +154,12 @@ dependency_package_providing_library_arch() {
 		('libminiupnpc.so.17')
 			package_name='miniupnpc'
 		;;
+		('libmodplug.so.1')
+			package_name='libmodplug'
+		;;
+		('libmpg123.so.0')
+			package_name='mpg123'
+		;;
 		('libnghttp2.so.14')
 			package_name='libnghttp2'
 		;;
@@ -146,6 +167,9 @@ dependency_package_providing_library_arch() {
 			package_name='nspr'
 		;;
 		('libnss3.so')
+			package_name='nss'
+		;;
+		('libnssutil3.so')
 			package_name='nss'
 		;;
 		('libogg.so.0')
@@ -168,6 +192,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='pango'
+		;;
+		('libphysfs.so.1')
+			package_name='physfs'
 		;;
 		('libplc4.so')
 			package_name='nspr'
@@ -220,6 +247,9 @@ dependency_package_providing_library_arch() {
 		('libSDL2_ttf-2.0.so.0')
 			package_name='sdl2_ttf'
 		;;
+		('libsecret-1.so.0')
+			package_name='libsecret'
+		;;
 		('libSM.so.6')
 			package_name='libsm'
 		;;
@@ -246,6 +276,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libstdc++.so.6')
 			package_name='gcc-libs'
+		;;
+		('libtheora.so.0')
+			package_name='libtheora'
 		;;
 		('libtheoradec.so.1')
 			package_name='libtheora'
@@ -277,11 +310,20 @@ dependency_package_providing_library_arch() {
 		('libX11.so.6')
 			package_name='libx11'
 		;;
+		('libXcomposite.so.1')
+			package_name='libxcomposite'
+		;;
 		('libXcursor.so.1')
 			package_name='libxcursor'
 		;;
+		('libXdamage.so.1')
+			package_name='libxdamage'
+		;;
 		('libXext.so.6')
 			package_name='libxext'
+		;;
+		('libXfixes.so.3')
+			package_name='libxfixes'
 		;;
 		('libXft.so.2')
 			package_name='libxft'
@@ -292,11 +334,23 @@ dependency_package_providing_library_arch() {
 		('libXinerama.so.1')
 			package_name='libxinerama'
 		;;
+		('libxml2.so.2')
+			package_name='libxml2'
+		;;
+		('libxmp.so.4')
+			package_name='libxmp'
+		;;
 		('libXrandr.so.2')
 			package_name='libxrandr'
 		;;
 		('libXrender.so.1')
 			package_name='libxrender'
+		;;
+		('libxslt.so.1')
+			package_name='libxslt'
+		;;
+		('libXss.so.1')
+			package_name='libxss'
 		;;
 		('libXt.so.6')
 			package_name='libxt'
@@ -306,9 +360,6 @@ dependency_package_providing_library_arch() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm'
-		;;
-		('libxmp.so.4')
-			package_name='libxmp'
 		;;
 		('libz.so.1')
 			package_name='zlib'
@@ -334,6 +385,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('ld-linux-x86-64.so.2')
 			package_name='lib32-glibc'
+		;;
+		('liballeg.so.4.4')
+			package_name='lib32-allegro4'
 		;;
 		('libasound.so.2')
 			package_name='lib32-alsa-lib'
@@ -368,11 +422,17 @@ dependency_package_providing_library_arch32() {
 		('libcrypto.so.1.1')
 			package_name='lib32-openssl'
 		;;
+		('libcups.so.2')
+			package_name='lib32-libcups'
+		;;
 		('libcurl.so.4')
 			package_name='lib32-curl'
 		;;
 		('libcurl-gnutls.so.4')
 			package_name='lib32-libcurl-gnutls'
+		;;
+		('libdbus-1.so.3')
+			package_name='lib32-dbus'
 		;;
 		('libdl.so.2')
 			package_name='lib32-glibc'
@@ -391,6 +451,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libgcc_s.so.1')
 			package_name='lib32-gcc-libs'
+		;;
+		('libgconf-2.so.4')
+			package_name='lib32-gconf'
 		;;
 		('libgcrypt.so.11')
 			package_name='lib32-libgcrypt15'
@@ -446,6 +509,9 @@ dependency_package_providing_library_arch32() {
 		('libidn2.so.0')
 			package_name='lib32-libidn2'
 		;;
+		('libjpeg.so.62')
+			package_name='lib32-libjpeg6-turbo'
+		;;
 		('libk5crypto.so.3')
 			package_name='lib32-krb5'
 		;;
@@ -466,6 +532,12 @@ dependency_package_providing_library_arch32() {
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
 		;;
+		('libmodplug.so.1')
+			package_name='lib32-libmodplug'
+		;;
+		('libmpg123.so.0')
+			package_name='lib32-mpg123'
+		;;
 		('libnghttp2.so.14')
 			package_name='lib32-libnghttp2'
 		;;
@@ -473,6 +545,9 @@ dependency_package_providing_library_arch32() {
 			package_name='lib32-nspr'
 		;;
 		('libnss3.so')
+			package_name='lib32-nss'
+		;;
+		('libnssutil3.so')
 			package_name='lib32-nss'
 		;;
 		('libogg.so.0')
@@ -496,6 +571,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='lib32-pango'
+		;;
+		('libphysfs.so.1')
+			package_name='lib32-physfs'
 		;;
 		('libplc4.so')
 			package_name='lib32-nspr'
@@ -548,6 +626,10 @@ dependency_package_providing_library_arch32() {
 		('libSDL2_ttf-2.0.so.0')
 			package_name='lib32-sdl2_ttf'
 		;;
+		('libsecret-1.so.0')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
+		;;
 		('libSM.so.6')
 			package_name='lib32-libsm'
 		;;
@@ -574,6 +656,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libstdc++.so.6')
 			package_name='lib32-gcc-libs'
+		;;
+		('libtheora.so.0')
+			package_name='lib32-libtheora'
 		;;
 		('libtheoradec.so.1')
 			package_name='lib32-libtheora'
@@ -606,11 +691,20 @@ dependency_package_providing_library_arch32() {
 		('libX11.so.6')
 			package_name='lib32-libx11'
 		;;
+		('libXcomposite.so.1')
+			package_name='lib32-libxcomposite'
+		;;
 		('libXcursor.so.1')
 			package_name='lib32-libxcursor'
 		;;
+		('libXdamage.so.1')
+			package_name='lib32-libxdamage'
+		;;
 		('libXext.so.6')
 			package_name='lib32-libxext'
+		;;
+		('libXfixes.so.3')
+			package_name='lib32-libxfixes'
 		;;
 		('libXft.so.2')
 			package_name='lib32-libxft'
@@ -621,11 +715,23 @@ dependency_package_providing_library_arch32() {
 		('libXinerama.so.1')
 			package_name='lib32-libxinerama'
 		;;
+		('libxml2.so.2')
+			package_name='lib32-libxml2'
+		;;
+		('libxmp.so.4')
+			package_name='lib32-libxmp-git'
+		;;
 		('libXrandr.so.2')
 			package_name='lib32-libxrandr'
 		;;
 		('libXrender.so.1')
 			package_name='lib32-libxrender'
+		;;
+		('libxslt.so.1')
+			package_name='lib32-libxslt'
+		;;
+		('libXss.so.1')
+			package_name='lib32-libxss'
 		;;
 		('libXt.so.6')
 			package_name='lib32-libxt'
@@ -635,9 +741,6 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='lib32-libxxf86vm'
-		;;
-		('libxmp.so.4')
-			package_name='lib32-libxmp-git'
 		;;
 		('libz.so.1')
 			package_name='lib32-zlib'
