@@ -125,7 +125,7 @@ package_gentoo_field_rdepend() {
 
 	local first_item_displayed dependency_string
 	first_item_displayed=0
-	while read -r dependency_string; do
+	while IFS= read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
 		fi

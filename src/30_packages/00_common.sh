@@ -382,7 +382,8 @@ package_get_provide() {
 	fi
 
 	# on Gentoo, avoid mixups between numbers in package ID and version number
-	# and add the required "!!games-playit/" prefix to the package ID
+	# and add the required "!games-playit/" prefix to the package ID
+	# (https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers)
 	case "$OPTION_PACKAGE" in
 		('gentoo'|'egentoo')
 			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
