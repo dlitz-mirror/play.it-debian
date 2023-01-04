@@ -126,22 +126,6 @@ package_format_guess() {
 	printf '%s' "$package_type"
 }
 
-# Print the identifier of the current package
-# USAGE: package_get_current
-# RETURN: a single package identifier
-package_get_current() {
-	local package
-	if variable_is_empty 'PKG'; then
-		# If $PKG is not explictly set,
-		# return the first package from the list of packages to build.
-		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
-	else
-		package="$PKG"
-	fi
-
-	printf '%s' "$package"
-}
-
 # get the full list of packages to generate
 # USAGE: packages_get_list
 # RETURN: a list of package identifiers

@@ -338,7 +338,7 @@ application_exe_path() {
 
 	# Look for the application binary in the current package.
 	local package package_path path_game_data
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)
 	application_exe_path="${package_path}${path_game_data}/${application_exe}"

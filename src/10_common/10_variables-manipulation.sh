@@ -91,10 +91,9 @@ get_context_specific_value() {
 # USAGE: get_context_suffix_archive
 # RETURN: the current archive suffix, not including the leading underscore (_)
 get_context_suffix_archive() {
-	# Get the current archive, check that it is set
-	local current_archive
-	current_archive="$ARCHIVE"
-	if [ -z "$current_archive" ]; then
+	local archive
+	archive=$(context_archive)
+	if [ -z "$archive" ]; then
 		error_archive_unset
 		return 1
 	fi
@@ -104,11 +103,11 @@ get_context_suffix_archive() {
 	if \
 		# shellcheck disable=SC2154
 		version_is_at_least '2.13' "$target_version" && \
-		[ "${ARCHIVE#ARCHIVE_BASE_}" != "$ARCHIVE" ]
+		[ "${archive#ARCHIVE_BASE_}" != "$archive" ]
 	then
-		archive_suffix=${ARCHIVE#ARCHIVE_BASE_}
+		archive_suffix=${archive#ARCHIVE_BASE_}
 	else
-		archive_suffix=${ARCHIVE#ARCHIVE_}
+		archive_suffix=${archive#ARCHIVE_}
 	fi
 
 	printf '%s' "$archive_suffix"
@@ -120,7 +119,7 @@ get_context_suffix_archive() {
 get_context_suffix_package() {
 	# Get the current package
 	local current_package
-	current_package=$(package_get_current)
+	current_package=$(context_package)
 
 	# Get the suffix from the full package identifier
 	local package_suffix

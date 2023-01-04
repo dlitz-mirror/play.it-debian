@@ -41,7 +41,7 @@ wine_launcher_write() {
 
 	# Automatically add required dependencies to the current package
 	local package
-	package=$(package_get_current)
+	package=$(context_package)
 	dependencies_add_generic "$package" 'wine'
 	if ! variable_is_empty 'APP_WINETRICKS'; then
 		dependencies_add_generic "$package" 'winetricks'
@@ -72,7 +72,7 @@ wine_prefix_wineprefix_path() {
 wine_prefix_wineprefix_environment() {
 	# Compute WINE prefix architecture
 	local package package_architecture wine_architecture
-	package=$(package_get_current)
+	package=$(context_package)
 	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
 	case "$package_architecture" in
 		('32')
