@@ -27,3 +27,29 @@ context_package() {
 
 	printf '%s' "$package"
 }
+
+# Print the suffix of the identifier of the current archive.
+# USAGE: context_archive_suffix
+# RETURN: the current archive identifier suffix including the leading underscore,
+#         or an empty string if no archive is set
+context_archive_suffix() {
+	if ! version_is_at_least '2.21' "$target_version"; then
+		context_archive_suffix_legacy
+		return 0
+	fi
+
+	local archive
+	archive=$(context_archive)
+
+	printf '%s' "${archive#ARCHIVE_BASE}"
+}
+
+# Print the suffix of the identifier of the current package.
+# USAGE: context_package_suffix
+# RETURN: the current package identifier suffix including the leading underscore
+context_package_suffix() {
+	local package
+	package=$(context_package)
+
+	printf '%s' "${package#PKG}"
+}

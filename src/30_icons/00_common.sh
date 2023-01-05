@@ -9,7 +9,7 @@ icons_list_all() {
 
 	# Include icons specific to the current archive context
 	local archive_suffix
-	archive_suffix="_$(get_context_suffix_archive)"
+	archive_suffix=$(context_archive_suffix)
 	while [ -n "$archive_suffix" ]; do
 		set | \
 			grep --regexp="^APP_.*_ICON${archive_suffix}=" | \

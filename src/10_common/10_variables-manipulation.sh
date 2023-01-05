@@ -31,7 +31,7 @@ context_specific_name() {
 				printf '%s' "$variable_name"
 				return 0
 			fi
-			context_suffix=$(get_context_suffix_archive)
+			context_suffix=$(context_archive_suffix | sed 's/^_//')
 		;;
 		('package')
 			# Return early if no package is explicitely set
@@ -39,7 +39,7 @@ context_specific_name() {
 				printf '%s' "$variable_name"
 				return 0
 			fi
-			context_suffix=$(get_context_suffix_package)
+			context_suffix=$(context_package_suffix | sed 's/^_//')
 		;;
 		(*)
 			error_context_invalid "$context"
@@ -85,47 +85,6 @@ context_specific_value() {
 # This should move into a compatibility source file at the next feature release.
 get_context_specific_value() {
 	context_specific_value "$1" "$2"
-}
-
-# get the current archive suffix and print it
-# USAGE: get_context_suffix_archive
-# RETURN: the current archive suffix, not including the leading underscore (_)
-get_context_suffix_archive() {
-	local archive
-	archive=$(context_archive)
-	if [ -z "$archive" ]; then
-		error_archive_unset
-		return 1
-	fi
-
-	# Get the suffix from the full archive identifier
-	local archive_suffix
-	if \
-		# shellcheck disable=SC2154
-		version_is_at_least '2.13' "$target_version" && \
-		[ "${archive#ARCHIVE_BASE_}" != "$archive" ]
-	then
-		archive_suffix=${archive#ARCHIVE_BASE_}
-	else
-		archive_suffix=${archive#ARCHIVE_}
-	fi
-
-	printf '%s' "$archive_suffix"
-}
-
-# get the current package suffix and print it
-# USAGE: get_context_suffix_package
-# RETURN: the current package suffix, not including the leading underscore (_)
-get_context_suffix_package() {
-	# Get the current package
-	local current_package
-	current_package=$(context_package)
-
-	# Get the suffix from the full package identifier
-	local package_suffix
-	package_suffix=${current_package#PKG_}
-
-	printf '%s' "$package_suffix"
 }
 
 # Check if the given variable is set.
