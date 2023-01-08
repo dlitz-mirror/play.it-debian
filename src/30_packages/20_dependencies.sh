@@ -143,7 +143,10 @@ dependencies_add_generic() {
 	current_dependencies=$(dependencies_list_generic "$package")
 
 	local dependencies_variable_name
-	dependencies_variable_name=$(context_specific_name 'archive' "${package}_DEPS")
+	dependencies_variable_name=$(context_name "${package}_DEPS")
+	if [ -z "$dependencies_variable_name" ]; then
+		dependencies_variable_name="${package}_DEPS"
+	fi
 	export $dependencies_variable_name="$current_dependencies $dependency"
 }
 
@@ -159,7 +162,10 @@ dependencies_add_native_libraries() {
 	current_dependencies=$(dependencies_list_native_libraries "$package")
 
 	local dependencies_variable_name
-	dependencies_variable_name=$(context_specific_name 'archive' "${package}_DEPENDENCIES_LIBRARIES")
+	dependencies_variable_name=$(context_name "${package}_DEPENDENCIES_LIBRARIES")
+	if [ -z "$dependencies_variable_name" ]; then
+		dependencies_variable_name="${package}_DEPENDENCIES_LIBRARIES"
+	fi
 	export $dependencies_variable_name="$current_dependencies
 	$dependency"
 }

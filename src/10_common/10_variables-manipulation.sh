@@ -13,71 +13,19 @@ get_value() {
 	eval printf -- '%b' \"\$"${variable_name}"\"
 }
 
-# Print the context-specific name of a variable.
-# The context can be either the current archive or the current package.
-# If no context-specific name has been found, the default name is printed.
-# USAGE: context_specific_name archive|package $variable_name
-context_specific_name() {
-	local variable_name
-	variable_name="$2"
-
-	# Get the context suffix based on the context type
-	local context context_suffix
-	context="$1"
-	case "$context" in
-		('archive')
-			# Return early if no archive is explicitely set
-			if variable_is_empty 'ARCHIVE'; then
-				printf '%s' "$variable_name"
-				return 0
-			fi
-			context_suffix=$(context_archive_suffix | sed 's/^_//')
-		;;
-		('package')
-			# Return early if no package is explicitely set
-			if variable_is_empty 'PKG'; then
-				printf '%s' "$variable_name"
-				return 0
-			fi
-			context_suffix=$(context_package_suffix | sed 's/^_//')
-		;;
-		(*)
-			error_context_invalid "$context"
-			return 1
-		;;
-	esac
-
-	# Try to find a context-specific variable name with a value set.
-	local variable_name_with_suffix
-	variable_name_with_suffix="${variable_name}_${context_suffix}"
-	while [ "$variable_name_with_suffix" != "$variable_name" ]; do
-		# Exit the loop if the current variable name has a value set.
-		if ! variable_is_empty "$variable_name_with_suffix"; then
-			break
-		fi
-		# Drop one suffix level for the next loop iteration.
-		variable_name_with_suffix="${variable_name_with_suffix%_*}"
-	done
-
-	# If the whole while loop went through without finding a context-specific value,
-	# $variable_name_with_suffix is now equal to $variable_name.
-	printf '%s' "$variable_name_with_suffix"
-}
-
 # Print the context-specific value of a variable.
 # The context can be either the current archive or the current package.
 # If no context-specific value has been found, the default value is printed.
 # USAGE: context_specific_value archive|package $variable_name
 context_specific_value() {
-	local context variable_name
-	context="$1"
+	# WARNING - Context limitation to either archive or package is ignored.
+	local variable_name
 	variable_name="$2"
 
 	local variable_name_with_context
-	variable_name_with_context=$(context_specific_name "$context" "$variable_name")
-
-	# Only return a value if one is actually set.
-	if ! variable_is_empty "$variable_name_with_context"; then
+	variable_name_with_context=$(context_name "$variable_name")
+	## Only return a value if one is actually set.
+	if [ -n "$variable_name_with_context" ]; then
 		get_value "$variable_name_with_context"
 	fi
 }
