@@ -27,5 +27,9 @@ dosbox_postrun_legacy() {
 }
 
 package_get_path() {
+	if version_is_at_least '2.20' "$target_version"; then
+		warning_deprecated_function 'package_get_path' 'package_path'
+	fi
+
 	package_path "$1"
 }

@@ -1,6 +1,10 @@
 # Keep compatibility with 2.15 and older
 
 extract_data_from() {
+	if version_is_at_least '2.16' "$target_version"; then
+		warning_deprecated_function 'extract_data_from' 'archive_extraction'
+	fi
+
 	local archive_path_from_environment archive_path_from_parameters
 	archive_path_from_environment=$(archive_find_path "$ARCHIVE")
 	archive_path_from_parameters="$1"
