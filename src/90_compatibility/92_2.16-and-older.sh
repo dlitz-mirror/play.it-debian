@@ -1,6 +1,10 @@
 # Keep compatibility with 2.16 and older
 
 icons_get_from_package() {
+	if version_is_at_least '2.17' "$target_version"; then
+		warning_deprecated_function 'icons_get_from_package' 'icons_inclusion'
+	fi
+
 	local package package_path path_game_data
 	package=$(package_get_current)
 	package_path=$(package_path "$package")
@@ -10,6 +14,10 @@ icons_get_from_package() {
 }
 
 icons_get_from_workdir() {
+	if version_is_at_least '2.17' "$target_version"; then
+		warning_deprecated_function 'icons_get_from_workdir' 'icons_inclusion'
+	fi
+
 	local icon_source_directory
 	icon_source_directory="${PLAYIT_WORKDIR}/gamedata"
 	icons_get_from_legacy_path "$icon_source_directory" "$@"
@@ -64,6 +72,10 @@ icons_get_from_legacy_path() {
 }
 
 icons_move_to() {
+	if version_is_at_least '2.17' "$target_version"; then
+		warning_deprecated_function 'icons_move_to' 'icons_inclusion'
+	fi
+
 	if [ "$SKIP_ICONS" -eq 1 ]; then
 		return 0
 	fi
