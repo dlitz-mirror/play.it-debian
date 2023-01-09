@@ -104,7 +104,7 @@ icon_path() {
 	# Get the icon path from its identifier
 	local icon icon_path
 	icon="$1"
-	icon_path=$(get_context_specific_value 'archive' "$icon")
+	icon_path=$(context_value "$icon")
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$icon_path" ]; then

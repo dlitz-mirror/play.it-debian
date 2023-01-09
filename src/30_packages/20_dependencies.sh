@@ -7,7 +7,7 @@ dependencies_list_generic() {
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_generic
-	dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	dependencies_generic=$(context_value "${package}_DEPS")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
@@ -30,7 +30,7 @@ dependencies_list_native_libraries() {
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_libraries
-	dependencies_libraries=$(get_context_specific_value 'archive' "${package}_DEPENDENCIES_LIBRARIES")
+	dependencies_libraries=$(context_value "${package}_DEPENDENCIES_LIBRARIES")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.

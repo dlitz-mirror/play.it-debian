@@ -73,7 +73,7 @@ wine_prefix_wineprefix_environment() {
 	# Compute WINE prefix architecture
 	local package package_architecture wine_architecture
 	package=$(context_package)
-	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	package_architecture=$(context_value "${package}_ARCH")
 	case "$package_architecture" in
 		('32')
 			wine_architecture='win32'

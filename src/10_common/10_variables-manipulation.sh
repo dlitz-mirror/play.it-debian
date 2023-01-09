@@ -13,28 +13,6 @@ get_value() {
 	eval printf -- '%b' \"\$"${variable_name}"\"
 }
 
-# Print the context-specific value of a variable.
-# The context can be either the current archive or the current package.
-# If no context-specific value has been found, the default value is printed.
-# USAGE: context_specific_value archive|package $variable_name
-context_specific_value() {
-	# WARNING - Context limitation to either archive or package is ignored.
-	local variable_name
-	variable_name="$2"
-
-	local variable_name_with_context
-	variable_name_with_context=$(context_name "$variable_name")
-	## Only return a value if one is actually set.
-	if [ -n "$variable_name_with_context" ]; then
-		get_value "$variable_name_with_context"
-	fi
-}
-# Legacy alias for context_specific_value
-# This should move into a compatibility source file at the next feature release.
-get_context_specific_value() {
-	context_specific_value "$1" "$2"
-}
-
 # Check if the given variable is set.
 # Warning: a variable can be set but empty.
 # USAGE: variable_is_set $variable_name

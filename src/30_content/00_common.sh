@@ -6,7 +6,7 @@ content_path_default() {
 	# No error is thrown if there is no default content path set by the game script.
 	# The calling function should check that the path is not empty.
 
-	get_context_specific_value 'archive' 'CONTENT_PATH_DEFAULT'
+	context_value 'CONTENT_PATH_DEFAULT'
 }
 
 # Print the path to the game data in the archive for a given identifier
@@ -17,9 +17,9 @@ content_path() {
 	local content_id
 	content_id="$1"
 
-	# Use the archive-specific content path if available
+	# Use the context-specific content path if available
 	local content_path
-	content_path=$(get_context_specific_value 'archive' "CONTENT_${content_id}_PATH")
+	content_path=$(context_value "CONTENT_${content_id}_PATH")
 
 	# Try to parse legacy variables for old game scripts
 	if \
@@ -47,9 +47,9 @@ content_files() {
 	local content_id
 	content_id="$1"
 
-	# Use the archive-specific files list if available
+	# Use the context-specific files list if available
 	local content_files
-	content_files=$(get_context_specific_value 'archive' "CONTENT_${content_id}_FILES")
+	content_files=$(context_value "CONTENT_${content_id}_FILES")
 
 	# Try to parse legacy variables for old game scripts
 	if \

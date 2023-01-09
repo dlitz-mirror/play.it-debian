@@ -69,7 +69,7 @@ context_name() {
 
 	local context_archive_suffix context_package_suffix
 	context_archive_suffix=$(context_archive_suffix)
-	context_package_suffix=$(context_archive_suffix)
+	context_package_suffix=$(context_package_suffix)
 
 	# Try to find an archive-specific value for the given variable.
 	local context_name_archive
@@ -154,4 +154,27 @@ context_name_package() {
 	done
 
 	# If no value has been found for the given variable, an empty string is returned.
+}
+
+# Print the context-sensitive value for the given variable
+# Context priority order is the following one:
+# - archive-specific
+# - package-specific
+# - default
+# - empty
+# USAGE: context_value $variable_name
+# RETURN: the context-sensitive value of the given variable,
+#         or an empty string
+context_value() {
+	local variable_name
+	variable_name="$1"
+
+	local context_name
+	context_name=$(context_name "$variable_name")
+	# Return early if this variable has no set value.
+	if [ -z "$context_name" ]; then
+		return 0
+	fi
+
+	get_value "$context_name"
 }

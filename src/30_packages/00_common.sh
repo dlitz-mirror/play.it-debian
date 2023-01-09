@@ -189,7 +189,7 @@ package_get_id() {
 
 	# get package ID from its name
 	local package_id
-	package_id=$(get_context_specific_value 'archive' "${package}_ID")
+	package_id=$(context_value "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
@@ -237,7 +237,7 @@ package_get_architecture() {
 
 	# get package architecture from its name
 	local package_architecture
-	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	package_architecture=$(context_value "${package}_ARCH")
 
 	# if no package-specific architecture is set, fall back to "all"
 	if [ -z "$package_architecture" ]; then
@@ -321,7 +321,7 @@ package_get_description() {
 
 	# get package description from its name
 	local package_description
-	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
+	package_description=$(context_value "${package}_DESCRIPTION")
 
 	###
 	# TODO
@@ -372,7 +372,7 @@ package_get_provide() {
 
 	# get provided package ID from its name
 	local package_provide
-	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
+	package_provide=$(context_value "${package}_PROVIDE")
 
 	# if no package is provided, return early
 	if [ -z "$package_provide" ]; then

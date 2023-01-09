@@ -341,7 +341,7 @@ dependencies_archlinux_full_list() {
 
 		# Include Arch-specific dependencies
 		local dependencies_specific
-		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_ARCH")
+		dependencies_specific=$(context_value "${package}_DEPS_ARCH")
 		if [ -n "$dependencies_specific" ]; then
 			printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
 		fi
