@@ -600,3 +600,53 @@ error_variable_not_set() {
 	print_error
 	printf "$message" "$variable_name"
 }
+
+# Display a warning when a deprecated function is called.
+# USAGE: warning_deprecated_function $old_function $new_function
+warning_deprecated_function() {
+	local old_function new_function
+	old_function="$1"
+	new_function="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La fonction suivante est dépréciée : %s\n'
+			message="$message"'Cette nouvelle fonction devrait être utilisée à sa place : %s\n\n'
+		;;
+		('en'|*)
+			message='The following function is deprecated: %s\n'
+			message="$message"'This new function should be used instead: %s\n\n'
+		;;
+	esac
+
+	# Print the message on the standard error output,
+	# to avoid messing up the regular output of the function that triggered this warning.
+	print_warning > /dev/stderr
+	printf "$message" "$old_function" "$new_function" > /dev/stderr
+}
+
+# Display an error when an obsolete function is called.
+# USAGE: error_obsolete_function $old_function $new_function
+error_obsolete_function() {
+	local old_function new_function
+	old_function="$1"
+	new_function="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La fonction suivante est obsolète : %s\n'
+			message="$message"'Cette nouvelle fonction doit être utilisée à sa place : %s\n'
+		;;
+		('en'|*)
+			message='The following function is obsolete: %s\n'
+			message="$message"'This new function must be used instead: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$old_function" "$new_function"
+}
