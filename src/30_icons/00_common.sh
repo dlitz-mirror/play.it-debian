@@ -3,19 +3,23 @@
 # RETURN: a list of icons identifiers, one per line,
 #         or an empty string if no icon seems to be set
 icons_list_all() {
-	set | \
-		grep --regexp='^APP_.*_ICON=' | \
-		cut --delimiter='=' --fields=1
+	local applications_list
+	applications_list=$(applications_list)
+	# Return early if there is no application set for the current game
+	if [ -z "$applications_list" ]; then
+		return 0
+	fi
 
-	# Include icons specific to the current archive context
-	local archive_suffix
-	archive_suffix=$(context_archive_suffix)
-	while [ -n "$archive_suffix" ]; do
-		set | \
-			grep --regexp="^APP_.*_ICON${archive_suffix}=" | \
-			cut --delimiter='=' --fields=1
-		archive_suffix="${archive_suffix%_*}"
+	local icons_list application application_icons_list
+	icons_list=''
+	for application in $applications_list; do
+		application_icons_list=$(application_icons_list "$application")
+		icons_list="$icons_list $application_icons_list"
 	done
+
+	if [ -n "$icons_list" ]; then
+		printf '%s\n' $icons_list
+	fi
 }
 
 # Print the list of icon identifiers for the given application.
