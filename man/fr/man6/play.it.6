@@ -13,7 +13,7 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar chemin
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -icons Cm yes | Cm no | Cm auto
+.Op Fl -icons Cm yes | Cm no
 .Op Fl -overwrite
 .Op Fl -output-dir Ar chemin
 .Op Fl -debug Op Ar N
@@ -93,15 +93,13 @@ paquets .tbz2 (Gentoo)
 .It Cm egentoo
 paquets .tar accompagné d’un .ebuild (Gentoo)
 .El
-.It Fl -icons Cm yes | Cm no | Cm auto
+.It Fl -icons Cm yes | Cm no
 Détermine l’inclusion des icônes dans les paquets.
 .Bl -tag -width indent -compact
 .It Cm yes
 Inclue les icônes et échoue si une dépendance n’est pas satisfaite
 .It Cm no
-N’inclue pas les icônes même si toutes les dépendances sont satisfaites
-.It Cm auto
-N’inclue les icônes que si toutes les dépendances sont satisfaites
+N’inclue pas les icônes
 .El
 .It Fl -overwrite
 Remplace les paquets s’ils existent déjà.

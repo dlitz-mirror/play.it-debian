@@ -77,18 +77,12 @@ check_deps() {
 	local icons_requirements requirement
 	icons_requirements=$(icons_list_dependencies)
 	for requirement in $icons_requirements; do
-		if ! command -v "$requirement" >/dev/null 2>&1; then
-			case "$OPTION_ICONS" in
-				('yes')
-					error_icon_dependency_not_found "$requirement"
-					return 1
-				;;
-				('auto')
-					warning_icon_dependency_not_found "$requirement"
-					export SKIP_ICONS=1
-					break
-				;;
-			esac
+		if \
+			! command -v "$requirement" >/dev/null 2>&1 \
+			&& [ "$OPTION_ICONS" = 'yes' ]
+		then
+			error_dependency_not_found "$requirement"
+			return 1
 		fi
 	done
 }

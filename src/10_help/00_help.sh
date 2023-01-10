@@ -176,19 +176,17 @@ help_icons() {
 		('fr')
 			message='\tInclure ou non les icônes dans les paquets\n\n'
 			message="$message"'\t%s\tInclure les icônes et sʼarrêter si une dépendance nʼa pas pu être trouvée\n' # yes
-			message="$message"'\t%s\tNe pas inclure les icônes même si toutes les dépendances sont présentes\n'   # no
-			message="$message"'\t%s\tInclure les icônes seulement si toutes les dépendances sont présentes\n\n'   # auto
+			message="$message"'\t%s\tNe pas inclure les icônes\n\n'   # no
 		;;
 		('en'|*)
 			message='\tInclude icons in packages\n\n'
 			message="$message"'\t%s\tInclude icons and stop if a dependency wasnʼt found\n'      # yes
-			message="$message"'\t%s\tDonʼt include icons even if all dependencies are present\n' # no
-			message="$message"'\t%s\tOnly include icons if all dependencies are present\n\n'     # auto
+			message="$message"'\t%s\tDonʼt include icons\n\n' # no
 		;;
 	esac
-	printf -- '--icons=yes|no|auto\n'
-	printf -- '--icons yes|no|auto\n\n'
-	printf "$message" 'yes' 'no' 'auto'
+	printf -- '--icons=yes|no\n'
+	printf -- '--icons yes|no\n\n'
+	printf "$message" 'yes' 'no'
 }
 
 # display --overwrite option usage

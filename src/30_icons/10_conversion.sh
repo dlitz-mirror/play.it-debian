@@ -3,7 +3,7 @@
 # RETURNS: a list of required commands, one per line
 icons_list_dependencies() {
 	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	if [ "$SKIP_ICONS" -eq 1 ]; then
+	if [ "$OPTION_ICONS" = 'no' ]; then
 		return 0
 	fi
 
@@ -41,7 +41,7 @@ icons_list_dependencies() {
 # USAGE: icons_inclusion $application[…]
 icons_inclusion() {
 	# Do nothing if icons inclusion has been disabled
-	if [ "$SKIP_ICONS" -eq 1 ]; then
+	if [ "$OPTION_ICONS" = 'no' ]; then
 		return 0
 	fi
 

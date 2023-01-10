@@ -60,7 +60,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_PACKAGE='arch deb gentoo egentoo'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_ICONS='yes no auto'
+	ALLOWED_VALUES_ICONS='yes no'
 
 	# Set default values for common options
 
@@ -74,7 +74,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_OPTION_ICONS='yes'
 	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
 	export DEFAULT_NO_FREE_SPACE_CHECK=0
-	export DEFAULT_SKIP_ICONS=0
 	export DEFAULT_OVERWRITE_PACKAGES=0
 	export DEFAULT_DEBUG=0
 	export DEFAULT_MTREE=1
@@ -118,7 +117,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		'OPTION_OUTPUT_DIR' \
 		'OPTION_PREFIX' \
 		'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' \
 		'OVERWRITE_PACKAGES' \
 		'DEBUG' \
 		'MTREE'
@@ -138,11 +136,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		check_option_validity "$option"
 	done
 
-	if [ "$OPTION_ICONS" = 'no' ]; then
-		SKIP_ICONS=1
-		export SKIP_ICONS
-	fi
-
 	case "$DEBUG" in
 		([0-9]) ;;
 		(*)
@@ -154,7 +147,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# DEBUG: output all options value
 	for option in \
 		'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' \
 		'OVERWRITE_PACKAGES' \
 		'DEBUG' \
 		'MTREE'

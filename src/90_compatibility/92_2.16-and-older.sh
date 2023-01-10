@@ -76,7 +76,7 @@ icons_move_to() {
 		warning_deprecated_function 'icons_move_to' 'icons_inclusion'
 	fi
 
-	if [ "$SKIP_ICONS" -eq 1 ]; then
+	if [ "$OPTION_ICONS" = 'no' ]; then
 		return 0
 	fi
 
