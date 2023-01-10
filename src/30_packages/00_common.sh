@@ -126,39 +126,26 @@ package_format_guess() {
 	printf '%s' "$package_type"
 }
 
-# Print the identifier of the current package
-# USAGE: package_get_current
-# RETURN: a single package identifier
-package_get_current() {
-	local package
-	if variable_is_empty 'PKG'; then
-		# If $PKG is not explictly set,
-		# return the first package from the list of packages to build.
-		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
-	else
-		package="$PKG"
-	fi
-
-	printf '%s' "$package"
-}
-
-# get the full list of packages to generate
+# Print the full list of packages that should be built from the current archive
+# If no value is set to PACKAGES_LIST or some archive-specific variant of PACKAGES_LIST,
+# the following default value is returned: "PKG_MAIN".
 # USAGE: packages_get_list
-# RETURN: a list of package identifiers
+# RETURN: a list of package identifiers,
+#         separated by spaces or line breaks
 packages_get_list() {
-	local packages_list
-	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
+	# WARNING - most context-related functions can not be used here,
+	#           because context_package relies on the current function.
 
-	# If PACKAGES_LIST is not set,
-	# falls back on a list of a single "PKG_MAIN" package
-	if [ -z "$packages_list" ]; then
+	local packages_list packages_list_name
+	packages_list_name=$(context_name_archive 'PACKAGES_LIST')
+	if [ -n "$packages_list_name" ]; then
+		packages_list=$(get_value "$packages_list_name")
+	elif ! variable_is_empty 'PACKAGES_LIST'; then
+		# shellcheck disable=SC2153
+		packages_list="$PACKAGES_LIST"
+	else
 		packages_list='PKG_MAIN'
 	fi
-
-	###
-	# TODO
-	# Check that the string is a space-separated list of valid package identifiers
-	###
 
 	printf '%s' "$packages_list"
 }
@@ -202,7 +189,7 @@ package_get_id() {
 
 	# get package ID from its name
 	local package_id
-	package_id=$(get_context_specific_value 'archive' "${package}_ID")
+	package_id=$(context_value "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
@@ -250,7 +237,7 @@ package_get_architecture() {
 
 	# get package architecture from its name
 	local package_architecture
-	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	package_architecture=$(context_value "${package}_ARCH")
 
 	# if no package-specific architecture is set, fall back to "all"
 	if [ -z "$package_architecture" ]; then
@@ -334,7 +321,7 @@ package_get_description() {
 
 	# get package description from its name
 	local package_description
-	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
+	package_description=$(context_value "${package}_DESCRIPTION")
 
 	###
 	# TODO
@@ -385,7 +372,7 @@ package_get_provide() {
 
 	# get provided package ID from its name
 	local package_provide
-	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
+	package_provide=$(context_value "${package}_PROVIDE")
 
 	# if no package is provided, return early
 	if [ -z "$package_provide" ]; then

@@ -5,8 +5,9 @@ extract_data_from() {
 		warning_deprecated_function 'extract_data_from' 'archive_extraction'
 	fi
 
-	local archive_path_from_environment archive_path_from_parameters
-	archive_path_from_environment=$(archive_find_path "$ARCHIVE")
+	local archive archive_path_from_environment archive_path_from_parameters
+	archive=$(context_archive)
+	archive_path_from_environment=$(archive_find_path "$archive")
 	archive_path_from_parameters="$1"
 	local archive_path_from_environment_real archive_path_from_parameters_real
 	archive_path_from_environment_real=$(realpath --canonicalize-existing "$archive_path_from_environment")
@@ -31,6 +32,6 @@ extract_data_from() {
 		printf "$message" "$game_name" 'extract_data_from' "$PLAYIT_GAMES_BUG_TRACKER_URL"
 		return 1
 	fi
-	archive_extraction "$ARCHIVE"
+	archive_extraction "$archive"
 }
 

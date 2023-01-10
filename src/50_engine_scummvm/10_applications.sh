@@ -17,7 +17,7 @@ application_scummvm_scummid() {
 
 	# Get the application ScummVM id from its identifier
 	local application_scummid
-	application_scummid=$(get_value "${application}_SCUMMID")
+	application_scummid=$(context_value "${application}_SCUMMID")
 
 	# Check that the id fits the ScummVM id format
 	# Allowed formats are:

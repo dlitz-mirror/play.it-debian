@@ -6,7 +6,7 @@ organize_data() {
 	fi
 
 	local package
-	package=$(package_get_current)
+	package=$(context_package)
 	content_inclusion "$1" "$package" "$2"
 }
 

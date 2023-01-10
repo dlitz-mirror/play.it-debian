@@ -6,7 +6,7 @@ icons_get_from_package() {
 	fi
 
 	local package package_path path_game_data
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)
 	icon_source_directory="${package_path}${path_game_data}"
@@ -83,7 +83,7 @@ icons_move_to() {
 	local path_icons
 	path_icons=$(path_icons)
 	local source_package source_package_path source_directory
-	source_package=$(package_get_current)
+	source_package=$(context_package)
 	source_package_path=$(package_path "$source_package")
 	source_directory="${source_package_path}${path_icons}"
 	local destination_package destination_package_path destination_directory

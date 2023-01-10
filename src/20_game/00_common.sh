@@ -5,7 +5,7 @@
 game_id() {
 	# The game id might might be archive-specific
 	local game_id
-	game_id=$(get_context_specific_value 'archive' 'GAME_ID')
+	game_id=$(context_value 'GAME_ID')
 
 	# Check that the id fits the format restrictions
 	if ! printf '%s' "$game_id" | \
@@ -24,7 +24,7 @@ game_id() {
 game_name() {
 	# The game name might might be archive-specific
 	local game_name
-	game_name=$(get_context_specific_value 'archive' 'GAME_NAME')
+	game_name=$(context_value 'GAME_NAME')
 
 	printf '%s' "$game_name"
 }

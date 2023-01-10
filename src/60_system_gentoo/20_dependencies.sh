@@ -254,7 +254,7 @@ dependencies_gentoo_full_list() {
 
 	# Include Gentoo-specific dependencies
 	local dependencies_specific
-	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+	dependencies_specific=$(context_value "${package}_DEPS_GENTOO")
 	if [ -n "$dependencies_specific" ]; then
 		printf '%s\n' "$dependencies_specific"
 	fi

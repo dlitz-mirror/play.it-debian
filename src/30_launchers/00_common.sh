@@ -6,7 +6,7 @@ launcher_path() {
 	application="$1"
 
 	local package package_path path_binaries application_id target_file
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_binaries=$(path_binaries)
 	application_id=$(application_id "$application")
@@ -215,7 +215,7 @@ launcher_write_script() {
 	case "$application_type" in
 		('wine')
 			local package package_path path_binaries game_id winecfg_file
-			package=$(package_get_current)
+			package=$(context_package)
 			package_path=$(package_path "$package")
 			path_binaries=$(path_binaries)
 			game_id=$(game_id)
@@ -351,7 +351,7 @@ launcher_write_desktop() {
 		[ "$application" != 'APP_WINECFG' ]
 	then
 		local package package_path path_xdg_desktop game_id winecfg_desktop
-		package=$(package_get_current)
+		package=$(context_package)
 		package_path=$(package_path "$package")
 		path_xdg_desktop=$(path_xdg_desktop)
 		game_id=$(game_id)
@@ -406,7 +406,7 @@ launcher_desktop_filepath() {
 	local application application_id package package_path path_xdg_desktop
 	application="$1"
 	application_id=$(application_id "$application")
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_xdg_desktop=$(path_xdg_desktop)
 

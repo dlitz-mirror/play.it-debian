@@ -286,7 +286,7 @@ icons_include_from_directory() {
 
 		# Compute icon path
 		local package package_path icon_resolution
-		package=$(package_get_current)
+		package=$(context_package)
 		package_path=$(package_path "$package")
 		icon_resolution=$(icon_get_resolution "$source_file")
 		destination_directory="${package_path}${path_icons}/${icon_resolution}/apps"

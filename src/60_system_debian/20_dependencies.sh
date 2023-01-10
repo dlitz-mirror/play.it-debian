@@ -184,7 +184,7 @@ dependencies_debian_full_list() {
 
 		# Include Debian-specific dependencies
 		local dependencies_specific
-		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_DEB")
+		dependencies_specific=$(context_value "${package}_DEPS_DEB")
 		if [ -n "$dependencies_specific" ]; then
 			printf '%s\n' "$dependencies_specific" | sed 's/, \?/\n/g'
 		fi
