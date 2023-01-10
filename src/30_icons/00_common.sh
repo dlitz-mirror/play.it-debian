@@ -28,11 +28,7 @@ application_icons_list() {
 
 	# Use the value of APP_xxx_ICONS_LIST if it is set
 	local icons_list
-	if variable_is_empty "${application}_ICONS_LIST"; then
-		icons_list=''
-	else
-		icons_list=$(get_value "${application}_ICONS_LIST")
-	fi
+	icons_list=$(context_value "${application}_ICONS_LIST")
 	if [ -n "$icons_list" ]; then
 		printf '%s' "$icons_list"
 		return 0

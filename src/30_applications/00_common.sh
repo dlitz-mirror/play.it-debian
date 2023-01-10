@@ -241,12 +241,11 @@ application_id() {
 	application="$1"
 
 	# Get the application type from its identifier
+	# Fall back on the game id if no value is set
 	local application_id
-	if variable_is_empty "${application}_ID"; then
-		# If no id is explicitely set, fall back on the game id
+	application_id=$(context_value "${application}_ID")
+	if [ -z "$application_id" ]; then
 		application_id=$(game_id)
-	else
-		application_id=$(get_value "${application}_ID")
 	fi
 
 	# Check that the id fits the format restrictions
@@ -352,12 +351,11 @@ application_name() {
 	application="$1"
 
 	# Get the application name from its identifier
+	# Fall back on the game name if no value is set
 	local application_name
-	if variable_is_empty "${application}_NAME"; then
-		# If no name is explicitely set, fall back on the game name
+	application_name=$(context_value "${application}_NAME")
+	if [ -z "$application_name" ]; then
 		application_name=$(game_name)
-	else
-		application_name=$(get_value "${application}_NAME")
 	fi
 
 	printf '%s' "$application_name"
