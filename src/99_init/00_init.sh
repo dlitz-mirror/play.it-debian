@@ -20,6 +20,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set default values
 
 	PRINT_LIST_OF_PACKAGES=0
+	PRINT_REQUIREMENTS=0
 
 	# Set URLs for error messages
 
@@ -168,6 +169,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		archives_list=$(archives_return_list)
 		archive=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
 		packages_print_list "$archive"
+		exit 0
+	fi
+
+	# If called with --list-requirements,
+	# print the list of commands required to run the current game script
+	# then exit early.
+
+	if [ $PRINT_REQUIREMENTS -eq 1 ]; then
+		# shellcheck disable=SC2046
+		ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list)) >/dev/null
+		requirements_list
 		exit 0
 	fi
 
