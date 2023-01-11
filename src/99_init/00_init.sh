@@ -161,14 +161,18 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		true
 	done
 
+	# Find the main archive
+
+	archives_list=$(archives_return_list)
+	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
+	export ARCHIVE
+
 	# If called with --list-packages,
 	# print the list of packages that would be generated from the given archive
 	# then exit early.
 
 	if [ $PRINT_LIST_OF_PACKAGES -eq 1 ]; then
-		archives_list=$(archives_return_list)
-		archive=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
-		packages_print_list "$archive"
+		packages_print_list "$ARCHIVE"
 		exit 0
 	fi
 
@@ -177,8 +181,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# then exit early.
 
 	if [ $PRINT_REQUIREMENTS -eq 1 ]; then
-		# shellcheck disable=SC2046
-		ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list)) >/dev/null
 		requirements_list
 		exit 0
 	fi
@@ -196,21 +198,19 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	export OPTION_OUTPUT_DIR
 
-	# Set main archive
-
-	# shellcheck disable=SC2046
-	archive_initialize_required 'SOURCE_ARCHIVE' $(archives_return_list)
-	# shellcheck disable=SC2046
-	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
-	export ARCHIVE
-
-	# Set path to working directory
-	set_temp_directories
-
 	# Check the presence of required tools
 
 	check_deps
 	archive_dependencies_check "$ARCHIVE"
+
+	# Set the main archive properties,
+	# and check its integrity.
+
+	archive_initialize_required 'SOURCE_ARCHIVE' $archives_list
+
+	# Set path to working directory
+
+	set_temp_directories
 
 	# Legacy - Export install paths as global variables.
 	# Pre-2.19 game scripts might rely on the availability of these global variables.
