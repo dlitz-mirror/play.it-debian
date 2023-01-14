@@ -139,7 +139,9 @@ application_type() {
 		if [ -n "$(unity3d_name)" ]; then
 			application_type='unity3d'
 		else
-			application_type=$(application_type_guess_from_file "$application")
+			if ! variable_is_empty 'PLAYIT_WORKDIR'; then
+				application_type=$(application_type_guess_from_file "$application")
+			fi
 		fi
 	fi
 

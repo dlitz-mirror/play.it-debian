@@ -39,6 +39,7 @@ help() {
 	help_skipfreespacecheck
 	help_configfile
 	help_listpackages
+	help_listrequirements
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -369,5 +370,22 @@ help_listpackages() {
 			;;
 	esac
 	printf -- '--list-packages\n\n'
+	printf "$message"
+}
+
+# Display --list-requirements option usage
+# USAGE: help_listrequirements
+help_listrequirements() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des commandes nécessaire à la construction de paquets à partir de lʼarchive donnée.\n\n'
+		;;
+		('en'|*)
+			message='\tPrint the list of commands required to build packages from the given archive.\n\n'
+		;;
+	esac
+	printf -- '--list-requirements\n\n'
 	printf "$message"
 }

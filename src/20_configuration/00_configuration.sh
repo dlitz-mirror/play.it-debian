@@ -154,6 +154,10 @@ parse_arguments() {
 				PRINT_LIST_OF_PACKAGES=1
 				export PRINT_LIST_OF_PACKAGES
 			;;
+			('--list-requirements')
+				PRINT_REQUIREMENTS=1
+				export PRINT_REQUIREMENTS
+			;;
 			('--'*)
 				error_option_unknown "$1"
 				return 1

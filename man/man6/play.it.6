@@ -21,6 +21,7 @@
 .Op Fl -show-game-script
 .Op Fl -config-file Ar path
 .Op Fl -list-packages
+.Op Fl -list-requirements
 .Sh DESCRIPTION
 .Nm
 is a free software building native packages from installers for Windows or
@@ -130,6 +131,8 @@ will be passed to
 as if they were given on the command-line.
 .It Fl -list-packages
 Print the list of packages to build.
+.It Fl -list-requirements
+Print the list of commands required to build packages from the given archive.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width DS
