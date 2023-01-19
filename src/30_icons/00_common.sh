@@ -111,10 +111,6 @@ icon_path() {
 		local application application_type
 		application=$(icon_application "$icon")
 		application_type=$(application_type "$application")
-		if [ -z "$application_type" ]; then
-			error_no_application_type "$application"
-			return 1
-		fi
 		case "$application_type" in
 			('unity3d')
 				icon_path=$(icon_unity3d_path "$icon")
