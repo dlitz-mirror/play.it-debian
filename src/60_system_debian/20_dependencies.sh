@@ -191,5 +191,8 @@ dependencies_debian_full_list() {
 
 		# Include dependencies on native libraries
 		dependencies_list_native_libraries_packages "$package"
+
+		# Include dependencies on Mono libraries
+		dependencies_list_mono_libraries_packages "$package"
 	} | sort --unique
 }
