@@ -1,3 +1,7 @@
+2.20.3
+
+  * Fix usage of pkg_set_deps_gentoo.
+
 2.20.2
 
   * Display an error when a DOSBox image disk was not found.
