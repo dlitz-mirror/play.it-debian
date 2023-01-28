@@ -1,13 +1,12 @@
 # Gentoo - Set list of generic dependencies
-# USAGE: pkg_set_deps_gentoo $dep[…]
+# USAGE: pkg_set_deps_gentoo $package $dep[…]
 pkg_set_deps_gentoo() {
-	# $pkg is inherited from the calling function.
-	# It should be passed as a mandatory argument to this function instead.
 	local package
-	package="$pkg"
+	package="$1"
+	shift
 
 	local package_architecture architecture_suffix architecture_suffix_use
-	package_architecture=$(package_get_architecture "$package")
+	package_architecture="$(package_get_architecture "$package")"
 	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
@@ -40,7 +39,7 @@ pkg_set_deps_gentoo() {
 			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
-				if [ "$(package_get_architecture "$package")" = '32' ]; then
+				if [ "$package_architecture" = '32' ]; then
 					pkg_dep="$pkg_dep amd64? ( sys-libs/glibc[multilib] )"
 				fi
 			;;
@@ -121,9 +120,9 @@ pkg_set_deps_gentoo() {
 				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
-				case "$(package_get_architecture "$package")" in
-					('32') pkg_set_deps_gentoo 'wine32' ;;
-					('64') pkg_set_deps_gentoo 'wine64' ;;
+				case "$package_architecture" in
+					('32') pkg_set_deps_gentoo "$package" 'wine32' ;;
+					('64') pkg_set_deps_gentoo "$package" 'wine64' ;;
 				esac
 			;;
 			('wine32')
@@ -133,9 +132,9 @@ pkg_set_deps_gentoo() {
 				pkg_dep='virtual/wine[abi_x86_64]'
 			;;
 			('wine-staging')
-				case "$(package_get_architecture "$package")" in
-					('32') pkg_set_deps_gentoo 'wine32-staging' ;;
-					('64') pkg_set_deps_gentoo 'wine64-staging' ;;
+				case "$package_architecture" in
+					('32') pkg_set_deps_gentoo "$package" 'wine32-staging' ;;
+					('64') pkg_set_deps_gentoo "$package" 'wine64-staging' ;;
 				esac
 			;;
 			('wine32-staging')
@@ -248,7 +247,7 @@ dependencies_gentoo_full_list() {
 			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
 			# we prevent it from leaking by setting it to an empty value.
 			pkg_deps=''
-			pkg_set_deps_gentoo $dependency_generic
+			pkg_set_deps_gentoo $package $dependency_generic
 			printf '%s\n' "$pkg_deps"
 		done <<- EOL
 		$(dependencies_list_generic "$package")
