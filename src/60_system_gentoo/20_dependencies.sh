@@ -240,26 +240,26 @@ dependencies_gentoo_full_list() {
 	local package
 	package="$1"
 
+	# Include generic dependencies
+	local dependency_generic
+	while read -r dependency_generic; do
+		# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking by setting it to an empty value.
+		pkg_deps=''
+		pkg_set_deps_gentoo $package $dependency_generic
+		printf '%s\n' "$pkg_deps"
+	done <<- EOL
+	$(dependencies_list_generic "$package")
+	EOL
+
+	# Include Gentoo-specific dependencies
+	local dependencies_specific
+	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+	if [ -n "$dependencies_specific" ]; then
+		printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
+	fi
+
 	{
-		# Include generic dependencies
-		local dependency_generic
-		while read -r dependency_generic; do
-			# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
-			# we prevent it from leaking by setting it to an empty value.
-			pkg_deps=''
-			pkg_set_deps_gentoo $package $dependency_generic
-			printf '%s\n' "$pkg_deps"
-		done <<- EOL
-		$(dependencies_list_generic "$package")
-		EOL
-
-		# Include Gentoo-specific dependencies
-		local dependencies_specific
-		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
-		if [ -n "$dependencies_specific" ]; then
-			printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
-		fi
-
 		# Include dependencies on native libraries
 		dependencies_list_native_libraries_packages "$package"
 
