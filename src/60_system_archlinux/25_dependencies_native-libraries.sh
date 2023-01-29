@@ -1,3 +1,41 @@
+# Arch Linux - Print the package names providing the given native libraries
+# USAGE: archlinux_dependencies_providing_native_libraries $library[…]
+# RETURN: a list of Arch Linux package names,
+#         one per line
+archlinux_dependencies_providing_native_libraries() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_arch "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
+# Arch Linux - Print the package names providing the given native libraries in a 32-bit build
+# USAGE: archlinux_dependencies_providing_native_libraries_32bit $library[…]
+# RETURN: a list of Arch Linux package names,
+#         one per line
+archlinux_dependencies_providing_native_libraries_32bit() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_arch32 "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Arch Linux - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_arch $library
 dependency_package_providing_library_arch() {

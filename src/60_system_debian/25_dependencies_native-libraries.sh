@@ -1,3 +1,22 @@
+# Debian - Print the package names providing the given native libraries
+# USAGE: debian_dependencies_providing_native_libraries $library[…]
+# RETURN: a list of Debian package names,
+#         one per line
+debian_dependencies_providing_native_libraries() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_deb "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Debian - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_deb $library
 dependency_package_providing_library_deb() {

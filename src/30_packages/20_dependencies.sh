@@ -45,40 +45,41 @@ dependencies_list_native_libraries() {
 # RETURNS: a list of native package names,
 #          one per line
 dependencies_list_native_libraries_packages() {
-	local package package_architecture
+	local package
 	package="$1"
-	package_architecture=$(package_get_architecture "$package")
 
-	local required_native_libraries library
+	local required_native_libraries
 	required_native_libraries=$(dependencies_list_native_libraries "$package")
-	for library in $required_native_libraries; do
-		case "$OPTION_PACKAGE" in
-			('arch')
-				case "$package_architecture" in
-					('32')
-						dependency_package_providing_library_arch32 "$library"
-					;;
-					(*)
-						dependency_package_providing_library_arch "$library"
-					;;
-				esac
-			;;
-			('deb')
-				dependency_package_providing_library_deb "$library"
-			;;
-			('gentoo'|'egentoo')
-				case "$package_architecture" in
-					('32')
-						dependency_package_providing_library_gentoo32 "$library" "$package"
-					;;
-					(*)
-						dependency_package_providing_library_gentoo "$library" "$package"
-					;;
-				esac
-			;;
-		esac
-		printf '\n'
-	done | sort --unique
+
+	case "$OPTION_PACKAGE" in
+		('arch')
+			local package_architecture
+			package_architecture=$(package_get_architecture "$package")
+			case "$package_architecture" in
+				('32')
+					archlinux_dependencies_providing_native_libraries_32bit $required_native_libraries
+				;;
+				(*)
+					archlinux_dependencies_providing_native_libraries $required_native_libraries
+				;;
+			esac
+		;;
+		('deb')
+			debian_dependencies_providing_native_libraries $required_native_libraries
+		;;
+		('gentoo'|'egentoo')
+			local package_architecture
+			package_architecture=$(package_get_architecture "$package")
+			case "$package_architecture" in
+				('32')
+					gentoo_dependencies_providing_native_libraries_32bit $required_native_libraries
+				;;
+				(*)
+					gentoo_dependencies_providing_native_libraries $required_native_libraries
+				;;
+			esac
+		;;
+	esac
 }
 
 # Print the list of Mono libraries required by a given package
