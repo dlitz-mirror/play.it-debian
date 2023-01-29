@@ -1,3 +1,30 @@
+2.21.1
+
+  * Fix Make rule used to build the library.
+  * Run syntax checks from the Makefile.
+  * Add ability to build release tarballs from Make.
+  * Add support for dependencies on more native libraries:
+    - libaudio.so.2
+    - libcrypt.so.1
+    - libFAudio.so.0
+    - libgomp.so.1
+    - liblcms2.so.2
+    - libpixman-1.so.0
+    - libSDL_kitchensink.so.1
+    - libSDL_sound-1.0.so.1
+    - libsigc-2.0.so.0
+    - libvorbisenc.so.2
+    - libX11-xcb.so.1
+    - libxcb.so.1
+    - libxcb-randr.so.0
+  * Add support for dependencies on more Mono libraries:
+    - OpenTK.dll
+    - OpenTK.Compatibility.dll
+    - OpenTK.GLControl.dll
+  * Prevent non-fatal errors when listing package dependencies.
+  * Fix the error displayed when no supported archive is found.
+  * Add support for "image/x-xpixmap" MIME type for icons.
+
 2.21.0
 
   * Deprecation notices:
