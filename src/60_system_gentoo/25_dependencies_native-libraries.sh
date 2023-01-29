@@ -61,6 +61,9 @@ dependency_package_providing_library_gentoo() {
 		('libatk-1.0.so.0')
 			package_name='dev-libs/atk'
 		;;
+		('libaudio.so.2')
+			package_name='media-libs/nas'
+		;;
 		('libavcodec.so.58')
 			package_name='media-video/ffmpeg'
 		;;
@@ -79,8 +82,14 @@ dependency_package_providing_library_gentoo() {
 		('libcairo.so.2')
 			package_name='x11-libs/cairo'
 		;;
+		('liblcms2.so.2')
+			package_name='media-libs/lcms'
+		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs'
+		;;
+		('libcrypt.so.1')
+			package_name='sys-libs/libxcrypt'
 		;;
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl'
@@ -104,6 +113,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libexpat.so.1')
 			package_name='dev-libs/expat'
+		;;
+		('libFAudio.so.0')
+			package_name='app-emulation/faudio'
 		;;
 		('libfontconfig.so.1')
 			package_name='media-libs/fontconfig'
@@ -155,6 +167,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2'
+		;;
+		('libgomp.so.1')
+			package_name='sys-devel/gcc'
 		;;
 		('libgpg-error.so.0')
 			package_name='dev-libs/libgpg-error'
@@ -237,6 +252,9 @@ dependency_package_providing_library_gentoo() {
 		('libphysfs.so.1')
 			package_name='dev-games/physfs'
 		;;
+		('libpixman-1.so.0')
+			package_name='x11-libs/pixman'
+		;;
 		('libplc4.so')
 			package_name='dev-libs/nspr'
 		;;
@@ -270,8 +288,15 @@ dependency_package_providing_library_gentoo() {
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl'
 		;;
+		('libSDL_kitchensink.so.1')
+			# This library is not provided for Gentonn
+			unset package_name
+		;;
 		('libSDL_mixer-1.2.so.0')
 			package_name='media-libs/sdl-mixer'
+		;;
+		('libSDL_sound-1.0.so.1')
+			package_name='media-libs/sdl-sound'
 		;;
 		('libSDL_ttf-2.0.so.0')
 			package_name='media-libs/sdl-ttf'
@@ -290,6 +315,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libsecret-1.so.0')
 			package_name='app-crypt/libsecret'
+		;;
+		('libsigc-2.0.so.0')
+			package_name='dev-libs/libsigc++'
 		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM'
@@ -342,6 +370,9 @@ dependency_package_providing_library_gentoo() {
 		('libvorbis.so.0')
 			package_name='media-libs/libvorbis'
 		;;
+		('libvorbisenc.so.2')
+			package_name='media-libs/libvorbis'
+		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis'
 		;;
@@ -350,6 +381,15 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libX11.so.6')
 			package_name='x11-libs/libX11'
+		;;
+		('libX11-xcb.so.1')
+			package_name='x11-libs/libX11'
+		;;
+		('libxcb.so.1')
+			package_name='x11-libs/libxcb'
+		;;
+		('libxcb-randr.so.0')
+			package_name='x11-libs/libxcb'
 		;;
 		('libXcomposite.so.1')
 			package_name='x11-libs/libXcomposite'
@@ -443,6 +483,9 @@ dependency_package_providing_library_gentoo32() {
 		('libatk-1.0.so.0')
 			package_name='dev-libs/atk[abi_x86_32]'
 		;;
+		('libaudio.so.2')
+			package_name='media-libs/nas[abi_x86_32]'
+		;;
 		('libavcodec.so.58')
 			package_name='media-video/ffmpeg[abi_x86_32]'
 		;;
@@ -461,8 +504,14 @@ dependency_package_providing_library_gentoo32() {
 		('libcairo.so.2')
 			package_name='x11-libs/cairo[abi_x86_32]'
 		;;
+		('liblcms2.so.2')
+			package_name='media-libs/lcms[abi_x86_32]'
+		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs[abi_x86_32]'
+		;;
+		('libcrypt.so.1')
+			package_name='sys-libs/libxcrypt[abi_x86_32]'
 		;;
 		('libcrypto.so.1.1')
 			package_name='dev-libs/openssl[abi_x86_32]'
@@ -486,6 +535,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libexpat.so.1')
 			package_name='dev-libs/expat[abi_x86_32]'
+		;;
+		('libFAudio.so.0')
+			package_name='app-emulation/faudio[abi_x86_32]'
 		;;
 		('libfontconfig.so.1')
 			package_name='media-libs/fontconfig[abi_x86_32]'
@@ -537,6 +589,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='dev-libs/glib:2[abi_x86_32]'
+		;;
+		('libgomp.so.1')
+			package_name='sys-devel/gcc[abi_x86_32]'
 		;;
 		('libgpg-error.so.0')
 			package_name='dev-libs/libgpg-error[abi_x86_32]'
@@ -619,6 +674,9 @@ dependency_package_providing_library_gentoo32() {
 		('libphysfs.so.1')
 			package_name='dev-games/physfs[abi_x86_32]'
 		;;
+		('libpixman-1.so.0')
+			package_name='x11-libs/pixman[abi_x86_32]'
+		;;
 		('libplc4.so')
 			package_name='dev-libs/nspr[abi_x86_32]'
 		;;
@@ -652,8 +710,15 @@ dependency_package_providing_library_gentoo32() {
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl[abi_x86_32]'
 		;;
+		('libSDL_kitchensink.so.1')
+			# This library is not provided for Gentoo
+			unset package_name
+		;;
 		('libSDL_mixer-1.2.so.0')
 			package_name='media-libs/sdl-mixer[abi_x86_32]'
+		;;
+		('libSDL_sound-1.0.so.1')
+			package_name='media-libs/sdl-sound[abi_x86_32]'
 		;;
 		('libSDL_ttf-2.0.so.0')
 			package_name='media-libs/sdl-ttf[abi_x86_32]'
@@ -672,6 +737,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libsecret-1.so.0')
 			package_name='app-crypt/libsecret[abi_x86_32]'
+		;;
+		('libsigc-2.0.so.0')
+			package_name='dev-libs/libsigc++[abi_x86_32]'
 		;;
 		('libSM.so.6')
 			package_name='x11-libs/libSM[abi_x86_32]'
@@ -724,6 +792,9 @@ dependency_package_providing_library_gentoo32() {
 		('libvorbis.so.0')
 			package_name='media-libs/libvorbis[abi_x86_32]'
 		;;
+		('libvorbisenc.so.2')
+			package_name='media-libs/libvorbis[abi_x86_32]'
+		;;
 		('libvorbisfile.so.3')
 			package_name='media-libs/libvorbis[abi_x86_32]'
 		;;
@@ -733,8 +804,17 @@ dependency_package_providing_library_gentoo32() {
 		('libX11.so.6')
 			package_name='x11-libs/libX11[abi_x86_32]'
 		;;
+		('libX11-xcb.so.1')
+			package_name='x11-libs/libX11[abi_x86_32]'
+		;;
+		('libxcb.so.1')
+			package_name='x11-libs/libxcb[abi_x86_32]'
+		;;
+		('libxcb-randr.so.0')
+			package_name='x11-libs/libxcb[abi_x86_32]'
+		;;
 		('libXcomposite.so.1')
-			package_name='x11-libs/libXcomposite[abi_x86_32'
+			package_name='x11-libs/libXcomposite[abi_x86_32]'
 		;;
 		('libXcursor.so.1')
 			package_name='x11-libs/libXcursor[abi_x86_32]'
