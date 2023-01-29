@@ -4,10 +4,17 @@
 # RETURN: a list of Debian package names,
 #         one per line
 debian_dependencies_providing_mono_libraries() {
-	local library
+	local library packages_list package
+	packages_list=''
 	for library in "$@"; do
-		debian_dependency_providing_mono_library "$library"
-	done | \
+		package=$(debian_dependency_providing_mono_library "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
 		sort --unique
 }
 

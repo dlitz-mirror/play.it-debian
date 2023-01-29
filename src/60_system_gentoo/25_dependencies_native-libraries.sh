@@ -1,3 +1,41 @@
+# Gentoo - Print the package names providing the given native libraries
+# USAGE: gentoo_dependencies_providing_native_libraries $library[…]
+# RETURN: a list of Gentoo package names,
+#         one per line
+gentoo_dependencies_providing_native_libraries() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_gentoo "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
+# Gentoo - Print the package names providing the given native libraries in a 32-bit build
+# USAGE: gentoo_dependencies_providing_native_libraries_32bit $library[…]
+# RETURN: a list of Gentoo package names,
+#         one per line
+gentoo_dependencies_providing_native_libraries_32bit() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_gentoo32 "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Gentoo - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_gentoo $library $package
 dependency_package_providing_library_gentoo() {
