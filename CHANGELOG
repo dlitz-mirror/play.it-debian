@@ -1,3 +1,76 @@
+2.21.0
+
+  * Deprecation notices:
+    * Support is dropped for --icons auto. The only valid values are --icon yes|no, defaulting to --icons yes.
+    * Support for application type "native_no-prefix" is dropped.
+    * For game scripts targeting ./play.it ≥ 2.21, the main archives identifiers must start with "ARCHIVE_BASE". Game scripts targeting an older version can still use the prefix "ARCHIVE" instead.
+    * The following functions are deprecated, but still available through compatibility aliases:
+      - context_specific_value
+      - get_context_specific_value
+      - package_get_current
+    * The following old functions are dropped, with no compatibility alias:
+      - get_context_suffix_archive
+      - get_context_suffix_package
+      - context_specific_name
+      - test_var
+    * Up to ./play.it 2.20, all of these content identifiers were tested when calling "content_inclusion_default" (or "prepare_package_layout" for older game scripts):
+      - LIBS_xxx
+      - LIBS0_xxx
+      - (…)
+      - LIBS9_xxx
+      - GAME_xxx
+      - GAME0_xxx
+      - (…)
+      - GAME9_xxx
+      - DOC_xxx
+      - DOC0_xxx
+      - (…)
+      - DOC9_xxx
+      Starting with ./play.it 2.21, the search stops at the first unset numbered identifier. So if "GAME1_xxx" is not set, "GAME2_xxx" up to "GAME9_xxx" will be skipped.
+      No legacy behaviour is provided for old game scripts.
+    * For WINE games, winecfg launchers are no longer generated.
+      To spawn winecfg using the prefix for a given name, you can run the following command:
+      WINEPREFIX=~/.cache/play.it/wine/${game_id} winecfg
+
+  * New options:
+    * --list-packages: List the packages that would be built from the given archive.
+    * --list-requirements: List the game script requirements for the given archive.
+
+  * Improvements of file type detection based on MIME:
+    * Exclude charset information from "file" output.
+    * Add support for "application/x-sharedlib" MIME type.
+    * Improve detection of PE32 executables.
+
+  * Reworked context system
+    * The following commonly used variables now have context support:
+      - APP_xxx_ID
+      - APP_xxx_NAME
+      - APP_xxx_ICONS_LIST
+      - APP_xxx_SCUMMID
+    * New functions are provided:
+      - context_value: Print the context-sensitive value for the given variable.
+      - context_name: Print the name of the variable containing the context-specific value of the given variable.
+      - context_archive: Print the identifier of the current archive.
+      - context_package: Print the identifier of the current package.
+
+  * Changes related to launchers:
+    * Provide a new function printing the path to a launcher script: launcher_path.
+
+  * Changes related to icons:
+    * Rework "icons_list_all" to include implicit icons (like the ones from Unity3D or WINE games).
+
+  * Changes specific to Mono games:
+    * Dependencies on a list of Mono libraries can be declared with a new dedicated variable: PKG_xxx_DEPENDENCIES_MONO_LIBRARIES.
+
+  * Changes specific to Gentoo:
+    * Use PKG_xxx_DEPS_GENTOO with no transformation, allowing to pass more complex dependency constraints.
+
+  * Other changes:
+    * Provide new warnings and errors to be used when deprecated/obsolete functions are called:
+      - warning_deprecated_function
+      - error_obsolete_function
+    * If EXPANSION_NAME is set, it is automatically included in the output of game_name.
+
 2.20.3
 
   * Fix usage of pkg_set_deps_gentoo.

@@ -184,12 +184,15 @@ dependencies_debian_full_list() {
 
 		# Include Debian-specific dependencies
 		local dependencies_specific
-		dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_DEB")
+		dependencies_specific=$(context_value "${package}_DEPS_DEB")
 		if [ -n "$dependencies_specific" ]; then
 			printf '%s\n' "$dependencies_specific" | sed 's/, \?/\n/g'
 		fi
 
 		# Include dependencies on native libraries
 		dependencies_list_native_libraries_packages "$package"
+
+		# Include dependencies on Mono libraries
+		dependencies_list_mono_libraries_packages "$package"
 	} | sort --unique
 }

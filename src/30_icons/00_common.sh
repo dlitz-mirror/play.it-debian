@@ -3,19 +3,23 @@
 # RETURN: a list of icons identifiers, one per line,
 #         or an empty string if no icon seems to be set
 icons_list_all() {
-	set | \
-		grep --regexp='^APP_.*_ICON=' | \
-		cut --delimiter='=' --fields=1
+	local applications_list
+	applications_list=$(applications_list)
+	# Return early if there is no application set for the current game
+	if [ -z "$applications_list" ]; then
+		return 0
+	fi
 
-	# Include icons specific to the current archive context
-	local archive_suffix
-	archive_suffix="_$(get_context_suffix_archive)"
-	while [ -n "$archive_suffix" ]; do
-		set | \
-			grep --regexp="^APP_.*_ICON${archive_suffix}=" | \
-			cut --delimiter='=' --fields=1
-		archive_suffix="${archive_suffix%_*}"
+	local icons_list application application_icons_list
+	icons_list=''
+	for application in $applications_list; do
+		application_icons_list=$(application_icons_list "$application")
+		icons_list="$icons_list $application_icons_list"
 	done
+
+	if [ -n "$icons_list" ]; then
+		printf '%s\n' $icons_list
+	fi
 }
 
 # Print the list of icon identifiers for the given application.
@@ -28,24 +32,15 @@ application_icons_list() {
 
 	# Use the value of APP_xxx_ICONS_LIST if it is set
 	local icons_list
-	if variable_is_empty "${application}_ICONS_LIST"; then
-		icons_list=''
-	else
-		icons_list=$(get_value "${application}_ICONS_LIST")
-	fi
+	icons_list=$(context_value "${application}_ICONS_LIST")
 	if [ -n "$icons_list" ]; then
 		printf '%s' "$icons_list"
 		return 0
 	fi
 
 	# Fall back on the default value of a single APP_xxx_ICON icon
-	local default_icon default_icon_identifier
-	default_icon_identifier=$(context_specific_name 'archive' "${application}_ICON")
-	if variable_is_empty "$default_icon_identifier"; then
-		default_icon=''
-	else
-		default_icon="$default_icon_identifier"
-	fi
+	local default_icon
+	default_icon=$(context_name "${application}_ICON")
 	## If a value is explicitly set for APP_xxx_ICON,
 	## we assume this is the only icon for the current application.
 	if [ -n "$default_icon" ]; then
@@ -109,17 +104,13 @@ icon_path() {
 	# Get the icon path from its identifier
 	local icon icon_path
 	icon="$1"
-	icon_path=$(get_context_specific_value 'archive' "$icon")
+	icon_path=$(context_value "$icon")
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$icon_path" ]; then
 		local application application_type
 		application=$(icon_application "$icon")
 		application_type=$(application_type "$application")
-		if [ -z "$application_type" ]; then
-			error_no_application_type "$application"
-			return 1
-		fi
 		case "$application_type" in
 			('unity3d')
 				icon_path=$(icon_unity3d_path "$icon")

@@ -26,8 +26,13 @@ content_inclusion_default_libraries() {
 	target_directory=$(path_libraries)
 
 	content_inclusion "LIBS_${package_suffix}" "$package" "$target_directory"
-	local index
+	local index files_list
 	for index in $(seq 0 9); do
+		# Stop looping at the first unset files list
+		files_list=$(context_name "CONTENT_LIBS${index}_${package_suffix}_FILES")
+		if [ -z "$files_list" ]; then
+			break
+		fi
 		content_inclusion "LIBS${index}_${package_suffix}" "$package" "$target_directory"
 	done
 }
@@ -45,8 +50,13 @@ content_inclusion_default_game_data() {
 	target_directory=$(path_game_data)
 
 	content_inclusion "GAME_${package_suffix}" "$package" "$target_directory"
-	local index
+	local index files_list
 	for index in $(seq 0 9); do
+		# Stop looping at the first unset files list
+		files_list=$(context_name "CONTENT_GAME${index}_${package_suffix}_FILES")
+		if [ -z "$files_list" ]; then
+			break
+		fi
 		content_inclusion "GAME${index}_${package_suffix}" "$package" "$target_directory"
 	done
 }
@@ -64,8 +74,13 @@ content_inclusion_default_documentation() {
 	target_directory=$(path_documentation)
 
 	content_inclusion "DOC_${package_suffix}" "$package" "$target_directory"
-	local index
+	local index files_list
 	for index in $(seq 0 9); do
+		# Stop looping at the first unset files list
+		files_list=$(context_name "CONTENT_DOC${index}_${package_suffix}_FILES")
+		if [ -z "$files_list" ]; then
+			break
+		fi
 		content_inclusion "DOC${index}_${package_suffix}" "$package" "$target_directory"
 	done
 }

@@ -3,12 +3,12 @@
 # RETURN: a space-separated list of application identifiers
 applications_list() {
 	# Return APPLICATIONS_LIST value, if it is explicitly set.
-	# Archive-specific values are supported.
+	# Context-specific values are supported.
 	local applications_list
 	if variable_is_empty 'APPLICATIONS_LIST'; then
 		applications_list=''
 	else
-		applications_list=$(get_context_specific_value 'archive' 'APPLICATIONS_LIST')
+		applications_list=$(context_value 'APPLICATIONS_LIST')
 	fi
 	if [ -n "$applications_list" ]; then
 		printf '%s' "$applications_list"
@@ -124,7 +124,6 @@ application_prefix_type() {
 #         - java
 #         - mono
 #         - native
-#         - native_no-prefix (deprecated)
 #         - renpy
 #         - residualvm
 #         - scummvm
@@ -133,14 +132,16 @@ application_type() {
 	# Get the application type from its identifier
 	local application application_type
 	application="$1"
-	application_type=$(get_context_specific_value 'package' "${application}_TYPE")
+	application_type=$(context_value "${application}_TYPE")
 
 	# If no type has been explicitely set, try to guess one
 	if [ -z "$application_type" ]; then
 		if [ -n "$(unity3d_name)" ]; then
 			application_type='unity3d'
 		else
-			application_type=$(application_type_guess_from_file "$application")
+			if ! variable_is_empty 'PLAYIT_WORKDIR'; then
+				application_type=$(application_type_guess_from_file "$application")
+			fi
 		fi
 	fi
 
@@ -164,9 +165,6 @@ application_type() {
 		)
 			## This is a supported type, no error to throw.
 		;;
-		('native_no-prefix')
-			## WARNING - This archive type is deprecated.
-		;;
 		(*)
 			error_unknown_application_type "$application_type"
 			return 1
@@ -186,9 +184,9 @@ application_type_guess_from_file() {
 	application="$1"
 	## application_exe can not be used here, as it relies on application_type.
 	## This could lead to a loop where application_type relies on itself.
-	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
+	application_exe=$(context_value "${application}_EXE")
 	if [ -z "$application_exe" ]; then
-		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
+		application_exe=$(context_value "${application}_EXE")
 	fi
 	application_exe_path=$(application_exe_path "$application_exe")
 
@@ -202,7 +200,8 @@ application_type_guess_from_file() {
 	case "$file_type" in
 		( \
 			'application/x-executable' | \
-			'application/x-pie-executable' \
+			'application/x-pie-executable' | \
+			'application/x-sharedlib' \
 		)
 			application_type='native'
 		;;
@@ -219,17 +218,14 @@ application_type_guess_from_file() {
 				('MS-DOS executable')
 					application_type='dosbox'
 				;;
-				( \
-					'PE32 executable (GUI) Intel 80386' | \
-					'PE32+ executable (GUI) x86-64' \
-				)
-					application_type='wine'
+				(*'Mono/.Net assembly')
+					application_type='mono'
 				;;
 				( \
-					'PE32 executable (GUI) Intel 80386 Mono/.Net assembly' | \
-					'PE32+ executable (GUI) x86-64 Mono/.Net assembly' \
+					'PE32 executable'* | \
+					'PE32+ executable'* \
 				)
-					application_type='mono'
+					application_type='wine'
 				;;
 			esac
 		;;
@@ -247,12 +243,11 @@ application_id() {
 	application="$1"
 
 	# Get the application type from its identifier
+	# Fall back on the game id if no value is set
 	local application_id
-	if variable_is_empty "${application}_ID"; then
-		# If no id is explicitely set, fall back on the game id
+	application_id=$(context_value "${application}_ID")
+	if [ -z "$application_id" ]; then
 		application_id=$(game_id)
-	else
-		application_id=$(get_value "${application}_ID")
 	fi
 
 	# Check that the id fits the format restrictions
@@ -270,25 +265,9 @@ application_id() {
 # USAGE: application_exe $application
 # RETURN: the application file name
 application_exe() {
-	# The following values a checked in order,
-	# the first one found is used:
-	# - package-specific value
-	# - archive-specific value
-	# - default value
-	local application application_exe application_exe_default
+	local application application_exe
 	application="$1"
-	if variable_is_empty "${application}_EXE"; then
-		application_exe_default=''
-	else
-		application_exe_default=$(get_value "${application}_EXE")
-	fi
-	application_exe=$(get_context_specific_value 'package' "${application}_EXE")
-	if \
-		[ -z "$application_exe" ] || \
-		[ "$application_exe" = "$application_exe_default" ]
-	then
-		application_exe=$(get_context_specific_value 'archive' "${application}_EXE")
-	fi
+	application_exe=$(context_value "${application}_EXE")
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$application_exe" ]; then
@@ -344,7 +323,7 @@ application_exe_path() {
 
 	# Look for the application binary in the current package.
 	local package package_path path_game_data
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)
 	application_exe_path="${package_path}${path_game_data}/${application_exe}"
@@ -374,12 +353,11 @@ application_name() {
 	application="$1"
 
 	# Get the application name from its identifier
+	# Fall back on the game name if no value is set
 	local application_name
-	if variable_is_empty "${application}_NAME"; then
-		# If no name is explicitely set, fall back on the game name
+	application_name=$(context_value "${application}_NAME")
+	if [ -z "$application_name" ]; then
 		application_name=$(game_name)
-	else
-		application_name=$(get_value "${application}_NAME")
 	fi
 
 	printf '%s' "$application_name"
@@ -467,7 +445,7 @@ application_options() {
 	# Get the application options string from its identifier
 	local application application_options
 	application="$1"
-	application_options=$(get_context_specific_value 'package' "${application}_OPTIONS")
+	application_options=$(context_value "${application}_OPTIONS")
 
 	# Check that the options string does not span multiple lines
 	if [ "$(printf '%s' "$application_options" | wc --lines)" -gt 1 ]; then
@@ -485,7 +463,7 @@ application_options() {
 # RETURN: the application libraries path relative to the game root,
 #         or an empty string if none is set
 application_libs() {
-	# Use the package-specific value if it is available,
+	# Use the context-specific value if it is available,
 	# falls back on the default value
-	get_context_specific_value 'package' "${1}_LIBS"
+	context_value "${1}_LIBS"
 }

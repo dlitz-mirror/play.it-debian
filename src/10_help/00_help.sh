@@ -38,6 +38,8 @@ help() {
 	help_tmpdir
 	help_skipfreespacecheck
 	help_configfile
+	help_listpackages
+	help_listrequirements
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -175,19 +177,17 @@ help_icons() {
 		('fr')
 			message='\tInclure ou non les icônes dans les paquets\n\n'
 			message="$message"'\t%s\tInclure les icônes et sʼarrêter si une dépendance nʼa pas pu être trouvée\n' # yes
-			message="$message"'\t%s\tNe pas inclure les icônes même si toutes les dépendances sont présentes\n'   # no
-			message="$message"'\t%s\tInclure les icônes seulement si toutes les dépendances sont présentes\n\n'   # auto
+			message="$message"'\t%s\tNe pas inclure les icônes\n\n'   # no
 		;;
 		('en'|*)
 			message='\tInclude icons in packages\n\n'
 			message="$message"'\t%s\tInclude icons and stop if a dependency wasnʼt found\n'      # yes
-			message="$message"'\t%s\tDonʼt include icons even if all dependencies are present\n' # no
-			message="$message"'\t%s\tOnly include icons if all dependencies are present\n\n'     # auto
+			message="$message"'\t%s\tDonʼt include icons\n\n' # no
 		;;
 	esac
-	printf -- '--icons=yes|no|auto\n'
-	printf -- '--icons yes|no|auto\n\n'
-	printf "$message" 'yes' 'no' 'auto'
+	printf -- '--icons=yes|no\n'
+	printf -- '--icons yes|no\n\n'
+	printf "$message" 'yes' 'no'
 }
 
 # display --overwrite option usage
@@ -354,4 +354,38 @@ help_configfile() {
 	esac
 	printf -- '--config-file\n\n'
 	printf "$message" "$config_file_path"
+}
+
+# Display --list-packages option usage
+# USAGE: help_listpackages
+help_listpackages() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des paquets à construire.\n\n'
+			;;
+		('en'|*)
+			message='\tPrint the list of packages to build.\n\n'
+			;;
+	esac
+	printf -- '--list-packages\n\n'
+	printf "$message"
+}
+
+# Display --list-requirements option usage
+# USAGE: help_listrequirements
+help_listrequirements() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des commandes nécessaire à la construction de paquets à partir de lʼarchive donnée.\n\n'
+		;;
+		('en'|*)
+			message='\tPrint the list of commands required to build packages from the given archive.\n\n'
+		;;
+	esac
+	printf -- '--list-requirements\n\n'
+	printf "$message"
 }

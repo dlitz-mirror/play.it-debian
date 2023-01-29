@@ -11,7 +11,7 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -icons Cm yes | Cm no | Cm auto
+.Op Fl -icons Cm yes | Cm no
 .Op Fl -overwrite
 .Op Fl -output-dir Ar path
 .Op Fl -debug Op Ar N
@@ -20,6 +20,8 @@
 .Op Fl -skip-free-space-check
 .Op Fl -show-game-script
 .Op Fl -config-file Ar path
+.Op Fl -list-packages
+.Op Fl -list-requirements
 .Sh DESCRIPTION
 .Nm
 is a free software building native packages from installers for Windows or
@@ -87,15 +89,13 @@ Generated package type selection.
 .It Cm egentoo
 .No .tar package with an associated .ebuild (Gentoo)
 .El
-.It Fl -icons Cm yes | Cm no | Cm auto
+.It Fl -icons Cm yes | Cm no
 Include icons in packages.
 .Bl -tag -width indent -compact
 .It Cm yes
 Include icons and stop if a dependency wasn’t found
 .It Cm no
-Do not include icons even if all dependencies are present
-.It Cm auto
-Only include icons if all dependencies are present
+Do not include icons
 .El
 .It Fl -overwrite
 Replace packages if they already exist.
@@ -129,6 +129,10 @@ Configuration file contains list of additional command-line parameters that
 will be passed to
 .Nm
 as if they were given on the command-line.
+.It Fl -list-packages
+Print the list of packages to build.
+.It Fl -list-requirements
+Print the list of commands required to build packages from the given archive.
 .El
 .Sh ENVIRONMENT
 .Bl -tag -width DS

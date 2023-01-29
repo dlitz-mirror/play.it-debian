@@ -1,21 +1,25 @@
+# Print the path to the launcher script for the given application.
+# USAGE: launcher_path $application
+# RETURN: The absolute path to the launcher
+launcher_path() {
+	local application
+	application="$1"
+
+	local package package_path path_binaries application_id target_file
+	package=$(context_package)
+	package_path=$(package_path "$package")
+	path_binaries=$(path_binaries)
+	application_id=$(application_id "$application")
+
+	printf '%s%s/%s' "$package_path" "$path_binaries" "$application_id"
+}
+
 # Write launcher script for the given application
 # USAGE: launcher_write_script $application
 launcher_write_script() {
 	local application
 	application="$1"
 	assert_not_empty 'application' 'launcher_write_script'
-	if ! testvar "$application" 'APP'; then
-		error_invalid_argument 'application' 'launcher_write_script'
-		return 1
-	fi
-
-	# compute file path
-	local package package_path path_binaries application_id target_file
-	package=$(package_get_current)
-	package_path=$(package_path "$package")
-	path_binaries=$(path_binaries)
-	application_id=$(application_id "$application")
-	target_file="${package_path}${path_binaries}/${application_id}"
 
 	# Get application type and prefix type
 	local application_type prefix_type
@@ -35,7 +39,9 @@ launcher_write_script() {
 	fi
 
 	# write launcher script
+	local target_file
 	debug_write_launcher "$application_type" "$binary_file"
+	target_file=$(launcher_path "$application")
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
@@ -97,14 +103,6 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
-		;;
-		('native_no-prefix')
-			# WARNING - This archive type is deprecated.
-			(
-				export ${application}_TYPE='native'
-				export ${application}_PREFIX_TYPE='none'
-				launcher_write_script "$@"
-			)
 		;;
 		('scummvm')
 			case "$prefix_type" in
@@ -203,31 +201,15 @@ launcher_write_script() {
 	fi
 	EOF
 
-	# for native applications, add execution permissions to the game binary file
+	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
 		('native'|'unity3d')
-			local binary_file path_game_data package_path application_exe
-			path_game_data=$(path_game_data)
-			package_path=$(package_path "$package")
+			local application_exe application_exe_path
 			application_exe=$(application_exe "$application")
-			binary_file="${package_path}${path_game_data}/${application_exe}"
-			chmod +x "$binary_file"
+			application_exe_path=$(application_exe_path "$application_exe")
+			chmod +x "$application_exe_path"
 		;;
 	esac
-
-	# for WINE applications, write launcher script for winecfg
-	case "$application_type" in
-		('wine')
-			local game_id winecfg_file
-			game_id=$(game_id)
-			winecfg_file="${package_path}${path_binaries}/${game_id}_winecfg"
-			if [ ! -e "$winecfg_file" ]; then
-				launcher_write_script_wine_winecfg "$application"
-			fi
-		;;
-	esac
-
-	return 0
 }
 
 # Check that the launcher target exists.
@@ -245,14 +227,6 @@ launcher_target_presence_check() {
 		('residualvm'|'scummvm'|'renpy')
 			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
 			return 0
-		;;
-		('wine')
-			# winecfg is provided by WINE itself, not the game archive.
-			local application_exe
-			application_exe=$(application_exe "$application")
-			if [ "$application_exe" = 'winecfg' ]; then
-				return 0
-			fi
 		;;
 	esac
 
@@ -343,34 +317,6 @@ launcher_write_desktop() {
 	desktop_file=$(launcher_desktop_filepath "$application")
 	mkdir --parents "$(dirname "$desktop_file")"
 	launcher_desktop "$application" > "$desktop_file"
-
-	# WINE - Write XDG desktop file for winecfg
-	local application_type
-	application_type=$(application_type "$application")
-	if [ -z "$application_type" ]; then
-		error_no_application_type "$application"
-		return 1
-	fi
-	if \
-		[ "$application_type" = 'wine' ] && \
-		[ "$application" != 'APP_WINECFG' ]
-	then
-		local package package_path path_xdg_desktop game_id winecfg_desktop
-		package=$(package_get_current)
-		package_path=$(package_path "$package")
-		path_xdg_desktop=$(path_xdg_desktop)
-		game_id=$(game_id)
-		winecfg_desktop="${package_path}${path_xdg_desktop}/${game_id}_winecfg.desktop"
-		if [ ! -e "$winecfg_desktop" ]; then
-			APP_WINECFG_ID="$(game_id)_winecfg"
-			APP_WINECFG_NAME="$(game_name) - WINE configuration"
-			APP_WINECFG_CAT='Settings'
-			export APP_WINECFG_ID APP_WINECFG_NAME APP_WINECFG_CAT
-			launcher_write_desktop 'APP_WINECFG'
-		fi
-	fi
-
-	return 0
 }
 
 # print the content of the XDG desktop file for the given application
@@ -380,18 +326,8 @@ launcher_desktop() {
 	local application
 	application="$1"
 
-	###
-	# TODO
-	# This should be moved to a dedicated function,
-	# probably in a 20_icons.sh source file
-	###
-	# get icon name
 	local application_icon
-	if [ "$application" = 'APP_WINECFG' ]; then
-		application_icon='winecfg'
-	else
-		application_icon=$(application_id "$application")
-	fi
+	application_icon=$(application_id "$application")
 
 	cat <<- EOF
 	[Desktop Entry]
@@ -411,7 +347,7 @@ launcher_desktop_filepath() {
 	local application application_id package package_path path_xdg_desktop
 	application="$1"
 	application_id=$(application_id "$application")
-	package=$(package_get_current)
+	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_xdg_desktop=$(path_xdg_desktop)
 

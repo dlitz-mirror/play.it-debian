@@ -9,13 +9,6 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	for pkg in "$@"; do
-		if ! testvar "$pkg" 'PKG'; then
-			error_invalid_argument 'pkg' 'write_metadata'
-			return 1
-		fi
-	done
-
 	case $OPTION_PACKAGE in
 		('arch')
 			for pkg in "$@"; do pkg_write_arch; done
@@ -38,10 +31,8 @@ write_metadata() {
 	debug_leaving_function 'write_metadata'
 }
 
-# build .pkg.tar or .deb package
+# Build the final packages.
 # USAGE: build_pkg [$pkg…]
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) (OPTION_PACKAGE) (PKG_PATH) PLAYIT_WORKDIR
-# CALLS: pkg_build_arch pkg_build_deb pkg_build_gentoo testvar
 build_pkg() {
 	if [ $# -eq 0 ]; then
 		# shellcheck disable=SC2046
@@ -52,19 +43,11 @@ build_pkg() {
 	debug_entering_function 'build_pkg'
 
 	local package package_path
-	for package in "$@"; do
-		if ! testvar "$package" 'PKG'; then
-			error_invalid_argument 'package' 'build_pkg'
-			return 1
-		fi
-	done
-
 	###
 	# TODO
 	# pkg_build_xxx implicitely depends on the target package being set as $pkg
 	# It should instead be passed as a mandatory argument.
 	###
-
 	case $OPTION_PACKAGE in
 		('arch')
 			for package in "$@"; do
@@ -143,41 +126,56 @@ package_format_guess() {
 	printf '%s' "$package_type"
 }
 
-# Print the identifier of the current package
-# USAGE: package_get_current
-# RETURN: a single package identifier
-package_get_current() {
-	local package
-	if variable_is_empty 'PKG'; then
-		# If $PKG is not explictly set,
-		# return the first package from the list of packages to build.
-		package=$(packages_get_list | cut --delimiter=' ' --fields=1)
-	else
-		package="$PKG"
-	fi
-
-	printf '%s' "$package"
-}
-
-# get the full list of packages to generate
+# Print the full list of packages that should be built from the current archive
+# If no value is set to PACKAGES_LIST or some archive-specific variant of PACKAGES_LIST,
+# the following default value is returned: "PKG_MAIN".
 # USAGE: packages_get_list
-# RETURN: a list of package identifiers
+# RETURN: a list of package identifiers,
+#         separated by spaces or line breaks
 packages_get_list() {
-	local packages_list
-	packages_list=$(get_context_specific_value 'archive' 'PACKAGES_LIST')
+	# WARNING - most context-related functions can not be used here,
+	#           because context_package relies on the current function.
 
-	# If PACKAGES_LIST is not set,
-	# falls back on a list of a single "PKG_MAIN" package
-	if [ -z "$packages_list" ]; then
+	local packages_list packages_list_name
+	packages_list_name=$(context_name_archive 'PACKAGES_LIST')
+	if [ -n "$packages_list_name" ]; then
+		packages_list=$(get_value "$packages_list_name")
+	elif ! variable_is_empty 'PACKAGES_LIST'; then
+		# shellcheck disable=SC2153
+		packages_list="$PACKAGES_LIST"
+	else
 		packages_list='PKG_MAIN'
 	fi
 
-	###
-	# TODO
-	# Check that the string is a space-separated list of valid package identifiers
-	###
-
 	printf '%s' "$packages_list"
+}
+
+# Print the list of the packages that would be generated from the given archive.
+# USAGE: packages_print_list $archive
+# RETURN: a list of package file names, one per line
+packages_print_list() {
+	local archive
+	archive="$1"
+
+	(
+		# shellcheck disable=SC2030
+		ARCHIVE="$archive"
+		case "$OPTION_PACKAGE" in
+			('egentoo')
+				local package_name
+				package_name=$(egentoo_package_name)
+				printf '%s\n' "$package_name"
+			;;
+			(*)
+				local packages_list package package_name
+				packages_list=$(packages_get_list)
+				for package in $packages_list; do
+					package_name=$(package_name "$package")
+					printf '%s\n' "$package_name"
+				done
+			;;
+		esac
+	)
 }
 
 # get ID of given package
@@ -191,7 +189,7 @@ package_get_id() {
 
 	# get package ID from its name
 	local package_id
-	package_id=$(get_context_specific_value 'archive' "${package}_ID")
+	package_id=$(context_value "${package}_ID")
 
 	# if no package-specific ID is set, fall back to game ID
 	if [ -z "$package_id" ]; then
@@ -239,7 +237,7 @@ package_get_architecture() {
 
 	# get package architecture from its name
 	local package_architecture
-	package_architecture=$(get_context_specific_value 'archive' "${package}_ARCH")
+	package_architecture=$(context_value "${package}_ARCH")
 
 	# if no package-specific architecture is set, fall back to "all"
 	if [ -z "$package_architecture" ]; then
@@ -323,7 +321,7 @@ package_get_description() {
 
 	# get package description from its name
 	local package_description
-	package_description=$(get_context_specific_value 'archive' "${package}_DESCRIPTION")
+	package_description=$(context_value "${package}_DESCRIPTION")
 
 	###
 	# TODO
@@ -374,7 +372,7 @@ package_get_provide() {
 
 	# get provided package ID from its name
 	local package_provide
-	package_provide=$(get_context_specific_value 'archive' "${package}_PROVIDE")
+	package_provide=$(context_value "${package}_PROVIDE")
 
 	# if no package is provided, return early
 	if [ -z "$package_provide" ]; then
@@ -382,7 +380,8 @@ package_get_provide() {
 	fi
 
 	# on Gentoo, avoid mixups between numbers in package ID and version number
-	# and add the required "!!games-playit/" prefix to the package ID
+	# and add the required "!games-playit/" prefix to the package ID
+	# (https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers)
 	case "$OPTION_PACKAGE" in
 		('gentoo'|'egentoo')
 			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')

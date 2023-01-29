@@ -1,35 +1,3 @@
-# Print the list of dependencies required to handle the provided icons.
-# USAGE: icons_list_dependencies
-# RETURNS: a list of required commands, one per line
-icons_list_dependencies() {
-	# Do nothing if the calling script explicitely asked for skipping icons extraction
-	if [ "$SKIP_ICONS" -eq 1 ]; then
-		return 0
-	fi
-
-	# Get list of icons
-	local icons_list
-	icons_list=$(icons_list_all)
-	## Return early if there is no icon for the current game script
-	if [ -z "$icons_list" ]; then
-		return 0
-	fi
-
-	# Print requirement for each icon.
-	local icon icon_filename
-	for icon in $icons_list; do
-		icon_filename=$(get_value "$icon")
-		case "$icon_filename" in
-			(*'.bmp'|*'.ico')
-				printf '%s\n' 'identify' 'convert'
-			;;
-			(*'.exe')
-				printf '%s\n' 'identify' 'convert' 'wrestool'
-			;;
-		esac
-	done
-}
-
 # Fetch icon from the archive contents,
 # convert it to PNG if it is not already in a supported format,
 # include it in the current package.
@@ -41,7 +9,7 @@ icons_list_dependencies() {
 # USAGE: icons_inclusion $application[…]
 icons_inclusion() {
 	# Do nothing if icons inclusion has been disabled
-	if [ "$SKIP_ICONS" -eq 1 ]; then
+	if [ "$OPTION_ICONS" = 'no' ]; then
 		return 0
 	fi
 
@@ -286,7 +254,7 @@ icons_include_from_directory() {
 
 		# Compute icon path
 		local package package_path icon_resolution
-		package=$(package_get_current)
+		package=$(context_package)
 		package_path=$(package_path "$package")
 		icon_resolution=$(icon_get_resolution "$source_file")
 		destination_directory="${package_path}${path_icons}/${icon_resolution}/apps"

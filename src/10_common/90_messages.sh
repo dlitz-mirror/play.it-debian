@@ -113,25 +113,6 @@ error_unknown_tar_implementation() {
 	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
 }
 
-# display a message when a required dependency is missing
-# USAGE: error_dependency_not_found $command_name
-error_dependency_not_found() {
-	local message command_name provider
-	command_name="$1"
-	provider="$(dependency_provided_by "$command_name")"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='%s est introuvable. Installez %s avant de lancer ce script.\n'
-		;;
-		('en'|*)
-			message='%s not found. Install %s before running this script.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$command_name" "$provider"
-}
-
 # display an error when the value assigned to a given option is not valid
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {
@@ -599,4 +580,54 @@ error_variable_not_set() {
 
 	print_error
 	printf "$message" "$variable_name"
+}
+
+# Display a warning when a deprecated function is called.
+# USAGE: warning_deprecated_function $old_function $new_function
+warning_deprecated_function() {
+	local old_function new_function
+	old_function="$1"
+	new_function="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La fonction suivante est dépréciée : %s\n'
+			message="$message"'Cette nouvelle fonction devrait être utilisée à sa place : %s\n\n'
+		;;
+		('en'|*)
+			message='The following function is deprecated: %s\n'
+			message="$message"'This new function should be used instead: %s\n\n'
+		;;
+	esac
+
+	# Print the message on the standard error output,
+	# to avoid messing up the regular output of the function that triggered this warning.
+	print_warning > /dev/stderr
+	printf "$message" "$old_function" "$new_function" > /dev/stderr
+}
+
+# Display an error when an obsolete function is called.
+# USAGE: error_obsolete_function $old_function $new_function
+error_obsolete_function() {
+	local old_function new_function
+	old_function="$1"
+	new_function="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La fonction suivante est obsolète : %s\n'
+			message="$message"'Cette nouvelle fonction doit être utilisée à sa place : %s\n'
+		;;
+		('en'|*)
+			message='The following function is obsolete: %s\n'
+			message="$message"'This new function must be used instead: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$old_function" "$new_function"
 }

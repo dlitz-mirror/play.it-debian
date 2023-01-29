@@ -3,6 +3,5 @@
 # RETURN: the Unity3D name, a string that can include spaces,
 #         or an empty string if none is set
 unity3d_name() {
-	get_context_specific_value 'archive' 'UNITY3D_NAME'
+	context_value 'UNITY3D_NAME'
 }
-

@@ -6,7 +6,7 @@ pkg_write_gentoo() {
 	# $pkg should be passed as a function argument, not inherited from the calling function
 	###
 
-	local package_path package_id
+	local archive package_path package_id
 	package_path=$(package_path "$pkg")
 	package_id=$(package_get_id "$pkg")
 
@@ -17,8 +17,10 @@ pkg_write_gentoo() {
 	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
 	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
 	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/files/install"
-	local target
-	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-$(packages_get_version "$ARCHIVE").ebuild"
+	local archive package_version target
+	archive=$(context_archive)
+	package_version=$(packages_get_version "$archive")
+	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
 
 	cat > "$target" <<- EOF
 	EAPI=7
@@ -76,9 +78,11 @@ pkg_write_gentoo() {
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
-	local pkg_filename_base package_id
+	local archive package_id package_version pkg_filename_base
+	archive=$(context_archive)
+	package_version=$(packages_get_version "$archive")
 	package_id=$(package_get_id "$pkg")
-	pkg_filename_base="${package_id}-$(packages_get_version "$ARCHIVE").tbz2"
+	pkg_filename_base="${package_id}-${package_version}.tbz2"
 
 	# Get packages list for the current game
 	local packages_list
@@ -106,11 +110,11 @@ pkg_build_gentoo() {
 
 	mkdir --parents "$PLAYIT_WORKDIR/portage-tmpdir"
 	local ebuild_path
-	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-$(packages_get_version "$ARCHIVE").ebuild"
+	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
 	ebuild "$ebuild_path" manifest 1>/dev/null
 	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$OPTION_COMPRESSION\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
 	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
-	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/${package_id}-$(packages_get_version "$ARCHIVE").tbz2" "$pkg_filename"
+	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/${package_id}-${package_version}.tbz2" "$pkg_filename"
 	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
@@ -125,7 +129,7 @@ package_gentoo_field_rdepend() {
 
 	local first_item_displayed dependency_string
 	first_item_displayed=0
-	while read -r dependency_string; do
+	while IFS= read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
 		fi
@@ -149,11 +153,10 @@ package_name_gentoo() {
 	local package
 	package="$1"
 
-	assert_not_empty 'ARCHIVE' 'package_name'
-
-	local package_id package_version package_name
+	local archive package_id package_version package_name
+	archive=$(context_archive)
 	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$ARCHIVE")
+	package_version=$(packages_get_version "$archive")
 	package_name="${package_id}-${package_version}.tbz2"
 
 	local packages_list current_package current_package_id

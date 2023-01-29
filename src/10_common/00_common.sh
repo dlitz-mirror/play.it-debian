@@ -162,23 +162,20 @@ guess_tar_implementation() {
 	esac
 }
 
-# returns best available lzip implementation
-# fails if lzip is not available
-# USAGE: get_lzip_implementation
-get_lzip_implementation() {
-	for command in 'tarlz' 'plzip' 'lzip'; do
-		if command -v "$command" >/dev/null 2>&1; then
-			printf '%s' "$command"
-			return 0
-		fi
-	done
-	error_dependency_not_found 'lzip'
-	return 1
-}
-
 # Return the MIME type of a given file
 # USAGE: file_type $file
 # RETURNS: the MIME type, as a string
 file_type() {
-	file --brief --dereference --mime-type "$1"
+	local file
+	file="$1"
+
+	local file_type
+	file_type=$(file --brief --dereference --mime-type "$file")
+
+	# Everything behind the first ";" is removed,
+	# so "application/x-executable; charset=binary"
+	# would be returned as "application/x-executable".
+	file_type=$(printf '%s' "$file_type" | cut --delimiter=';' --fields=1)
+
+	printf '%s' "$file_type"
 }

@@ -7,7 +7,7 @@ dependencies_list_generic() {
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_generic
-	dependencies_generic=$(get_context_specific_value 'archive' "${package}_DEPS")
+	dependencies_generic=$(context_value "${package}_DEPS")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
@@ -30,7 +30,7 @@ dependencies_list_native_libraries() {
 
 	# Distinct dependencies lists might be used based on source archive
 	local dependencies_libraries
-	dependencies_libraries=$(get_context_specific_value 'archive' "${package}_DEPENDENCIES_LIBRARIES")
+	dependencies_libraries=$(context_value "${package}_DEPENDENCIES_LIBRARIES")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
@@ -79,6 +79,64 @@ dependencies_list_native_libraries_packages() {
 		esac
 		printf '\n'
 	done | sort --unique
+}
+
+# Print the list of Mono libraries required by a given package
+# USAGE: dependencies_list_mono_libraries $package
+# RETURNS: a list of Mono library names,
+#          one per line
+dependencies_list_mono_libraries() {
+	local package
+	package="$1"
+
+	# Distinct dependencies lists might be used based on source archive
+	local dependencies_mono_libraries
+	dependencies_mono_libraries=$(context_value "${package}_DEPENDENCIES_MONO_LIBRARIES")
+
+	# Always return a list with no duplicate entry,
+	# excluding empty lines.
+	# Ignore grep error return if there is nothing to print.
+	printf '%s' "$dependencies_mono_libraries" | \
+		sort --unique | \
+		grep --invert-match --regexp='^$' || true
+}
+
+# Print the list of native packages providing the Mono libraries required by a given package
+# USAGE: dependencies_list_mono_libraries_packages $package
+# RETURNS: a list of native package names,
+#          one per line
+dependencies_list_mono_libraries_packages() {
+	local package package_architecture
+	package="$1"
+	package_architecture=$(package_get_architecture "$package")
+
+	# Return early if the current package requires no Mono library
+	local required_mono_libraries library
+	required_mono_libraries=$(dependencies_list_mono_libraries "$package")
+	if [ -z "$required_mono_libraries" ]; then
+		return 0
+	fi
+
+	# Return early when building packages for a system that does not provide Mono libraries in dedicated packages.
+	case "$OPTION_PACKAGE" in
+		('arch')
+			# Arch Linux provides all Mono libraries in a single "mono" package.
+			printf '%s\n' 'mono'
+			return 0
+		;;
+		('gentoo'|'egentoo')
+			# Gentoo provides all Mono libraries in a single "dev-lang/mono" package.
+			printf '%s\n' 'dev-lang/mono'
+			return 0
+		;;
+	esac
+
+	case "$OPTION_PACKAGE" in
+		('deb')
+			debian_dependencies_providing_mono_libraries $required_mono_libraries
+			return 0
+		;;
+	esac
 }
 
 # Print the path to a temporary files used for unknown libraries listing
@@ -143,7 +201,10 @@ dependencies_add_generic() {
 	current_dependencies=$(dependencies_list_generic "$package")
 
 	local dependencies_variable_name
-	dependencies_variable_name=$(context_specific_name 'archive' "${package}_DEPS")
+	dependencies_variable_name=$(context_name "${package}_DEPS")
+	if [ -z "$dependencies_variable_name" ]; then
+		dependencies_variable_name="${package}_DEPS"
+	fi
 	export $dependencies_variable_name="$current_dependencies $dependency"
 }
 
@@ -159,7 +220,10 @@ dependencies_add_native_libraries() {
 	current_dependencies=$(dependencies_list_native_libraries "$package")
 
 	local dependencies_variable_name
-	dependencies_variable_name=$(context_specific_name 'archive' "${package}_DEPENDENCIES_LIBRARIES")
+	dependencies_variable_name=$(context_name "${package}_DEPENDENCIES_LIBRARIES")
+	if [ -z "$dependencies_variable_name" ]; then
+		dependencies_variable_name="${package}_DEPENDENCIES_LIBRARIES"
+	fi
 	export $dependencies_variable_name="$current_dependencies
 	$dependency"
 }

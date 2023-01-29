@@ -14,8 +14,11 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	unset OPTION_PACKAGE
 	unset SOURCE_ARCHIVE
 	unset PLAYIT_WORKDIR
-	unset winecfg_desktop
-	unset winecfg_launcher
+
+	# Set default values
+
+	PRINT_LIST_OF_PACKAGES=0
+	PRINT_REQUIREMENTS=0
 
 	# Set URLs for error messages
 
@@ -56,7 +59,7 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# shellcheck disable=SC2034
 	ALLOWED_VALUES_PACKAGE='arch deb gentoo egentoo'
 	# shellcheck disable=SC2034
-	ALLOWED_VALUES_ICONS='yes no auto'
+	ALLOWED_VALUES_ICONS='yes no'
 
 	# Set default values for common options
 
@@ -70,7 +73,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	export DEFAULT_OPTION_ICONS='yes'
 	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
 	export DEFAULT_NO_FREE_SPACE_CHECK=0
-	export DEFAULT_SKIP_ICONS=0
 	export DEFAULT_OVERWRITE_PACKAGES=0
 	export DEFAULT_DEBUG=0
 	export DEFAULT_MTREE=1
@@ -114,7 +116,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		'OPTION_OUTPUT_DIR' \
 		'OPTION_PREFIX' \
 		'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' \
 		'OVERWRITE_PACKAGES' \
 		'DEBUG' \
 		'MTREE'
@@ -134,11 +135,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		check_option_validity "$option"
 	done
 
-	if [ "$OPTION_ICONS" = 'no' ]; then
-		SKIP_ICONS=1
-		export SKIP_ICONS
-	fi
-
 	case "$DEBUG" in
 		([0-9]) ;;
 		(*)
@@ -150,7 +146,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# DEBUG: output all options value
 	for option in \
 		'NO_FREE_SPACE_CHECK' \
-		'SKIP_ICONS' \
 		'OVERWRITE_PACKAGES' \
 		'DEBUG' \
 		'MTREE'
@@ -163,6 +158,30 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		debug_option_value "OPTION_$option"
 		true
 	done
+
+	# Find the main archive
+
+	archives_list=$(archives_return_list)
+	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
+	export ARCHIVE
+
+	# If called with --list-packages,
+	# print the list of packages that would be generated from the given archive
+	# then exit early.
+
+	if [ $PRINT_LIST_OF_PACKAGES -eq 1 ]; then
+		packages_print_list "$ARCHIVE"
+		exit 0
+	fi
+
+	# If called with --list-requirements,
+	# print the list of commands required to run the current game script
+	# then exit early.
+
+	if [ $PRINT_REQUIREMENTS -eq 1 ]; then
+		requirements_list
+		exit 0
+	fi
 
 	# Make sure the output directory exists and is writable
 
@@ -177,21 +196,19 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	export OPTION_OUTPUT_DIR
 
-	# Set main archive
-
-	# shellcheck disable=SC2046
-	archive_initialize_required 'SOURCE_ARCHIVE' $(archives_return_list)
-	# shellcheck disable=SC2046
-	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $(archives_return_list))
-	export ARCHIVE
-
-	# Set path to working directory
-	set_temp_directories
-
 	# Check the presence of required tools
 
 	check_deps
 	archive_dependencies_check "$ARCHIVE"
+
+	# Set the main archive properties,
+	# and check its integrity.
+
+	archive_initialize_required 'SOURCE_ARCHIVE' $archives_list
+
+	# Set path to working directory
+
+	set_temp_directories
 
 	# Legacy - Export install paths as global variables.
 	# Pre-2.19 game scripts might rely on the availability of these global variables.

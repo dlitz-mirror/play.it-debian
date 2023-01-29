@@ -91,7 +91,7 @@ wine_renderer_launcher_snippet_wined3d() {
 
 	# Automatically add required dependencies to the current package
 	local package dependency_library
-	package=$(package_get_current)
+	package=$(context_package)
 	case "$wined3d_backend" in
 		('gl')
 			dependency_library='libGL.so.1'
@@ -134,7 +134,7 @@ wine_renderer_launcher_snippet_dxvk() {
 
 	# Automatically add required dependencies to the current package
 	local package
-	package=$(package_get_current)
+	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
 	dependencies_add_generic "$package" 'winetricks'
 }
@@ -158,7 +158,7 @@ wine_renderer_launcher_snippet_vkd3d() {
 
 	# Automatically add required dependencies to the current package
 	local package
-	package=$(package_get_current)
+	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
 	dependencies_add_generic "$package" 'winetricks'
 }

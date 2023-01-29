@@ -254,14 +254,17 @@ dependencies_gentoo_full_list() {
 
 	# Include Gentoo-specific dependencies
 	local dependencies_specific
-	dependencies_specific=$(get_context_specific_value 'archive' "${package}_DEPS_GENTOO")
+	dependencies_specific=$(context_value "${package}_DEPS_GENTOO")
 	if [ -n "$dependencies_specific" ]; then
-		printf '%s\n' "$dependencies_specific" | sed 's/ /\n/g'
+		printf '%s\n' "$dependencies_specific"
 	fi
 
 	{
 		# Include dependencies on native libraries
 		dependencies_list_native_libraries_packages "$package"
+
+		# Include dependencies on Mono libraries
+		dependencies_list_mono_libraries_packages "$package"
 
 		local package_provide
 		package_provide=$(package_get_provide "$package")
