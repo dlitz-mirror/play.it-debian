@@ -5,25 +5,6 @@ print_debug() {
 	return 0
 }
 
-# print an option’s value
-# USAGE: debug_option_value $option_name
-debug_option_value() {
-	if [ "$DEBUG" -eq 0 ]; then
-		return 0
-	fi
-
-	local option_name
-	option_name="$1"
-	assert_not_empty 'option_name' 'debug_option_value'
-
-	local option_value
-	option_value=$(get_value "$option_name")
-
-	print_debug
-	printf '%s: %s\n' "$option_name" "$option_value" >> /dev/stderr
-	return 0
-}
-
 # print the name of the entered function
 # USAGE: debug_entering_function $function_name [$debug_level]
 debug_entering_function() {

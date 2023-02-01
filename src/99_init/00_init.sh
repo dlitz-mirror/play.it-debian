@@ -96,10 +96,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		OPTION_PACKAGE="$DEFAULT_OPTION_PACKAGE"
 	fi
 
-	# Check option validity for the package format, since it will be used for the compression method
-
-	check_option_validity 'PACKAGE'
-
 	# Set allowed and default values for compression and prefix depending on the chosen package format
 
 	# shellcheck disable=SC2034
@@ -127,36 +123,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 			option_default_value=$(get_value "DEFAULT_$option")
 			export $option="$option_default_value"
 		fi
-	done
-
-	# Check options values validity
-
-	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS'; do
-		check_option_validity "$option"
-	done
-
-	case "$DEBUG" in
-		([0-9]) ;;
-		(*)
-			error_option_invalid 'DEBUG' "$DEBUG"
-			exit 1
-		;;
-	esac
-
-	# DEBUG: output all options value
-	for option in \
-		'NO_FREE_SPACE_CHECK' \
-		'OVERWRITE_PACKAGES' \
-		'DEBUG' \
-		'MTREE'
-	do
-		debug_option_value "$option"
-		true
-	done
-	for option in 'CHECKSUM' 'COMPRESSION' \
-		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
-		debug_option_value "OPTION_$option"
-		true
 	done
 
 	# Find the main archive

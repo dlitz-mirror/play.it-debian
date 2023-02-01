@@ -293,34 +293,6 @@ error_application_wrong_type() {
 	printf "$message" "$function_name" "$application_type"
 }
 
-# display an error when the compression method is not compatible with the
-# package format
-# USAGE: error_compression_invalid
-error_compression_invalid() {
-	local compression_method allowed_values package_format message
-
-	compression_method="$OPTION_COMPRESSION"
-	allowed_values="$ALLOWED_VALUES_COMPRESSION"
-	package_format="$OPTION_PACKAGE"
-
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
-			message="$message"'Seules les méthodes suivantes sont acceptées :\n'
-			message="$message"'\t%s\n'
-			;;
-		('en'|*)
-			message='"%s" compression method is not compatible with "%s" package format.\n'
-			message="$message"'Only the following options are accepted:\n'
-			message="$message"'\t%s\n'
-			;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$compression_method" "$package_format" "$allowed_values"
-}
-
 # Display an error when trying to use a non-existing directory for temporary files
 # USAGE: error_temporary_path_not_a_directory $temporary_directory_path
 error_temporary_path_not_a_directory() {
