@@ -25,7 +25,7 @@ load_configuration_file() {
 		$(cat "$config_file_path")
 	EOF
 
-	parse_arguments $arguments
+	parse_arguments_default $arguments
 }
 
 # Print the configuration file path.
@@ -39,8 +39,7 @@ find_configuration_file() {
 		case "$1" in
 			( \
 				'--config-file='* | \
-				'--config-file' | \
-				'-c' \
+				'--config-file' \
 			)
 				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
 					config_file_path=$(argument_value "$1")

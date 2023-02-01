@@ -168,26 +168,21 @@ help_package() {
 	printf "$message" 'arch' 'deb' 'gentoo'
 }
 
-# display --icons option usage
+# display --no-icons option usage
 # USAGE: help_icons
 help_icons() {
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='\tInclure ou non les icônes dans les paquets\n\n'
-			message="$message"'\t%s\tInclure les icônes et sʼarrêter si une dépendance nʼa pas pu être trouvée\n' # yes
-			message="$message"'\t%s\tNe pas inclure les icônes\n\n'   # no
+			message='\tNe pas inclure les icônes du jeu.\n\n'
 		;;
 		('en'|*)
-			message='\tInclude icons in packages\n\n'
-			message="$message"'\t%s\tInclude icons and stop if a dependency wasnʼt found\n'      # yes
-			message="$message"'\t%s\tDonʼt include icons\n\n' # no
+			message='\tDo not include game icons.\n\n'
 		;;
 	esac
-	printf -- '--icons=yes|no\n'
-	printf -- '--icons yes|no\n\n'
-	printf "$message" 'yes' 'no'
+	printf -- '--no-icons\n\n'
+	printf "$message"
 }
 
 # display --overwrite option usage
@@ -314,10 +309,12 @@ help_tmpdir() {
 		;;
 	esac
 	printf -- '--tmpdir\n\n'
-	printf "$message" "${TMPDIR:-/tmp}"
+	local default_value
+	default_value=$(option_value_default 'tmpdir')
+	printf "$message" "$default_value"
 }
 
-# Display --skip-free-space-check option usage
+# Display --no-free-space-check option usage
 # USAGE: help_skipfreespacecheck
 help_skipfreespacecheck() {
 	local message
@@ -330,7 +327,7 @@ help_skipfreespacecheck() {
 			message='\tDo not check for free space.\n\n'
 		;;
 	esac
-	printf -- '--skip-free-space-check\n\n'
+	printf -- '--no-free-space-check\n\n'
 	printf "$message"
 }
 

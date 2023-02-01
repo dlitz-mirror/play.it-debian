@@ -1,33 +1,39 @@
 # Parse the arguments given to the game script or wrapper
+# WARNING: Options that are already set from the user environment are not overriden.
 # USAGE: parse_arguments $arguments[…]
 parse_arguments() {
-	local option_name option_value
+	local option_name option_variable option_value
 	while [ $# -gt 0 ]; do
-		unset option_name option_value
+		unset option_name option_variable option_value
 		case "$1" in
-			('--help')
-				help
-				exit 0
-			;;
-			('--no-mtree')
-				export MTREE=0
-			;;
-			('--skip-free-space-check')
-				export NO_FREE_SPACE_CHECK=1
-			;;
-			('--overwrite')
-				export OVERWRITE_PACKAGES=1
-			;;
-			('--list-packages')
-				export PRINT_LIST_OF_PACKAGES=1
-			;;
-			('--list-requirements')
-				export PRINT_REQUIREMENTS=1
+			( \
+				'--help' | \
+				'--list-packages' | \
+				'--list-requirements' | \
+				'--overwrite' | \
+				'--show-game-script' | \
+				'--version' \
+			)
+				option_name=$(argument_name "$1")
+				option_variable=$(option_variable "$option_name")
+				if variable_is_empty "$option_variable"; then
+					option_update "$option_name" 1
+				fi
 			;;
 			( \
-				'--config-file='* | \
+				'--no-free-space-check' | \
+				'--no-icons' | \
+				'--no-mtree' \
+			)
+				option_name=$(argument_name "$1" | sed 's/^no-//')
+				option_variable=$(option_variable "$option_name")
+				if variable_is_empty "$option_variable"; then
+					option_update "$option_name" 0
+				fi
+			;;
+			( \
 				'--config-file' | \
-				'-c' \
+				'--config-file='* \
 			)
 				# Skip this argument, has it should have already been handled by find_configuration_file.
 				if ! printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
@@ -39,58 +45,55 @@ parse_arguments() {
 				'--debug='* \
 			)
 				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
-					option_value=$(argument_value "$1")
-				else
-					option_value=$(argument_value "$1" "$2")
-					shift 1
-				fi
-				case "$option_value" in
-					([0-9])
-						export DEBUG="$option_value"
-					;;
-					(*)
-						export DEBUG=1
-					;;
-				esac
-			;;
-			( \
-				'--checksum='*| \
-				'--checksum'| \
-				'--compression='*| \
-				'--compression'| \
-				'--prefix='*| \
-				'--prefix'| \
-				'--package='*| \
-				'--package'| \
-				'--icons='*| \
-				'--icons'| \
-				'--output-dir='*| \
-				'--output-dir'| \
-				'--tmpdir='*| \
-				'--tmpdir'* \
-			)
-				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
 					option_name=$(argument_name "$1")
+					option_variable=$(option_variable "$option_name")
 					option_value=$(argument_value "$1")
 				else
 					option_name=$(argument_name "$1" "$2")
+					option_variable=$(option_variable "$option_name")
 					option_value=$(argument_value "$1" "$2")
 					shift 1
 				fi
-				if [ "$option_value" = 'help' ]; then
-					eval help_$option_name
-					exit 0
-				else
-					local option_variable
-					option_variable="OPTION_$(
-						printf '%s' "$option_name" | \
-							sed 's/-/_/g' | \
-							tr '[:lower:]' '[:upper:]' \
-					)"
-					export $option_variable="$option_value"
+				if variable_is_empty "$option_variable"; then
+					case "$option_value" in
+						([0-9])
+							option_update "$option_name" "$option_value"
+						;;
+						(*)
+							option_update "$option_name" 1
+						;;
+					esac
 				fi
 			;;
-			('--'*)
+			( \
+				'--checksum' | \
+				'--checksum='* | \
+				'--compression' | \
+				'--compression='* | \
+				'--output-dir' | \
+				'--output-dir='* | \
+				'--package' | \
+				'--package='* | \
+				'--prefix' | \
+				'--prefix='* | \
+				'--tmpdir' | \
+				'--tmpdir='* \
+			)
+				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
+					option_name=$(argument_name "$1")
+					option_variable=$(option_variable "$option_name")
+					option_value=$(argument_value "$1")
+				else
+					option_name=$(argument_name "$1" "$2")
+					option_variable=$(option_variable "$option_name")
+					option_value=$(argument_value "$1" "$2")
+					shift 1
+				fi
+				if variable_is_empty "$option_variable"; then
+					option_update "$option_name" "$option_value"
+				fi
+			;;
+			('-'*)
 				error_option_unknown "$1"
 				return 1
 			;;
@@ -101,6 +104,82 @@ parse_arguments() {
 					error_not_a_file "$1"
 					return 1
 				fi
+			;;
+		esac
+		shift 1
+	done
+}
+
+# Parse the arguments set through the configuration file
+# WARNING: Only a subset of the supported options are allowed here.
+# USAGE: parse_arguments $arguments[…]
+parse_arguments_default() {
+	local option_name option_value
+	while [ $# -gt 0 ]; do
+		unset option_name option_value
+		case "$1" in
+			( \
+				'--overwrite' \
+			)
+				option_name=$(argument_name "$1")
+				option_update_default "$option_name" 1
+			;;
+			( \
+				'--no-free-space-check' | \
+				'--no-icons' | \
+				'--no-mtree' \
+			)
+				option_name=$(argument_name "$1" | sed 's/^no-//')
+				option_update_default "$option_name" 0
+			;;
+			( \
+				'--debug' | \
+				'--debug='* \
+			)
+				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
+					option_name=$(argument_name "$1")
+					option_value=$(argument_value "$1")
+				else
+					option_name=$(argument_name "$1" "$2")
+					option_value=$(argument_value "$1" "$2")
+					shift 1
+				fi
+				case "$option_value" in
+					([0-9])
+						option_update_default "$option_name" "$option_value"
+					;;
+					(*)
+						option_update_default "$option_name" 1
+					;;
+				esac
+			;;
+			( \
+				'--checksum' | \
+				'--checksum='* | \
+				'--compression' | \
+				'--compression='* | \
+				'--output-dir' | \
+				'--output-dir='* | \
+				'--package' | \
+				'--package='* | \
+				'--prefix' | \
+				'--prefix='* | \
+				'--tmpdir' | \
+				'--tmpdir='* \
+			)
+				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
+					option_name=$(argument_name "$1")
+					option_value=$(argument_value "$1")
+				else
+					option_name=$(argument_name "$1" "$2")
+					option_value=$(argument_value "$1" "$2")
+					shift 1
+				fi
+				option_update_default "$option_name" "$option_value"
+			;;
+			('--'*)
+				error_option_unknown "$1"
+				return 1
 			;;
 		esac
 		shift 1

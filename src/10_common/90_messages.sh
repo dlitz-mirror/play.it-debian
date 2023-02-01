@@ -230,6 +230,23 @@ error_incompatible_versions() {
 		"$((VERSION_MAJOR_TARGET + 1)).0"
 }
 
+# Display an error when the wrapper is called with no archive argument
+# USAGE: error_archive_missing_from_arguments
+error_archive_missing_from_arguments() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Aucune archive nʼa été fournie sur la ligne de commande.\n'
+		;;
+		('en'|*)
+			message='No archive has been provided on the command line.\n'
+		;;
+	esac
+	print_error
+	printf "$message"
+}
+
 # display an error when no game script has been found for a given archive
 # USAGE: error_no_script_found_for_archive $archive
 error_no_script_found_for_archive() {
@@ -422,12 +439,12 @@ error_temporary_path_not_enough_space() {
 		('fr')
 			message='Le chemin demandé pour stocker les fichiers temporaires ne dispose pas dʼassez dʼespace libre : %s\n'
 			message="$message"'Un chemin alternatif peut-être fourni avec --tmpdir.\n'
-			message="$message"'Cette vérification de lʼespace libre peut aussi être contournée avec --skip-free-space-check.\n'
+			message="$message"'Cette vérification de lʼespace libre peut aussi être contournée avec --no-free-space-check.\n'
 		;;
 		('en'|*)
 			message='The path set for temporary files storage has not enough free space: %s\n'
 			message="$message"'An alternative path can be provided with --tmpdir.\n'
-			message="$message"'This free space check can also be disabled using --skip-free-space-check.\n'
+			message="$message"'This free space check can also be disabled using --no-free-space-check.\n'
 		;;
 	esac
 

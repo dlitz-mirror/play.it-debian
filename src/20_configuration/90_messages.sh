@@ -26,15 +26,13 @@ error_option_invalid() {
 	case "${LANG%_*}" in
 		('fr')
 			message='"%s" nʼest pas une valeur valide pour --%s.\n'
-			message="$message"'Lancez le script avec lʼoption --%s=help pour une liste des valeurs acceptés.\n'
 		;;
 		('en'|*)
 			message='"%s" is not a valid value for --%s.\n'
-			message="$message"'Run the script with the option --%s=help to get a list of supported values.\n'
 		;;
 	esac
 	print_error
-	printf "$message" "$option_value" "$option_name" "$option_name"
+	printf "$message" "$option_value" "$option_name"
 }
 
 # display an error when the config file is not found
