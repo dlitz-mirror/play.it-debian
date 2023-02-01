@@ -9,7 +9,9 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	case $OPTION_PACKAGE in
+	local option_package
+	option_package=$(option_value 'package')
+	case $option_package in
 		('arch')
 			for pkg in "$@"; do pkg_write_arch; done
 		;;
@@ -21,10 +23,6 @@ write_metadata() {
 		;;
 		('egentoo')
 			pkg_write_egentoo "$@"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
-			return 1
 		;;
 	esac
 
@@ -42,13 +40,14 @@ build_pkg() {
 
 	debug_entering_function 'build_pkg'
 
-	local package package_path
 	###
 	# TODO
 	# pkg_build_xxx implicitely depends on the target package being set as $pkg
 	# It should instead be passed as a mandatory argument.
 	###
-	case $OPTION_PACKAGE in
+	local option_package package package_path
+	option_package=$(option_value 'package')
+	case $option_package in
 		('arch')
 			for package in "$@"; do
 				package_path=$(package_path "$package")
@@ -72,10 +71,6 @@ build_pkg() {
 		;;
 		('egentoo')
 			pkg_build_egentoo "$@"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
-			return 1
 		;;
 	esac
 
@@ -157,10 +152,12 @@ packages_print_list() {
 	local archive
 	archive="$1"
 
+	local option_package
+	option_package=$(option_value 'package')
 	(
 		# shellcheck disable=SC2030
 		ARCHIVE="$archive"
-		case "$OPTION_PACKAGE" in
+		case "$option_package" in
 			('egentoo')
 				local package_name
 				package_name=$(egentoo_package_name)
@@ -205,7 +202,9 @@ package_get_id() {
 	fi
 
 	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
-	case "$OPTION_PACKAGE" in
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			case "$(package_get_architecture "$package")" in
 				('32')
@@ -216,7 +215,7 @@ package_get_id() {
 	esac
 
 	# on Gentoo, avoid mixups between numbers in package ID and version number
-	case "$OPTION_PACKAGE" in
+	case "$option_package" in
 		('gentoo'|'egentoo')
 			package_id=$(printf '%s' "$package_id" | sed 's/-/_/g')
 		;;
@@ -262,8 +261,9 @@ package_get_architecture_string() {
 	package_architecture=$(package_get_architecture "$package")
 
 	# set package architecture string, based on its architecture and target package format
-	local package_architecture_string
-	case "$OPTION_PACKAGE" in
+	local option_package package_architecture_string
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			case "$package_architecture" in
 				('32'|'64')
@@ -300,10 +300,6 @@ package_get_architecture_string() {
 				;;
 			esac
 		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_get_architecture_string'
-			return 1
-		;;
 	esac
 
 	printf '%s' "$package_architecture_string"
@@ -330,9 +326,10 @@ package_get_description() {
 	###
 
 	# generate a multi-lines or single-line description based on the target package format
-	local package_description_full game_name
+	local game_name option_package package_description_full
 	game_name=$(game_name)
-	case "$OPTION_PACKAGE" in
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('deb')
 			if [ -n "$package_description" ]; then
 				package_description_full='Description: %s - %s'
@@ -382,7 +379,9 @@ package_get_provide() {
 	# on Gentoo, avoid mixups between numbers in package ID and version number
 	# and add the required "!games-playit/" prefix to the package ID
 	# (https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers)
-	case "$OPTION_PACKAGE" in
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('gentoo'|'egentoo')
 			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
 			package_provide="!games-playit/${package_provide}"
@@ -400,10 +399,9 @@ package_name() {
 	local package
 	package="$1"
 
-	assert_not_empty 'OPTION_PACKAGE' 'package_name'
-
-	local package_name
-	case "$OPTION_PACKAGE" in
+	local option_package package_name
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			package_name=$(package_name_archlinux "$package")
 		;;
@@ -415,10 +413,6 @@ package_name() {
 		;;
 		('egentoo')
 			package_name=$(egentoo_package_name)
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_name'
-			return 1
 		;;
 	esac
 
@@ -432,11 +426,11 @@ package_path() {
 	local package
 	package="$1"
 
-	assert_not_empty 'OPTION_PACKAGE' 'package_path'
 	assert_not_empty 'PLAYIT_WORKDIR' 'package_path'
 
-	local package_name package_path
-	case "$OPTION_PACKAGE" in
+	local option_package package_name package_path
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			package_path=$(package_path_archlinux "$package")
 		;;
@@ -448,10 +442,6 @@ package_path() {
 		;;
 		('egentoo')
 			package_path=$(package_path_egentoo "$package")
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_path'
-			return 1
 		;;
 	esac
 
@@ -539,7 +529,9 @@ packages_get_version() {
 	packages_version="${packages_version}+${script_version}"
 
 	# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
-	case "$OPTION_PACKAGE" in
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('gentoo'|'egentoo')
 			set +o errexit
 			packages_version=$(printf '%s' "$packages_version" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?')

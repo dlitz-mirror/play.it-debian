@@ -38,8 +38,10 @@ tolower_convmv() {
 	convmv_options='-f utf8 --notest --lower -r'
 	find_options='-mindepth 1 -maxdepth 1'
 
-	# Hide convmv output unless $DEBUG is set to ≥ 1
-	if [ "$DEBUG" -ge 1 ]; then
+	# Hide convmv output unless $PLAYIT_OPTION_DEBUG is set to ≥ 1
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -ge 1 ]; then
 		# shellcheck disable=SC2086
 		find "$directory" $find_options -exec \
 			convmv $convmv_options {} +
@@ -94,8 +96,10 @@ toupper_convmv() {
 	convmv_options='-f utf8 --notest --upper -r'
 	find_options='-mindepth 1 -maxdepth 1'
 
-	# Hide convmv output unless $DEBUG is set to ≥ 1
-	if [ "$DEBUG" -ge 1 ]; then
+	# Hide convmv output unless $PLAYIT_OPTION_DEBUG is set to ≥ 1
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -ge 1 ]; then
 		# shellcheck disable=SC2086
 		find "$directory" $find_options -exec \
 			convmv $convmv_options {} +

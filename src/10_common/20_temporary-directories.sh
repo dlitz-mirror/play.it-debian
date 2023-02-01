@@ -34,14 +34,7 @@ set_temp_directories() {
 # Print the path to the temporary directory to use
 # USAGE: temporary_directory_path
 temporary_directory_path() {
-	# Use the value set through --tmpdir if it is set
-	if ! variable_is_empty 'OPTION_TMPDIR'; then
-		printf '%s' "$OPTION_TMPDIR"
-		return 0
-	fi
-
-	# Fall back to using $TMPDIR, defaulting to /tmp
-	printf '%s' "${TMPDIR:-/tmp}"
+	option_value 'tmpdir'
 }
 
 # Run checks on the path used for temporary files
@@ -81,7 +74,9 @@ temporary_directory_checks() {
 	fi
 
 	# Check that there is enough free space under the given path
-	if [ "$NO_FREE_SPACE_CHECK" -eq 0 ]; then
+	local option_free_space_check
+	option_free_space_check=$(option_value 'free-space-check')
+	if [ "$option_free_space_check" -eq 1 ]; then
 		local free_space_required free_space_available
 		###
 		# TODO

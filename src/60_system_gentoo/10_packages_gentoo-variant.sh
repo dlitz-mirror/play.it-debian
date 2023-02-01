@@ -96,10 +96,13 @@ pkg_build_gentoo() {
 			mkdir --parents "$(dirname "$pkg_filename_base")"
 		fi
 	done
-	local pkg_filename
-	pkg_filename="$OPTION_OUTPUT_DIR/$pkg_filename_base"
+	local option_output_dir pkg_filename
+	option_output_dir=$(option_value 'output-dir')
+	pkg_filename="${option_output_dir}/${pkg_filename_base}"
 
-	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+	local option_overwrite
+	option_overwrite=$(option_value 'overwrite')
+	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$pkg_filename_base"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg}_PKG
@@ -112,8 +115,11 @@ pkg_build_gentoo() {
 	local ebuild_path
 	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
 	ebuild "$ebuild_path" manifest 1>/dev/null
-	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$OPTION_COMPRESSION\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$OPTION_COMPRESSION" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+
+	local option_compression
+	option_compression=$(option_value 'compression')
+	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$option_compression\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$option_compression" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
 	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/${package_id}-${package_version}.tbz2" "$pkg_filename"
 	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 

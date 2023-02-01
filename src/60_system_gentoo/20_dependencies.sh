@@ -148,7 +148,9 @@ pkg_set_deps_gentoo() {
 				esac
 			;;
 			(*)
-				case "$OPTION_PACKAGE" in
+				local option_package
+				option_package=$(option_value 'package')
+				case "$option_package" in
 					('gentoo')
 						pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
 						local tested_package packages_list
@@ -160,11 +162,6 @@ pkg_set_deps_gentoo() {
 								fi
 							fi
 						done
-						;;
-					('egentoo') ;;
-					(*)
-						error_invalid_argument 'OPTION_PACKAGE' 'pkg_set_deps_gentoo'
-						return 1
 						;;
 				esac
 				;;

@@ -402,24 +402,17 @@ archive_extractor_options() {
 
 # check integrity of target file
 # USAGE: archive_integrity_check $archive $file ($name)
-# CALLS: archive_integrity_check_md5
 archive_integrity_check() {
-	local archive
-	local file
-	local name
+	local archive file name
 	archive="$1"
 	file="$2"
 	name="$3"
-	case "$OPTION_CHECKSUM" in
+
+	local option_checksum
+	option_checksum=$(option_value 'checksum')
+	case "$option_checksum" in
 		('md5')
 			archive_integrity_check_md5 "$archive" "$file" "$name"
-		;;
-		('none')
-			return 0
-		;;
-		(*)
-			error_invalid_argument 'OPTION_CHECKSUM' 'archive_integrity_check'
-			return 1
 		;;
 	esac
 }

@@ -364,8 +364,9 @@ launcher_desktop_exec() {
 	application="$1"
 
 	# Enclose the path in single quotes if it includes spaces
-	local field_format
-	case "$OPTION_PREFIX" in
+	local option_prefix field_format
+	option_prefix=$(option_value 'prefix')
+	case "$option_prefix" in
 		(*' '*)
 			field_format="Exec='%s'"
 		;;
@@ -377,7 +378,7 @@ launcher_desktop_exec() {
 	# Use the full path for non-standard prefixes
 	local field_value application_id
 	application_id=$(application_id "$application")
-	case "$OPTION_PREFIX" in
+	case "$option_prefix" in
 		('/usr'|'/usr/local')
 			field_value="$application_id"
 		;;

@@ -48,10 +48,10 @@ dependencies_list_native_libraries_packages() {
 	local package
 	package="$1"
 
-	local required_native_libraries
+	local required_native_libraries option_package
 	required_native_libraries=$(dependencies_list_native_libraries "$package")
-
-	case "$OPTION_PACKAGE" in
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			local package_architecture
 			package_architecture=$(package_get_architecture "$package")
@@ -119,7 +119,9 @@ dependencies_list_mono_libraries_packages() {
 	fi
 
 	# Return early when building packages for a system that does not provide Mono libraries in dedicated packages.
-	case "$OPTION_PACKAGE" in
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			# Arch Linux provides all Mono libraries in a single "mono" package.
 			printf '%s\n' 'mono'
@@ -132,7 +134,7 @@ dependencies_list_mono_libraries_packages() {
 		;;
 	esac
 
-	case "$OPTION_PACKAGE" in
+	case "$option_package" in
 		('deb')
 			debian_dependencies_providing_mono_libraries $required_mono_libraries
 			return 0

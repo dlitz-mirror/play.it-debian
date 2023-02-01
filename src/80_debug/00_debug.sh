@@ -25,7 +25,9 @@ debug_entering_function() {
 		debug_level=1
 	fi
 
-	if [ "$DEBUG" -lt "$debug_level" ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -lt "$debug_level" ]; then
 		return 0
 	fi
 
@@ -58,7 +60,9 @@ debug_leaving_function() {
 		debug_level=1
 	fi
 
-	if [ "$DEBUG" -lt "$debug_level" ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -lt "$debug_level" ]; then
 		return 0
 	fi
 
@@ -74,7 +78,9 @@ debug_leaving_function() {
 # print the name of the created directory
 # USAGE: debug_creating_directory $dir_path
 debug_creating_directory() {
-	if [ "$DEBUG" -eq 0 ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -eq 0 ]; then
 		return 0
 	fi
 
@@ -90,7 +96,9 @@ debug_creating_directory() {
 # print the name of an used directory
 # USAGE: debug_using_directory $dir_path
 debug_using_directory() {
-	if [ "$DEBUG" -eq 0 ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -eq 0 ]; then
 		return 0
 	fi
 
@@ -106,7 +114,9 @@ debug_using_directory() {
 # print the type of the launcher being created
 # USAGE: debug_write_launcher $launcher_type
 debug_write_launcher() {
-	if [ "$DEBUG" -eq 0 ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -eq 0 ]; then
 		return 0
 	fi
 
@@ -127,7 +137,9 @@ debug_write_launcher() {
 # print an external command
 # USAGE: debug_external_command $command
 debug_external_command() {
-	if [ "$DEBUG" -eq 0 ]; then
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -eq 0 ]; then
 		return 0
 	fi
 

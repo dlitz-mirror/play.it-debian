@@ -1,15 +1,9 @@
 # Print install path for binaries.
 # USAGE: path_binaries
 path_binaries() {
-	local install_prefix
-	install_prefix="$OPTION_PREFIX"
-	assert_not_empty 'install_prefix' 'path_binaries'
-
-	local target_system
-	target_system="$OPTION_PACKAGE"
-	assert_not_empty 'target_system' 'path_binaries'
-
-	local path_structure
+	local install_prefix target_system path_structure
+	install_prefix=$(option_value 'prefix')
+	target_system=$(option_value 'package')
 	case "$target_system" in
 		('deb')
 			# Debian uses /usr/games as the default path for game-related binaries.
@@ -31,20 +25,17 @@ path_xdg_desktop() {
 	# If they could be installed under a custom path like /opt/${game_id},
 	# they would not be picked up by applications menus without a manual intervention from the system administrator.
 	local default_install_prefix
-	default_install_prefix="$DEFAULT_OPTION_PREFIX"
-	assert_not_empty 'default_install_prefix' 'path_xdg_desktop'
-
+	default_install_prefix=$(option_value_default 'prefix')
 	printf '%s/share/applications' "$default_install_prefix"
 }
 
 # Print install path for documentation files.
 # USAGE: path_documentation
 path_documentation() {
-	local install_prefix
-	install_prefix="$OPTION_PREFIX"
-	assert_not_empty 'install_prefix' 'path_documentation'
-
-	case "$OPTION_PACKAGE" in
+	local install_prefix option_package
+	install_prefix=$(option_value 'prefix')
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('deb'|'arch')
 			local game_id
 			game_id=$(game_id)
@@ -55,28 +46,16 @@ path_documentation() {
 			package_name=$(egentoo_package_name)
 			printf '%s/share/doc/%s' "$install_prefix" "$package_name"
 			;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'path_documentation'
-			return 1
-			;;
 	esac
 }
 
 # Print install path for game files.
 # USAGE: path_game_data
 path_game_data() {
-	local install_prefix
-	install_prefix="$OPTION_PREFIX"
-	assert_not_empty 'install_prefix' 'path_game_data'
-
-	local game_id
+	local install_prefix game_id target_system path_structure
+	install_prefix=$(option_value 'prefix')
 	game_id=$(game_id)
-
-	local target_system
-	target_system="$OPTION_PACKAGE"
-	assert_not_empty 'target_system' 'path_game_data'
-
-	local path_structure
+	target_system=$(option_value 'package')
 	case "$target_system" in
 		('deb')
 			# Debian uses /usr/share/games as the default path for game-related data files.
@@ -97,21 +76,15 @@ path_icons() {
 	# Icons are always installed under the default install prefix.
 	# launcher_desktop (src/30_launchers/00_common.sh) expects the icon to be available under either /usr or /usr/local.
 	local default_install_prefix
-	default_install_prefix="$DEFAULT_OPTION_PREFIX"
-	assert_not_empty 'default_install_prefix' 'path_icons'
-
+	default_install_prefix=$(option_value_default 'prefix')
 	printf '%s/share/icons/hicolor' "$default_install_prefix"
 }
 
 # Print install path for native libraries.
 # USAGE: path_libraries
 path_libraries() {
-	local install_prefix
-	install_prefix="$OPTION_PREFIX"
-	assert_not_empty 'install_prefix' 'path_game_data'
-
-	local game_id
+	local install_prefix game_id
+	install_prefix=$(option_value 'prefix')
 	game_id=$(game_id)
-
 	printf '%s/lib/games/%s' "$install_prefix" "$game_id"
 }
