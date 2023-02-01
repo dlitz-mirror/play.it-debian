@@ -37,16 +37,18 @@ find_configuration_file() {
 	# Override the default path if another one has been specified.
 	while [ $# -gt 0 ]; do
 		case "$1" in
-			('--config-file='*|\
-			 '--config-file'|\
-			 '-c')
-				if [ "${1%=*}" != "${1#*=}" ]; then
-					config_file_path="${1#*=}"
+			( \
+				'--config-file='* | \
+				'--config-file' | \
+				'-c' \
+			)
+				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
+					config_file_path=$(argument_value "$1")
 				else
-					config_file_path="$2"
+					config_file_path=$(argument_value "$1" "$2")
 				fi
 				break
-				;;
+			;;
 		esac
 		shift 1
 	done
@@ -65,116 +67,6 @@ find_configuration_file() {
 	fi
 
 	printf '%s' "$config_file_path"
-	return 0
-}
-
-# parse arguments given to the script
-# USAGE: parse_arguments $arguments[…]
-parse_arguments() {
-	local option
-	local value
-
-	while [ $# -gt 0 ]; do
-		case "$1" in
-			('--help')
-				help
-				exit 0
-			;;
-			( \
-				'--checksum='*| \
-				'--checksum'| \
-				'--compression='*| \
-				'--compression'| \
-				'--prefix='*| \
-				'--prefix'| \
-				'--package='*| \
-				'--package'| \
-				'--icons='*| \
-				'--icons'| \
-				'--output-dir='*| \
-				'--output-dir'| \
-				'--tmpdir='*| \
-				'--tmpdir'* \
-			)
-				if [ "${1%=*}" != "${1#*=}" ]; then
-					option="$(printf '%s' "${1%=*}" | sed 's/^--//;s/-/_/g')"
-					value="${1#*=}"
-				else
-					option="$(printf '%s' "$1" | sed 's/^--//;s/-/_/g')"
-					value="$2"
-					shift 1
-				fi
-				if [ "$value" = 'help' ]; then
-					eval help_$option
-					exit 0
-				else
-					# shellcheck disable=SC2046
-					eval OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')=\"$value\"
-					# shellcheck disable=SC2046
-					export OPTION_$(printf '%s' "$option" | sed 's/-/_/g' | tr '[:lower:]' '[:upper:]')
-				fi
-				unset option
-				unset value
-			;;
-			('--skip-free-space-check')
-				NO_FREE_SPACE_CHECK='1'
-				export NO_FREE_SPACE_CHECK
-			;;
-			('--overwrite')
-				OVERWRITE_PACKAGES=1
-				export OVERWRITE_PACKAGES
-			;;
-			('--debug'|'--debug='*)
-				if [ "${1%=*}" != "${1#*=}" ]; then
-					DEBUG="${1#*=}"
-				else
-					case "$2" in
-						([0-9])
-							DEBUG="$2"
-							shift 1
-							;;
-						(*)
-							DEBUG=1
-					esac
-				fi
-				export DEBUG
-			;;
-			('--no-mtree')
-				MTREE=0
-				export MTREE
-			;;
-			('--config-file='*|\
-			 '--config-file'|\
-			 '-c')
-				if [ "${1%=*}" = "${1#*=}" ]; then
-					shift 1
-				fi
-			;;
-			('--list-packages')
-				PRINT_LIST_OF_PACKAGES=1
-				export PRINT_LIST_OF_PACKAGES
-			;;
-			('--list-requirements')
-				PRINT_REQUIREMENTS=1
-				export PRINT_REQUIREMENTS
-			;;
-			('--'*)
-				error_option_unknown "$1"
-				return 1
-			;;
-			(*)
-				if [ -f "$1" ]; then
-					SOURCE_ARCHIVE="$1"
-					export SOURCE_ARCHIVE
-				else
-					error_not_a_file "$1"
-					return 1
-				fi
-			;;
-		esac
-		shift 1
-	done
-
 	return 0
 }
 
