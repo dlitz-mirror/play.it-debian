@@ -107,27 +107,6 @@ error_unknown_tar_implementation() {
 	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
 }
 
-# display an error when the value assigned to a given option is not valid
-# USAGE: error_option_invalid $option_name $option_value
-error_option_invalid() {
-	local message option_name option_value
-	option_name="$1"
-	option_value="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='%s nʼest pas une valeur valide pour --%s.\n'
-			message="$message"'Lancez le script avec lʼoption --%s=help pour une liste des valeurs acceptés.\n'
-		;;
-		('en'|*)
-			message='%s is not a valid value for --%s.\n'
-			message="$message"'Run the script with the option --%s=help to get a list of supported values.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$option_value" "$option_name" "$option_name"
-}
-
 # display an error when a given path is not a directory
 # USAGE: error_not_a_directory $path
 error_not_a_directory() {
