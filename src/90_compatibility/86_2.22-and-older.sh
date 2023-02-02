@@ -1,5 +1,13 @@
 # Keep compatibility with 2.22 and older
 
+debian_dpkg_compression_legacy() {
+	local dpkg_options option_compression
+	dpkg_options="$1"
+	option_compression="$2"
+
+	printf '%s -Z%s' "$dpkg_options" "$option_compression"
+}
+
 option_validity_check_compression_legacy() {
 	local option_value
 	option_value="$1"
