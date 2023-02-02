@@ -8,6 +8,36 @@ debian_dpkg_compression_legacy() {
 	printf '%s -Z%s' "$dpkg_options" "$option_compression"
 }
 
+archlinux_tar_compress_program_legacy() {
+	local option_compression
+	option_compression="$1"
+
+	printf '%s' "$option_compression"
+}
+
+archlinux_package_name_legacy() {
+	local package_name option_compression
+	package_name="$1"
+	option_compression="$2"
+
+	case "$option_compression" in
+		('gzip')
+			package_name="${package_name}.gz"
+		;;
+		('xz')
+			package_name="${package_name}.xz"
+		;;
+		('bzip2')
+			package_name="${package_name}.bz2"
+		;;
+		('zstd')
+			package_name="${package_name}.zst"
+		;;
+	esac
+
+	printf '%s' "$package_name"
+}
+
 option_validity_check_compression_legacy() {
 	local option_value
 	option_value="$1"
