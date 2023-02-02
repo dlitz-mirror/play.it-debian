@@ -8,7 +8,7 @@
 .Nm
 .Ar archive
 .Op Fl -checksum Cm md5 | Cm none
-.Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
+.Op Fl -compression Cm none | Cm speed | Cm size
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
 .Op Fl -no-icons
@@ -48,26 +48,15 @@ md5sum verification
 .It Cm none
 no verification
 .El
-.It Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
-Generated packages compression method selection. (Some options may not be
-available depending on the chosen package format.)
+.It Fl -compression Cm none | Cm speed | Cm size
+Generated packages compression method selection.
 .Bl -tag -width indent -compact
 .It Cm none
 no compression
-.It Cm gzip
-gzip compression (fast)
-.It Cm xz
-xz compression (slower but more efficient than gzip)
-.It Cm bzip2
-bzip2 compression
-.It Cm zstd
-zstd compression
-.It Cm lz4
-lz4 compression (fastest but biggest files)
-.It Cm lzip
-lzip compression (similar to xz, fit for long-term archiving)
-.It Cm lzop
-lzop compression (slower than lz4 at inflating but more efficient)
+.It Cm speed
+compression method focusing on compression speed
+.It Cm size
+compression method focusing on size reduction
 .El
 .It Fl -prefix Ar path
 Game installation

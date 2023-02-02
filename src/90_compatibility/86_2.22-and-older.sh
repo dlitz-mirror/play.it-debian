@@ -1,5 +1,48 @@
 # Keep compatibility with 2.22 and older
 
+option_validity_check_compression_legacy() {
+	local option_value
+	option_value="$1"
+
+	local option_package option_package_variable
+	option_package_variable=$(option_variable 'package')
+	option_package=$(get_value "$option_package_variable")
+	case "$option_package" in
+		('arch')
+			case "$option_value" in
+				('none'|'gzip'|'xz'|'bzip2'|'zstd')
+					return 0
+				;;
+			esac
+		;;
+		('deb')
+			case "$option_value" in
+				('none'|'gzip'|'xz')
+					return 0
+				;;
+			esac
+		;;
+		('gentoo')
+			case "$option_value" in
+				('gzip'|'xz'|'bzip2'|'zstd'|'lz4'|'lzip'|'lzop')
+					return 0
+				;;
+			esac
+		;;
+		('egentoo')
+			case "$option_value" in
+				('none'|'gzip'|'xz'|'bzip2'|'zstd'|'lzip')
+					return 0
+				;;
+			esac
+		;;
+	esac
+
+	# Throw an error if we are not in one of the valid cases
+	error_option_invalid 'compression' "$option_value"
+	return 1
+}
+
 option_export_legacy() {
 	local option_name
 	option_name="$1"

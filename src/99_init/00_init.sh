@@ -83,31 +83,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	unset option_package
 
-	# Set default value for compression depending on the chosen package format
-
-	option_compression_variable_default=$(option_variable_default 'compression')
-	## Skip setting a default value based on the set package format
-	## if a default has already been set from the configuration file.
-	if variable_is_empty "$option_compression_variable_default"; then
-		option_package=$(option_value 'package')
-		case "$option_package" in
-			('arch')
-				option_value_default='zstd'
-			;;
-			('deb')
-				option_value_default='none'
-			;;
-			('gentoo')
-				option_value_default='bzip2'
-			;;
-			('egentoo')
-				option_value_default='bzip2'
-			;;
-		esac
-		option_update_default 'compression' "$option_value_default"
-	fi
-	unset option_compression_variable_default option_package option_value_default
-
 	# Set options not already set by script arguments to default values
 
 	for option_name in \

@@ -2,7 +2,7 @@
 # USAGE: options_init_default
 options_init_default() {
 	option_update_default 'checksum' 'md5'
-	option_update_default 'compression' '' # Default value is set later, based on "package" value.
+	option_update_default 'compression' 'none'
 	option_update_default 'output-dir' "$PWD"
 	option_update_default 'package' 'deb'
 	option_update_default 'prefix' '/usr'
@@ -163,39 +163,20 @@ option_validity_check() {
 			esac
 		;;
 		('compression')
-			local option_package option_package_variable
-			option_package_variable=$(option_variable 'package')
-			option_package=$(get_value "$option_package_variable")
-			case "$option_package" in
-				('arch')
-					case "$option_value" in
-						('none'|'gzip'|'xz'|'bzip2'|'zstd')
-							return 0
-						;;
-					esac
-				;;
-				('deb')
-					case "$option_value" in
-						('none'|'gzip'|'xz')
-							return 0
-						;;
-					esac
-				;;
-				('gentoo')
-					case "$option_value" in
-						('gzip'|'xz'|'bzip2'|'zstd'|'lz4'|'lzip'|'lzop')
-							return 0
-						;;
-					esac
-				;;
-				('egentoo')
-					case "$option_value" in
-						('none'|'gzip'|'xz'|'bzip2'|'zstd'|'lzip')
-							return 0
-						;;
-					esac
+			case "$option_value" in
+				('none'|'speed'|'size')
+					return 0
 				;;
 			esac
+			if ! version_is_at_least '2.23' "$target_version"; then
+				option_validity_check_compression_legacy "$option_value"
+				# Ensure the warning is only displayed once
+				if variable_is_empty 'PLAYIT_WARNING_LEGACY_COMPRESSION_SHOWN'; then
+					warning_option_value_deprecated "$option_name" "$option_value"
+					export PLAYIT_WARNING_LEGACY_COMPRESSION_SHOWN=1
+				fi
+				return 0
+			fi
 		;;
 		('debug')
 			case "$option_value" in
