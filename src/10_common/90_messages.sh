@@ -1,9 +1,3 @@
-# print OK
-# USAGE: print_ok
-print_ok() {
-	printf '\t\033[1;32mOK\033[0m\n'
-}
-
 # print a localized error message
 # USAGE: print_error
 print_error() {
@@ -348,77 +342,6 @@ error_compression_invalid() {
 	printf "$message" "$compression_method" "$package_format" "$allowed_values"
 }
 
-# display an error when trying to get the current archive but none is set
-# USAGE: error_archive_unset
-error_archive_unset() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Aucune archive nʼest définie, mais une est attendue à ce point de lʼexécution.\n'
-		;;
-		('en'|*)
-			message='No archive is set, but one is expected at this step.\n'
-		;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message"
-}
-
-# display an error when trying to use an unkown type of context
-# valid context types are:
-# - archive
-# - package
-# USAGE: error_context_invalid $context
-error_context_invalid() {
-	local context
-	context="$1"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Un type de contexte inattendu a été demandé : %s\n'
-			message="$message"'Seuls les types suivants sont valides :\n'
-			message="$message"'\t- archive\n'
-			message="$message"'\t- package\n'
-		;;
-		('en'|*)
-			message='An unexpected context type has been required: %s\n'
-			message="$message"'Only the following types are valid:\n'
-			message="$message"'\t- archive\n'
-			message="$message"'\t- package\n'
-		;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$context"
-}
-
-# displays an error when no valid candidates for ./play.it temporary directory
-# has been found
-# USAGE: error_no_valid_temp_dir_found $directory[…]
-error_no_valid_temp_dir_found() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Aucun répertoire testé ne peut servir de répertoire
-			temporaire pour ./play.it :\n'
-		;;
-		('en'|*)
-			message='No tested repository can be used as ./play.it temporary
-			directory:\n'
-		;;
-	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message"
-	printf '%s\n' "$@"
-}
-
 # Display an error when trying to use a non-existing directory for temporary files
 # USAGE: error_temporary_path_not_a_directory $temporary_directory_path
 error_temporary_path_not_a_directory() {
@@ -606,28 +529,4 @@ warning_deprecated_function() {
 	# to avoid messing up the regular output of the function that triggered this warning.
 	print_warning > /dev/stderr
 	printf "$message" "$old_function" "$new_function" > /dev/stderr
-}
-
-# Display an error when an obsolete function is called.
-# USAGE: error_obsolete_function $old_function $new_function
-error_obsolete_function() {
-	local old_function new_function
-	old_function="$1"
-	new_function="$2"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La fonction suivante est obsolète : %s\n'
-			message="$message"'Cette nouvelle fonction doit être utilisée à sa place : %s\n'
-		;;
-		('en'|*)
-			message='The following function is obsolete: %s\n'
-			message="$message"'This new function must be used instead: %s\n'
-		;;
-	esac
-
-	print_error
-	printf "$message" "$old_function" "$new_function"
 }
