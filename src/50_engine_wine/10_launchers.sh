@@ -115,7 +115,7 @@ wine_prefix_wineprefix_regedit() {
 }
 
 # WINE - Initial call to winetricks during prefix generation
-# USAGE: launcher_wine_winetricks_call $winetricks_verb[…]
+# USAGE: wine_prefix_wineprefix_winetricks $winetricks_verb[…]
 wine_prefix_wineprefix_winetricks() {
 	# Return early if no winetricks call is required
 	if [ $# -eq 0 ]; then
