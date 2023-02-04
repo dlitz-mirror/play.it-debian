@@ -163,6 +163,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	archives_list=$(archives_return_list)
 	ARCHIVE=$(archive_find_from_candidates 'SOURCE_ARCHIVE' $archives_list)
+	if [ -z "$ARCHIVE" ]; then
+		error_archive_not_found $archives_list
+		exit 0
+	fi
 	export ARCHIVE
 
 	# If called with --list-packages,
