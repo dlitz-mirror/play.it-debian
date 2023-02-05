@@ -6,9 +6,6 @@ pkg_set_deps_deb() {
 			('alsa')
 				pkg_dep='libasound2-plugins'
 			;;
-			('bzip2')
-				pkg_dep='libbz2-1.0'
-			;;
 			('dosbox')
 				pkg_dep='dosbox'
 			;;
@@ -17,9 +14,6 @@ pkg_set_deps_deb() {
 			;;
 			('gcc32')
 				pkg_dep='gcc-multilib:amd64 | gcc'
-			;;
-			('gconf')
-				pkg_dep='libgconf-2-4'
 			;;
 			('glibc')
 				pkg_dep='libc6'
@@ -38,12 +32,6 @@ pkg_set_deps_deb() {
 			;;
 			('json')
 				pkg_dep='libjson-c3 | libjson-c2 | libjson0'
-			;;
-			('libcurl')
-				pkg_dep='libcurl4 | libcurl3'
-			;;
-			('libcurl-gnutls')
-				pkg_dep='libcurl3-gnutls'
 			;;
 			('libstdc++')
 				pkg_dep='libstdc++6'
@@ -75,25 +63,10 @@ pkg_set_deps_deb() {
 			('scummvm')
 				pkg_dep='scummvm'
 			;;
-			('sdl1.2')
-				pkg_dep='libsdl1.2debian'
-			;;
 			('sdl2')
 				pkg_dep='libsdl2-2.0-0'
 			;;
-			('sdl2_image')
-				pkg_dep='libsdl2-image-2.0-0'
-			;;
-			('sdl2_mixer')
-				pkg_dep='libsdl2-mixer-2.0-0'
-			;;
-			('theora')
-				pkg_dep='libtheora0'
-			;;
-			('vorbis')
-				pkg_dep='libvorbisfile3'
-			;;
-			('wine'|'wine-staging')
+			('wine')
 				###
 				# TODO
 				# $pkg should be computed here, not implicitely inherited from the calling function
@@ -114,9 +87,6 @@ pkg_set_deps_deb() {
 			;;
 			('xcursor')
 				pkg_dep='libxcursor1'
-			;;
-			('xft')
-				pkg_dep='libxft2'
 			;;
 			('xgamma'|'xrandr')
 				pkg_dep='x11-xserver-utils:amd64 | x11-xserver-utils'

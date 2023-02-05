@@ -5,25 +5,20 @@ pkg_set_deps_gentoo() {
 	package="$1"
 	shift
 
-	local package_architecture architecture_suffix architecture_suffix_use
+	local package_architecture architecture_suffix
 	package_architecture="$(package_get_architecture "$package")"
 	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
-			architecture_suffix_use=',abi_x86_32'
 		;;
 		('64')
 			architecture_suffix=''
-			architecture_suffix_use=''
 		;;
 	esac
 	for dep in "$@"; do
 		case $dep in
 			('alsa')
 				pkg_dep="media-libs/alsa-lib$architecture_suffix media-plugins/alsa-plugins$architecture_suffix"
-			;;
-			('bzip2')
-				pkg_dep="app-arch/bzip2$architecture_suffix"
 			;;
 			('dosbox')
 				pkg_dep="games-emulation/dosbox"
@@ -33,9 +28,6 @@ pkg_set_deps_gentoo() {
 			;;
 			('gcc32')
 				pkg_dep='' #gcc (in @system) should be multilib unless it is a no-multilib profile, in which case the 32 bits libraries wouldn't work
-			;;
-			('gconf')
-				pkg_dep="gnome-base/gconf$architecture_suffix"
 			;;
 			('glibc')
 				pkg_dep="sys-libs/glibc"
@@ -57,16 +49,6 @@ pkg_set_deps_gentoo() {
 			;;
 			('json')
 				pkg_dep="dev-libs/json-c$architecture_suffix"
-			;;
-			('libcurl')
-				pkg_dep="net-misc/curl$architecture_suffix"
-			;;
-			('libcurl-gnutls')
-				local architecture_string
-				pkg_dep="net-libs/libcurl-debian$architecture_suffix"
-				pkg_overlay='steam-overlay'
-				architecture_string="$(package_get_architecture_string "$package")"
-				dependencies_gentoo_link 'libcurl-gnutls.so.4' "/usr/$(dependency_gentoo_libdir "$architecture_string")/debiancompat" "$package"
 			;;
 			('libstdc++')
 				pkg_dep='' #maybe this should be virtual/libstdc++, otherwise, it is included in gcc, which should be in @system
@@ -98,26 +80,8 @@ pkg_set_deps_gentoo() {
 			('scummvm')
 				pkg_dep='games-engines/scummvm'
 			;;
-			('sdl1.2')
-				pkg_dep="media-libs/libsdl$architecture_suffix"
-			;;
 			('sdl2')
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
-			;;
-			('sdl2_image')
-				# Most games will require at least jpeg and png
-				# Maybe we should add gif and tiff to that list?
-				pkg_dep="media-libs/sdl2-image[jpeg,png$architecture_suffix_use]"
-			;;
-			('sdl2_mixer')
-				#Most games will require at least one of flac, mp3, vorbis or wav USE flags, it should better to require them all instead of not requiring any and having non-fonctionnal sound in some games.
-				pkg_dep="media-libs/sdl2-mixer[flac,mp3,vorbis,wav$architecture_suffix_use]"
-			;;
-			('theora')
-				pkg_dep="media-libs/libtheora$architecture_suffix"
-			;;
-			('vorbis')
-				pkg_dep="media-libs/libvorbis$architecture_suffix"
 			;;
 			('wine')
 				case "$package_architecture" in
@@ -131,18 +95,6 @@ pkg_set_deps_gentoo() {
 			('wine64')
 				pkg_dep='virtual/wine[abi_x86_64]'
 			;;
-			('wine-staging')
-				case "$package_architecture" in
-					('32') pkg_set_deps_gentoo "$package" 'wine32-staging' ;;
-					('64') pkg_set_deps_gentoo "$package" 'wine64-staging' ;;
-				esac
-			;;
-			('wine32-staging')
-				pkg_dep='virtual/wine[staging,abi_x86_32]'
-			;;
-			('wine64-staging')
-				pkg_dep='virtual/wine[staging,abi_x86_64]'
-			;;
 			('winetricks')
 				pkg_dep='app-emulation/winetricks
 				|| (
@@ -153,9 +105,6 @@ pkg_set_deps_gentoo() {
 			;;
 			('xcursor')
 				pkg_dep="x11-libs/libXcursor$architecture_suffix"
-			;;
-			('xft')
-				pkg_dep="x11-libs/libXft$architecture_suffix"
 			;;
 			('xgamma')
 				pkg_dep='x11-apps/xgamma'

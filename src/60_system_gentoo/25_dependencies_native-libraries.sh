@@ -308,10 +308,15 @@ dependency_package_providing_library_gentoo() {
 			package_name='media-libs/libsdl2[opengl]'
 		;;
 		('libSDL2_image-2.0.so.0')
-			package_name='media-libs/sdl2-image'
+			# Most games will require at least jpeg and png
+			# Maybe we should add gif and tiff to that list?
+			package_name='media-libs/sdl2-image[jpeg,png]'
 		;;
 		('libSDL2_mixer-2.0.so.0')
-			package_name='media-libs/sdl2-mixer'
+			# Most games will require at least one of flac, mp3, vorbis or wav USE flags,
+			# it should better to require them all instead of not requiring any
+			# and having non-fonctionnal sound in some games.
+			package_name='media-libs/sdl2-mixer[flac,mp3,vorbis,wav]'
 		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf'
@@ -733,10 +738,15 @@ dependency_package_providing_library_gentoo32() {
 			package_name='media-libs/libsdl2[abi_x86_32,opengl]'
 		;;
 		('libSDL2_image-2.0.so.0')
-			package_name='media-libs/sdl2-image[abi_x86_32]'
+			# Most games will require at least jpeg and png
+			# Maybe we should add gif and tiff to that list?
+			package_name='media-libs/sdl2-image[jpeg,png,abi_x86_32]'
 		;;
 		('libSDL2_mixer-2.0.so.0')
-			package_name='media-libs/sdl2-mixer[abi_x86_32]'
+			# Most games will require at least one of flac, mp3, vorbis or wav USE flags,
+			# it should better to require them all instead of not requiring any
+			# and having non-fonctionnal sound in some games.
+			package_name='media-libs/sdl2-mixer[flac,mp3,vorbis,wav,abi_x86_32]'
 		;;
 		('libSDL2_ttf-2.0.so.0')
 			package_name='media-libs/sdl2-ttf[abi_x86_32]'
