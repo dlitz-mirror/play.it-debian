@@ -102,20 +102,20 @@ icons_inclusion_single_icon() {
 	unset WRESTOOL_OPTIONS
 }
 
-# extract .png file(s) from target file
+# Convert the given file into .png icons
 # USAGE: icon_extract_png_from_file $file $destination
-# RETURNS: nothing
-# SIDE EFFECT: convert the given file to .png icons, the .png files are created in the given directory
 icon_extract_png_from_file() {
-	local icon_file destination icon_type
+	local icon_file destination
 	icon_file="$1"
 	destination="$2"
+
+	local icon_type
 	icon_type=$(file_type "$icon_file")
 	mkdir --parents "$destination"
 	case "$icon_type" in
 		( \
-			'application/x-dosexec' | \
-			'application/vnd.microsoft.portable-executable' \
+			'application/vnd.microsoft.portable-executable' | \
+			'application/x-dosexec' \
 		)
 			icon_extract_png_from_exe "$icon_file" "$destination"
 		;;
@@ -125,10 +125,16 @@ icon_extract_png_from_file() {
 		('image/vnd.microsoft.icon')
 			icon_extract_png_from_ico "$icon_file" "$destination"
 		;;
-		('image/bmp'|'image/x-ms-bmp')
+		( \
+			'image/bmp' | \
+			'image/x-ms-bmp' \
+		)
 			icon_convert_bmp_to_png "$icon_file" "$destination"
 		;;
-		('image/x-xpmi')
+		( \
+			'image/x-xpixmap' | \
+			'image/x-xpmi' \
+		)
 			icon_copy_xpm "$icon_file" "$destination"
 		;;
 		(*)
