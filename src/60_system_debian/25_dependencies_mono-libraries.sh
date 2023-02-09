@@ -50,6 +50,15 @@ debian_dependency_providing_mono_library() {
 		('Mono.Security.dll')
 			package_name='libmono-security4.0-cil'
 		;;
+		('OpenTK.dll')
+			package_name='libopentk1.1-cil'
+		;;
+		('OpenTK.Compatibility.dll')
+			package_name='libopentk1.1-cil'
+		;;
+		('OpenTK.GLControl.dll')
+			package_name='libopentk1.1-cil'
+		;;
 		('System.dll')
 			package_name='libmono-system4.0-cil'
 		;;
