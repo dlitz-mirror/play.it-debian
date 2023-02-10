@@ -144,6 +144,9 @@ Emplacement par défaut du fichier de configuration. Celui-ci contient une liste
 de paramètres qui seront passés à
 .Nm
 comme s’ils lui avaient été donnés sur la ligne de commande.
+.Sh COMPRESSION
+.Ss Debian
+Lors de la construction de paquets pour Debian (avec --package deb), utiliser --compression auto suit le comportement par défaut de dpkg-deb. Ce comportement peut être contrôlé par les variables dʼenvironnement DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE et DPKG_DEB_COMPRESSOR_LEVEL. Référez-vous à dpkg-deb(1) pour plus de détails sur la manière dont elles peuvent être utilisées.
 .Sh VOIR AUSSI
 .Bl -column
 .Xr dosbox 1

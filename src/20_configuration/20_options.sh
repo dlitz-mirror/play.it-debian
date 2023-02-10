@@ -366,7 +366,7 @@ options_compatibility_check() {
 			;;
 			('deb')
 				case "$option_compression" in
-					('none'|'speed'|'size')
+					('none'|'speed'|'size'|'auto')
 						# Valid combination (current value)
 					;;
 					('gzip'|'xz')
