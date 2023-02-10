@@ -81,24 +81,23 @@ pkg_write_deb() {
 
 # build .deb package
 # USAGE: pkg_build_deb $pkg_path
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) PLAYIT_WORKDIR
-# CALLED BY: build_pkg
 pkg_build_deb() {
-	local pkg_filename
-	pkg_filename="$OPTION_OUTPUT_DIR/$(basename "$1").deb"
-	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+	local option_output_dir pkg_filename
+	option_output_dir=$(option_value 'output-dir')
+	pkg_filename="${option_output_dir}/$(basename "$1").deb"
+
+	local option_overwrite
+	option_overwrite=$(option_value 'overwrite')
+	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$(basename "$pkg_filename")"
 		return 0
 	fi
 
-	local dpkg_options
-	case $OPTION_COMPRESSION in
+	local option_compression dpkg_options
+	option_compression=$(option_value 'compression')
+	case $option_compression in
 		('gzip'|'none'|'xz')
-			dpkg_options="-Z$OPTION_COMPRESSION"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_deb'
-			return 1
+			dpkg_options="-Z$option_compression"
 		;;
 	esac
 

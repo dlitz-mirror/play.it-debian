@@ -32,8 +32,9 @@ requirements_list() {
 # USAGE: requirements_list_compression
 # RETURN: a list for required commands, one per line
 requirements_list_compression() {
-	local requirements
-	case "$OPTION_COMPRESSION" in
+	local option_compression requirements
+	option_compression=$(option_value 'compression')
+	case "$option_compression" in
 		('gzip')
 			requirements='gzip'
 		;;
@@ -66,9 +67,10 @@ requirements_list_compression() {
 # USAGE: requirements_list_checksum
 # RETURN: a list for required commands, one per line
 requirements_list_checksum() {
-	local requirements
-	case "$OPTION_CHECKSUM" in
-		('md5sum')
+	local option_checksum requirements
+	option_checksum=$(option_value 'checksum')
+	case "$option_checksum" in
+		('md5')
 			requirements='md5sum'
 		;;
 	esac
@@ -82,8 +84,9 @@ requirements_list_checksum() {
 # USAGE: requirements_list_package
 # RETURN: a list for required commands, one per line
 requirements_list_package() {
-	local requirements
-	case "$OPTION_PACKAGE" in
+	local option_package requirements
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			# bsdtar and gzip are required for .MTREE
 			requirements='bsdtar gzip'
@@ -107,7 +110,9 @@ requirements_list_package() {
 # RETURN: a list for required commands, one per line
 requirements_list_icons() {
 	# Return early if icons inclusion is disabled
-	if [ "$OPTION_ICONS" = 'no' ]; then
+	local option_icons
+	option_icons=$(option_value 'icons')
+	if [ "$option_icons" -eq 0 ]; then
 		return 0
 	fi
 
@@ -246,10 +251,14 @@ check_deps() {
 		SCRIPT_DEPS=''
 	fi
 
+	local requirements_list_compression requirements_list_checksum requirements_list_package
+	requirements_list_compression=$(requirements_list_compression)
+	requirements_list_checksum=$(requirements_list_checksum)
+	requirements_list_package=$(requirements_list_package)
 	SCRIPT_DEPS="$SCRIPT_DEPS
-	$(requirements_list_compression)
-	$(requirements_list_checksum)
-	$(requirements_list_package)"
+	$requirements_list_compression
+	$requirements_list_checksum
+	$requirements_list_package"
 
 	for dep in $SCRIPT_DEPS; do
 		case $dep in
@@ -266,7 +275,9 @@ check_deps() {
 	done
 
 	# Check for the dependencies required to extract the icons
-	if [ "$OPTION_ICONS" = 'yes' ]; then
+	local option_icons
+	option_icons=$(option_value 'icons')
+	if [ "$option_icons" -eq 1 ]; then
 		local icons_requirements requirement
 		icons_requirements=$(requirements_list_icons)
 		for requirement in $icons_requirements; do

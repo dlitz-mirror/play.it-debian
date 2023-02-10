@@ -13,13 +13,13 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar chemin
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -icons Cm yes | Cm no
+.Op Fl -no-icons
 .Op Fl -overwrite
 .Op Fl -output-dir Ar chemin
 .Op Fl -debug Op Ar N
 .Op Fl -no-mtree
 .Op Fl -tmpdir Ar chemin
-.Op Fl -skip-free-space-check
+.Op Fl -no-free-space-check
 .Op Fl -show-game-script
 .Op Fl -config-file Ar chemin
 .Op Fl -list-packages
@@ -94,14 +94,8 @@ paquets .tbz2 (Gentoo)
 .It Cm egentoo
 paquets .tar accompagné d’un .ebuild (Gentoo)
 .El
-.It Fl -icons Cm yes | Cm no
-Détermine l’inclusion des icônes dans les paquets.
-.Bl -tag -width indent -compact
-.It Cm yes
-Inclue les icônes et échoue si une dépendance n’est pas satisfaite
-.It Cm no
-N’inclue pas les icônes
-.El
+.It Fl -no-icons
+Ne pas inclure les icônes du jeu.
 .It Fl -overwrite
 Remplace les paquets s’ils existent déjà.
 .It Fl -output-dir Ar chemin
@@ -119,7 +113,7 @@ volumineux.
 Définit le répertoire utilisé pour le stockage des fichiers temporaire.
 La valeur par défaut est : 
 .Ev TMPDIR
-.It Fl -skip-free-space-check
+.It Fl -no-free-space-check
 Ne pas tester l’espace libre disponible.
 .It Fl -show-game-script
 Affiche seulement le nom du script du jeu à utiliser sans l’exécuter.

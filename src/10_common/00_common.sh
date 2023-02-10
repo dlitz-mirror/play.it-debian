@@ -38,8 +38,10 @@ tolower_convmv() {
 	convmv_options='-f utf8 --notest --lower -r'
 	find_options='-mindepth 1 -maxdepth 1'
 
-	# Hide convmv output unless $DEBUG is set to ≥ 1
-	if [ "$DEBUG" -ge 1 ]; then
+	# Hide convmv output unless $PLAYIT_OPTION_DEBUG is set to ≥ 1
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -ge 1 ]; then
 		# shellcheck disable=SC2086
 		find "$directory" $find_options -exec \
 			convmv $convmv_options {} +
@@ -94,8 +96,10 @@ toupper_convmv() {
 	convmv_options='-f utf8 --notest --upper -r'
 	find_options='-mindepth 1 -maxdepth 1'
 
-	# Hide convmv output unless $DEBUG is set to ≥ 1
-	if [ "$DEBUG" -ge 1 ]; then
+	# Hide convmv output unless $PLAYIT_OPTION_DEBUG is set to ≥ 1
+	local option_debug
+	option_debug=$(option_value 'debug')
+	if [ "$option_debug" -ge 1 ]; then
 		# shellcheck disable=SC2086
 		find "$directory" $find_options -exec \
 			convmv $convmv_options {} +
@@ -118,31 +122,6 @@ toupper_shell() {
 		newfile="$(dirname "$file")/$(basename "$file" | tr '[:lower:]' '[:upper:]')"
 		[ -e "$newfile" ] || mv "$file" "$newfile"
 	done
-}
-
-# check that the value assigned to a given option is valid
-# USAGE: check_option_validity $option_name
-# CALLS: error_option_invalid
-check_option_validity() {
-	local option_name option_value allowed_values
-	option_name="$1"
-	option_value=$(get_value "OPTION_${option_name}")
-	allowed_values=$(get_value "ALLOWED_VALUES_${option_name}")
-	for allowed_value in $allowed_values; do
-		if [ "$option_value" = "$allowed_value" ]; then
-			# leaves the function with a success code if the tested value is valid
-			return 0
-		fi
-	done
-	# if we did not leave the function before this point, the tested value is not valid
-	option_name=$(printf '%s' "$option_name" | tr '[:upper:]' '[:lower:]')
-	if [ "$option_name" = 'compression' ]; then
-		error_compression_invalid
-		return 1
-	else
-		error_option_invalid "$option_name" "$option_value"
-		return 1
-	fi
 }
 
 # try to guess the tar implementation used for `tar` on the current system

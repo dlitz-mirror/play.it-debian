@@ -11,13 +11,13 @@
 .Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
-.Op Fl -icons Cm yes | Cm no
+.Op Fl -no-icons
 .Op Fl -overwrite
 .Op Fl -output-dir Ar path
 .Op Fl -debug Op Ar N
 .Op Fl -no-mtree
 .Op Fl -tmpdir Ar path
-.Op Fl -skip-free-space-check
+.Op Fl -no-free-space-check
 .Op Fl -show-game-script
 .Op Fl -config-file Ar path
 .Op Fl -list-packages
@@ -89,14 +89,8 @@ Generated package type selection.
 .It Cm egentoo
 .No .tar package with an associated .ebuild (Gentoo)
 .El
-.It Fl -icons Cm yes | Cm no
-Include icons in packages.
-.Bl -tag -width indent -compact
-.It Cm yes
-Include icons and stop if a dependency wasn’t found
-.It Cm no
-Do not include icons
-.El
+.It Fl -icons
+Do not include game icons.
 .It Fl -overwrite
 Replace packages if they already exist.
 .It Fl -output-dir Ar path
@@ -113,7 +107,7 @@ dealing with big games.
 Set the directory used for temporary files storage.
 Default value is: 
 .Ev TMPDIR
-.It Fl -skip-free-space-check
+.It Fl -no-free-space-check
 Do not check for free space.
 .It Fl -show-game-script
 Only display the name of the game script to use, without running it.

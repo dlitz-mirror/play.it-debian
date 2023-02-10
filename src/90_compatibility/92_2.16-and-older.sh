@@ -76,7 +76,9 @@ icons_move_to() {
 		warning_deprecated_function 'icons_move_to' 'icons_inclusion'
 	fi
 
-	if [ "$OPTION_ICONS" = 'no' ]; then
+	local option_icons
+	option_icons=$(option_value 'icons')
+	if [ "$option_icons" -eq 0 ]; then
 		return 0
 	fi
 

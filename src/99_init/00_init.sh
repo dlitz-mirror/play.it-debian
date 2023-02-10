@@ -8,17 +8,8 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 
 	# Unset variables that we do not want to import from the user environment
 
-	unset OPTION_CHECKSUM
-	unset OPTION_COMPRESSION
-	unset OPTION_PREFIX
-	unset OPTION_PACKAGE
 	unset SOURCE_ARCHIVE
 	unset PLAYIT_WORKDIR
-
-	# Set default values
-
-	PRINT_LIST_OF_PACKAGES=0
-	PRINT_REQUIREMENTS=0
 
 	# Set URLs for error messages
 
@@ -44,120 +35,102 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	export VERSION_MAJOR_PROVIDED VERSION_MAJOR_TARGET VERSION_MINOR_PROVIDED VERSION_MINOR_TARGET
 
-	# Set allowed values for common options
+	# Set options
 
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_CHECKSUM='none md5'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION_DEB='none gzip xz'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION_ARCH='none gzip xz bzip2 zstd'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION_GENTOO='gzip xz bzip2 zstd lz4 lzip lzop'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION_EGENTOO='none gzip xz bzip2 zstd lzip'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_PACKAGE='arch deb gentoo egentoo'
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_ICONS='yes no'
+	## Set hardcoded defaults
+	options_init_default
 
-	# Set default values for common options
-
-	export DEFAULT_OPTION_CHECKSUM='md5'
-	export DEFAULT_OPTION_COMPRESSION_ARCH='zstd'
-	export DEFAULT_OPTION_COMPRESSION_DEB='none'
-	export DEFAULT_OPTION_COMPRESSION_GENTOO='bzip2'
-	export DEFAULT_OPTION_COMPRESSION_EGENTOO='bzip2'
-	export DEFAULT_OPTION_PREFIX='/usr'
-	export DEFAULT_OPTION_PACKAGE='deb'
-	export DEFAULT_OPTION_ICONS='yes'
-	export DEFAULT_OPTION_OUTPUT_DIR="$PWD"
-	export DEFAULT_NO_FREE_SPACE_CHECK=0
-	export DEFAULT_OVERWRITE_PACKAGES=0
-	export DEFAULT_DEBUG=0
-	export DEFAULT_MTREE=1
-
-	# Load configuration file values
-
+	## Load defaults from the configuration file
 	config_file_path=$(find_configuration_file "$@")
 	load_configuration_file "$config_file_path"
 
-	# Parse arguments given to the script
-
+	## Set options from the command-line
 	parse_arguments "$@"
+
+	# Display the help message,
+	# if called with --help.
+
+	if option_is_set 'help'; then
+		option_help=$(option_value 'help')
+		if [ "$option_help" -eq 1 ]; then
+			help
+			exit 0
+		fi
+	fi
+	unset option_help
+
+	# Display the version string,
+	# if called with --version.
+
+	if option_is_set 'version'; then
+		option_version=$(option_value 'version')
+		if [ "$option_version" -eq 1 ]; then
+			printf '%s\n' "$LIBRARY_VERSION"
+			exit 0
+		fi
+	fi
+	unset option_version
 
 	# Try to detect the host distribution if no package format has been explicitely set
 
-	if variable_is_empty 'OPTION_PACKAGE'; then
-		OPTION_PACKAGE=$(package_format_guess)
+	if ! option_is_set 'package'; then
+		option_package=$(package_format_guess)
+		if [ -z "$option_package" ]; then
+			option_package=$(option_value_default 'package')
+			warning_package_format_guessing_failed "$option_package"
+		fi
+		option_update 'package' "$option_package"
 	fi
-	if variable_is_empty 'OPTION_PACKAGE'; then
-		warning_package_format_guessing_failed "$DEFAULT_OPTION_PACKAGE"
-		OPTION_PACKAGE="$DEFAULT_OPTION_PACKAGE"
+	unset option_package
+
+	# Set default value for compression depending on the chosen package format
+
+	option_compression_variable_default=$(option_variable_default 'compression')
+	## Skip setting a default value based on the set package format
+	## if a default has already been set from the configuration file.
+	if variable_is_empty "$option_compression_variable_default"; then
+		option_package=$(option_value 'package')
+		case "$option_package" in
+			('arch')
+				option_value_default='zstd'
+			;;
+			('deb')
+				option_value_default='none'
+			;;
+			('gentoo')
+				option_value_default='bzip2'
+			;;
+			('egentoo')
+				option_value_default='bzip2'
+			;;
+		esac
+		option_update_default 'compression' "$option_value_default"
 	fi
-
-	# Check option validity for the package format, since it will be used for the compression method
-
-	check_option_validity 'PACKAGE'
-
-	# Set allowed and default values for compression and prefix depending on the chosen package format
-
-	# shellcheck disable=SC2034
-	ALLOWED_VALUES_COMPRESSION="$(get_value "ALLOWED_VALUES_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
-	# shellcheck disable=SC2034
-	DEFAULT_OPTION_COMPRESSION="$(get_value "DEFAULT_OPTION_COMPRESSION_$(printf '%s' "$OPTION_PACKAGE" | tr '[:lower:]' '[:upper:]')")"
+	unset option_compression_variable_default option_package option_value_default
 
 	# Set options not already set by script arguments to default values
 
-	for option in \
-		'OPTION_CHECKSUM' \
-		'OPTION_COMPRESSION' \
-		'OPTION_ICONS' \
-		'OPTION_OUTPUT_DIR' \
-		'OPTION_PREFIX' \
-		'NO_FREE_SPACE_CHECK' \
-		'OVERWRITE_PACKAGES' \
-		'DEBUG' \
-		'MTREE'
+	for option_name in \
+		'checksum' \
+		'compression' \
+		'debug' \
+		'free-space-check' \
+		'icons' \
+		'list-packages' \
+		'list-requirements' \
+		'mtree' \
+		'output-dir' \
+		'overwrite' \
+		'prefix' \
+		'show-game-script' \
+		'tmpdir'
 	do
-		if \
-			variable_is_empty "$option" \
-			&& ! variable_is_empty "DEFAULT_$option"
-		then
-			option_default_value=$(get_value "DEFAULT_$option")
-			export $option="$option_default_value"
+		if ! option_is_set "$option_name"; then
+			option_value=$(option_value_default "$option_name")
+			option_update "$option_name" "$option_value"
 		fi
 	done
-
-	# Check options values validity
-
-	for option in 'CHECKSUM' 'COMPRESSION' 'ICONS'; do
-		check_option_validity "$option"
-	done
-
-	case "$DEBUG" in
-		([0-9]) ;;
-		(*)
-			error_option_invalid 'DEBUG' "$DEBUG"
-			exit 1
-		;;
-	esac
-
-	# DEBUG: output all options value
-	for option in \
-		'NO_FREE_SPACE_CHECK' \
-		'OVERWRITE_PACKAGES' \
-		'DEBUG' \
-		'MTREE'
-	do
-		debug_option_value "$option"
-		true
-	done
-	for option in 'CHECKSUM' 'COMPRESSION' \
-		'PREFIX' 'PACKAGE' 'OUTPUT_DIR'; do
-		debug_option_value "OPTION_$option"
-		true
-	done
+	unset option_value
 
 	# Find the main archive
 
@@ -168,37 +141,41 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 		exit 0
 	fi
 	export ARCHIVE
+	unset archives_list
+
+	# Display the path to the game script,
+	# if called with --show-game-script.
+
+	if option_is_set 'show-game-script'; then
+		option_show_game_script=$(option_value 'show-game-script')
+		if [ "$option_show_game_script" -eq 1 ]; then
+			printf '%s\n' "$(realpath "$0")"
+			exit 0
+		fi
+	fi
+	unset option_show_game_script
 
 	# If called with --list-packages,
 	# print the list of packages that would be generated from the given archive
 	# then exit early.
 
-	if [ $PRINT_LIST_OF_PACKAGES -eq 1 ]; then
+	option_list_packages=$(option_value 'list-packages')
+	if [ "$option_list_packages" -eq 1 ]; then
 		packages_print_list "$ARCHIVE"
 		exit 0
 	fi
+	unset option_list_packages
 
 	# If called with --list-requirements,
 	# print the list of commands required to run the current game script
 	# then exit early.
 
-	if [ $PRINT_REQUIREMENTS -eq 1 ]; then
+	option_list_requirements=$(option_value 'list-requirements')
+	if [ "$option_list_requirements" -eq 1 ]; then
 		requirements_list
 		exit 0
 	fi
-
-	# Make sure the output directory exists and is writable
-
-	OPTION_OUTPUT_DIR=$(printf '%s' "$OPTION_OUTPUT_DIR" | sed "s#^~#$HOME#")
-	if [ ! -d "$OPTION_OUTPUT_DIR" ]; then
-		error_not_a_directory "$OPTION_OUTPUT_DIR"
-		exit 1
-	fi
-	if [ ! -w "$OPTION_OUTPUT_DIR" ]; then
-		error_not_writable "$OPTION_OUTPUT_DIR"
-		exit 1
-	fi
-	export OPTION_OUTPUT_DIR
+	unset option_list_requirements
 
 	# Check the presence of required tools
 
@@ -208,7 +185,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set the main archive properties,
 	# and check its integrity.
 
+	archives_list=$(archives_return_list)
 	archive_initialize_required 'SOURCE_ARCHIVE' $archives_list
+	unset archives_list
 
 	# Set path to working directory
 

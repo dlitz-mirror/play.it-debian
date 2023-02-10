@@ -72,20 +72,23 @@ pkg_write_arch() {
 	fi
 
 	# Creates .MTREE
-	if [ "$MTREE" -eq 1 ]; then
+	local option_mtree
+	option_mtree=$(option_value 'mtree')
+	if [ "$option_mtree" -eq 1 ]; then
 		package_archlinux_create_mtree "$pkg"
 	fi
 }
 
 # build .pkg.tar package
 # USAGE: pkg_build_arch $pkg_path
-# NEEDED VARS: (OPTION_COMPRESSION) (LANG) PLAYIT_WORKDIR
-# CALLED BY: build_pkg
 pkg_build_arch() {
-	local pkg_filename
-	pkg_filename=$(realpath "$OPTION_OUTPUT_DIR/$(basename "$1").pkg.tar")
+	local option_output_dir pkg_filename
+	option_output_dir=$(option_value 'output-dir')
+	pkg_filename=$(realpath "${option_output_dir}/$(basename "$1").pkg.tar")
 
-	if [ -e "$pkg_filename" ] && [ $OVERWRITE_PACKAGES -ne 1 ]; then
+	local option_overwrite
+	option_overwrite=$(option_value 'overwrite')
+	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$(basename "$pkg_filename")"
 		eval ${pkg}_PKG=\"$pkg_filename\"
 		export ${pkg?}_PKG
@@ -110,7 +113,9 @@ pkg_build_arch() {
 		;;
 	esac
 
-	case $OPTION_COMPRESSION in
+	local option_compression
+	option_compression=$(option_value 'compression')
+	case $option_compression in
 		('gzip')
 			tar_options="$tar_options --gzip"
 			pkg_filename="${pkg_filename}.gz"
@@ -127,11 +132,6 @@ pkg_build_arch() {
 		('zstd')
 			tar_options="$tar_options --zstd"
 			pkg_filename="${pkg_filename}.zst"
-		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_arch'
-			return 1
 		;;
 	esac
 
@@ -212,15 +212,16 @@ package_name_archlinux() {
 	local package
 	package="$1"
 
-	assert_not_empty 'OPTION_COMPRESSION' 'package_name_archlinux'
-
 	local archive package_id package_version package_architecture package_name
 	archive=$(context_archive)
 	package_id=$(package_get_id "$package")
 	package_version=$(packages_get_version "$archive")
 	package_architecture=$(package_get_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.tar"
-	case "$OPTION_COMPRESSION" in
+
+	local option_compression
+	option_compression=$(option_value 'compression')
+	case $option_compression in
 		('gzip')
 			package_name="${package_name}.gz"
 		;;
@@ -232,13 +233,6 @@ package_name_archlinux() {
 		;;
 		('zstd')
 			package_name="${package_name}.zst"
-		;;
-		('none')
-			# No compression extension to append.
-		;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'package_name_archlinux'
-			return 1
 		;;
 	esac
 

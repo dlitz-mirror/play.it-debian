@@ -9,7 +9,9 @@
 # USAGE: icons_inclusion $application[…]
 icons_inclusion() {
 	# Do nothing if icons inclusion has been disabled
-	if [ "$OPTION_ICONS" = 'no' ]; then
+	local option_icons
+	option_icons=$(option_value 'icons')
+	if [ "$option_icons" -eq 0 ]; then
 		return 0
 	fi
 

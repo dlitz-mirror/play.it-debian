@@ -18,7 +18,10 @@ pkg_write_egentoo() {
 	fi
 
 	package_filename="$(egentoo_package_name).tar"
-	case $OPTION_COMPRESSION in
+
+	local option_compression dpkg_options
+	option_compression=$(option_value 'compression')
+	case $option_compression in
 		('gzip')
 			package_filename="${package_filename}.gz"
 		;;
@@ -38,18 +41,14 @@ pkg_write_egentoo() {
 			inherits="$inherits unpacker"
 			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
 		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
-			return 1
-		;;
 	esac
 
-	local package_id package_name
+	local option_output_dir package_id package_name
+	option_output_dir=$(option_value 'output-dir')
 	package_id="$(egentoo_package_id)"
 	package_name="$(egentoo_package_name)"
-	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}"
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}/${package_name}.ebuild")
+	mkdir --parents "${option_output_dir}/overlay/games-playit/${package_id}"
+	ebuild_path=$(realpath "${option_output_dir}/overlay/games-playit/${package_id}/${package_name}.ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -109,12 +108,15 @@ pkg_build_egentoo() {
 
 	tar_command="tar"
 
-	local package_name package_filename
-	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
+	local option_output_dir package_name package_filename
+	option_output_dir=$(option_value 'output-dir')
+	mkdir --parents "${option_output_dir}/packages"
 	package_name="$(egentoo_package_name)"
-	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/${package_name}.tar")
+	package_filename=$(realpath "${option_output_dir}/packages/${package_name}.tar")
 
-	case $OPTION_COMPRESSION in
+	local option_compression dpkg_options
+	option_compression=$(option_value 'compression')
+	case $option_compression in
 		('gzip')
 			compression_command="gzip"
 			package_filename="${package_filename}.gz"
@@ -143,11 +145,6 @@ pkg_build_egentoo() {
 				package_filename="${package_filename}.lz"
 			fi
 		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
-			return 1
-		;;
 	esac
 
 	tar_options='--create -P'
@@ -169,8 +166,9 @@ pkg_build_egentoo() {
 
 	compression_options="${compression_options} --stdout --quiet"
 
-	local package package_path
-	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
+	local option_overwrite package package_path
+	option_overwrite=$(option_value 'overwrite')
+	if [ -e "$package_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
 		for package in "$@"; do
 			eval "${package}"_PKG=\""$package_filename"\"

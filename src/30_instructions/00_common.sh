@@ -39,7 +39,10 @@ print_instructions() {
 	if [ -s "$(dependency_gentoo_overlays_file)" ]; then
 		information_required_gentoo_overlays
 	fi
-	if [ "$OPTION_PACKAGE" = 'egentoo' ]; then
+
+	local option_package
+	option_package=$(option_value 'package')
+	if [ "$option_package" = 'egentoo' ]; then
 		info_local_overlay_gentoo
 	fi
 
@@ -54,7 +57,9 @@ print_instructions() {
 		print_instructions_architecture_specific '32' $packages_list_all $packages_list_32
 		print_instructions_architecture_specific '64' $packages_list_all $packages_list_64
 	else
-		case $OPTION_PACKAGE in
+		local option_package
+		option_package=$(option_value 'package')
+		case $option_package in
 			('arch')
 				print_instructions_arch "$@"
 			;;
@@ -66,10 +71,6 @@ print_instructions() {
 			;;
 			('egentoo')
 				print_instructions_egentoo "$@"
-			;;
-			(*)
-				error_option_invalid 'package' "$OPTION_PACKAGE"
-				return 1
 			;;
 		esac
 	fi
@@ -84,7 +85,10 @@ print_instructions_architecture_specific() {
 	architecture_variant="${1}-bit"
 	information_installation_instructions_variant "$architecture_variant"
 	shift 1
-	case $OPTION_PACKAGE in
+
+	local option_package
+	option_package=$(option_value 'package')
+	case $option_package in
 		('arch')
 			print_instructions_arch "$@"
 		;;
@@ -96,10 +100,6 @@ print_instructions_architecture_specific() {
 		;;
 		('egentoo')
 			print_instructions_egentoo "$@"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'print_instructions'
-			return 1
 		;;
 	esac
 }

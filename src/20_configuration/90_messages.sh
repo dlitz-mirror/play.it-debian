@@ -16,6 +16,25 @@ error_option_unknown() {
 	printf "$message" "$option_name"
 }
 
+# display an error when the value assigned to a given option is not valid
+# USAGE: error_option_invalid $option_name $option_value
+error_option_invalid() {
+	local message option_name option_value
+	option_name="$1"
+	option_value="$2"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='"%s" nʼest pas une valeur valide pour --%s.\n'
+		;;
+		('en'|*)
+			message='"%s" is not a valid value for --%s.\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$option_value" "$option_name"
+}
+
 # display an error when the config file is not found
 # USAGE: error_config_file_not_found $config_file_path
 error_config_file_not_found() {
@@ -36,4 +55,3 @@ error_config_file_not_found() {
 	print_error
 	printf "$message" "$config_file_path"
 }
-
