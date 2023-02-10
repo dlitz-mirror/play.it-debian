@@ -97,18 +97,20 @@ help_compression() {
 			message='\tChoix de la méthode de compression des paquets générés\n'
 			message="$message"'\t%s\tpas de compression\n'
 			message="$message"'\t%s\tméthode de compression mettant lʼaccent sur la rapidité\n'
-			message="$message"'\t%s\tméthode de compression mettant lʼaccent sur la réduction de taille\n\n'
+			message="$message"'\t%s\tméthode de compression mettant lʼaccent sur la réduction de taille\n'
+			message="$message"'\t%s\tméthode de compression par défaut du système actuel\n\n'
 		;;
 		('en'|*)
 			message='\tGenerated packages compression method selection\n'
 			message="$message"'\t%s\tno compression\n'
 			message="$message"'\t%s\tcompression method focusing on compression speed\n'
-			message="$message"'\t%s\tcompression method focusing on size reduction\n\n'
+			message="$message"'\t%s\tcompression method focusing on size reduction\n'
+			message="$message"'\t%s\tdefault compression method on the current system\n\n'
 		;;
 	esac
-	printf -- '--compression=none|speed|size\n'
-	printf -- '--compression none|speed|size\n\n'
-	printf "$message" 'none' 'speed' 'size'
+	printf -- '--compression=none|speed|size|auto\n'
+	printf -- '--compression none|speed|size|auto\n\n'
+	printf "$message" 'none' 'speed' 'size' 'auto'
 }
 
 # display --prefix option usage

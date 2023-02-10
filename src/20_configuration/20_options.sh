@@ -164,7 +164,7 @@ option_validity_check() {
 		;;
 		('compression')
 			case "$option_value" in
-				('none'|'speed'|'size')
+				('none'|'speed'|'size'|'auto')
 					return 0
 				;;
 			esac

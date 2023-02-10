@@ -8,7 +8,7 @@
 .Nm
 .Ar archive
 .Op Fl -checksum Cm md5 | Cm none
-.Op Fl -compression Cm none | Cm speed | Cm size
+.Op Fl -compression Cm none | Cm speed | Cm size | Cm auto
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
 .Op Fl -no-icons
@@ -48,7 +48,7 @@ md5sum verification
 .It Cm none
 no verification
 .El
-.It Fl -compression Cm none | Cm speed | Cm size
+.It Fl -compression Cm none | Cm speed | Cm size | Cm auto
 Generated packages compression method selection.
 .Bl -tag -width indent -compact
 .It Cm none
@@ -57,6 +57,8 @@ no compression
 compression method focusing on compression speed
 .It Cm size
 compression method focusing on size reduction
+.It Cm auto
+default compression method on the current system
 .El
 .It Fl -prefix Ar path
 Game installation

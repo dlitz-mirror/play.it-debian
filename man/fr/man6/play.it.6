@@ -10,7 +10,7 @@
 .Nm
 .Ar archive
 .Op Fl -checksum Cm md5 | Cm none
-.Op Fl -compression Cm none | Cm speed | Cm size
+.Op Fl -compression Cm none | Cm speed | Cm size | Cm auto
 .Op Fl -prefix Ar chemin
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
 .Op Fl -no-icons
@@ -53,7 +53,7 @@ vérification de la somme md5
 .It Cm none
 pas de vérification
 .El
-.It Fl -compression Cm none | Cm speed | Cm size
+.It Fl -compression Cm none | Cm speed | Cm size | Cm auto
 Détermine la méthode de compression des paquets générés.
 .Bl -tag -width indent -compact
 .It Cm none
@@ -62,6 +62,8 @@ pas de compression
 méthode de compression mettant lʼaccent sur la rapidité
 .It Cm size
 méthode de compression mettant lʼaccent sur la réduction de taille
+.It Cm auto
+méthode de compression par défaut du système actuel
 .El
 .It Fl -prefix Ar chemin
 Détermine le
