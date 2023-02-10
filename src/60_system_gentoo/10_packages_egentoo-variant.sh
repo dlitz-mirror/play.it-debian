@@ -19,27 +19,21 @@ pkg_write_egentoo() {
 
 	package_filename="$(egentoo_package_name).tar"
 
-	local option_compression dpkg_options
+	local option_compression
 	option_compression=$(option_value 'compression')
 	case $option_compression in
-		('gzip')
+		('speed')
 			package_filename="${package_filename}.gz"
 		;;
-		('xz')
-			package_filename="${package_filename}.xz"
-		;;
-		('bzip2')
+		('size')
 			package_filename="${package_filename}.bz2"
 		;;
-		('zstd')
-			package_filename="${package_filename}.zst"
-			inherits="$inherits unpacker"
-			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
-		;;
-		('lzip')
-			package_filename="${package_filename}.lz"
-			inherits="$inherits unpacker"
-			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
+		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
+				inherits=$(egentoo_package_inherits_legacy "$inherits" "$option_compression")
+				build_deps=$(egentoo_package_build_deps_legacy "$build_deps" "$option_compression")
+			fi
 		;;
 	esac
 
@@ -114,35 +108,23 @@ pkg_build_egentoo() {
 	package_name="$(egentoo_package_name)"
 	package_filename=$(realpath "${option_output_dir}/packages/${package_name}.tar")
 
-	local option_compression dpkg_options
+	local option_compression
 	option_compression=$(option_value 'compression')
 	case $option_compression in
-		('gzip')
-			compression_command="gzip"
+		('speed')
 			package_filename="${package_filename}.gz"
+			compression_command='gzip'
 		;;
-		('xz')
-			compression_command="xz"
-			compression_options="--threads=0"
-			package_filename="${package_filename}.xz"
-		;;
-		('bzip2')
-			compression_command="bzip2"
+		('size')
 			package_filename="${package_filename}.bz2"
+			compression_command='bzip2'
 		;;
-		('zstd')
-			compression_command="zstd"
-			package_filename="${package_filename}.zst"
-		;;
-		('lzip')
-			compression_command="$(get_lzip_implementation)"
-			if [ $compression_command = "tarlz" ]; then
-				tar_command="tarlz"
-				compression_command=""
-				PLAYIT_TAR_IMPLEMENTATION="gnutar"
-			else
-				compression_options="-0"
-				package_filename="${package_filename}.lz"
+		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
+				compression_command=$(egentoo_package_compression_command_legacy "$option_compression")
+				compression_options=$(egentoo_package_compression_options_legacy "$compression_options" "$option_compression")
+				tar_command=$(egentoo_package_tar_command_legacy "$tar_command" "$option_compression")
 			fi
 		;;
 	esac
