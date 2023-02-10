@@ -147,6 +147,8 @@ comme s’ils lui avaient été donnés sur la ligne de commande.
 .Sh COMPRESSION
 .Ss Debian
 Lors de la construction de paquets pour Debian (avec --package deb), utiliser --compression auto suit le comportement par défaut de dpkg-deb. Ce comportement peut être contrôlé par les variables dʼenvironnement DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE et DPKG_DEB_COMPRESSOR_LEVEL. Référez-vous à dpkg-deb(1) pour plus de détails sur la manière dont elles peuvent être utilisées.
+.Ss Gentoo
+Lors de la construction de paquets pour Gentoo (avec --package gentoo ou --package egentoo), utiliser --compression auto suit le comportement par défaut de ebuild. Ce comportement peut être contrôlé par les variables dʼenvironnement BINPKG_COMPRESS et BINPKG_COMPRESS_FLAGS. Référez-vous à make.conf(5) pour plus de détails sur la manière dont elles peuvent être utilisées.
 .Sh VOIR AUSSI
 .Bl -column
 .Xr dosbox 1

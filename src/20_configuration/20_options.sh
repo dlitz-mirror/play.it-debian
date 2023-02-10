@@ -380,7 +380,7 @@ options_compatibility_check() {
 			;;
 			('gentoo')
 				case "$option_compression" in
-					('none'|'speed'|'size')
+					('none'|'speed'|'size'|'auto')
 						# Valid combination (current value)
 					;;
 					('gzip'|'xz'|'bzip2'|'zstd'|'lz4'|'lzip'|'lzop')
@@ -394,7 +394,7 @@ options_compatibility_check() {
 			;;
 			('egentoo')
 				case "$option_compression" in
-					('none'|'speed'|'size')
+					('none'|'speed'|'size'|'auto')
 						# Valid combination (current value)
 					;;
 					('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
