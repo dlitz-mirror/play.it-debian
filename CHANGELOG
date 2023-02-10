@@ -1,3 +1,95 @@
+2.22.0
+
+  * Deprecation notices:
+    * Multiple options are dropped, here are the replacements that should be used:
+      - --icons yes (no replacement, this is the default behaviour)
+      - --icons no → --no-icons
+      - --skip-free-space-check → --no-free-space-check
+      - -c → --config-file
+      - -h → --help
+      - -v → --version
+    * Functions used to fetch packages metadata have been renamed:
+      - packages_get_maintainer → package_maintainer
+      - packages_get_version → package_version (a compatibility alias is provided)
+      - package_get_architecture → package_architecture
+      - package_get_architecture_string → package_architecture_string
+      - package_get_description → package_description
+      - package_get_id → package_id
+    * "launcher_write_script_wine_run" is obsolete, "wine_launcher_run" should be used instead. A compatibility wrapper is provided for game scripts targeting ./play.it < 2.22.
+    * Legacy environment variables (usually "OPTION_xxx") are still exported only for game scripts targeting ./play.it ≤ 2.22. See "Options system rework" below for more details.
+    * The legacy values for --compression are still valid only for game scripts targeting ./play.it ≤ 2.22. See "Compression methods rework" below for more details.
+    * "unity3d" is no longer a full blown application type, but a variant of the application type "native". See "New application type variant system" below for more details.
+    * The internal test "variable_is_set" is dropped. "get_value" no longer throws an error when trying to query an unset variable, it returns an empty value instead.
+
+  * Options system rework:
+    * A new function is provided to fetch the current value of a given option:
+      option_value $option_name
+      As an example, instead of a direct use of the value of the deprecated variable $OPTION_COMPRESSION, the following function call should be used:
+      option_value 'compression'
+    * The game archive is no longer the first mandatory argument when calling the "play.it" command. It can now be provided anywhere on the command line.
+    * All options can be set using environment variables, here is the full list of command line arguments and for each one the equivalent environment variable:
+      - --checksum → PLAYIT_OPTION_CHECKSUM
+      - --compression → PLAYIT_OPTION_COMPRESSION
+      - --config-file → PLAYIT_OPTION_CONFIG_FILE
+      - --debug → PLAYIT_OPTION_DEBUG
+      - --help → PLAYIT_OPTION_HELP
+      - --list-packages → PLAYIT_OPTION_LIST_PACKAGES
+      - --list-requirements → PLAYIT_OPTION_LIST_REQUIREMENTS
+      - --no-free-space-check → PLAYIT_OPTION_FREE_SPACE_CHECK
+      - --no-icons → PLAYIT_OPTION_ICONS
+      - --no-mtree → PLAYIT_OPTION_MTREE
+      - --overwrite → PLAYIT_OPTION_OVERWRITE
+      - --output-dir → PLAYIT_OPTION_OUTPUT_DIR
+      - --package → PLAYIT_OPTION_PACKAGE
+      - --prefix → PLAYIT_OPTION_PREFIX
+      - --show-game-script → PLAYIT_OPTION_SHOW_GAME_SCRIPT
+      - --tmpdir → PLAYIT_OPTION_TMPDIR
+      - --version → PLAYIT_OPTION_VERSION
+      If a same option is set using both an environment variable and a command line argument, the command line argument is ignored.
+
+  * Compression methods rework:
+    * Compression options are no longer specific to the target package format, the same four values are available:
+      - "none":  no compression (default value)
+      - "speed": compression method focusing on compression speed
+      - "size":  compression method focusing on size reduction
+      - "auto":  use the current defaults for the packages generation tool (not supported when building packages for Arch Linux)
+      The legacy values are still available for game scripts targeting ./play.it ≤ 2.22, but their use triggers a deprecation warning. For game scripts targeting ./play.it > 2.22, an error is thrown.
+
+  * New application type variant system:
+    * The application type variant can be set from a game script using the variable "APP_xxx_TYPE_VARIANT". There is only one accepted value for now: "unity3d".
+    * Unity3D games for Windows are no longer wrongly identified as native Linux games if they set "UNITY3D_NAME" but not "APP_xxx_TYPE".
+    * A dedicated per-session log file is used for Unity3D games running through WINE.
+
+  * Changes related to packages:
+    * Environment variables set for Debian tools are followed when trying to get the maintainer name and e-mail.
+
+  * Changes specific to Debian:
+    * The generation of the DEBIAN/control file is moved to a dedicated function.
+    * The package metadata generation is updated to no longer rely on implicit variable inheritance.
+
+  * Dead code removals:
+    * Support is dropped for unused compatibility wrappers:
+      - package_get_current
+    * Support is dropped for unused messages:
+      - error_archive_unset
+      - error_context_invalid
+      - error_no_valid_temp_dir_found
+      - error_obsolete_function
+      - print_ok
+      - warning_missing_library
+    * Support is dropped for unused generic dependency keywords:
+      - bzip2
+      - gconf
+      - libcurl
+      - libcurl-gnutls
+      - sdl1.2
+      - sdl2_image
+      - sdl2_mixer
+      - theora
+      - vorbis
+      - wine-staging / wine32-staging / wine64-staging
+      - xft
+
 2.21.2
 
   * Display an explicit error when a game script seems to support no archive.
