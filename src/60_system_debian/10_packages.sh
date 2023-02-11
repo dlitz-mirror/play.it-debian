@@ -24,15 +24,16 @@ pkg_write_deb() {
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
-	local archive package_id
+	local archive package_id package_maintainer
 	archive=$(context_archive)
 	package_id=$(package_get_id "$pkg")
+	package_maintainer=$(package_maintainer)
 	cat > "$control_file" <<- EOF
 	Package: $package_id
 	Version: $(packages_get_version "$archive")
 	Architecture: $(package_get_architecture_string "$pkg")
 	Multi-Arch: foreign
-	Maintainer: $(packages_get_maintainer)
+	Maintainer: ${package_maintainer}
 	Installed-Size: $pkg_size
 	Section: non-free/games
 	EOF

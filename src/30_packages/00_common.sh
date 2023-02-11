@@ -448,12 +448,27 @@ package_path() {
 	printf '%s/packages/%s' "$PLAYIT_WORKDIR" "$package_path"
 }
 
-# get the maintainer string
-# USAGE: packages_get_maintainer
-# RETURNS: packages maintainer, as a non-empty string
-packages_get_maintainer() {
-	# get maintainer string from /etc/makepkg.conf
+# Print the maintainer string
+# USAGE: package_maintainer
+# RETURNS: the package maintainer, as a non-empty string
+package_maintainer() {
 	local maintainer
+	maintainer=''
+
+	# Try to get a maintainer string from environment variables used by Debian tools.
+	if ! variable_is_empty 'DEBEMAIL'; then
+		if ! variable_is_empty 'DEBFULLNAME'; then
+			maintainer="$DEBFULLNAME <${DEBEMAIL}>"
+		else
+			maintainer="$DEBEMAIL"
+		fi
+	fi
+	if [ -n "$maintainer" ]; then
+		printf '%s' "$maintainer"
+		return 0
+	fi
+
+	# Try to get a maintainer string from /etc/makepkg.conf.
 	if \
 		[ -r '/etc/makepkg.conf' ] \
 		&& grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
@@ -465,18 +480,14 @@ packages_get_maintainer() {
 		else
 			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
 		fi
-	else
-		maintainer=''
 	fi
-
-	# return early if we already have a maintainer string
 	if [ -n "$maintainer" ]; then
 		printf '%s' "$maintainer"
 		return 0
 	fi
 
-	# get current machine hostname
-	# falls back on using "localhost"
+	# Compute a maintainer e-mail from the current hostname and user name,
+	# falling back to "user@localhost".
 	local hostname
 	if command -v 'hostname' >/dev/null 2>&1; then
 		hostname=$(hostname)
@@ -485,11 +496,8 @@ packages_get_maintainer() {
 	else
 		hostname='localhost'
 	fi
-
-	# get current user name
-	# falls back on "user"
 	local username
-	if [ -n "$USER" ]; then
+	if ! variable_is_empty 'USER'; then
 		username="$USER"
 	elif command -v 'whoami' >/dev/null 2>&1; then
 		username=$(whoami)
@@ -498,9 +506,7 @@ packages_get_maintainer() {
 	else
 		username='user'
 	fi
-
 	printf '%s@%s' "$username" "$hostname"
-	return 0
 }
 
 # get the packages version string for a given archive
