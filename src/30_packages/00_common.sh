@@ -509,46 +509,32 @@ package_maintainer() {
 	printf '%s@%s' "$username" "$hostname"
 }
 
-# get the packages version string for a given archive
-# USAGE: packages_get_version $archive
-# RETURNS: packages version, as a non-empty string
-packages_get_version() {
-	# single argument should be the archive name
-	local archive
-	archive="$1"
-	assert_not_empty 'archive' 'packages_get_version'
+# Print the package version string
+# USAGE: package_version
+# RETURNS: the package version, as a non-empty string
+package_version() {
+	assert_not_empty 'script_version' 'package_version'
 
-	###
-	# TODO
-	# Check that $script_version is a non-empty string
-	# Display an explicit error message if it is unset or empty
-	###
-
-	# get the version string for the current archive
-	# falls back on "1.0-1"
-	local packages_version
+	# Get the version string for the current archive,
+	# falling back on "1.0-1" if it is not explicitly set.
+	local archive package_version
+	archive=$(context_archive)
 	if variable_is_empty "${archive}_VERSION"; then
-		packages_version='1.0-1'
+		package_version='1.0-1'
 	else
-		packages_version=$(get_value "${archive}_VERSION")
+		package_version=$(get_value "${archive}_VERSION")
 	fi
-	packages_version="${packages_version}+${script_version}"
+	package_version="${package_version}+${script_version}"
 
-	# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
+	# Portage does not like some of our version names
+	# cf. https://devmanual.gentoo.org/ebuild-writing/file-format/index.html
 	local option_package
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('gentoo'|'egentoo')
-			set +o errexit
-			packages_version=$(printf '%s' "$packages_version" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?')
-			set -o errexit
-			if [ -z "$packages_version" ]; then
-				packages_version='1.0'
-			fi
-			packages_version="${packages_version}_p$(printf '%s' "$script_version" | sed 's/\.//g')"
+			package_version=$(gentoo_package_version "$package_version")
 		;;
 	esac
 
-	printf '%s' "$packages_version"
-	return 0
+	printf '%s' "$package_version"
 }

@@ -24,13 +24,13 @@ pkg_write_deb() {
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
-	local archive package_id package_maintainer
-	archive=$(context_archive)
+	local package_id package_maintainer package_version
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
+	package_version=$(package_version)
 	cat > "$control_file" <<- EOF
 	Package: $package_id
-	Version: $(packages_get_version "$archive")
+	Version: ${package_version}
 	Architecture: $(package_get_architecture_string "$pkg")
 	Multi-Arch: foreign
 	Maintainer: ${package_maintainer}
@@ -161,10 +161,9 @@ package_name_debian() {
 	local package
 	package="$1"
 
-	local archive package_id package_version package_architecture package_name
-	archive=$(context_archive)
+	local package_id package_version package_architecture package_name
 	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$archive")
+	package_version=$(package_version)
 	package_architecture=$(package_get_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.deb"
 

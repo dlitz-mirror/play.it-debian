@@ -195,10 +195,9 @@ package_path_egentoo() {
 	local package
 	package="$1"
 
-	local archive package_id package_version package_architecture package_path
-	archive=$(context_archive)
+	local package_id package_version package_architecture package_path
 	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$archive")
+	package_version=$(package_version)
 	package_architecture=$(package_get_architecture_string "$package")
 	package_path="${package_id}_${package_version}_${package_architecture}"
 
