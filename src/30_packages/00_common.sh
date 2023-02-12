@@ -175,25 +175,22 @@ packages_print_list() {
 	)
 }
 
-# get ID of given package
-# USAGE: package_get_id $package
-# RETURNS: package ID, as a non-empty string
-package_get_id() {
-	# single argument should be the package name
+# Print the id of the given package
+# USAGE: package_id $package
+# RETURNS: the package id, as a non-empty string
+package_id() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_id'
 
-	# get package ID from its name
 	local package_id
 	package_id=$(context_value "${package}_ID")
 
-	# if no package-specific ID is set, fall back to game ID
+	# Fall back to the game id if no package id is explicitly set
 	if [ -z "$package_id" ]; then
 		package_id=$(game_id)
 	fi
 
-	# Check that the id fits the format restrictions
+	# Check that the id fits the format restrictions.
 	if ! printf '%s' "$package_id" | \
 		grep --quiet --regexp='^[0-9a-z][-0-9a-z]\+[0-9a-z]$'
 	then
@@ -201,30 +198,19 @@ package_get_id() {
 		return 1
 	fi
 
-	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
+	# Apply tweaks specific to the target package format.
 	local option_package
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
-			local package_architecture
-			package_architecture=$(package_architecture "$package")
-			case "$package_architecture" in
-				('32')
-					package_id="lib32-${package_id}"
-				;;
-			esac
+			package_id=$(archlinux_package_id "$package_id")
 		;;
-	esac
-
-	# on Gentoo, avoid mixups between numbers in package ID and version number
-	case "$option_package" in
 		('gentoo'|'egentoo')
-			package_id=$(printf '%s' "$package_id" | sed 's/-/_/g')
+			package_id=$(gentoo_package_id "$package_id")
 		;;
 	esac
 
 	printf '%s' "$package_id"
-	return 0
 }
 
 # Print the architecture of the given package

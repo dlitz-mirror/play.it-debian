@@ -27,7 +27,7 @@ pkg_write_deb() {
 	local package_architecture package_description package_id package_maintainer package_version
 	package_architecture=$(package_architecture_string "$pkg")
 	package_description=$(package_description "$pkg")
-	package_id=$(package_get_id "$pkg")
+	package_id=$(package_id "$pkg")
 	package_maintainer=$(package_maintainer)
 	package_provide=$(package_provide "$pkg")
 	package_version=$(package_version)
@@ -165,7 +165,7 @@ package_name_debian() {
 	package="$1"
 
 	local package_id package_version package_architecture package_name
-	package_id=$(package_get_id "$package")
+	package_id=$(package_id "$package")
 	package_version=$(package_version)
 	package_architecture=$(package_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.deb"

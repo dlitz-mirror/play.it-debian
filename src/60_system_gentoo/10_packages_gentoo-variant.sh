@@ -8,7 +8,7 @@ pkg_write_gentoo() {
 
 	local package_path package_id
 	package_path=$(package_path "$pkg")
-	package_id=$(package_get_id "$pkg")
+	package_id=$(package_id "$pkg")
 
 	mkdir --parents \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata" \
@@ -80,9 +80,10 @@ pkg_write_gentoo() {
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
+	# FIXME - $pkg should be passed as a function argument, not inherited from the calling function
 	local package_id package_version pkg_filename_base
 	package_version=$(package_version)
-	package_id=$(package_get_id "$pkg")
+	package_id=$(package_id "$pkg")
 	pkg_filename_base="${package_id}-${package_version}.tbz2"
 
 	# Get packages list for the current game
@@ -91,7 +92,7 @@ pkg_build_gentoo() {
 
 	local current_package_id
 	for package in $packages_list; do
-		current_package_id=$(package_get_id "$package")
+		current_package_id=$(package_id "$package")
 		if [ "$package" != "$pkg" ] && [ "${current_package_id}" = "$package_id" ]; then
 			pkg_filename_base="$(package_architecture_string "$pkg")/$pkg_filename_base"
 			mkdir --parents "$(dirname "$pkg_filename_base")"
@@ -177,14 +178,14 @@ package_name_gentoo() {
 	package="$1"
 
 	local package_id package_version package_name
-	package_id=$(package_get_id "$package")
+	package_id=$(package_id "$package")
 	package_version=$(package_version)
 	package_name="${package_id}-${package_version}.tbz2"
 
 	local packages_list current_package current_package_id
 	packages_list=$(packages_get_list)
 	for current_package in $packages_list; do
-		current_package_id=$(package_get_id "$current_package")
+		current_package_id=$(package_id "$current_package")
 		if \
 			[ "$current_package" != "$package" ] \
 			&& [ "$current_package_id" = "$package_id" ]
@@ -274,8 +275,19 @@ gentoo_package_provide() {
 	provided_package_id="$1"
 
 	# Avoid mixups between numbers in package ID and version number.
-	provided_package_id=$(printf '%s' "$provided_package_id" | sed 's/-/_/g')
+	provided_package_id=$(gentoo_package_id "$provided_package_id")
 
 	# Add the required "!games-playit/" prefix to the package ID.
 	printf '!games-playit/%s' "$package_provide"
+}
+
+# Tweak the given package id to ensure compatibility with portage
+# USAGE: gentoo_package_id $package_id
+# RETURNS: the package id, as a non-empty string
+gentoo_package_id() {
+	local package_id
+	package_id="$1"
+
+	# Avoid mixups between numbers in package id and version number.
+	printf '%s' "$package_id" | sed 's/-/_/g'
 }
