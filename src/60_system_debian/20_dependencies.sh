@@ -67,12 +67,12 @@ pkg_set_deps_deb() {
 				pkg_dep='libsdl2-2.0-0'
 			;;
 			('wine')
-				###
-				# TODO
-				# $pkg should be computed here, not implicitely inherited from the calling function
-				###
+				# FIXME - $package should be passed as a function argument, not inherited from the calling function
+				local package
+				package="$pkg"
+
 				local package_architecture
-				package_architecture=$(package_get_architecture "$pkg")
+				package_architecture=$(package_architecture "$package")
 				case "$package_architecture" in
 					('32')
 						pkg_dep='wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'

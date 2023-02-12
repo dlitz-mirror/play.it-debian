@@ -24,14 +24,15 @@ pkg_write_deb() {
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
-	local package_id package_maintainer package_version
+	local package_architecture package_id package_maintainer package_version
+	package_architecture=$(package_architecture_string "$pkg")
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
 	package_version=$(package_version)
 	cat > "$control_file" <<- EOF
 	Package: $package_id
 	Version: ${package_version}
-	Architecture: $(package_get_architecture_string "$pkg")
+	Architecture: ${package_architecture}
 	Multi-Arch: foreign
 	Maintainer: ${package_maintainer}
 	Installed-Size: $pkg_size
@@ -164,7 +165,7 @@ package_name_debian() {
 	local package_id package_version package_architecture package_name
 	package_id=$(package_get_id "$package")
 	package_version=$(package_version)
-	package_architecture=$(package_get_architecture_string "$package")
+	package_architecture=$(package_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.deb"
 
 	printf '%s' "$package_name"
@@ -183,4 +184,31 @@ package_path_debian() {
 	package_path="${package_name%.deb}"
 
 	printf '%s' "$package_path"
+}
+
+# Print the architecture string of the given package, in the format expected by dpkg
+# USAGE: debian_package_architecture_string $package
+# RETURNS: the package architecture, as one of the following values:
+#          - i386
+#          - amd64
+#          - all
+debian_package_architecture_string() {
+	local package
+	package="$1"
+
+	local package_architecture package_architecture_string
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32')
+			package_architecture_string='i386'
+		;;
+		('64')
+			package_architecture_string='amd64'
+		;;
+		('all')
+			package_architecture_string='all'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
 }

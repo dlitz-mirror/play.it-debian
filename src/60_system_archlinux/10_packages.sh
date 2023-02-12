@@ -16,7 +16,8 @@ pkg_write_arch() {
 
 	mkdir --parents "$(dirname "$target")"
 
-	local package_id package_maintainer package_version
+	local package_architecture package_id package_maintainer package_version
+	package_architecture=$(package_architecture_string "$pkg")
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
 	package_version=$(package_version)
@@ -27,7 +28,7 @@ pkg_write_arch() {
 	packager = ${package_maintainer}
 	builddate = $(date +%s)
 	size = $pkg_size
-	arch = $(package_get_architecture_string "$pkg")
+	arch = ${package_architecture}
 	pkgdesc = $(package_get_description "$pkg")
 	$(package_archlinux_fields_depend "$pkg")
 	EOF
@@ -39,7 +40,9 @@ pkg_write_arch() {
 		EOF
 	fi
 
-	if [ "$(package_get_architecture "$pkg")" = '32' ]; then
+	local package_architecture
+	package_architecture=$(package_architecture "$pkg")
+	if [ "$package_architecture" = '32' ]; then
 		cat >> "$target" <<- EOF
 		conflict = $(printf '%s' "$package_id" | sed 's/^lib32-//')
 		provides = $(printf '%s' "$package_id" | sed 's/^lib32-//')
@@ -221,7 +224,7 @@ package_name_archlinux() {
 	local package_id package_version package_architecture package_name
 	package_id=$(package_get_id "$package")
 	package_version=$(package_version)
-	package_architecture=$(package_get_architecture_string "$package")
+	package_architecture=$(package_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.tar"
 
 	local option_compression
@@ -256,4 +259,27 @@ package_path_archlinux() {
 	package_path="${package_name%.tar*}"
 
 	printf '%s' "$package_path"
+}
+
+# Print the architecture string of the given package, in the format expected by pacman
+# USAGE: archlinux_package_architecture_string $package
+# RETURNS: the package architecture, as one of the following values:
+#          - x86_64
+#          - any
+archlinux_package_architecture_string() {
+	local package
+	package="$1"
+
+	local package_architecture package_architecture_string
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32'|'64')
+			package_architecture_string='x86_64'
+		;;
+		('all')
+			package_architecture_string='any'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
 }

@@ -94,7 +94,6 @@ pkg_build_egentoo() {
 	local tar_options
 	local compression_command
 	local compression_options
-	local packages_paths
 
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'pkg_build_egentoo'
@@ -148,7 +147,7 @@ pkg_build_egentoo() {
 
 	compression_options="${compression_options} --stdout --quiet"
 
-	local option_overwrite package package_path
+	local option_overwrite package
 	option_overwrite=$(option_value 'overwrite')
 	if [ -e "$package_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
@@ -161,18 +160,18 @@ pkg_build_egentoo() {
 		rm -f "$package_filename"
 	fi
 
+	local packages_paths package_path package_architecture
+	packages_paths=''
 	for package in "$@"; do
 		package_path=$(package_path "$package")
 		packages_paths="$packages_paths $package_path"
-
-		case "$(package_get_architecture "$package")" in
+		package_architecture=$(package_architecture "$package")
+		case "$package_architecture" in
 			('64') tar_options="$tar_options --xform=s:^${package_path}:./amd64:x" ;;
 			('32') tar_options="$tar_options --xform=s:^${package_path}:./x86:x" ;;
 			(*)    tar_options="$tar_options --xform=s:^${package_path}:./data:x" ;;
 		esac
-
-		eval "${package}"_PKG=\""$package_filename"\"
-		export "${package}"_PKG
+		export "${package}_PKG=$package_filename"
 	done
 
 	information_package_building "$(basename "$package_filename")"
@@ -198,7 +197,7 @@ package_path_egentoo() {
 	local package_id package_version package_architecture package_path
 	package_id=$(package_get_id "$package")
 	package_version=$(package_version)
-	package_architecture=$(package_get_architecture_string "$package")
+	package_architecture=$(package_architecture_string "$package")
 	package_path="${package_id}_${package_version}_${package_architecture}"
 
 	printf '%s' "$package_path"

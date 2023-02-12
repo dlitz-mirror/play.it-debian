@@ -6,7 +6,7 @@ pkg_set_deps_gentoo() {
 	shift
 
 	local package_architecture architecture_suffix
-	package_architecture="$(package_get_architecture "$package")"
+	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'

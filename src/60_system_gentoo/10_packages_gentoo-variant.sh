@@ -25,8 +25,9 @@ pkg_write_gentoo() {
 	EAPI=7
 	RESTRICT="fetch strip binchecks"
 	EOF
-	local pkg_architectures
-	case "$(package_get_architecture "$pkg")" in
+	local package_architecture pkg_architectures
+	package_architecture=$(package_architecture "$pkg")
+	case "$package_architecture" in
 		('32')
 			pkg_architectures='-* x86 amd64'
 		;;
@@ -90,7 +91,7 @@ pkg_build_gentoo() {
 	for package in $packages_list; do
 		current_package_id=$(package_get_id "$package")
 		if [ "$package" != "$pkg" ] && [ "${current_package_id}" = "$package_id" ]; then
-			pkg_filename_base="$(package_get_architecture_string "$pkg")/$pkg_filename_base"
+			pkg_filename_base="$(package_architecture_string "$pkg")/$pkg_filename_base"
 			mkdir --parents "$(dirname "$pkg_filename_base")"
 		fi
 	done
@@ -187,7 +188,7 @@ package_name_gentoo() {
 			&& [ "$current_package_id" = "$package_id" ]
 		then
 			local package_architecture
-			package_architecture=$(package_get_architecture_string "$package")
+			package_architecture=$(package_architecture_string "$package")
 			package_name="${package_architecture}/${package_name}"
 			break
 		fi
@@ -232,4 +233,32 @@ gentoo_package_version() {
 	fi
 
 	printf '$%s_p%s' "$package_version" "$(printf '%s' "$script_version" | sed 's/\.//g')"
+}
+
+# Print the architecture string of the given package, in the format expected by portage
+# USAGE: gentoo_package_architecture_string $package
+# RETURNS: the package architecture, as one of the following values:
+#          - x86
+#          - amd64
+#          - data (dummy value)
+gentoo_package_architecture_string() {
+	local package
+	package="$1"
+
+	local package_architecture package_architecture_string
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32')
+			package_architecture_string='x86'
+		;;
+		('64')
+			package_architecture_string='amd64'
+		;;
+		('all')
+			# We could put anything here, it should not be used for package metadata.
+			package_architecture_string='data'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
 }

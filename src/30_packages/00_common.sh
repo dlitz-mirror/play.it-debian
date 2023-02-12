@@ -206,7 +206,9 @@ package_get_id() {
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
-			case "$(package_get_architecture "$package")" in
+			local package_architecture
+			package_architecture=$(package_architecture "$package")
+			case "$package_architecture" in
 				('32')
 					package_id="lib32-${package_id}"
 				;;
@@ -225,85 +227,50 @@ package_get_id() {
 	return 0
 }
 
-# get architecture of given package
-# USAGE: package_get_architecture $package
-# RETURNS: package architecture, as a non-empty string
-package_get_architecture() {
-	# single argument should be the package name
+# Print the architecture of the given package
+# USAGE: package_architecture $package
+# RETURNS: the package architecture, as one of the following values:
+#          - 32
+#          - 64
+#          - all
+package_architecture() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_architecture'
 
-	# get package architecture from its name
 	local package_architecture
 	package_architecture=$(context_value "${package}_ARCH")
 
-	# if no package-specific architecture is set, fall back to "all"
+	# If no archive is explictly set for the given package,
+	# fall back to "all".
 	if [ -z "$package_architecture" ]; then
 		package_architecture='all'
 	fi
 
 	printf '%s' "$package_architecture"
-	return 0
 }
 
-# get architecture string for given package
-# USAGE: package_get_architecture_string $package
-# RETURNS: package architecture, as a non-empty string, ready to include in package meta-data
-package_get_architecture_string() {
-	# single argument should be the package name
+# Print the architecture string of the given package, in the format expected by the packages manager
+# USAGE: package_architecture_string $package
+# RETURNS: the package architecture, in the format expected by the packages manager
+package_architecture_string() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_architecture_string'
 
-	# get package architecture
-	local package_architecture
-	package_architecture=$(package_get_architecture "$package")
-
-	# set package architecture string, based on its architecture and target package format
 	local option_package package_architecture_string
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
-			case "$package_architecture" in
-				('32'|'64')
-					package_architecture_string='x86_64'
-				;;
-				(*)
-					package_architecture_string='any'
-				;;
-			esac
+			package_architecture_string=$(archlinux_package_architecture_string "$package")
 		;;
 		('deb')
-			case "$package_architecture" in
-				('32')
-					package_architecture_string='i386'
-				;;
-				('64')
-					package_architecture_string='amd64'
-				;;
-				(*)
-					package_architecture_string='all'
-				;;
-			esac
+			package_architecture_string=$(debian_package_architecture_string "$package")
 		;;
 		('gentoo'|'egentoo')
-			case "$package_architecture" in
-				('32')
-					package_architecture_string='x86'
-				;;
-				('64')
-					package_architecture_string='amd64'
-				;;
-				(*)
-					package_architecture_string='data' # We could put anything here, it shouldn't be used for package metadata
-				;;
-			esac
+			package_architecture_string=$(gentoo_package_architecture_string "$package")
 		;;
 	esac
 
 	printf '%s' "$package_architecture_string"
-	return 0
 }
 
 # get description for given package

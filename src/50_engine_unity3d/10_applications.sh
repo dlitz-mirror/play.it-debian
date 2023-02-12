@@ -22,8 +22,10 @@ application_unity3d_exe() {
 	fi
 
 	# Compute the file name from the package architecture and UNITY3D_NAME
-	local architecture_suffix
-	case "$(package_get_architecture "$(context_package)")" in
+	local package package_architecture architecture_suffix
+	package=$(context_package)
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
 		('32')
 			architecture_suffix='.x86'
 		;;
