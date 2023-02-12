@@ -28,6 +28,7 @@ pkg_write_deb() {
 	package_architecture=$(package_architecture_string "$pkg")
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
+	package_provide=$(package_provide "$pkg")
 	package_version=$(package_version)
 	cat > "$control_file" <<- EOF
 	Package: $package_id
@@ -38,11 +39,11 @@ pkg_write_deb() {
 	Installed-Size: $pkg_size
 	Section: non-free/games
 	EOF
-	if [ -n "$(package_get_provide "$pkg")" ]; then
+	if [ -n "${package_provide}" ]; then
 		cat >> "$control_file" <<- EOF
-		Conflicts: $(package_get_provide "$pkg")
-		Provides: $(package_get_provide "$pkg")
-		Replaces: $(package_get_provide "$pkg")
+		Conflicts: ${package_provide}
+		Provides: ${package_provide}
+		Replaces: ${package_provide}
 		EOF
 	fi
 	local field_depends

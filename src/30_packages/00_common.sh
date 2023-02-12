@@ -325,38 +325,32 @@ package_get_description() {
 	return 0
 }
 
-# get "provide" field of given package
-# USAGE: package_get_provide $package
-# RETURNS: provided package ID as a non-empty string, or an empty string is none is provided
-package_get_provide() {
-	# single argument should be the package name
+# Print the alternative name provided by the given package
+# USAGE: package_provide $package
+# RETURNS: the provided package id as a non-empty string,
+#          or an empty string is none is provided
+package_provide() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_provide'
 
-	# get provided package ID from its name
 	local package_provide
 	package_provide=$(context_value "${package}_PROVIDE")
 
-	# if no package is provided, return early
+	# Return early if no alternative package name is provided by the current package.
 	if [ -z "$package_provide" ]; then
 		return 0
 	fi
 
-	# on Gentoo, avoid mixups between numbers in package ID and version number
-	# and add the required "!games-playit/" prefix to the package ID
-	# (https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers)
+	# Apply Gentoo-specific tweaks.
 	local option_package
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('gentoo'|'egentoo')
-			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
-			package_provide="!games-playit/${package_provide}"
+			package_provide=$(gentoo_package_provide "$package_provide")
 		;;
 	esac
 
 	printf '%s' "$package_provide"
-	return 0
 }
 
 # Print the file name of the given package
