@@ -1,18 +1,17 @@
 # Print the list of generic dependencies required by a given package
 # USAGE: dependencies_list_generic $package
+# RETURN: a list of generic dependcy keywords,
+#         separated by line breaks
 dependencies_list_generic() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'dependencies_list_generic'
 
-	# Distinct dependencies lists might be used based on source archive
 	local dependencies_generic
 	dependencies_generic=$(context_value "${package}_DEPS")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
 	# Ignore grep error return if there is nothing to print.
-	local dependency
 	printf '%s' "$dependencies_generic" | \
 		sed 's/ /\n/g' | \
 		sort --unique | \

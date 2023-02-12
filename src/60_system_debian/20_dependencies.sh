@@ -1,134 +1,129 @@
-# Debian - Set list of generic dependencies
-# USAGE: pkg_set_deps_deb $dep[…]
+# Print the list of packages required to provide the given generic dependency keyword on Debian
+# USAGE: pkg_set_deps_deb $dependency_keyword [$package]
 pkg_set_deps_deb() {
-	for dep in "$@"; do
-		case $dep in
-			('alsa')
-				pkg_dep='libasound2-plugins'
-			;;
-			('dosbox')
-				pkg_dep='dosbox'
-			;;
-			('freetype')
-				pkg_dep='libfreetype6'
-			;;
-			('gcc32')
-				pkg_dep='gcc-multilib:amd64 | gcc'
-			;;
-			('glibc')
-				pkg_dep='libc6'
-			;;
-			('glu')
-				pkg_dep='libglu1-mesa | libglu1'
-			;;
-			('glx')
-				pkg_dep='libgl1 | libgl1-mesa-glx, libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
-			;;
-			('gtk2')
-				pkg_dep='libgtk2.0-0'
-			;;
-			('java')
-				pkg_dep='default-jre:amd64 | java-runtime:amd64 | default-jre | java-runtime'
-			;;
-			('json')
-				pkg_dep='libjson-c3 | libjson-c2 | libjson0'
-			;;
-			('libstdc++')
-				pkg_dep='libstdc++6'
-			;;
-			('libudev1')
-				pkg_dep='libudev1'
-			;;
-			('libxrandr')
-				pkg_dep='libxrandr2'
-			;;
-			('mono')
-				pkg_dep='mono-runtime'
-			;;
-			('nss')
-				pkg_dep='libnss3'
-			;;
-			('openal')
-				pkg_dep='libopenal1'
-			;;
-			('pulseaudio')
-				pkg_dep='pulseaudio:amd64 | pulseaudio'
-			;;
-			('renpy')
-				pkg_dep='renpy'
-			;;
-			('residualvm')
-				pkg_dep='residualvm'
-			;;
-			('scummvm')
-				pkg_dep='scummvm'
-			;;
-			('sdl2')
-				pkg_dep='libsdl2-2.0-0'
-			;;
-			('wine')
-				# FIXME - $package should be passed as a function argument, not inherited from the calling function
-				local package
-				package="$pkg"
+	# The optional second argument is only used with the "wine" dependency keyword.
+	local dependency_keyword package
+	dependency_keyword="$1"
+	package="$2"
 
-				local package_architecture
-				package_architecture=$(package_architecture "$package")
-				case "$package_architecture" in
-					('32')
-						pkg_dep='wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'
-					;;
-					('64')
-						pkg_dep='wine64 | wine64-development | wine-stable-amd64 | wine-devel-amd64 | wine-staging-amd64, wine'
-					;;
-				esac
-			;;
-			('winetricks')
-				pkg_dep='winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
-			;;
-			('xcursor')
-				pkg_dep='libxcursor1'
-			;;
-			('xgamma'|'xrandr')
-				pkg_dep='x11-xserver-utils:amd64 | x11-xserver-utils'
-			;;
-			( \
-				'libgdk_pixbuf-2.0.so.0' | \
-				'libc.so.6' | \
-				'libglib-2.0.so.0' | \
-				'libgobject-2.0.so.0' | \
-				'libGLU.so.1' | \
-				'libGL.so.1' | \
-				'libgdk-x11-2.0.so.0' | \
-				'libgtk-x11-2.0.so.0' | \
-				'libasound.so.2' | \
-				'libasound_module_'*'.so' | \
-				'libmbedtls.so.12' | \
-				'libpng16.so.16' | \
-				'libpulse.so.0' | \
-				'libpulse-simple.so.0' | \
-				'libstdc++.so.6' | \
-				'libudev.so.1' | \
-				'libX11.so.6' | \
-				'libopenal.so.1' | \
-				'libSDL-1.2.so.0' | \
-				'libSDL2-2.0.so.0' | \
-				'libturbojpeg.so.0' | \
-				'libuv.so.1' | \
-				'libvorbisfile.so.3' | \
-				'libz.so.1' \
-			)
-				pkg_dep=$(dependency_package_providing_library_deb "$dep")
-			;;
-			(*)
-				pkg_dep="$dep"
-			;;
-		esac
-		if variable_is_empty 'pkg_deps'; then
-			pkg_deps="$pkg_dep"
-		else
-			pkg_deps="$pkg_deps, $pkg_dep"
-		fi
-	done
+	case "$dependency_keyword" in
+		('alsa')
+			printf 'libasound2-plugins'
+		;;
+		('dosbox')
+			printf 'dosbox'
+		;;
+		('freetype')
+			printf 'libfreetype6'
+		;;
+		('gcc32')
+			printf 'gcc-multilib:amd64 | gcc'
+		;;
+		('glibc')
+			printf 'libc6'
+		;;
+		('glu')
+			printf 'libglu1-mesa | libglu1'
+		;;
+		('glx')
+			printf 'libgl1 | libgl1-mesa-glx, libglx-mesa0 | libglx-vendor | libgl1-mesa-glx'
+		;;
+		('gtk2')
+			printf 'libgtk2.0-0'
+		;;
+		('java')
+			printf 'default-jre:amd64 | java-runtime:amd64 | default-jre | java-runtime'
+		;;
+		('json')
+			printf 'libjson-c3 | libjson-c2 | libjson0'
+		;;
+		('libstdc++')
+			printf 'libstdc++6'
+		;;
+		('libudev1')
+			printf 'libudev1'
+		;;
+		('libxrandr')
+			printf 'libxrandr2'
+		;;
+		('mono')
+			printf 'mono-runtime'
+		;;
+		('nss')
+			printf 'libnss3'
+		;;
+		('openal')
+			printf 'libopenal1'
+		;;
+		('pulseaudio')
+			printf 'pulseaudio:amd64 | pulseaudio'
+		;;
+		('renpy')
+			printf 'renpy'
+		;;
+		('residualvm')
+			printf 'residualvm'
+		;;
+		('scummvm')
+			printf 'scummvm'
+		;;
+		('sdl2')
+			printf 'libsdl2-2.0-0'
+		;;
+		('wine')
+			local package package_architecture
+			package_architecture=$(package_architecture "$package")
+			case "$package_architecture" in
+				('32')
+					printf 'wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'
+				;;
+				('64')
+					printf 'wine64 | wine64-development | wine-stable-amd64 | wine-devel-amd64 | wine-staging-amd64, wine'
+				;;
+			esac
+		;;
+		('winetricks')
+			printf 'winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
+		;;
+		('xcursor')
+			printf 'libxcursor1'
+		;;
+		('xgamma'|'xrandr')
+			printf 'x11-xserver-utils:amd64 | x11-xserver-utils'
+		;;
+		( \
+			'libgdk_pixbuf-2.0.so.0' | \
+			'libc.so.6' | \
+			'libglib-2.0.so.0' | \
+			'libgobject-2.0.so.0' | \
+			'libGLU.so.1' | \
+			'libGL.so.1' | \
+			'libgdk-x11-2.0.so.0' | \
+			'libgtk-x11-2.0.so.0' | \
+			'libasound.so.2' | \
+			'libasound_module_'*'.so' | \
+			'libmbedtls.so.12' | \
+			'libpng16.so.16' | \
+			'libpulse.so.0' | \
+			'libpulse-simple.so.0' | \
+			'libstdc++.so.6' | \
+			'libudev.so.1' | \
+			'libX11.so.6' | \
+			'libopenal.so.1' | \
+			'libSDL-1.2.so.0' | \
+			'libSDL2-2.0.so.0' | \
+			'libturbojpeg.so.0' | \
+			'libuv.so.1' | \
+			'libvorbisfile.so.3' | \
+			'libz.so.1' \
+		)
+			dependency_package_providing_library_deb "$dependency_keyword"
+		;;
+		(*)
+			# Unknown dependency keywords are assumed to be litteral package names.
+			printf '%s' "$dependency_keyword"
+		;;
+	esac
 }
 
 # Debian - List all dependencies for the given package
@@ -143,14 +138,11 @@ dependencies_debian_full_list() {
 	packages_list_full=''
 
 	# Include generic dependencies
-	local dependency_generic pkg_deps
+	local dependency_generic dependency_package
 	while read -r dependency_generic; do
-		# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
-		# we prevent it from leaking by setting it to an empty value.
-		pkg_deps=''
-		pkg_set_deps_deb $dependency_generic
+		dependency_package=$(pkg_set_deps_deb "$dependency_generic" "$package")
 		packages_list_full="$packages_list_full
-		$pkg_deps"
+		$dependency_package"
 	done <<- EOL
 	$(dependencies_list_generic "$package")
 	EOL
