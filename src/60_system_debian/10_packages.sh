@@ -53,11 +53,10 @@ debian_package_metadata_control() {
 # Write the metadata for the given package
 # WARNING: The target package is set in write_metadata,
 #          and passed through a $pkg variable implicitly inherited.
-# USAGE: pkg_write_deb
+# USAGE: pkg_write_deb $package
 pkg_write_deb() {
-	# FIXME - $package should be passed as a function argument, not inherited from the calling function
 	local package
-	package="$pkg"
+	package="$1"
 
 	# Create metadata directory, enforce correct permissions.
 	local package_path control_directory

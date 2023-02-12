@@ -9,17 +9,29 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	local option_package
+	local package option_package
 	option_package=$(option_value 'package')
-	case $option_package in
+	case "$option_package" in
 		('arch')
-			for pkg in "$@"; do pkg_write_arch; done
+			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
+			local pkg
+			for package in "$@"; do
+				pkg="$package"
+				pkg_write_arch
+			done
 		;;
 		('deb')
-			for pkg in "$@"; do pkg_write_deb; done
+			for package in "$@"; do
+				pkg_write_deb "$package"
+			done
 		;;
 		('gentoo')
-			for pkg in "$@"; do pkg_write_gentoo; done
+			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
+			local pkg
+			for package in "$@"; do
+				pkg="$package"
+				pkg_write_gentoo
+			done
 		;;
 		('egentoo')
 			pkg_write_egentoo "$@"
