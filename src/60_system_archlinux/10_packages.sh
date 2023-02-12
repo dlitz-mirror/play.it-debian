@@ -16,8 +16,9 @@ pkg_write_arch() {
 
 	mkdir --parents "$(dirname "$target")"
 
-	local package_architecture package_id package_maintainer package_version
+	local package_architecture package_description package_id package_maintainer package_version
 	package_architecture=$(package_architecture_string "$pkg")
+	package_description=$(package_description "$pkg")
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
 	package_provide=$(package_provide "$pkg")
@@ -30,7 +31,7 @@ pkg_write_arch() {
 	builddate = $(date +%s)
 	size = $pkg_size
 	arch = ${package_architecture}
-	pkgdesc = $(package_get_description "$pkg")
+	pkgdesc = ${package_description}
 	$(package_archlinux_fields_depend "$pkg")
 	EOF
 

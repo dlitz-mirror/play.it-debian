@@ -24,8 +24,9 @@ pkg_write_deb() {
 	chmod 755 "$control_directory"
 
 	# Write main metadata file, enforce correct permissions
-	local package_architecture package_id package_maintainer package_version
+	local package_architecture package_description package_id package_maintainer package_version
 	package_architecture=$(package_architecture_string "$pkg")
+	package_description=$(package_description "$pkg")
 	package_id=$(package_get_id "$pkg")
 	package_maintainer=$(package_maintainer)
 	package_provide=$(package_provide "$pkg")
@@ -54,7 +55,7 @@ pkg_write_deb() {
 		EOF
 	fi
 	cat >> "$control_file" <<- EOF
-	$(package_get_description "$pkg")
+	Description: ${package_description}
 	EOF
 	chmod 644 "$control_file"
 

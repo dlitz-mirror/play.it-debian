@@ -273,56 +273,74 @@ package_architecture_string() {
 	printf '%s' "$package_architecture_string"
 }
 
-# get description for given package
-# USAGE: package_get_description $package
-# RETURNS: package description, as a non-empty string
-package_get_description() {
-	# single argument should be the package name
+# Print the desciption of the given package
+# USAGE: package_description $package
+# RETURNS: the package description, a non-empty string
+package_description() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_description'
 
-	# get package description from its name
 	local package_description
 	package_description=$(context_value "${package}_DESCRIPTION")
 
-	###
-	# TODO
-	# Check that $script_version is a non-empty strings
-	# Display an explicit error message if it is unset or empty
-	###
-
-	# generate a multi-lines or single-line description based on the target package format
-	local game_name option_package package_description_full
+	# Generate a multi-lines or single-line description based on the target package format
+	local game_name option_package
 	game_name=$(game_name)
 	option_package=$(option_value 'package')
 	case "$option_package" in
-		('deb')
-			if [ -n "$package_description" ]; then
-				package_description_full='Description: %s - %s'
-				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "${game_name}" "$package_description" "$script_version")
-			else
-				package_description_full='Description: %s'
-				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "${game_name}" "$script_version")
-			fi
+		('arch')
+			package_description_oneline "$package"
 		;;
-		('arch'|'gentoo')
-			if [ -n "$package_description" ]; then
-				# shellcheck disable=SC2154
-				package_description_full="${game_name} - $package_description - ./play.it script version $script_version"
-			else
-				# shellcheck disable=SC2154
-				package_description_full="${game_name} - ./play.it script version $script_version"
-			fi
+		('deb')
+			package_description_multilines "$package"
+		;;
+		('gentoo'|'egentoo')
+			package_description_oneline "$package"
 		;;
 	esac
+}
 
-	printf '%s' "$package_description_full"
-	return 0
+# Print the desciption of the given package, on several lines
+# USAGE: package_description_multilines $package
+# RETURNS: the package description, a non-empty string,
+#          on several lines
+package_description_multilines() {
+	assert_not_empty 'script_version' 'package_description_multilines'
+
+	local package
+	package="$1"
+
+	local game_name package_description
+	game_name=$(game_name)
+	package_description=$(context_value "${package}_DESCRIPTION")
+	if [ -n "$package_description" ]; then
+		# Silence the following ShellCheck false positive:
+		# script_version is referenced but not assigned.
+		# shellcheck disable=SC2154
+		printf '%s - %s\n ./play.it script version %s' "$game_name" "$package_description" "$script_version"
+	else
+		printf '%s\n ./play.it script version %s' "$game_name" "$script_version"
+	fi
+}
+
+# Print the desciption of the given package, on a single line
+# USAGE: package_description_oneline $package
+# RETURNS: the package description, a non-empty string,
+#          on a single line
+package_description_oneline() {
+	assert_not_empty 'script_version' 'package_description_oneline'
+
+	local package
+	package="$1"
+
+	local game_name package_description
+	game_name=$(game_name)
+	package_description=$(context_value "${package}_DESCRIPTION")
+	if [ -n "$package_description" ]; then
+		printf '%s - %s - ./play.it script version %s' "$game_name" "$package_description" "$script_version"
+	else
+		printf '%s - ./play.it script version %s' "$game_name" "$script_version"
+	fi
 }
 
 # Print the alternative name provided by the given package

@@ -38,9 +38,11 @@ pkg_write_gentoo() {
 			pkg_architectures='x86 amd64' #data packages
 		;;
 	esac
+	local package_description
+	package_description=$(package_description "$pkg")
 	cat >> "$target" <<- EOF
 	KEYWORDS="$pkg_architectures"
-	DESCRIPTION="$(package_get_description "$pkg")"
+	DESCRIPTION="${package_description}"
 	SLOT="0"
 	EOF
 
