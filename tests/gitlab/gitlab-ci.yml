@@ -1,36 +1,6 @@
-stages:
-  - build
-  - syntax
-
-build_library:
-  stage: build
+check:
   interruptible: true
-  only:
-    - master@play.it/scripts
-    - /^staging-.*$/@play.it/scripts
-    - tags@play.it/scripts
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
   script:
-    - make
-  artifacts:
-    paths:
-      - ./lib/libplayit2.sh
-
-syntax_library:
-  stage: syntax
-  interruptible: true
-  only:
-    - master@play.it/scripts
-    - /^staging-.*$/@play.it/scripts
-    - tags@play.it/scripts
-  script:
-    - make shellcheck-library
-
-syntax_wrapper:
-  stage: syntax
-  interruptible: true
-  only:
-    - master@play.it/scripts
-    - /^staging-.*$/@play.it/scripts
-    - tags@play.it/scripts
-  script:
-    - make shellcheck-wrapper
+    - make check
