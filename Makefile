@@ -19,9 +19,9 @@ endif
 
 DEBUG := 0
 
-all: libplayit2.sh
+all: lib/libplayit2.sh
 
-libplayit2.sh: src/*
+lib/libplayit2.sh: src/*/*.sh
 	mkdir --parents lib
 ifeq ($(DEBUG),1)
 	find src -type f -name '*.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
