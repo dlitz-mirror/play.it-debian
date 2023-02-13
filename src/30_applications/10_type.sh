@@ -116,3 +116,13 @@ application_type_guess_from_file() {
 
 	printf '%s' "$application_type"
 }
+
+# Print the type variant for the given application
+# USAGE: application_type_variant $application
+# RETURNS: the type variant, or an empty string
+application_type_variant() {
+	local application
+	application="$1"
+
+	context_value "${application}_TYPE_VARIANT"
+}
