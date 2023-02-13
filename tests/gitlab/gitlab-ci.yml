@@ -23,7 +23,7 @@ syntax_library:
     - /^staging-.*$/@play.it/scripts
     - tags@play.it/scripts
   script:
-    - ./tests/syntax/library_shellcheck.sh
+    - make shellcheck-library
 
 syntax_wrapper:
   stage: syntax
@@ -33,4 +33,4 @@ syntax_wrapper:
     - /^staging-.*$/@play.it/scripts
     - tags@play.it/scripts
   script:
-    - ./tests/syntax/wrapper_shellcheck.sh
+    - make shellcheck-wrapper
