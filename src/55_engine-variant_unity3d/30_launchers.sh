@@ -52,10 +52,9 @@ launcher_write_script_unity3d_run() {
 	launcher_write_script_postrun "$application" "$launcher_file"
 
 	sed --in-place 's/    /\t/g' "$launcher_file"
-	return 0
 }
 
-# print the snippet starting pulseaudio if it is available
+# Print the snippet starting pulseaudio if it is available
 # USAGE: launcher_unity3d_pulseaudio_start
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
 launcher_unity3d_pulseaudio_start() {
@@ -74,7 +73,7 @@ launcher_unity3d_pulseaudio_start() {
 	EOF
 }
 
-# print the snippet stopping pulseaudio if it has been started for this game session
+# Print the snippet stopping pulseaudio if it has been started for this game session
 # USAGE: launcher_unity3d_pulseaudio_stop
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
 launcher_unity3d_pulseaudio_stop() {
@@ -88,7 +87,7 @@ launcher_unity3d_pulseaudio_stop() {
 	EOF
 }
 
-# print the snippet hiding libpulse-simple.so.0 if pulseaudio is not available
+# Print the snippet hiding libpulse-simple.so.0 if pulseaudio is not available
 # USAGE: launcher_unity3d_pulseaudio_hide_libpulse
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
 launcher_unity3d_pulseaudio_hide_libpulse() {
@@ -106,7 +105,7 @@ launcher_unity3d_pulseaudio_hide_libpulse() {
 	EOF
 }
 
-# print the snippet setting a dedicated log file for the current game session
+# Print the snippet setting a dedicated log file for the current game session
 # USAGE: launcher_unity3d_dedicated_log
 # RETURN: the code snippet, a multi-lines string
 launcher_unity3d_dedicated_log() {
@@ -118,7 +117,7 @@ launcher_unity3d_dedicated_log() {
 	EOF
 }
 
-# print the snippet making a hard copy of the game binary in the prefix
+# Print the snippet making a hard copy of the game binary in the prefix
 # USAGE: launcher_unity3d_copy_binary
 # RETURN: the code snippet, a multi-lines string, indented with four spaces
 launcher_unity3d_copy_binary() {
@@ -132,7 +131,7 @@ launcher_unity3d_copy_binary() {
 	EOF
 }
 
-# print the snippet setting forcing the use of a US-like locale
+# Print the snippet setting forcing the use of a US-like locale
 # USAGE: launcher_unity3d_force_locale
 # RETURN: the code snippet, a multi-lines string
 launcher_unity3d_force_locale() {
@@ -142,4 +141,3 @@ launcher_unity3d_force_locale() {
 
 	EOF
 }
-

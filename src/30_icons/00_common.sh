@@ -113,7 +113,7 @@ icon_path() {
 		application_type=$(application_type "$application")
 		case "$application_type" in
 			('unity3d')
-				icon_path=$(icon_unity3d_path "$icon")
+				icon_path=$(icon_unity3d_path)
 			;;
 			('wine')
 				icon_path=$(icon_wine_path "$icon")
