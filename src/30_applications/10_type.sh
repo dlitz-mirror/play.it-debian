@@ -8,7 +8,6 @@
 #         - renpy
 #         - residualvm
 #         - scummvm
-#         - unity3d
 #         - wine
 #         or an empty string if the type is not set and could not be guessed
 application_type() {
@@ -20,12 +19,8 @@ application_type() {
 
 	# If no type has been explicitely set, try to guess one
 	if [ -z "$application_type" ]; then
-		if [ -n "$(unity3d_name)" ]; then
-			application_type='unity3d'
-		else
-			if ! variable_is_empty 'PLAYIT_WORKDIR'; then
-				application_type=$(application_type_guess_from_file "$application")
-			fi
+		if ! variable_is_empty 'PLAYIT_WORKDIR'; then
+			application_type=$(application_type_guess_from_file "$application")
 		fi
 	fi
 
@@ -44,7 +39,6 @@ application_type() {
 			'renpy' | \
 			'residualvm' | \
 			'scummvm' | \
-			'unity3d' | \
 			'wine' \
 		)
 			## This is a supported type, no error to throw.
@@ -68,9 +62,7 @@ application_type_guess_from_file() {
 
 	# Compute path to application binary
 	local application_exe application_exe_path
-	## application_exe can not be used here, as it relies on application_type.
-	## This could lead to a loop where application_type relies on itself.
-	application_exe=$(context_value "${application}_EXE")
+	application_exe=$(application_exe "$application")
 	application_exe_path=$(application_exe_path "$application_exe")
 
 	# Return early if no binary file can be found for the given application.
@@ -124,5 +116,18 @@ application_type_variant() {
 	local application
 	application="$1"
 
-	context_value "${application}_TYPE_VARIANT"
+	local application_type_variant
+	application_type_variant=$(context_value "${application}_TYPE_VARIANT")
+	if [ -n "$application_type_variant" ]; then
+		printf '%s' "$application_type_variant"
+		return 0
+	fi
+
+	# If no variant is explicitly set, try to guess one.
+	local unity3d_name
+	unity3d_name=$(unity3d_name)
+	if [ -n "$unity3d_name" ]; then
+		printf 'unity3d'
+		return 0
+	fi
 }

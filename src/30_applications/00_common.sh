@@ -18,7 +18,9 @@ applications_list() {
 	# If no value is set, try to guess one
 
 	## Unity3D game
-	if [ -n "$(unity3d_name)" ]; then
+	local unity3d_name
+	unity3d_name=$(unity3d_name)
+	if [ -n "$unity3d_name" ]; then
 		# Unity3D games are expected to provide a single application
 		printf '%s' 'APP_MAIN'
 		return 0
@@ -154,13 +156,9 @@ application_exe() {
 
 	# If no value is set, try to find one based on the application type
 	if [ -z "$application_exe" ]; then
-		local application_type
-		application_type=$(application_type "$application")
-		if [ -z "$application_type" ]; then
-			error_no_application_type "$application"
-			return 1
-		fi
-		case "$application_type" in
+		local application_type_variant
+		application_type_variant=$(application_type_variant "$application")
+		case "$application_type_variant" in
 			('unity3d')
 				application_exe=$(application_unity3d_exe "$application")
 			;;
