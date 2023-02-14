@@ -55,3 +55,24 @@ error_config_file_not_found() {
 	print_error
 	printf "$message" "$config_file_path"
 }
+
+# Display a warning when setting an option to a deprecated value
+# USAGE: warning_option_value_deprecated $option_name $option_value
+warning_option_value_deprecated() {
+	local option_name option_value
+	option_name="$1"
+	option_value="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La valeur suivante est dépréciée pour lʼoption "%s", et ne sera plus acceptée dans une future version : "%s"\n\n'
+		;;
+		('en'|*)
+			message='The following value is deprecated for option "%s", and will no longer be supported with some future update: "%s"\n\n'
+		;;
+	esac
+	print_warning >/dev/stderr
+	printf "$message" "$option_name" "$option_value" >/dev/stderr
+}

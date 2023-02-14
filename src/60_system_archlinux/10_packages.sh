@@ -113,25 +113,25 @@ pkg_build_arch() {
 		;;
 	esac
 
-	local option_compression
+	local option_compression tar_compress_program
 	option_compression=$(option_value 'compression')
 	case $option_compression in
-		('gzip')
-			tar_options="$tar_options --gzip"
-			pkg_filename="${pkg_filename}.gz"
+		('none')
+			tar_compress_program=''
 		;;
-		('xz')
-			export XZ_DEFAULTS="${XZ_DEFAULTS:=--threads=0}"
-			tar_options="$tar_options --xz"
-			pkg_filename="${pkg_filename}.xz"
-		;;
-		('bzip2')
-			tar_options="$tar_options --bzip2"
-			pkg_filename="${pkg_filename}.bz2"
-		;;
-		('zstd')
-			tar_options="$tar_options --zstd"
+		('speed')
+			tar_compress_program='zstd --fast=1'
 			pkg_filename="${pkg_filename}.zst"
+		;;
+		('size')
+			tar_compress_program='zstd -19'
+			pkg_filename="${pkg_filename}.zst"
+		;;
+		('gzip'|'xz'|'bzip2'|'zstd')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				tar_compress_program=$(archlinux_tar_compress_program_legacy "$option_compression")
+				pkg_filename=$(archlinux_package_name_legacy "$pkg_filename" "$option_compression")
+			fi
 		;;
 	esac
 
@@ -147,8 +147,13 @@ pkg_build_arch() {
 		if [ -e '.MTREE' ]; then
 			files=".MTREE $files"
 		fi
-		debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
-		tar $tar_options --file "$pkg_filename" $files
+		if [ -n "$tar_compress_program" ]; then
+			debug_external_command "tar $tar_options --use-compress-program=\"$tar_compress_program\" --file \"$pkg_filename\" $files"
+			tar $tar_options --use-compress-program="$tar_compress_program" --file "$pkg_filename" $files
+		else
+			debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
+			tar $tar_options --file "$pkg_filename" $files
+		fi
 	)
 
 	eval ${pkg}_PKG=\"$pkg_filename\"
@@ -222,17 +227,16 @@ package_name_archlinux() {
 	local option_compression
 	option_compression=$(option_value 'compression')
 	case $option_compression in
-		('gzip')
-			package_name="${package_name}.gz"
-		;;
-		('xz')
-			package_name="${package_name}.xz"
-		;;
-		('bzip2')
-			package_name="${package_name}.bz2"
-		;;
-		('zstd')
+		('speed')
 			package_name="${package_name}.zst"
+		;;
+		('size')
+			package_name="${package_name}.zst"
+		;;
+		('gzip'|'xz'|'bzip2'|'zstd')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				package_name=$(archlinux_package_name_legacy "$package_name" "$option_compression")
+			fi
 		;;
 	esac
 

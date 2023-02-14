@@ -79,32 +79,55 @@ pkg_write_deb() {
 	fi
 }
 
-# build .deb package
-# USAGE: pkg_build_deb $pkg_path
+# Build a .deb package from the given path
+# USAGE: pkg_build_deb $package_path
 pkg_build_deb() {
-	local option_output_dir pkg_filename
-	option_output_dir=$(option_value 'output-dir')
-	pkg_filename="${option_output_dir}/$(basename "$1").deb"
+	local package_path
+	package_path="$1"
 
+	local option_output_dir generated_package_name generated_package_path
+	option_output_dir=$(option_value 'output-dir')
+	generated_package_name=$(basename "$package_path")
+	generated_package_path="${option_output_dir}/${generated_package_name}.deb"
+
+	# Skip packages already existing,
+	# unless called with --overwrite.
 	local option_overwrite
 	option_overwrite=$(option_value 'overwrite')
-	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
-		information_package_already_exists "$(basename "$pkg_filename")"
+	if \
+		[ "$option_overwrite" -eq 0 ] \
+		&& [ -e "$generated_package_path" ]
+	then
+		information_package_already_exists "${generated_package_name}.deb"
 		return 0
 	fi
 
+	# Set compression setting
 	local option_compression dpkg_options
 	option_compression=$(option_value 'compression')
-	case $option_compression in
-		('gzip'|'none'|'xz')
-			dpkg_options="-Z$option_compression"
+	dpkg_options=''
+	case "$option_compression" in
+		('none')
+			dpkg_options="${dpkg_options} -Znone"
+		;;
+		('speed')
+			dpkg_options="${dpkg_options} -Zgzip"
+		;;
+		('size')
+			dpkg_options="${dpkg_options} -Zxz"
+		;;
+		('gzip'|'xz')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				dpkg_options=$(debian_dpkg_compression_legacy "$dpkg_options" "$option_compression")
+			fi
 		;;
 	esac
 
-
-	information_package_building "$(basename "$pkg_filename")"
-	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$1\" \"$pkg_filename\" 1>/dev/null"
-	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options --build "$1" "$pkg_filename" 1>/dev/null
+	# Run the actual package generation, using dpkg-deb
+	information_package_building "${generated_package_name}.deb"
+	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
+	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
+		--build "$package_path" "$generated_package_path" 1>/dev/null
 }
 
 # Debian - Print contents of "Depends" field

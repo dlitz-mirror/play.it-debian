@@ -10,7 +10,7 @@
 .Nm
 .Ar archive
 .Op Fl -checksum Cm md5 | Cm none
-.Op Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
+.Op Fl -compression Cm none | Cm speed | Cm size
 .Op Fl -prefix Ar chemin
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
 .Op Fl -no-icons
@@ -53,26 +53,15 @@ vérification de la somme md5
 .It Cm none
 pas de vérification
 .El
-.It Fl -compression Cm none | Cm gzip | Cm xz | Cm bzip2 | Cm zstd | Cm lz4 | Cm lzip | Cm lzop
-Détermine la méthode de compression des paquets générés. (Toutes les options ne
-seront pas nécessairement disponible selon le format de paquet choisi.)
+.It Fl -compression Cm none | Cm speed | Cm size
+Détermine la méthode de compression des paquets générés.
 .Bl -tag -width indent -compact
 .It Cm none
 pas de compression
-.It Cm gzip
-compression gzip (rapide)
-.It Cm xz
-compression xz (plus lente mais plus efficace que gzip)
-.It Cm bzip2
-compression bzip2
-.It Cm zstd
-compression zstd
-.It Cm lz4
-compression lz4 (la plus rapide mais les plus gros fichiers)
-.It Cm lzip
-compression lzip (similaire à xz, adapté à l’archivage de long terme)
-.It Cm lzop
-compression lzop (plus lente que lz4 lors de la compression mais plus efficace)
+.It Cm speed
+méthode de compression mettant lʼaccent sur la rapidité
+.It Cm size
+méthode de compression mettant lʼaccent sur la réduction de taille
 .El
 .It Fl -prefix Ar chemin
 Détermine le
