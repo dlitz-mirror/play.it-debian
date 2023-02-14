@@ -1,4 +1,4 @@
-.PHONY: all clean install uninstall check shellcheck-library shellcheck-wrapper
+.PHONY: all clean install uninstall dist check shellcheck-library shellcheck-wrapper
 
 UID := $(shell id --user)
 
@@ -43,6 +43,23 @@ install:
 uninstall:
 	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.sh $(DESTDIR)$(mandir)/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) $(DESTDIR)$(datadir)/play.it $(DESTDIR)$(mandir)/man6 $(DESTDIR)$(mandir)/fr/man6
+
+# Release preparation
+
+## The generated tarball is signed with gpg by default,
+## NO_SIGN should be set to a non-0 value to skip the signature.
+NO_SIGN := 0
+
+dist: VERSION := $(shell head --lines=1 CHANGELOG)
+dist: TARBALL := play.it-$(VERSION).tar.gz
+dist: TAR_OPTIONS := --sort=name --mtime=2017-06-14 --owner=root:0 --group=root:0 --use-compress-program='gzip --no-name'
+dist: CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+	mkdir --parents dist
+	LC_ALL=C tar cf dist/$(TARBALL) $(TAR_OPTIONS) CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+ifeq ($(NO_SIGN),0)
+	rm --force dist/$(TARBALL).asc
+	gpg --armor --detach-sign dist/$(TARBALL)
+endif
 
 # Syntax checks relying on ShellCheck
 
