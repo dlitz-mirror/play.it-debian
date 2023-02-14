@@ -169,30 +169,43 @@ dependencies_debian_full_list() {
 	local package
 	package="$1"
 
-	{
-		# Include generic dependencies
-		local dependency_generic pkg_deps
-		while read -r dependency_generic; do
-			# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
-			# we prevent it from leaking by setting it to an empty value.
-			pkg_deps=''
-			pkg_set_deps_deb $dependency_generic
-			printf '%s\n' "$pkg_deps"
-		done <<- EOL
-		$(dependencies_list_generic "$package")
-		EOL
+	local packages_list packages_list_full
+	packages_list_full=''
 
-		# Include Debian-specific dependencies
-		local dependencies_specific
-		dependencies_specific=$(context_value "${package}_DEPS_DEB")
-		if [ -n "$dependencies_specific" ]; then
-			printf '%s\n' "$dependencies_specific" | sed 's/, \?/\n/g'
-		fi
+	# Include generic dependencies
+	local dependency_generic pkg_deps
+	while read -r dependency_generic; do
+		# pkg_set_deps_deb sets a variable $pkg_deps instead of printing a value,
+		# we prevent it from leaking by setting it to an empty value.
+		pkg_deps=''
+		pkg_set_deps_deb $dependency_generic
+		packages_list_full="$packages_list_full
+		$pkg_deps"
+	done <<- EOL
+	$(dependencies_list_generic "$package")
+	EOL
 
-		# Include dependencies on native libraries
-		dependencies_list_native_libraries_packages "$package"
+	# Include Debian-specific dependencies
+	local dependencies_specific
+	dependencies_specific=$(context_value "${package}_DEPS_DEB")
+	if [ -n "$dependencies_specific" ]; then
+		packages_list=$(printf '%s\n' "$dependencies_specific" | sed 's/, \?/\n/g')
+		packages_list_full="$packages_list_full
+		$packages_list"
+	fi
 
-		# Include dependencies on Mono libraries
-		dependencies_list_mono_libraries_packages "$package"
-	} | sort --unique
+	# Include dependencies on native libraries
+	packages_list=$(dependencies_list_native_libraries_packages "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
+	# Include dependencies on Mono libraries
+	packages_list=$(dependencies_list_mono_libraries_packages "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
+	printf '%s' "$packages_list_full" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
 }

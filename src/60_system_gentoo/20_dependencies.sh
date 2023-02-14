@@ -259,19 +259,30 @@ dependencies_gentoo_full_list() {
 		printf '%s\n' "$dependencies_specific"
 	fi
 
-	{
-		# Include dependencies on native libraries
-		dependencies_list_native_libraries_packages "$package"
+	local packages_list packages_list_full
+	packages_list_full=''
 
-		# Include dependencies on Mono libraries
-		dependencies_list_mono_libraries_packages "$package"
+	# Include dependencies on native libraries
+	packages_list=$(dependencies_list_native_libraries_packages "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
 
-		local package_provide
-		package_provide=$(package_get_provide "$package")
-		if [ -n "$package_provide" ]; then
-			printf '%s\n' "$package_provide"
-		fi
-	} | sort --unique
+	# Include dependencies on Mono libraries
+	packages_list=$(dependencies_list_mono_libraries_packages "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
+	local package_provide
+	package_provide=$(package_get_provide "$package")
+	if [ -n "$package_provide" ]; then
+		packages_list_full="$packages_list_full
+		$package_provide"
+	fi
+
+	printf '%s' "$packages_list_full" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
 }
 
 # Gentoo - Print the path to a temporary file used for additional overlays listing

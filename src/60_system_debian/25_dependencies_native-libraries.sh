@@ -1,3 +1,22 @@
+# Debian - Print the package names providing the given native libraries
+# USAGE: debian_dependencies_providing_native_libraries $library[…]
+# RETURN: a list of Debian package names,
+#         one per line
+debian_dependencies_providing_native_libraries() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_deb "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Debian - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_deb $library
 dependency_package_providing_library_deb() {
@@ -22,6 +41,9 @@ dependency_package_providing_library_deb() {
 		('libatk-1.0.so.0')
 			package_name='libatk1.0-0'
 		;;
+		('libaudio.so.2')
+			package_name='libaudio2'
+		;;
 		('libavcodec.so.58')
 			package_name='libavcodec58 | libavcodec-extra58'
 		;;
@@ -40,8 +62,14 @@ dependency_package_providing_library_deb() {
 		('libcairo.so.2')
 			package_name='libcairo2'
 		;;
+		('liblcms2.so.2')
+			package_name='liblcms2-2'
+		;;
 		('libcom_err.so.2')
 			package_name='libcom-err2'
+		;;
+		('libcrypt.so.1')
+			package_name='libcrypt1'
 		;;
 		('libcrypto.so.1.1')
 			package_name='libssl1.1'
@@ -63,6 +91,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libexpat.so.1')
 			package_name='libexpat1'
+		;;
+		('libFAudio.so.0')
+			package_name='libfaudio0'
 		;;
 		('libfontconfig.so.1')
 			package_name='libfontconfig1'
@@ -117,6 +148,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='libglib2.0-0'
+		;;
+		('libgomp.so.1')
+			package_name='libgomp1'
 		;;
 		('libgpg-error.so.0')
 			package_name='libgpg-error0'
@@ -199,6 +233,9 @@ dependency_package_providing_library_deb() {
 		('libphysfs.so.1')
 			package_name='libphysfs1'
 		;;
+		('libpixman-1.so.0')
+			package_name='libpixman-1-0'
+		;;
 		('libplc4.so')
 			package_name='libnspr4'
 		;;
@@ -232,8 +269,14 @@ dependency_package_providing_library_deb() {
 		('libSDL-1.2.so.0')
 			package_name='libsdl1.2debian'
 		;;
+		('libSDL_kitchensink.so.1')
+			package_name='libsdl-kitchensink1'
+		;;
 		('libSDL_mixer-1.2.so.0')
 			package_name='libsdl-mixer1.2'
+		;;
+		('libSDL_sound-1.0.so.1')
+			package_name='libsdl-sound1.2'
 		;;
 		('libSDL_ttf-2.0.so.0')
 			package_name='libsdl-ttf2.0-0'
@@ -252,6 +295,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libsecret-1.so.0')
 			package_name='libsecret-1-0'
+		;;
+		('libsigc-2.0.so.0')
+			package_name='libsigc++-2.0-0v5'
 		;;
 		('libSM.so.6')
 			package_name='libsm6'
@@ -304,6 +350,9 @@ dependency_package_providing_library_deb() {
 		('libvorbis.so.0')
 			package_name='libvorbis0a'
 		;;
+		('libvorbisenc.so.2')
+			package_name='libvorbisenc2'
+		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbisfile3'
 		;;
@@ -314,6 +363,15 @@ dependency_package_providing_library_deb() {
 		;;
 		('libX11.so.6')
 			package_name='libx11-6'
+		;;
+		('libX11-xcb.so.1')
+			package_name='libx11-xcb1'
+		;;
+		('libxcb.so.1')
+			package_name='libxcb1'
+		;;
+		('libxcb-randr.so.0')
+			package_name='libxcb-randr0'
 		;;
 		('libXcomposite.so.1')
 			package_name='libxcomposite1'

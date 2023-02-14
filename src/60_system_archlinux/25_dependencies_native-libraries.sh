@@ -1,3 +1,41 @@
+# Arch Linux - Print the package names providing the given native libraries
+# USAGE: archlinux_dependencies_providing_native_libraries $library[…]
+# RETURN: a list of Arch Linux package names,
+#         one per line
+archlinux_dependencies_providing_native_libraries() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_arch "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
+# Arch Linux - Print the package names providing the given native libraries in a 32-bit build
+# USAGE: archlinux_dependencies_providing_native_libraries_32bit $library[…]
+# RETURN: a list of Arch Linux package names,
+#         one per line
+archlinux_dependencies_providing_native_libraries_32bit() {
+	local library packages_list package
+	packages_list=''
+	for library in "$@"; do
+		package=$(dependency_package_providing_library_arch32 "$library")
+		packages_list="$packages_list
+		$package"
+	done
+
+	printf '%s' "$packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Arch Linux - Print the package name providing the given native library
 # USAGE: dependency_package_providing_library_arch $library
 dependency_package_providing_library_arch() {
@@ -22,6 +60,9 @@ dependency_package_providing_library_arch() {
 		('libatk-1.0.so.0')
 			package_name='atk'
 		;;
+		('libaudio.so.2')
+			package_name='nas'
+		;;
 		('libavcodec.so.58')
 			package_name='ffmpeg'
 		;;
@@ -40,8 +81,14 @@ dependency_package_providing_library_arch() {
 		('libcairo.so.2')
 			package_name='cairo'
 		;;
+		('liblcms2.so.2')
+			package_name='lcms2'
+		;;
 		('libcom_err.so.2')
 			package_name='e2fsprogs'
+		;;
+		('libcrypt.so.1')
+			package_name='libxcrypt'
 		;;
 		('libcrypto.so.1.1')
 			package_name='openssl'
@@ -63,6 +110,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libexpat.so.1')
 			package_name='expat'
+		;;
+		('libFAudio.so.0')
+			package_name='faudio'
 		;;
 		('libfontconfig.so.1')
 			package_name='fontconfig'
@@ -114,6 +164,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libgobject-2.0.so.0')
 			package_name='glib2'
+		;;
+		('libgomp.so.1')
+			package_name='gcc-libs'
 		;;
 		('libgpg-error.so.0')
 			package_name='libgpg-error'
@@ -196,6 +249,9 @@ dependency_package_providing_library_arch() {
 		('libphysfs.so.1')
 			package_name='physfs'
 		;;
+		('libpixman-1.so.0')
+			package_name='pixman'
+		;;
 		('libplc4.so')
 			package_name='nspr'
 		;;
@@ -229,8 +285,15 @@ dependency_package_providing_library_arch() {
 		('libSDL-1.2.so.0')
 			package_name='sdl'
 		;;
+		('libSDL_kitchensink.so.1')
+			# This library is not provided for Arch Linux
+			unset package_name
+		;;
 		('libSDL_mixer-1.2.so.0')
 			package_name='sdl_mixer'
+		;;
+		('libSDL_sound-1.0.so.1')
+			package_name='sdl_sound'
 		;;
 		('libSDL_ttf-2.0.so.0')
 			package_name='sdl_ttf'
@@ -249,6 +312,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libsecret-1.so.0')
 			package_name='libsecret'
+		;;
+		('libsigc-2.0.so.0')
+			package_name='libsigc++'
 		;;
 		('libSM.so.6')
 			package_name='libsm'
@@ -301,6 +367,9 @@ dependency_package_providing_library_arch() {
 		('libvorbis.so.0')
 			package_name='libvorbis'
 		;;
+		('libvorbisenc.so.2')
+			package_name='libvorbis'
+		;;
 		('libvorbisfile.so.3')
 			package_name='libvorbis'
 		;;
@@ -309,6 +378,15 @@ dependency_package_providing_library_arch() {
 		;;
 		('libX11.so.6')
 			package_name='libx11'
+		;;
+		('libX11-xcb.so.1')
+			package_name='libx11'
+		;;
+		('libxcb.so.1')
+			package_name='libxcb'
+		;;
+		('libxcb-randr.so.0')
+			package_name='libxcb'
 		;;
 		('libXcomposite.so.1')
 			package_name='libxcomposite'
@@ -398,6 +476,10 @@ dependency_package_providing_library_arch32() {
 		('libatk-1.0.so.0')
 			package_name='lib32-atk'
 		;;
+		('libaudio.so.2')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
+		;;
 		('libavcodec.so.58')
 			package_name='lib32-libffmpeg'
 		;;
@@ -416,8 +498,14 @@ dependency_package_providing_library_arch32() {
 		('libcairo.so.2')
 			package_name='lib32-cairo'
 		;;
+		('liblcms2.so.2')
+			package_name='lib32-lcms2'
+		;;
 		('libcom_err.so.2')
 			package_name='lib32-e2fsprogs'
+		;;
+		('libcrypt.so.1')
+			package_name='lib32-libxcrypt'
 		;;
 		('libcrypto.so.1.1')
 			package_name='lib32-openssl'
@@ -439,6 +527,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libexpat.so.1')
 			package_name='lib32-expat'
+		;;
+		('libFAudio.so.0')
+			package_name='lib32-faudio'
 		;;
 		('libfontconfig.so.1')
 			package_name='lib32-fontconfig'
@@ -491,6 +582,9 @@ dependency_package_providing_library_arch32() {
 		('libgobject-2.0.so.0')
 			package_name='lib32-glib2'
 		;;
+		('libgomp.so.1')
+			package_name='lib32-gcc-libs'
+		;;
 		('libgpg-error.so.0')
 			package_name='lib32-libgpg-error'
 		;;
@@ -516,7 +610,7 @@ dependency_package_providing_library_arch32() {
 			package_name='lib32-krb5'
 		;;
 		('libkrb5.so.3')
-			package_name='lib-32krb5'
+			package_name='lib32-krb5'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='lib32-luajit'
@@ -575,6 +669,9 @@ dependency_package_providing_library_arch32() {
 		('libphysfs.so.1')
 			package_name='lib32-physfs'
 		;;
+		('libpixman-1.so.0')
+			package_name='lib32-pixman'
+		;;
 		('libplc4.so')
 			package_name='lib32-nspr'
 		;;
@@ -608,8 +705,15 @@ dependency_package_providing_library_arch32() {
 		('libSDL-1.2.so.0')
 			package_name='lib32-sdl'
 		;;
+		('libSDL_kitchensink.so.1')
+			# This library is not provided for Arch Linux
+			unset package_name
+		;;
 		('libSDL_mixer-1.2.so.0')
 			package_name='lib32-sdl_mixer'
+		;;
+		('libSDL_sound-1.0.so.1')
+			package_name='lib32-sdl_sound'
 		;;
 		('libSDL_ttf-2.0.so.0')
 			package_name='lib32-sdl_ttf'
@@ -629,6 +733,9 @@ dependency_package_providing_library_arch32() {
 		('libsecret-1.so.0')
 			# This library is not provided in a 32-bit build for Arch Linux
 			unset package_name
+		;;
+		('libsigc-2.0.so.0')
+			package_name='lib32-libsigc++'
 		;;
 		('libSM.so.6')
 			package_name='lib32-libsm'
@@ -682,6 +789,9 @@ dependency_package_providing_library_arch32() {
 		('libvorbis.so.0')
 			package_name='lib32-libvorbis'
 		;;
+		('libvorbisenc.so.2')
+			package_name='lib32-libvorbis'
+		;;
 		('libvorbisfile.so.3')
 			package_name='lib32-libvorbis'
 		;;
@@ -690,6 +800,15 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libX11.so.6')
 			package_name='lib32-libx11'
+		;;
+		('libX11-xcb.so.1')
+			package_name='lib32-libx11'
+		;;
+		('libxcb.so.1')
+			package_name='lib32-libxcb'
+		;;
+		('libxcb-randr.so.0')
+			package_name='lib32-libxcb'
 		;;
 		('libXcomposite.so.1')
 			package_name='lib32-libxcomposite'
