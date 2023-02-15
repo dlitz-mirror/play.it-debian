@@ -286,7 +286,7 @@ dependency_package_providing_library_gentoo() {
 			package_name='media-video/rtmpdump'
 		;;
 		('libSDL-1.2.so.0')
-			package_name='media-libs/libsdl'
+			package_name='media-libs/libsdl[opengl]'
 		;;
 		('libSDL_kitchensink.so.1')
 			# This library is not provided for Gentonn
@@ -302,7 +302,7 @@ dependency_package_providing_library_gentoo() {
 			package_name='media-libs/sdl-ttf'
 		;;
 		('libSDL2-2.0.so.0')
-			package_name='media-libs/libsdl2'
+			package_name='media-libs/libsdl2[opengl]'
 		;;
 		('libSDL2_image-2.0.so.0')
 			package_name='media-libs/sdl2-image'
@@ -708,7 +708,7 @@ dependency_package_providing_library_gentoo32() {
 			package_name='media-video/rtmpdump[abi_x86_32]'
 		;;
 		('libSDL-1.2.so.0')
-			package_name='media-libs/libsdl[abi_x86_32]'
+			package_name='media-libs/libsdl[abi_x86_32,opengl]'
 		;;
 		('libSDL_kitchensink.so.1')
 			# This library is not provided for Gentoo
@@ -724,7 +724,7 @@ dependency_package_providing_library_gentoo32() {
 			package_name='media-libs/sdl-ttf[abi_x86_32]'
 		;;
 		('libSDL2-2.0.so.0')
-			package_name='media-libs/libsdl2[abi_x86_32]'
+			package_name='media-libs/libsdl2[abi_x86_32,opengl]'
 		;;
 		('libSDL2_image-2.0.so.0')
 			package_name='media-libs/sdl2-image[abi_x86_32]'
