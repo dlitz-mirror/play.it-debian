@@ -1,3 +1,24 @@
+# Error message: No archive supported for the current game script
+error_no_archive_supported() {
+	local game_script
+	game_script=$(realpath "$0")
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='Ce script semble ne prendre en charge aucune archive : %s\n'
+			message="$message"'Merci de signaler cette erreur sur notre outil de suivi : %s\n'
+		;;
+		('en'|*)
+			message='This script seems to support no archive: %s\n'
+			message="$message"'Please report this issue in our bug tracker: %s\n'
+		;;
+	esac
+
+	print_error
+	printf "$message" "$game_script" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+}
+
 # display an error when trying to extract an archive but no extractor is present
 # USAGE: error_archive_no_extractor_found $archive_type
 error_archive_no_extractor_found() {

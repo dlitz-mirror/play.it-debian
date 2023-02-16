@@ -1,5 +1,13 @@
 # Keep compatibility with 2.20 and older
 
+archives_return_list_legacy() {
+	local variable_name_pattern
+	variable_name_pattern='^ARCHIVE_[0-9A-Z]\+\(_OLD[0-9A-Z]*\)*='
+	set | \
+		grep --regexp="$variable_name_pattern" | \
+		cut --delimiter='=' --fields=1
+}
+
 package_get_current() {
 	if version_is_at_least '2.21' "$target_version"; then
 		warning_deprecated_function 'package_get_current' 'context_package'
