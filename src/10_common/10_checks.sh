@@ -103,7 +103,7 @@ check_directory_supports_executable_files() {
 }
 
 # Compare two version strings using the x.y.z format
-# Arbitrary number of numeric fields should be supported
+# An arbitrary number of numeric fields is supported.
 # USAGE: version_is_at_least $version_reference $version_tested
 # RETURNS: 0 if bigger or equal, 1 otherwise
 version_is_at_least() {
@@ -111,12 +111,40 @@ version_is_at_least() {
 	version_reference="$1"
 	version_tested="$2"
 
-	# If both version numbers are the same, return early
+	if command -v 'dpkg' >/dev/null 2>&1; then
+		version_is_at_least_dpkg "$version_reference" "$version_tested"
+	else
+		version_is_at_least_shell "$version_reference" "$version_tested"
+	fi
+}
+
+# Compare two version strings using the x.y.z format
+# The comparison is done using dpkg.
+# USAGE: version_is_at_least_dpkg $version_reference $version_tested
+# RETURNS: 0 if bigger or equal, 1 otherwise
+version_is_at_least_dpkg() {
+	local version_reference version_tested
+	version_reference="$1"
+	version_tested="$2"
+
+	dpkg --compare-versions "$version_tested" 'ge' "$version_reference"
+}
+
+# Compare two version strings using the x.y.z format
+# The comparison is implemented in Shell.
+# USAGE: version_is_at_least_shell $version_reference $version_tested
+# RETURNS: 0 if bigger or equal, 1 otherwise
+version_is_at_least_shell() {
+	local version_reference version_tested
+	version_reference="$1"
+	version_tested="$2"
+
+	# If both version strings are the same, return early.
 	if [ "$version_tested" = "$version_reference" ]; then
 			return 0
 	fi
 
-	# Compare version fields one at a time
+	# Compare version fields one at a time.
 	local field field_reference field_tested
 	field=1
 	field_reference=$(printf '%s' "$version_reference" | cut --delimiter='.' --fields=$field)
@@ -133,20 +161,14 @@ version_is_at_least() {
 		fi
 	done
 
-	# Both version number have a different number of fields, and all compared fields are the same
-	# If the reference is longer, the tested version number is lower
+	# Both version number have a different number of fields,
+	# and all compared fields are the same.
+	## If the reference is longer, the tested version number is lower.
 	if [ -n "$field_reference" ]; then
 		return 1
-	# If the tested version is longer, it is higher than the reference one
+	## If the tested version is longer, it is higher than the reference one.
 	elif [ -n "$field_tested" ]; then
 		return 0
-	# We should never enter this last case
-	else
-		###
-		# TODO
-		# Fail with some explicit error
-		###
-		return 1
 	fi
 }
 
