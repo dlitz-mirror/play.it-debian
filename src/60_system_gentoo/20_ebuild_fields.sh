@@ -2,14 +2,15 @@
 # USAGE: egentoo_field_keywords $package…
 egentoo_field_keywords() {
 	local keywords
-	local package
 
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'egentoo_field_keywords'
 	fi
 
+	local package package_architecture
 	for package in "$@"; do
-		case "$(package_get_architecture "$package")" in
+		package_architecture=$(package_architecture "$package")
+		case "$package_architecture" in
 			('32')
 				printf '%s' '-* x86 amd64'
 				return 0
@@ -33,14 +34,15 @@ egentoo_field_rdepend() {
 	local package_64bits
 	local package_32bits
 	local package_data
-	local package
 
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'egentoo_field_rdepend'
 	fi
 
+	local package package_architecture
 	for package in "$@"; do
-		case "$(package_get_architecture "$package")" in
+		package_architecture=$(package_architecture "$package")
+		case "$package_architecture" in
 			('32')
 				package_32bits="$package"
 				;;

@@ -1,7 +1,13 @@
 # Arch Linux - Set list of generic dependencies
 # USAGE: pkg_set_deps_arch $dep[…]
 pkg_set_deps_arch() {
-	case "$(package_get_architecture "$pkg")" in
+	# FIXME - $package should be passed as a function argument, not inherited from the calling function
+	local package
+	package="$pkg"
+
+	local package_architecture
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
 		('32')
 			pkg_set_deps_arch32 "$@"
 		;;

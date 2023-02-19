@@ -1,18 +1,17 @@
 # Print the list of generic dependencies required by a given package
 # USAGE: dependencies_list_generic $package
+# RETURN: a list of generic dependcy keywords,
+#         separated by line breaks
 dependencies_list_generic() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'dependencies_list_generic'
 
-	# Distinct dependencies lists might be used based on source archive
 	local dependencies_generic
 	dependencies_generic=$(context_value "${package}_DEPS")
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
 	# Ignore grep error return if there is nothing to print.
-	local dependency
 	printf '%s' "$dependencies_generic" | \
 		sed 's/ /\n/g' | \
 		sort --unique | \
@@ -54,7 +53,7 @@ dependencies_list_native_libraries_packages() {
 	case "$option_package" in
 		('arch')
 			local package_architecture
-			package_architecture=$(package_get_architecture "$package")
+			package_architecture=$(package_architecture "$package")
 			case "$package_architecture" in
 				('32')
 					archlinux_dependencies_providing_native_libraries_32bit $required_native_libraries
@@ -69,7 +68,7 @@ dependencies_list_native_libraries_packages() {
 		;;
 		('gentoo'|'egentoo')
 			local package_architecture
-			package_architecture=$(package_get_architecture "$package")
+			package_architecture=$(package_architecture "$package")
 			case "$package_architecture" in
 				('32')
 					gentoo_dependencies_providing_native_libraries_32bit $required_native_libraries
@@ -107,9 +106,8 @@ dependencies_list_mono_libraries() {
 # RETURNS: a list of native package names,
 #          one per line
 dependencies_list_mono_libraries_packages() {
-	local package package_architecture
+	local package
 	package="$1"
-	package_architecture=$(package_get_architecture "$package")
 
 	# Return early if the current package requires no Mono library
 	local required_mono_libraries library

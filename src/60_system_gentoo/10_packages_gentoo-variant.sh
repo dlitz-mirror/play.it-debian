@@ -6,9 +6,9 @@ pkg_write_gentoo() {
 	# $pkg should be passed as a function argument, not inherited from the calling function
 	###
 
-	local archive package_path package_id
+	local package_path package_id
 	package_path=$(package_path "$pkg")
-	package_id=$(package_get_id "$pkg")
+	package_id=$(package_id "$pkg")
 
 	mkdir --parents \
 		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata" \
@@ -17,17 +17,17 @@ pkg_write_gentoo() {
 	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
 	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
 	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/files/install"
-	local archive package_version target
-	archive=$(context_archive)
-	package_version=$(packages_get_version "$archive")
+	local package_version target
+	package_version=$(package_version)
 	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
 
 	cat > "$target" <<- EOF
 	EAPI=7
 	RESTRICT="fetch strip binchecks"
 	EOF
-	local pkg_architectures
-	case "$(package_get_architecture "$pkg")" in
+	local package_architecture pkg_architectures
+	package_architecture=$(package_architecture "$pkg")
+	case "$package_architecture" in
 		('32')
 			pkg_architectures='-* x86 amd64'
 		;;
@@ -38,9 +38,11 @@ pkg_write_gentoo() {
 			pkg_architectures='x86 amd64' #data packages
 		;;
 	esac
+	local package_description
+	package_description=$(package_description "$pkg")
 	cat >> "$target" <<- EOF
 	KEYWORDS="$pkg_architectures"
-	DESCRIPTION="$(package_get_description "$pkg")"
+	DESCRIPTION="${package_description}"
 	SLOT="0"
 	EOF
 
@@ -78,10 +80,10 @@ pkg_write_gentoo() {
 # NEEDED VARS: (LANG) PLAYIT_WORKDIR
 # CALLED BY: build_pkg
 pkg_build_gentoo() {
-	local archive package_id package_version pkg_filename_base
-	archive=$(context_archive)
-	package_version=$(packages_get_version "$archive")
-	package_id=$(package_get_id "$pkg")
+	# FIXME - $pkg should be passed as a function argument, not inherited from the calling function
+	local package_id package_version pkg_filename_base
+	package_version=$(package_version)
+	package_id=$(package_id "$pkg")
 	pkg_filename_base="${package_id}-${package_version}.tbz2"
 
 	# Get packages list for the current game
@@ -90,9 +92,9 @@ pkg_build_gentoo() {
 
 	local current_package_id
 	for package in $packages_list; do
-		current_package_id=$(package_get_id "$package")
+		current_package_id=$(package_id "$package")
 		if [ "$package" != "$pkg" ] && [ "${current_package_id}" = "$package_id" ]; then
-			pkg_filename_base="$(package_get_architecture_string "$pkg")/$pkg_filename_base"
+			pkg_filename_base="$(package_architecture_string "$pkg")/$pkg_filename_base"
 			mkdir --parents "$(dirname "$pkg_filename_base")"
 		fi
 	done
@@ -175,22 +177,21 @@ package_name_gentoo() {
 	local package
 	package="$1"
 
-	local archive package_id package_version package_name
-	archive=$(context_archive)
-	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$archive")
+	local package_id package_version package_name
+	package_id=$(package_id "$package")
+	package_version=$(package_version)
 	package_name="${package_id}-${package_version}.tbz2"
 
 	local packages_list current_package current_package_id
 	packages_list=$(packages_get_list)
 	for current_package in $packages_list; do
-		current_package_id=$(package_get_id "$current_package")
+		current_package_id=$(package_id "$current_package")
 		if \
 			[ "$current_package" != "$package" ] \
 			&& [ "$current_package_id" = "$package_id" ]
 		then
 			local package_architecture
-			package_architecture=$(package_get_architecture_string "$package")
+			package_architecture=$(package_architecture_string "$package")
 			package_name="${package_architecture}/${package_name}"
 			break
 		fi
@@ -212,4 +213,81 @@ package_path_gentoo() {
 	package_path="${package_name%.tbz2}"
 
 	printf '%s' "$package_path"
+}
+
+# Tweak the given package version string to ensure it is compatible with portage
+# USAGE: gentoo_package_version $package_version
+# RETURNS: the package version, as a non-empty string
+gentoo_package_version() {
+	assert_not_empty 'script_version' 'gentoo_package_version'
+
+	local package_version
+	package_version="$1"
+
+	set +o errexit
+	package_version=$(
+		printf '%s' "$package_version" | \
+			grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?'
+	)
+	set -o errexit
+
+	if [ -z "$package_version" ]; then
+		package_version='1.0'
+	fi
+
+	printf '$%s_p%s' "$package_version" "$(printf '%s' "$script_version" | sed 's/\.//g')"
+}
+
+# Print the architecture string of the given package, in the format expected by portage
+# USAGE: gentoo_package_architecture_string $package
+# RETURNS: the package architecture, as one of the following values:
+#          - x86
+#          - amd64
+#          - data (dummy value)
+gentoo_package_architecture_string() {
+	local package
+	package="$1"
+
+	local package_architecture package_architecture_string
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32')
+			package_architecture_string='x86'
+		;;
+		('64')
+			package_architecture_string='amd64'
+		;;
+		('all')
+			# We could put anything here, it should not be used for package metadata.
+			package_architecture_string='data'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
+}
+
+# Tweak the alternative name provided by a package, to ensure compatibility with portage
+# cf. https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers
+# USAGE: gentoo_package_provide $provided_package_id
+# RETURNS: the provided package id as a non-empty string
+gentoo_package_provide() {
+	local provided_package_id
+	provided_package_id="$1"
+
+	# Avoid mixups between numbers in package ID and version number.
+	provided_package_id=$(gentoo_package_id "$provided_package_id")
+
+	# Add the required "!games-playit/" prefix to the package ID.
+	printf '!games-playit/%s' "$package_provide"
+}
+
+# Tweak the given package id to ensure compatibility with portage
+# USAGE: gentoo_package_id $package_id
+# RETURNS: the package id, as a non-empty string
+gentoo_package_id() {
+	local package_id
+	package_id="$1"
+
+	# Avoid mixups between numbers in package id and version number.
+	printf '%s' "$package_id" | sed 's/-/_/g'
 }

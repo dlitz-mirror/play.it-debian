@@ -6,7 +6,7 @@ pkg_set_deps_gentoo() {
 	shift
 
 	local package_architecture architecture_suffix
-	package_architecture="$(package_get_architecture "$package")"
+	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
 		('32')
 			architecture_suffix='[abi_x86_32]'
@@ -153,11 +153,12 @@ pkg_set_deps_gentoo() {
 				case "$option_package" in
 					('gentoo')
 						pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-						local tested_package packages_list
+						local tested_package packages_list package_provide
 						packages_list=$(packages_get_list)
 						for tested_package in $packages_list; do
 							if [ "$tested_package" != "$package" ]; then
-								if [ "$(package_get_provide "$tested_package")" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
+								package_provide=$(package_provide "$tested_package")
+								if [ "$package_provide" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
 									pkg_dep="|| ( ${pkg_dep} )"
 								fi
 							fi
@@ -219,7 +220,7 @@ dependencies_gentoo_full_list() {
 	$packages_list"
 
 	local package_provide
-	package_provide=$(package_get_provide "$package")
+	package_provide=$(package_provide "$package")
 	if [ -n "$package_provide" ]; then
 		packages_list_full="$packages_list_full
 		$package_provide"

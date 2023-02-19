@@ -22,7 +22,7 @@ print_instructions() {
 	packages_list_64=''
 	packages_list_all=''
 	for package in "$@"; do
-		package_architecture=$(package_get_architecture "$package")
+		package_architecture=$(package_architecture "$package")
 		case "$package_architecture" in
 			('32')
 				packages_list_32="$packages_list_32 $package"

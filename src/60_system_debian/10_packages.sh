@@ -1,77 +1,96 @@
-# write .deb package meta-data
-# USAGE: pkg_write_deb
+# Print the content of the DEBIAN/control metadata file for the given package
+# USAGE: debian_package_metadata_control $package
+# RETURN: the contents of the DEBIAN/control file,
+#         spanning over multiple lines
+debian_package_metadata_control() {
+	local package
+	package="$1"
+
+	# Compute the package size, in kilobytes.
+	local package_path package_size
+	package_path=$(package_path "$package")
+	package_size=$(
+		du --total --block-size=1K --summarize "$package_path" | \
+			tail --lines=1 | \
+			cut --fields=1
+	)
+
+	local package_architecture package_depends package_description package_id package_maintainer package_version
+	package_architecture=$(package_architecture_string "$package")
+	package_depends=$(package_debian_field_depends "$package")
+	package_description=$(package_description "$package")
+	package_id=$(package_id "$package")
+	package_maintainer=$(package_maintainer)
+	package_provide=$(package_provide "$package")
+	package_version=$(package_version)
+
+	cat <<- EOF
+	Package: $package_id
+	Version: $package_version
+	Architecture: $package_architecture
+	Multi-Arch: foreign
+	Maintainer: $package_maintainer
+	Installed-Size: $package_size
+	Section: non-free/games
+	EOF
+	if [ -n "$package_provide" ]; then
+		cat <<- EOF
+		Conflicts: $package_provide
+		Provides: $package_provide
+		Replaces: $package_provide
+		EOF
+	fi
+	if [ -n "$package_depends" ]; then
+		cat <<- EOF
+		Depends: $package_depends
+		EOF
+	fi
+	cat <<- EOF
+	Description: $package_description
+	EOF
+}
+
+# Write the metadata for the given package
+# WARNING: The target package is set in write_metadata,
+#          and passed through a $pkg variable implicitly inherited.
+# USAGE: pkg_write_deb $package
 pkg_write_deb() {
-	###
-	# TODO
-	# $pkg should be passed as a function argument, not inherited from the calling function
-	###
+	local package
+	package="$1"
 
-	local package_path
-	package_path=$(package_path "$pkg")
-
-	local pkg_deps pkg_size control_directory control_file postinst_script prerm_script
-
+	# Create metadata directory, enforce correct permissions.
+	local package_path control_directory
+	package_path=$(package_path "$package")
 	control_directory="${package_path}/DEBIAN"
-	control_file="$control_directory/control"
-	postinst_script="$control_directory/postinst"
-	prerm_script="$control_directory/prerm"
-
-	# Get package size
-	pkg_size=$(du --total --block-size=1K --summarize "$package_path" | tail --lines=1 | cut --fields=1)
-
-	# Create metadata directory, enforce correct permissions
 	mkdir --parents "$control_directory"
 	chmod 755 "$control_directory"
 
-	# Write main metadata file, enforce correct permissions
-	local archive package_id
-	archive=$(context_archive)
-	package_id=$(package_get_id "$pkg")
-	cat > "$control_file" <<- EOF
-	Package: $package_id
-	Version: $(packages_get_version "$archive")
-	Architecture: $(package_get_architecture_string "$pkg")
-	Multi-Arch: foreign
-	Maintainer: $(packages_get_maintainer)
-	Installed-Size: $pkg_size
-	Section: non-free/games
-	EOF
-	if [ -n "$(package_get_provide "$pkg")" ]; then
-		cat >> "$control_file" <<- EOF
-		Conflicts: $(package_get_provide "$pkg")
-		Provides: $(package_get_provide "$pkg")
-		Replaces: $(package_get_provide "$pkg")
-		EOF
-	fi
-	local field_depends
-	field_depends=$(package_debian_field_depends "$pkg")
-	if [ -n "$field_depends" ]; then
-		cat >> "$control_file" <<- EOF
-		Depends: $field_depends
-		EOF
-	fi
-	cat >> "$control_file" <<- EOF
-	$(package_get_description "$pkg")
-	EOF
+	# Write main metadata file (DEBIAN/control), enforce correct permissions.
+	local control_file
+	control_file="${control_directory}/control"
+	debian_package_metadata_control "$package" > "$control_file"
 	chmod 644 "$control_file"
 
-	# Write postinst/prerm scripts, enforce correct permissions
-	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
+	# Write postinst/prerm scripts, enforce correct permissions.
+	if ! variable_is_empty "${package}_POSTINST_RUN"; then
+		local postinst_script
+		postinst_script="${control_directory}/postinst"
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
-		$(get_value "${pkg}_POSTINST_RUN")
+		$(get_value "${package}_POSTINST_RUN")
 
 		exit 0
 		EOF
 		chmod 755 "$postinst_script"
 	fi
-
-	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
+	if ! variable_is_empty "${package}_PRERM_RUN"; then
+		local prerm_script
+		prerm_script="${control_directory}/prerm"
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
-		$(get_value "${pkg}_PRERM_RUN")
+		$(get_value "${package}_PRERM_RUN")
 
 		exit 0
 		EOF
@@ -160,11 +179,10 @@ package_name_debian() {
 	local package
 	package="$1"
 
-	local archive package_id package_version package_architecture package_name
-	archive=$(context_archive)
-	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$archive")
-	package_architecture=$(package_get_architecture_string "$package")
+	local package_id package_version package_architecture package_name
+	package_id=$(package_id "$package")
+	package_version=$(package_version)
+	package_architecture=$(package_architecture_string "$package")
 	package_name="${package_id}_${package_version}_${package_architecture}.deb"
 
 	printf '%s' "$package_name"
@@ -183,4 +201,31 @@ package_path_debian() {
 	package_path="${package_name%.deb}"
 
 	printf '%s' "$package_path"
+}
+
+# Print the architecture string of the given package, in the format expected by dpkg
+# USAGE: debian_package_architecture_string $package
+# RETURNS: the package architecture, as one of the following values:
+#          - i386
+#          - amd64
+#          - all
+debian_package_architecture_string() {
+	local package
+	package="$1"
+
+	local package_architecture package_architecture_string
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32')
+			package_architecture_string='i386'
+		;;
+		('64')
+			package_architecture_string='amd64'
+		;;
+		('all')
+			package_architecture_string='all'
+		;;
+	esac
+
+	printf '%s' "$package_architecture_string"
 }
