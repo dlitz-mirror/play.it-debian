@@ -76,3 +76,33 @@ warning_option_value_deprecated() {
 	print_warning >/dev/stderr
 	printf "$message" "$option_name" "$option_value" >/dev/stderr
 }
+
+# Error message: Some options are currently set to incompatible values
+# USAGE: error_incompatible_options $option_name_1 $option_name_2
+error_incompatible_options() {
+	local option_name_1 option_name_2
+	option_name_1="$1"
+	option_name_2="$2"
+
+	local option_value_1 option_value_2
+	option_value_1=$(option_value "$option_name_1")
+	option_value_2=$(option_value "$option_name_2")
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='Les options suivantes ne sont pas compatibles :\n'
+			message="$message"'\t--%s %s\n'
+			message="$message"'\t--%s %s\n\n'
+		;;
+		('en'|*)
+			message='The following options are not compatible:\n'
+			message="$message"'\t--%s %s\n'
+			message="$message"'\t--%s %s\n\n'
+		;;
+	esac
+	print_error
+	printf "$message" \
+		"$option_name_1" "$option_value_1" \
+		"$option_name_2" "$option_value_2"
+}

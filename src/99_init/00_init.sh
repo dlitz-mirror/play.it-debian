@@ -107,6 +107,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	done
 	unset option_value
 
+	# Throw an error if incompatible options are set
+
+	options_compatibility_check
+
 	# Find the main archive
 
 	archives_list=$(archives_return_list)
