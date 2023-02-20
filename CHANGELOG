@@ -1,3 +1,11 @@
+2.21.2
+
+  * Display an explicit error when a game script seems to support no archive.
+  * Use dpkg for version strings comparison.
+  * Ensure the pre-run and post-run actions strings always end with a line break.
+  * Add missing native library dependency: libIL.so.1
+  * Gentoo: Add the opengl USE flag to relevant SDL packages.
+
 2.21.1
 
   * Fix Make rule used to build the library.

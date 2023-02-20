@@ -408,7 +408,8 @@ application_prerun() {
 		;;
 	esac
 
-	printf '%s' "$application_prerun"
+	# Ensure the pre-run actions string always end with a line break.
+	printf '%s\n' "$application_prerun"
 }
 
 # Print the post-run actions for the given application.
@@ -434,7 +435,8 @@ application_postrun() {
 		;;
 	esac
 
-	printf '%s' "$application_postrun"
+	# Ensure the post-run actions string always end with a line break.
+	printf '%s\n' "$application_postrun"
 }
 
 # print the options string for the given application

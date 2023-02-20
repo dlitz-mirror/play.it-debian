@@ -170,6 +170,9 @@ dependency_package_providing_library_deb() {
 		('libidn2.so.0')
 			package_name='libidn2-0'
 		;;
+		('libIL.so.1')
+			package_name='libdevil1c2'
+		;;
 		('libjpeg.so.62')
 			package_name='libjpeg62-turbo | libjpeg62'
 		;;
