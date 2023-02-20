@@ -186,6 +186,9 @@ dependency_package_providing_library_arch() {
 		('libidn2.so.0')
 			package_name='libidn2'
 		;;
+		('libIL.so.1')
+			package_name='devil'
+		;;
 		('libjpeg.so.62')
 			package_name='libjpeg6-turbo'
 		;;
@@ -602,6 +605,10 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libidn2.so.0')
 			package_name='lib32-libidn2'
+		;;
+		('libIL.so.1')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
 		;;
 		('libjpeg.so.62')
 			package_name='lib32-libjpeg6-turbo'

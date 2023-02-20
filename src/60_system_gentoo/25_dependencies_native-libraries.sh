@@ -189,6 +189,9 @@ dependency_package_providing_library_gentoo() {
 		('libidn2.so.0')
 			package_name='net-dns/libidn2'
 		;;
+		('libIL.so.1')
+			package_name='media-libs/devil'
+		;;
 		('libjpeg.so.62')
 			package_name='media-libs/libjpeg-turbo'
 		;;
@@ -610,6 +613,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libidn2.so.0')
 			package_name='net-dns/libidn2[abi_x86_32]'
+		;;
+		('libIL.so.1')
+			package_name='media-libs/devil[abi_x86_32]'
 		;;
 		('libjpeg.so.62')
 			package_name='media-libs/libjpeg-turbo[abi_x86_32]'
