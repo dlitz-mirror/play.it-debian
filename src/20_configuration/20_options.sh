@@ -343,6 +343,21 @@ option_validity_check() {
 # RETURN: nothing if all the current options are valid used together,
 #         throw an error otherwise
 options_compatibility_check() {
+	# Check the compatibility of --compression auto with the target package format.
+	local option_compression
+	option_compression=$(option_value 'compression')
+	if [ "$option_compression" = 'auto' ]; then
+		local option_package
+		option_package=$(option_value 'package')
+		case "$option_package" in
+			('arch')
+				# --compression auto has not been implemented for Arch Linux packages yet.
+				error_incompatible_options 'package' 'compression'
+				return 1
+			;;
+		esac
+	fi
+
 	# Check the compatibility of the "package" and "compression" values,
 	# when using legacy compression values.
 	if ! version_is_at_least '2.23' "$target_version"; then
