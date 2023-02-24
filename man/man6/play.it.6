@@ -8,7 +8,7 @@
 .Nm
 .Ar archive
 .Op Fl -checksum Cm md5 | Cm none
-.Op Fl -compression Cm none | Cm speed | Cm size
+.Op Fl -compression Cm none | Cm speed | Cm size | Cm auto
 .Op Fl -prefix Ar path
 .Op Fl -package Cm arch | Cm deb | Cm gentoo | Cm egentoo
 .Op Fl -no-icons
@@ -48,7 +48,7 @@ md5sum verification
 .It Cm none
 no verification
 .El
-.It Fl -compression Cm none | Cm speed | Cm size
+.It Fl -compression Cm none | Cm speed | Cm size | Cm auto
 Generated packages compression method selection.
 .Bl -tag -width indent -compact
 .It Cm none
@@ -57,6 +57,8 @@ no compression
 compression method focusing on compression speed
 .It Cm size
 compression method focusing on size reduction
+.It Cm auto
+default compression method on the current system
 .El
 .It Fl -prefix Ar path
 Game installation
@@ -136,6 +138,11 @@ Default path to the configuration file. This file contains a list of additional
 command-line parameters that will be passed to
 .Nm
 as if they were given on the command-line.
+.Sh COMPRESSION
+.Ss Debian
+When building packages for Debian (with --package deb), using --compression auto relies on the default dpkg-deb behaviour. This behaviour can be controlled using the environment variables DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE and DPKG_DEB_COMPRESSOR_LEVEL. See dpkg-deb(1) for more details on how these can be used.
+.Ss Gentoo
+When building packages for Gentoo (with --package gentoo or --package egentoo), using --compression auto relies on the default ebuild behaviour. This behaviour can be controlled using the environment variables BINPKG_COMPRESS and BINPKG_COMPRESS_FLAGS. See make.conf(5) for more details on how these can be used.
 .Sh DIAGNOSTICS
 .Ss Arch Linux
 .Bl -ohang

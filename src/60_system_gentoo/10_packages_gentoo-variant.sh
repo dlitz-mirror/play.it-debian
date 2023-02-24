@@ -130,14 +130,22 @@ pkg_build_gentoo() {
 		('size')
 			binkpg_compress='bzip2'
 		;;
+		('auto')
+			binkpg_compress=''
+		;;
 		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
 			if ! version_is_at_least '2.23' "$target_version"; then
 				binkpg_compress=$(gentoo_package_binkpg_compress_legacy "$option_compression")
 			fi
 		;;
 	esac
-	debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-	PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$binkpg_compress" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+	if [ -n "$binkpg_compress" ]; then
+		debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+		PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$binkpg_compress" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+	else
+		debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+		PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+	fi
 	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/${package_id}-${package_version}.tbz2" "$pkg_filename"
 	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 
