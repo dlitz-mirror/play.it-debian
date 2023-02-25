@@ -13,9 +13,7 @@ pkg_write_egentoo() {
 	inherits="xdg"
 
 	# Ensure that $build_deps is set.
-	if ! variable_is_set 'build_deps'; then
-		build_deps=''
-	fi
+	build_deps=$(get_value 'build_deps')
 
 	package_filename="$(egentoo_package_name).tar"
 

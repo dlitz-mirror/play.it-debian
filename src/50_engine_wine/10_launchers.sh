@@ -354,20 +354,17 @@ launcher_write_script_wine_application_variables() {
 	application="$1"
 	file="$2"
 
-	local application_exe application_options
+	local application_exe application_options wine_link_dirs
 	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
-
-	if ! variable_is_set 'APP_WINE_LINK_DIRS'; then
-		APP_WINE_LINK_DIRS=''
-	fi
+	wine_link_dirs=$(get_value 'APP_WINE_LINK_DIRS')
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
-	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
+	APP_WINE_LINK_DIRS="$wine_link_dirs"
 
 	EOF
 	return 0

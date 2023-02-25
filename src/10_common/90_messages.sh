@@ -452,27 +452,6 @@ error_temporary_path_not_enough_space() {
 	printf "$message" "$temporary_directory_path"
 }
 
-# Display an error when trying to get the value of an unset variable.
-# USAGE: error_variable_not_set $variable_name
-error_variable_not_set() {
-	local variable_name
-	variable_name="$1"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La valeur de la variable suivante a été demandée, mais elle nʼa pas été définie : %s\n'
-		;;
-		('en'|*)
-			message='The value of the following variable has been queried, but it has not been set: %s\n'
-		;;
-	esac
-
-	print_error
-	printf "$message" "$variable_name"
-}
-
 # Display a warning when a deprecated function is called.
 # USAGE: warning_deprecated_function $old_function $new_function
 warning_deprecated_function() {
