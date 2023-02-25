@@ -18,11 +18,10 @@ application_mono_options() {
 
 	# Get the application Mono options string from its identifier
 	local application_mono_options
-	if variable_is_empty "${application}_MONO_OPTIONS"; then
-		# Return early if no options string is set.
+	application_mono_options=$(get_value "${application}_MONO_OPTIONS")
+	## Return early if no options string is set.
+	if [ -z "$application_mono_options" ]; then
 		return 0
-	else
-		application_mono_options=$(get_value "${application}_MONO_OPTIONS")
 	fi
 
 	# Check that the options string does not span multiple lines

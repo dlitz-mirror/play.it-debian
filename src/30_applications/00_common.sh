@@ -5,11 +5,7 @@ applications_list() {
 	# Return APPLICATIONS_LIST value, if it is explicitly set.
 	# Context-specific values are supported.
 	local applications_list
-	if variable_is_empty 'APPLICATIONS_LIST'; then
-		applications_list=''
-	else
-		applications_list=$(context_value 'APPLICATIONS_LIST')
-	fi
+	applications_list=$(context_value 'APPLICATIONS_LIST')
 	if [ -n "$applications_list" ]; then
 		printf '%s' "$applications_list"
 		return 0
@@ -96,11 +92,7 @@ application_prefix_type() {
 
 	# Override default with explicitely set prefix type for the given application.
 	local prefix_type_override
-	if variable_is_empty "${application}_PREFIX_TYPE"; then
-		prefix_type_override=''
-	else
-		prefix_type_override=$(get_value "${application}_PREFIX_TYPE")
-	fi
+	prefix_type_override=$(get_value "${application}_PREFIX_TYPE")
 	if [ -n "$prefix_type_override" ]; then
 		prefix_type="$prefix_type_override"
 	fi
@@ -253,11 +245,10 @@ application_category() {
 
 	# Get the application category from its identifier
 	local application_category
-	if variable_is_empty "${application}_CAT"; then
-		# If no category is explicitely set, fall back on "Game"
+	application_category=$(get_value "${application}_CAT")
+	## If no category is explicitely set, fall back on "Game"
+	if [ -z "$application_category" ]; then
 		application_category='Game'
-	else
-		application_category=$(get_value "${application}_CAT")
 	fi
 
 	# TODO - We could check that the category is part of the 1.0 XDG spec:

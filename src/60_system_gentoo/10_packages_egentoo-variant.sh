@@ -94,15 +94,11 @@ egentoo_package_filename_auto() {
 	local package_filename
 	package_filename="$1"
 
-	if variable_is_empty 'BINPKG_COMPRESS'; then
-		# "zstd" is the default value for BINKPG_COMPRESS,
-		# according to make.conf(5) manpage.
-		# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
-		local BINPKG_COMPRESS
-		BINPKG_COMPRESS='zstd'
-	fi
-
-	case "$BINPKG_COMPRESS" in
+	# "zstd" is the default value for BINKPG_COMPRESS,
+	# according to make.conf(5) manpage.
+	# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
+	local package_filename
+	case "${BINPKG_COMPRESS:-zstd}" in
 		('bzip2')
 			package_filename="${package_filename}.bz2"
 		;;
@@ -135,16 +131,11 @@ egentoo_package_filename_auto() {
 # RETURN: the command to use for the generated archive compression,
 #         following the current value of BINPKG_COMPRESS
 egentoo_package_compression_command_auto() {
-	if variable_is_empty 'BINPKG_COMPRESS'; then
-		# "zstd" is the default value for BINKPG_COMPRESS,
-		# according to make.conf(5) manpage.
-		# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
-		local BINPKG_COMPRESS
-		BINPKG_COMPRESS='zstd'
-	fi
-
+	# "zstd" is the default value for BINKPG_COMPRESS,
+	# according to make.conf(5) manpage.
+	# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
 	local compression_command
-	case "$BINPKG_COMPRESS" in
+	case "${BINPKG_COMPRESS:-zstd}" in
 		('bzip2')
 			compression_command='bzip2'
 		;;
@@ -221,9 +212,7 @@ pkg_build_egentoo() {
 		('auto')
 			package_filename=$(egentoo_package_filename_auto "$package_filename")
 			compression_command=$(egentoo_package_compression_command_auto)
-			if ! variable_is_empty 'BINPKG_COMPRESS_FLAGS'; then
-				compression_options="$BINPKG_COMPRESS_FLAGS"
-			fi
+			compression_options="${BINPKG_COMPRESS_FLAGS:-}"
 		;;
 		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
 			if ! version_is_at_least '2.23' "$target_version"; then

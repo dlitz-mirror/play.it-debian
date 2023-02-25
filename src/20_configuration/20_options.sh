@@ -158,11 +158,7 @@ option_validity_check() {
 	# to avoid a loop between "option_value" and the current function.
 	local option_variable option_value
 	option_variable=$(option_variable "$option_name")
-	if variable_is_empty "$option_variable"; then
-		option_value=''
-	else
-		option_value=$(get_value "$option_variable")
-	fi
+	option_value=$(get_value "$option_variable")
 	if [ -z "$option_value" ]; then
 		option_variable=$(option_variable_default "$option_name")
 		option_value=$(get_value "$option_variable")
@@ -244,7 +240,7 @@ option_validity_check() {
 			# Check that the value of "output-dir" is a path to a writable directory.
 
 			## This check is not useful if a no-op option has been set.
-			local noop_option noop_option_variable noop_option_value
+			local noop_option noop_option_value
 			for noop_option in \
 				'help' \
 				'list-packages' \
@@ -252,12 +248,9 @@ option_validity_check() {
 				'show-game-script' \
 				'version'
 			do
-				noop_option_variable=$(option_variable "$noop_option")
-				if ! variable_is_empty "$noop_option_variable"; then
-					noop_option_value=$(option_value "$noop_option")
-					if [ "$noop_option_value" -eq 1 ]; then
-						return 0
-					fi
+				noop_option_value=$(option_value "$noop_option")
+				if [ "${noop_option_value:-0}" -eq 1 ]; then
+					return 0
 				fi
 			done
 
@@ -304,7 +297,7 @@ option_validity_check() {
 			# Check that the value of "tmpdir" is a path to a writable directory.
 
 			## This check is not useful if a no-op option has been set.
-			local noop_option noop_option_variable noop_option_value
+			local noop_option noop_option_value
 			for noop_option in \
 				'help' \
 				'list-packages' \
@@ -312,12 +305,9 @@ option_validity_check() {
 				'show-game-script' \
 				'version'
 			do
-				noop_option_variable=$(option_variable "$noop_option")
-				if ! variable_is_empty "$noop_option_variable"; then
-					noop_option_value=$(option_value "$noop_option")
-					if [ "$noop_option_value" -eq 1 ]; then
-						return 0
-					fi
+				noop_option_value=$(option_value "$noop_option")
+				if [ "${noop_option_value:-0}" -eq 1 ]; then
+					return 0
 				fi
 			done
 

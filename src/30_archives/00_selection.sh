@@ -100,10 +100,7 @@ archive_find_from_candidates() {
 
 	# An archive path might already be set, if it has been passed on the command line
 	local current_archive_path
-	current_archive_path=''
-	if ! variable_is_empty "$archive_name"; then
-		current_archive_path=$(get_value $archive_name)
-	fi
+	current_archive_path=$(get_value $archive_name)
 
 	# Loop around archive candidates, stopping on the first one found
 	local archive_candidate file_name file_path
@@ -225,9 +222,7 @@ archive_set_properties_from_candidate() {
 		'SIZE' \
 		'VERSION'
 	do
-		if ! variable_is_empty "${archive_candidate}_${property}"; then
-			export "${archive_name}_${property}=$(get_value "${archive_candidate}_${property}")"
-		fi
+		export "${archive_name}_${property}=$(get_value "${archive_candidate}_${property}")"
 	done
 
 	return 0
@@ -241,11 +236,12 @@ archive_add_size_to_total() {
 	archive="$1"
 	assert_not_empty 'archive' 'archive_add_size_to_total'
 
-	# Get the given archive size, defaults to a size of 0
+	# Get the given archive size
 	local archive_size
-	archive_size='0'
-	if ! variable_is_empty "${archive}_SIZE"; then
-		archive_size=$(get_value "${archive}_SIZE")
+	archive_size=$(get_value "${archive}_SIZE")
+	## Default to a size of 0
+	if [ -z "$archive_size" ]; then
+		archive_size='0'
 	fi
 
 	# Update the total size of all archives in use
@@ -269,11 +265,7 @@ archive_get_type() {
 
 	# Return archive type early if it is already set
 	local archive_type
-	if variable_is_empty "${archive_identifier}_TYPE"; then
-		archive_type=''
-	else
-		archive_type=$(get_value "${archive_identifier}_TYPE")
-	fi
+	archive_type=$(get_value "${archive_identifier}_TYPE")
 	if [ -n "$archive_type" ]; then
 		printf '%s' "$archive_type"
 		return 0
@@ -358,11 +350,7 @@ archive_extractor() {
 
 	# Return archive extractor early if it is already set
 	local archive_extractor
-	if variable_is_empty "${archive_identifier}_EXTRACTOR"; then
-		archive_extractor=''
-	else
-		archive_extractor=$(get_value "${archive_identifier}_EXTRACTOR")
-	fi
+	archive_extractor=$(get_value "${archive_identifier}_EXTRACTOR")
 	if [ -n "$archive_extractor" ]; then
 		printf '%s' "$archive_extractor"
 		return 0
@@ -394,10 +382,7 @@ archive_extractor_options() {
 	local archive
 	archive="$1"
 
-	# Only display an options string if one is set.
-	if ! variable_is_empty "${archive}_EXTRACTOR_OPTIONS"; then
-		get_value "${archive}_EXTRACTOR_OPTIONS"
-	fi
+	get_value "${archive}_EXTRACTOR_OPTIONS"
 }
 
 # check integrity of target file

@@ -247,15 +247,11 @@ requirements_list_archive_single() {
 # they are handled by another function: archive_dependencies_check.
 # USAGE: check_deps
 check_deps() {
-	if variable_is_empty 'SCRIPT_DEPS'; then
-		SCRIPT_DEPS=''
-	fi
-
 	local requirements_list_compression requirements_list_checksum requirements_list_package
 	requirements_list_compression=$(requirements_list_compression)
 	requirements_list_checksum=$(requirements_list_checksum)
 	requirements_list_package=$(requirements_list_package)
-	SCRIPT_DEPS="$SCRIPT_DEPS
+	SCRIPT_DEPS="${SCRIPT_DEPS:-}
 	$requirements_list_compression
 	$requirements_list_checksum
 	$requirements_list_package"

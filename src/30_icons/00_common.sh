@@ -155,9 +155,9 @@ icon_wrestool_options() {
 
 	# Fetch the custom options string
 	local wrestool_options
-	wrestool_options='--type=14'
-	if ! variable_is_empty "${icon}_WRESTOOL_OPTIONS"; then
-		wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+	wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+	if [ -z "$wrestool_options" ]; then
+		wrestool_options='--type=14'
 	fi
 
 	###

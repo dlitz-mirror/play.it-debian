@@ -218,11 +218,7 @@ information_archives_list() {
 	local archive archive_name archive_url
 	for archive in "$@"; do
 		archive_name=$(get_value "$archive")
-		if variable_is_empty "${archive}_URL"; then
-			archive_url=''
-		else
-			archive_url=$(get_value "${archive}_URL")
-		fi
+		archive_url=$(get_value "${archive}_URL")
 		if [ -n "$archive_url" ]; then
 			printf '%s — %s\n' "$archive_name" "$archive_url"
 		else

@@ -53,28 +53,22 @@ parse_arguments "$@"
 # Display the help message,
 # if called with --help.
 
-option_help_variable=$(option_variable 'help')
-if ! variable_is_empty "$option_help_variable"; then
-	option_help=$(option_value 'help')
-	if [ "$option_help" -eq 1 ]; then
-		help
-		exit 0
-	fi
+option_help=$(option_value 'help')
+if [ "${option_help:-0}" -eq 1 ]; then
+	help
+	exit 0
 fi
-unset option_help_variable option_help
+unset option_help
 
 # Display the version string,
 # if called with --version.
 
-option_version_variable=$(option_variable 'version')
-if ! variable_is_empty "$option_version_variable"; then
-	option_version=$(option_value 'version')
-	if [ "$option_version" -eq 1 ]; then
-		printf '%s\n' "$LIBRARY_VERSION"
-		exit 0
-	fi
+option_version=$(option_value 'version')
+if [ "${option_version:-0}" -eq 1 ]; then
+	printf '%s\n' "$LIBRARY_VERSION"
+	exit 0
 fi
-unset option_version_variable option_version
+unset option_version
 
 # Exit with an error if no archive is provided
 

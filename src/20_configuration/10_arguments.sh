@@ -15,10 +15,7 @@ parse_arguments() {
 				'--version' \
 			)
 				option_name=$(argument_name "$1")
-				option_variable=$(option_variable "$option_name")
-				if variable_is_empty "$option_variable"; then
-					option_update "$option_name" 1
-				fi
+				option_update "$option_name" 1
 			;;
 			( \
 				'--no-free-space-check' | \
@@ -26,10 +23,7 @@ parse_arguments() {
 				'--no-mtree' \
 			)
 				option_name=$(argument_name "$1" | sed 's/^no-//')
-				option_variable=$(option_variable "$option_name")
-				if variable_is_empty "$option_variable"; then
-					option_update "$option_name" 0
-				fi
+				option_update "$option_name" 0
 			;;
 			( \
 				'--config-file' | \
@@ -54,16 +48,14 @@ parse_arguments() {
 					option_value=$(argument_value "$1" "$2")
 					shift 1
 				fi
-				if variable_is_empty "$option_variable"; then
-					case "$option_value" in
-						([0-9])
-							option_update "$option_name" "$option_value"
-						;;
-						(*)
-							option_update "$option_name" 1
-						;;
-					esac
-				fi
+				case "$option_value" in
+					([0-9])
+						option_update "$option_name" "$option_value"
+					;;
+					(*)
+						option_update "$option_name" 1
+					;;
+				esac
 			;;
 			( \
 				'--checksum' | \
@@ -89,9 +81,7 @@ parse_arguments() {
 					option_value=$(argument_value "$1" "$2")
 					shift 1
 				fi
-				if variable_is_empty "$option_variable"; then
-					option_update "$option_name" "$option_value"
-				fi
+				option_update "$option_name" "$option_value"
 			;;
 			('-'*)
 				error_option_unknown "$1"

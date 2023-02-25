@@ -492,14 +492,13 @@ package_maintainer() {
 package_version() {
 	assert_not_empty 'script_version' 'package_version'
 
-	# Get the version string for the current archive,
-	# falling back on "1.0-1" if it is not explicitly set.
+	# Get the version string for the current archive.
 	local archive package_version
 	archive=$(context_archive)
-	if variable_is_empty "${archive}_VERSION"; then
+	package_version=$(get_value "${archive}_VERSION")
+	## Fall back on "1.0-1" if no version string is explicitly set.
+	if [ -z "$package_version" ]; then
 		package_version='1.0-1'
-	else
-		package_version=$(get_value "${archive}_VERSION")
 	fi
 	package_version="${package_version}+${script_version}"
 
