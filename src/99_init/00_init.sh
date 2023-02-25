@@ -107,6 +107,12 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	done
 	unset option_value
 
+	# Check the presence of required paths set by default options (like the configuration file),
+	# as these are skipped by options_init_default.
+
+	option_validity_check 'output-dir'
+	option_validity_check 'tmpdir'
+
 	# Throw an error if incompatible options are set
 
 	options_compatibility_check

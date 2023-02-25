@@ -105,6 +105,17 @@ option_update_default() {
 	local option_variable
 	option_variable=$(option_variable_default "$option_name")
 	export $option_variable="$option_value"
+
+	case "$option_name" in
+		('output-dir'|'tmpdir')
+			# Directory existence check should be skipped when setting default options,
+			# because we might be in a no-op situation (--help, --version, etc.)
+			# but we do not know about it yet.
+		;;
+		(*)
+			option_validity_check "$option_name"
+		;;
+	esac
 }
 
 # Get the value of the given option
@@ -114,8 +125,6 @@ option_update_default() {
 option_value() {
 	local option_name
 	option_name="$1"
-
-	option_validity_check "$option_name"
 
 	local option_variable
 	option_variable=$(option_variable "$option_name")
@@ -152,6 +161,10 @@ option_validity_check() {
 	if variable_is_empty "$option_variable"; then
 		option_value=''
 	else
+		option_value=$(get_value "$option_variable")
+	fi
+	if [ -z "$option_value" ]; then
+		option_variable=$(option_variable_default "$option_name")
 		option_value=$(get_value "$option_variable")
 	fi
 	case "$option_name" in
