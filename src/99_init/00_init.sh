@@ -3,6 +3,12 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Exit immediately on error
 	set -o errexit
 
+	# Error out (and exit) when trying to expand an unset variable
+	## Only for game scripts targeting ./play.it ≥ 2.23
+	if version_is_at_least '2.23' "$target_version"; then
+		set -o nounset
+	fi
+
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
