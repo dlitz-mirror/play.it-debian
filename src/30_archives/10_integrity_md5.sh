@@ -5,11 +5,6 @@ archive_get_md5sum_cached() {
 	name="$1"
 	assert_not_empty 'name' 'archive_get_md5sum_cached'
 
-	# Return early if no cached hash could be found.
-	if variable_is_empty "${name}_CACHED_MD5SUM"; then
-		return 0
-	fi
-
 	get_value "${name}_CACHED_MD5SUM"
 }
 

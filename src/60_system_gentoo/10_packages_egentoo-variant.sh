@@ -13,43 +13,34 @@ pkg_write_egentoo() {
 	inherits="xdg"
 
 	# Ensure that $build_deps is set.
-	if ! variable_is_set 'build_deps'; then
-		build_deps=''
-	fi
+	build_deps=$(get_value 'build_deps')
 
 	package_filename="$(egentoo_package_name).tar"
-	case $OPTION_COMPRESSION in
-		('gzip')
+
+	local option_compression
+	option_compression=$(option_value 'compression')
+	case $option_compression in
+		('speed')
 			package_filename="${package_filename}.gz"
 		;;
-		('xz')
-			package_filename="${package_filename}.xz"
-		;;
-		('bzip2')
+		('size')
 			package_filename="${package_filename}.bz2"
 		;;
-		('zstd')
-			package_filename="${package_filename}.zst"
-			inherits="$inherits unpacker"
-			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
-		;;
-		('lzip')
-			package_filename="${package_filename}.lz"
-			inherits="$inherits unpacker"
-			build_deps="$build_deps\\n\\t\$(unpacker_src_uri_depends)"
-		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_write_egentoo'
-			return 1
+		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
+				inherits=$(egentoo_package_inherits_legacy "$inherits" "$option_compression")
+				build_deps=$(egentoo_package_build_deps_legacy "$build_deps" "$option_compression")
+			fi
 		;;
 	esac
 
-	local package_id package_name
+	local option_output_dir package_id package_name
+	option_output_dir=$(option_value 'output-dir')
 	package_id="$(egentoo_package_id)"
 	package_name="$(egentoo_package_name)"
-	mkdir --parents "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}"
-	ebuild_path=$(realpath "$OPTION_OUTPUT_DIR/overlay/games-playit/${package_id}/${package_name}.ebuild")
+	mkdir --parents "${option_output_dir}/overlay/games-playit/${package_id}"
+	ebuild_path=$(realpath "${option_output_dir}/overlay/games-playit/${package_id}/${package_name}.ebuild")
 
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
@@ -94,62 +85,99 @@ src_install() {
 EOF
 }
 
+# Append the required extension to the given package name,
+# relying on BINPKG_COMPRESS environment variable.
+# USAGE: egentoo_package_filename_auto package_filename
+# RETURN: the given package name, with the correct filename extension added,
+#         following the current value of BINPKG_COMPRESS
+egentoo_package_filename_auto() {
+	local package_filename
+	package_filename="$1"
+
+	# "zstd" is the default value for BINKPG_COMPRESS,
+	# according to make.conf(5) manpage.
+	# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
+	local package_filename
+	case "${BINPKG_COMPRESS:-zstd}" in
+		('bzip2')
+			package_filename="${package_filename}.bz2"
+		;;
+		('gzip')
+			package_filename="${package_filename}.gz"
+		;;
+		('lz4')
+			package_filename="${package_filename}.lz4"
+		;;
+		('lzip')
+			package_filename="${package_filename}.lz"
+		;;
+		('lzop')
+			package_filename="${package_filename}.lzop"
+		;;
+		('xz')
+			package_filename="${package_filename}.xz"
+		;;
+		('zstd')
+			package_filename="${package_filename}.zst"
+		;;
+	esac
+
+	printf '%s' "$package_filename"
+}
+
+# Print the command that should be used for the generated .tar archive compression,
+# relying on BINPKG_COMPRESS environment variable.
+# USAGE: egentoo_package_compression_command_auto
+# RETURN: the command to use for the generated archive compression,
+#         following the current value of BINPKG_COMPRESS
+egentoo_package_compression_command_auto() {
+	# "zstd" is the default value for BINKPG_COMPRESS,
+	# according to make.conf(5) manpage.
+	# cf. https://dev.gentoo.org/~zmedico/portage/doc/man/make.conf.5.html
+	local compression_command
+	case "${BINPKG_COMPRESS:-zstd}" in
+		('bzip2')
+			compression_command='bzip2'
+		;;
+		('gzip')
+			compression_command='gzip'
+		;;
+		('lz4')
+			compression_command='lz4'
+		;;
+		('lzip')
+			compression_command='lzip'
+		;;
+		('lzop')
+			compression_command='lzop'
+		;;
+		('xz')
+			compression_command='xz'
+		;;
+		('zstd')
+			compression_command='zstd'
+		;;
+	esac
+
+	printf '%s' "$compression_command"
+}
+
 # builds dummy egentoo package
 # USAGE: pkg_build_egentoo PKG_xxx
 pkg_build_egentoo() {
-	local tar_command
-	local tar_options
-	local compression_command
-	local compression_options
-	local packages_paths
-
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'pkg_build_egentoo'
 	fi
 
-	tar_command="tar"
-
-	local package_name package_filename
-	mkdir --parents "$OPTION_OUTPUT_DIR/packages"
+	local option_output_dir package_name package_filename
+	option_output_dir=$(option_value 'output-dir')
+	mkdir --parents "${option_output_dir}/packages"
 	package_name="$(egentoo_package_name)"
-	package_filename=$(realpath "$OPTION_OUTPUT_DIR/packages/${package_name}.tar")
+	package_filename=$(realpath "${option_output_dir}/packages/${package_name}.tar")
 
-	case $OPTION_COMPRESSION in
-		('gzip')
-			compression_command="gzip"
-			package_filename="${package_filename}.gz"
-		;;
-		('xz')
-			compression_command="xz"
-			compression_options="--threads=0"
-			package_filename="${package_filename}.xz"
-		;;
-		('bzip2')
-			compression_command="bzip2"
-			package_filename="${package_filename}.bz2"
-		;;
-		('zstd')
-			compression_command="zstd"
-			package_filename="${package_filename}.zst"
-		;;
-		('lzip')
-			compression_command="$(get_lzip_implementation)"
-			if [ $compression_command = "tarlz" ]; then
-				tar_command="tarlz"
-				compression_command=""
-				PLAYIT_TAR_IMPLEMENTATION="gnutar"
-			else
-				compression_options="-0"
-				package_filename="${package_filename}.lz"
-			fi
-		;;
-		('none') ;;
-		(*)
-			error_invalid_argument 'OPTION_COMPRESSION' 'pkg_build_egentoo'
-			return 1
-		;;
-	esac
-
+	# Set base tar archiving command and options
+	local tar_command tar_options
+	tar_command='tar'
 	tar_options='--create -P'
 	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
 		guess_tar_implementation
@@ -167,10 +195,39 @@ pkg_build_egentoo() {
 		;;
 	esac
 
-	compression_options="${compression_options} --stdout --quiet"
+	# Set compression command and options
+	local option_compression compression_command compression_options
+	option_compression=$(option_value 'compression')
+	case "$option_compression" in
+		('speed')
+			package_filename="${package_filename}.gz"
+			compression_command='gzip'
+			compression_options=''
+		;;
+		('size')
+			package_filename="${package_filename}.bz2"
+			compression_command='bzip2'
+			compression_options=''
+		;;
+		('auto')
+			package_filename=$(egentoo_package_filename_auto "$package_filename")
+			compression_command=$(egentoo_package_compression_command_auto)
+			compression_options="${BINPKG_COMPRESS_FLAGS:-}"
+		;;
+		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
+			if ! version_is_at_least '2.23' "$target_version"; then
+				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
+				compression_command=$(egentoo_package_compression_command_legacy "$option_compression")
+				compression_options=$(egentoo_package_compression_options_legacy "$compression_options" "$option_compression")
+				tar_command=$(egentoo_package_tar_command_legacy "$tar_command" "$option_compression")
+			fi
+		;;
+	esac
+	compression_options="$compression_options --stdout --quiet"
 
-	local package package_path
-	if [ -e "$package_filename" ] && [ "$OVERWRITE_PACKAGES" -ne 1 ]; then
+	local option_overwrite package
+	option_overwrite=$(option_value 'overwrite')
+	if [ -e "$package_filename" ] && [ "$option_overwrite" -eq 0 ]; then
 		information_package_already_exists "$(basename "$package_filename")"
 		for package in "$@"; do
 			eval "${package}"_PKG=\""$package_filename"\"
@@ -181,18 +238,18 @@ pkg_build_egentoo() {
 		rm -f "$package_filename"
 	fi
 
+	local packages_paths package_path package_architecture
+	packages_paths=''
 	for package in "$@"; do
 		package_path=$(package_path "$package")
 		packages_paths="$packages_paths $package_path"
-
-		case "$(package_get_architecture "$package")" in
+		package_architecture=$(package_architecture "$package")
+		case "$package_architecture" in
 			('64') tar_options="$tar_options --xform=s:^${package_path}:./amd64:x" ;;
 			('32') tar_options="$tar_options --xform=s:^${package_path}:./x86:x" ;;
 			(*)    tar_options="$tar_options --xform=s:^${package_path}:./data:x" ;;
 		esac
-
-		eval "${package}"_PKG=\""$package_filename"\"
-		export "${package}"_PKG
+		export "${package}_PKG=$package_filename"
 	done
 
 	information_package_building "$(basename "$package_filename")"
@@ -215,11 +272,10 @@ package_path_egentoo() {
 	local package
 	package="$1"
 
-	local archive package_id package_version package_architecture package_path
-	archive=$(context_archive)
-	package_id=$(package_get_id "$package")
-	package_version=$(packages_get_version "$archive")
-	package_architecture=$(package_get_architecture_string "$package")
+	local package_id package_version package_architecture package_path
+	package_id=$(package_id "$package")
+	package_version=$(package_version)
+	package_architecture=$(package_architecture_string "$package")
 	package_path="${package_id}_${package_version}_${package_architecture}"
 
 	printf '%s' "$package_path"

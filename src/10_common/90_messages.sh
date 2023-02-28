@@ -1,9 +1,3 @@
-# print OK
-# USAGE: print_ok
-print_ok() {
-	printf '\t\033[1;32mOK\033[0m\n'
-}
-
 # print a localized error message
 # USAGE: print_error
 print_error() {
@@ -111,27 +105,6 @@ error_unknown_tar_implementation() {
 	esac
 	print_error
 	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
-}
-
-# display an error when the value assigned to a given option is not valid
-# USAGE: error_option_invalid $option_name $option_value
-error_option_invalid() {
-	local message option_name option_value
-	option_name="$1"
-	option_value="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='%s nʼest pas une valeur valide pour --%s.\n'
-			message="$message"'Lancez le script avec lʼoption --%s=help pour une liste des valeurs acceptés.\n'
-		;;
-		('en'|*)
-			message='%s is not a valid value for --%s.\n'
-			message="$message"'Run the script with the option --%s=help to get a list of supported values.\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$option_value" "$option_name" "$option_name"
 }
 
 # display an error when a given path is not a directory
@@ -257,6 +230,23 @@ error_incompatible_versions() {
 		"$((VERSION_MAJOR_TARGET + 1)).0"
 }
 
+# Display an error when the wrapper is called with no archive argument
+# USAGE: error_archive_missing_from_arguments
+error_archive_missing_from_arguments() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Aucune archive nʼa été fournie sur la ligne de commande.\n'
+		;;
+		('en'|*)
+			message='No archive has been provided on the command line.\n'
+		;;
+	esac
+	print_error
+	printf "$message"
+}
+
 # display an error when no game script has been found for a given archive
 # USAGE: error_no_script_found_for_archive $archive
 error_no_script_found_for_archive() {
@@ -318,105 +308,6 @@ error_application_wrong_type() {
 	print_error
 	# shellcheck disable=SC2059
 	printf "$message" "$function_name" "$application_type"
-}
-
-# display an error when the compression method is not compatible with the
-# package format
-# USAGE: error_compression_invalid
-error_compression_invalid() {
-	local compression_method allowed_values package_format message
-
-	compression_method="$OPTION_COMPRESSION"
-	allowed_values="$ALLOWED_VALUES_COMPRESSION"
-	package_format="$OPTION_PACKAGE"
-
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La méthode de compression "%s" nʼest pas compatible avec le format de paquets "%s".\n'
-			message="$message"'Seules les méthodes suivantes sont acceptées :\n'
-			message="$message"'\t%s\n'
-			;;
-		('en'|*)
-			message='"%s" compression method is not compatible with "%s" package format.\n'
-			message="$message"'Only the following options are accepted:\n'
-			message="$message"'\t%s\n'
-			;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$compression_method" "$package_format" "$allowed_values"
-}
-
-# display an error when trying to get the current archive but none is set
-# USAGE: error_archive_unset
-error_archive_unset() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Aucune archive nʼest définie, mais une est attendue à ce point de lʼexécution.\n'
-		;;
-		('en'|*)
-			message='No archive is set, but one is expected at this step.\n'
-		;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message"
-}
-
-# display an error when trying to use an unkown type of context
-# valid context types are:
-# - archive
-# - package
-# USAGE: error_context_invalid $context
-error_context_invalid() {
-	local context
-	context="$1"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Un type de contexte inattendu a été demandé : %s\n'
-			message="$message"'Seuls les types suivants sont valides :\n'
-			message="$message"'\t- archive\n'
-			message="$message"'\t- package\n'
-		;;
-		('en'|*)
-			message='An unexpected context type has been required: %s\n'
-			message="$message"'Only the following types are valid:\n'
-			message="$message"'\t- archive\n'
-			message="$message"'\t- package\n'
-		;;
-	esac
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$context"
-}
-
-# displays an error when no valid candidates for ./play.it temporary directory
-# has been found
-# USAGE: error_no_valid_temp_dir_found $directory[…]
-error_no_valid_temp_dir_found() {
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Aucun répertoire testé ne peut servir de répertoire
-			temporaire pour ./play.it :\n'
-		;;
-		('en'|*)
-			message='No tested repository can be used as ./play.it temporary
-			directory:\n'
-		;;
-	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message"
-	printf '%s\n' "$@"
 }
 
 # Display an error when trying to use a non-existing directory for temporary files
@@ -548,38 +439,17 @@ error_temporary_path_not_enough_space() {
 		('fr')
 			message='Le chemin demandé pour stocker les fichiers temporaires ne dispose pas dʼassez dʼespace libre : %s\n'
 			message="$message"'Un chemin alternatif peut-être fourni avec --tmpdir.\n'
-			message="$message"'Cette vérification de lʼespace libre peut aussi être contournée avec --skip-free-space-check.\n'
+			message="$message"'Cette vérification de lʼespace libre peut aussi être contournée avec --no-free-space-check.\n'
 		;;
 		('en'|*)
 			message='The path set for temporary files storage has not enough free space: %s\n'
 			message="$message"'An alternative path can be provided with --tmpdir.\n'
-			message="$message"'This free space check can also be disabled using --skip-free-space-check.\n'
+			message="$message"'This free space check can also be disabled using --no-free-space-check.\n'
 		;;
 	esac
 
 	print_error
 	printf "$message" "$temporary_directory_path"
-}
-
-# Display an error when trying to get the value of an unset variable.
-# USAGE: error_variable_not_set $variable_name
-error_variable_not_set() {
-	local variable_name
-	variable_name="$1"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La valeur de la variable suivante a été demandée, mais elle nʼa pas été définie : %s\n'
-		;;
-		('en'|*)
-			message='The value of the following variable has been queried, but it has not been set: %s\n'
-		;;
-	esac
-
-	print_error
-	printf "$message" "$variable_name"
 }
 
 # Display a warning when a deprecated function is called.
@@ -606,28 +476,4 @@ warning_deprecated_function() {
 	# to avoid messing up the regular output of the function that triggered this warning.
 	print_warning > /dev/stderr
 	printf "$message" "$old_function" "$new_function" > /dev/stderr
-}
-
-# Display an error when an obsolete function is called.
-# USAGE: error_obsolete_function $old_function $new_function
-error_obsolete_function() {
-	local old_function new_function
-	old_function="$1"
-	new_function="$2"
-
-	local message
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='La fonction suivante est obsolète : %s\n'
-			message="$message"'Cette nouvelle fonction doit être utilisée à sa place : %s\n'
-		;;
-		('en'|*)
-			message='The following function is obsolete: %s\n'
-			message="$message"'This new function must be used instead: %s\n'
-		;;
-	esac
-
-	print_error
-	printf "$message" "$old_function" "$new_function"
 }

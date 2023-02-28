@@ -3,20 +3,19 @@ set -o errexit
 
 LIB_ONLY=1
 
-: "${XDG_DATA_HOME:="$HOME/.local/share"}"
+PLAYIT_LIB_PATHS="
+$PWD
+$(dirname "$0")/lib
+${XDG_DATA_HOME:="${HOME}/.local/share"}/play.it
+/usr/local/share/games/play.it
+/usr/local/share/play.it
+/usr/share/games/play.it
+/usr/share/play.it"
 
 if [ -z "$PLAYIT_LIB2" ]; then
-	for path in\
-		"$PWD"\
-		"$(dirname "$0")/lib"\
-		"$XDG_DATA_HOME/play.it"\
-		'/usr/local/share/games/play.it'\
-		'/usr/local/share/play.it'\
-		'/usr/share/games/play.it'\
-		'/usr/share/play.it'
-	do
-		if [ -e "$path/libplayit2.sh" ]; then
-			PLAYIT_LIB2="$path/libplayit2.sh"
+	for playit_lib_path in $PLAYIT_LIB_PATHS; do
+		if [ -e "${playit_lib_path}/libplayit2.sh" ]; then
+			PLAYIT_LIB2="${playit_lib_path}/libplayit2.sh"
 			break
 		fi
 	done
@@ -28,43 +27,68 @@ if [ -z "$PLAYIT_LIB2" ]; then
 fi
 # shellcheck source=lib/libplayit2.sh
 . "$PLAYIT_LIB2"
+export PLAYIT_LIB2
 
-if [ "$#" = 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+# Set default options
+
+## Set hardcoded defaults
+options_init_default
+
+## Load defaults from the configuration file
+config_file_path=$(find_configuration_file "$@")
+load_configuration_file "$config_file_path"
+
+# Display the help message,
+# if called with no argument.
+
+if [ $# -eq 0 ]; then
 	help
 	exit 0
 fi
 
-if [ "$1" = "--version" ] || [ "$1" = "-v" ] ; then
-        echo $LIBRARY_VERSION
-        exit 0
+# Set options from the command-line
+
+parse_arguments "$@"
+
+# Display the help message,
+# if called with --help.
+
+option_help=$(option_value 'help')
+if [ "${option_help:-0}" -eq 1 ]; then
+	help
+	exit 0
 fi
+unset option_help
 
-INPUT_FILE="$1"
+# Display the version string,
+# if called with --version.
 
-if [ ! -f "$INPUT_FILE" ]; then
-	error_not_a_file "$INPUT_FILE"
+option_version=$(option_value 'version')
+if [ "${option_version:-0}" -eq 1 ]; then
+	printf '%s\n' "$LIBRARY_VERSION"
+	exit 0
+fi
+unset option_version
+
+# Exit with an error if no archive is provided
+
+if [ -z "$SOURCE_ARCHIVE" ]; then
+	error_archive_missing_from_arguments
 	exit 1
 fi
 
-# Locate script by file name
-FILE_NAME="$(basename "$INPUT_FILE" | sed 's/\[/\\\[/g;s/\]/\\\]/g')"
-SCRIPT=$(games_find_script_for_archive "$FILE_NAME")
+# Locate game script by file name
+
+FILE_NAME="$(basename "$SOURCE_ARCHIVE" | sed 's/\[/\\\[/g;s/\]/\\\]/g')"
+GAME_SCRIPT=$(games_find_script_for_archive "$FILE_NAME")
 
 # Exit with an error if the given archive is not supported
-if [ -z "$SCRIPT" ]; then
+
+if [ -z "$GAME_SCRIPT" ]; then
 	error_no_script_found_for_archive "$FILE_NAME"
 	exit 1
 fi
 
-export PLAYIT_LIB2
+# Load the game script
 
-shift 1
-
-if [ "$1" = "--show-game-script" ]; then
-	realpath "$SCRIPT"
-	exit 0
-fi
-
-"$SCRIPT" "$INPUT_FILE" "$@"
-
-exit 0
+exec "$GAME_SCRIPT" "$@"

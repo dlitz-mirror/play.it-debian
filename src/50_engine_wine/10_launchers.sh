@@ -23,7 +23,11 @@ wine_launcher_write() {
 				wine_persistent_regedit_environment
 			} >> "$target_file"
 			wine_persistent_regedit_load >> "$target_file"
-			launcher_write_script_wine_run "$application" "$target_file"
+			if version_is_at_least '2.22' "$target_version"; then
+				wine_launcher_run >> "$target_file"
+			else
+				launcher_write_script_wine_run "$application" "$target_file"
+			fi
 			wine_persistent_regedit_store >> "$target_file"
 			launcher_write_script_prefix_cleanup "$target_file"
 		;;
@@ -312,6 +316,7 @@ wine_persistent_regedit_load() {
 	done <<- EOL
 	$(printf '%s' "$REGEDIT_PERSISTENT_KEYS")
 	EOL
+
 	EOF
 }
 
@@ -349,47 +354,58 @@ launcher_write_script_wine_application_variables() {
 	application="$1"
 	file="$2"
 
-	local application_exe application_options
+	local application_exe application_options wine_link_dirs
 	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
-
-	if ! variable_is_set 'APP_WINE_LINK_DIRS'; then
-		APP_WINE_LINK_DIRS=''
-	fi
+	wine_link_dirs=$(get_value 'APP_WINE_LINK_DIRS')
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
-	APP_WINE_LINK_DIRS="$APP_WINE_LINK_DIRS"
+	APP_WINE_LINK_DIRS="$wine_link_dirs"
 
 	EOF
 	return 0
 }
 
-# WINE - run the game
-# USAGE: launcher_write_script_wine_run $application $file
-launcher_write_script_wine_run() {
-	local application file
+# WINE - Print the snippet handling the actual run of the game
+# USAGE: wine_launcher_run $qapplication
+wine_launcher_run() {
+	local application
 	application="$1"
-	file="$2"
 
-	cat >> "$file" <<- 'EOF'
-	# Run the game
+	local application_type_variant
+	application_type_variant=$(application_type_variant "$application")
+
+	cat <<- 'EOF'
+	# Run the game
 
 	cd "${WINEPREFIX}/drive_c/${GAME_ID}"
+
 	EOF
-	launcher_write_script_prerun "$application" "$file"
-	cat >> "$file" <<- 'EOF'
-	# Do not exit on application failure,
-	# to ensure post-run commands are run.
+
+	application_prerun "$application"
+
+	case "$application_type_variant" in
+		('unity3d')
+			# Use a dedicated log file for the current game session
+			launcher_unity3d_dedicated_log
+		;;
+	esac
+
+	cat <<- 'EOF'
+	## Do not exit on application failure,
+	## to ensure post-run commands are run.
 	set +o errexit
 	$(wine_command) "$APP_EXE" $APP_OPTIONS "$@"
 	game_exit_status=$?
 	set -o errexit
+
 	EOF
-	launcher_write_script_postrun "$application" "$file"
+
+	application_postrun "$application"
 }
 
 # WINE - Apply winetricks verbs, spawning a terminal if required

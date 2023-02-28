@@ -23,20 +23,67 @@ native_launcher_run() {
 	local application
 	application="$1"
 
+	local application_type_variant
+	application_type_variant=$(application_type_variant "$application")
+
+	local execution_path
+	execution_path=$(native_launcher_exec_path "$application")
 	cat <<- EOF
 	# Run the game
-	cd "$(native_launcher_exec_path "$application")"
-	$(native_launcher_binary_copy "$application")
-	$(application_prerun "$application")
-	$(launcher_native_libraries_paths)
+
+	cd "$execution_path"
+
+	EOF
+
+	application_prerun "$application"
+
+	case "$application_type_variant" in
+		('unity3d')
+			# Start pulseaudio if it is available
+			launcher_unity3d_pulseaudio_start
+
+			# Work around crash on launch related to libpulse
+			# Some Unity3D games crash on launch if libpulse-simple.so.0 is available but pulseaudio is not running
+			launcher_unity3d_pulseaudio_hide_libpulse
+
+			# Use a dedicated log file for the current game session
+			launcher_unity3d_dedicated_log
+
+			# Make a hard copy of the game binary in the current prefix,
+			# otherwise the engine might follow the link and run the game from the system path.
+			launcher_unity3d_copy_binary
+
+			# Work around Unity3D poor support for non-US locales
+			launcher_unity3d_force_locale
+		;;
+		(*)
+			# Make a hard copy of the game binary in the current prefix,
+			# otherwise the engine might follow the link and run the game from the system path.
+			native_launcher_binary_copy "$application"
+		;;
+	esac
+
+	# Set loading paths for libraries
+	launcher_native_libraries_paths
+
+	cat <<- 'EOF'
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
-	"./\$APP_EXE" \$APP_OPTIONS "\$@"
-	game_exit_status=\$?
+	"./$APP_EXE" $APP_OPTIONS "$@"
+	game_exit_status=$?
 	set -o errexit
-	$(application_postrun "$application")
+
 	EOF
+
+	case "$application_type_variant" in
+		('unity3d')
+			# Stop pulseaudio if it has been started for this game session
+			launcher_unity3d_pulseaudio_stop
+		;;
+	esac
+
+	application_postrun "$application"
 }
 
 # Linux native - Print the path from where the game binary is called
@@ -121,5 +168,6 @@ launcher_native_libraries_paths() {
 	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_USER}:${LD_LIBRARY_PATH}"
 	fi
 	export LD_LIBRARY_PATH
+
 	EOF
 }

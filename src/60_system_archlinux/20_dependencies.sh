@@ -1,7 +1,13 @@
 # Arch Linux - Set list of generic dependencies
 # USAGE: pkg_set_deps_arch $dep[…]
 pkg_set_deps_arch() {
-	case "$(package_get_architecture "$pkg")" in
+	# FIXME - $package should be passed as a function argument, not inherited from the calling function
+	local package
+	package="$pkg"
+
+	local package_architecture
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
 		('32')
 			pkg_set_deps_arch32 "$@"
 		;;
@@ -19,9 +25,6 @@ pkg_set_deps_arch32() {
 			('alsa')
 				pkg_dep='lib32-alsa-lib lib32-alsa-plugins'
 			;;
-			('bzip2')
-				pkg_dep='lib32-bzip2'
-			;;
 			('dosbox')
 				pkg_dep='dosbox'
 			;;
@@ -30,9 +33,6 @@ pkg_set_deps_arch32() {
 			;;
 			('gcc32')
 				pkg_dep='gcc-multilib lib32-gcc-libs'
-			;;
-			('gconf')
-				pkg_dep='lib32-gconf'
 			;;
 			('glibc')
 				pkg_dep='lib32-glibc'
@@ -51,12 +51,6 @@ pkg_set_deps_arch32() {
 			;;
 			('json')
 				pkg_dep='lib32-json-c'
-			;;
-			('libcurl')
-				pkg_dep='lib32-curl'
-			;;
-			('libcurl-gnutls')
-				pkg_dep='lib32-libcurl-gnutls'
 			;;
 			('libstdc++')
 				pkg_dep='lib32-gcc-libs'
@@ -85,38 +79,17 @@ pkg_set_deps_arch32() {
 			('scummvm')
 				pkg_dep='scummvm'
 			;;
-			('sdl1.2')
-				pkg_dep='lib32-sdl'
-			;;
 			('sdl2')
 				pkg_dep='lib32-sdl2'
 			;;
-			('sdl2_image')
-				pkg_dep='lib32-sdl2_image'
-			;;
-			('sdl2_mixer')
-				pkg_dep='lib32-sdl2_mixer'
-			;;
-			('theora')
-				pkg_dep='lib32-libtheora'
-			;;
-			('vorbis')
-				pkg_dep='lib32-libvorbis'
-			;;
 			('wine'|'wine32'|'wine64')
 				pkg_dep='wine'
-			;;
-			('wine-staging'|'wine32-staging'|'wine64-staging')
-				pkg_dep='wine-staging'
 			;;
 			('winetricks')
 				pkg_dep='winetricks xterm'
 			;;
 			('xcursor')
 				pkg_dep='lib32-libxcursor'
-			;;
-			('xft')
-				pkg_dep='lib32-libxft'
 			;;
 			('xgamma')
 				pkg_dep='xorg-xgamma'
@@ -173,9 +146,6 @@ pkg_set_deps_arch64() {
 			('alsa')
 				pkg_dep='alsa-lib alsa-plugins'
 			;;
-			('bzip2')
-				pkg_dep='bzip2'
-			;;
 			('dosbox')
 				pkg_dep='dosbox'
 			;;
@@ -184,9 +154,6 @@ pkg_set_deps_arch64() {
 			;;
 			('gcc32')
 				pkg_dep='gcc-multilib lib32-gcc-libs'
-			;;
-			('gconf')
-				pkg_dep='gconf'
 			;;
 			('glibc')
 				pkg_dep='glibc'
@@ -205,12 +172,6 @@ pkg_set_deps_arch64() {
 			;;
 			('json')
 				pkg_dep='json-c'
-			;;
-			('libcurl')
-				pkg_dep='curl'
-			;;
-			('libcurl-gnutls')
-				pkg_dep='libcurl-gnutls'
 			;;
 			('libstdc++')
 				pkg_dep='gcc-libs'
@@ -242,23 +203,8 @@ pkg_set_deps_arch64() {
 			('scummvm')
 				pkg_dep='scummvm'
 			;;
-			('sdl1.2')
-				pkg_dep='sdl'
-			;;
 			('sdl2')
 				pkg_dep='sdl2'
-			;;
-			('sdl2_image')
-				pkg_dep='sdl2_image'
-			;;
-			('sdl2_mixer')
-				pkg_dep='sdl2_mixer'
-			;;
-			('theora')
-				pkg_dep='libtheora'
-			;;
-			('vorbis')
-				pkg_dep='libvorbis'
 			;;
 			('wine'|'wine32'|'wine64')
 				pkg_dep='wine'
@@ -268,9 +214,6 @@ pkg_set_deps_arch64() {
 			;;
 			('xcursor')
 				pkg_dep='libxcursor'
-			;;
-			('xft')
-				pkg_dep='libxft'
 			;;
 			('xgamma')
 				pkg_dep='xorg-xgamma'

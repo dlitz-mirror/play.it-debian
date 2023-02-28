@@ -8,14 +8,6 @@ archives_return_list_legacy() {
 		cut --delimiter='=' --fields=1
 }
 
-package_get_current() {
-	if version_is_at_least '2.21' "$target_version"; then
-		warning_deprecated_function 'package_get_current' 'context_package'
-	fi
-
-	context_package
-}
-
 context_archive_suffix_legacy() {
 	local archive
 	archive=$(context_archive)

@@ -150,23 +150,6 @@ launcher_write_script() {
 				;;
 			esac
 		;;
-		('unity3d')
-			case "$prefix_type" in
-				('symlinks')
-					native_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					launcher_write_script_unity3d_run "$application" "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-		;;
 		('wine')
 			wine_launcher_write "$application" "$target_file"
 		;;
@@ -203,7 +186,7 @@ launcher_write_script() {
 
 	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
-		('native'|'unity3d')
+		('native')
 			local application_exe application_exe_path
 			application_exe=$(application_exe "$application")
 			application_exe_path=$(application_exe_path "$application_exe")
@@ -364,8 +347,9 @@ launcher_desktop_exec() {
 	application="$1"
 
 	# Enclose the path in single quotes if it includes spaces
-	local field_format
-	case "$OPTION_PREFIX" in
+	local option_prefix field_format
+	option_prefix=$(option_value 'prefix')
+	case "$option_prefix" in
 		(*' '*)
 			field_format="Exec='%s'"
 		;;
@@ -377,7 +361,7 @@ launcher_desktop_exec() {
 	# Use the full path for non-standard prefixes
 	local field_value application_id
 	application_id=$(application_id "$application")
-	case "$OPTION_PREFIX" in
+	case "$option_prefix" in
 		('/usr'|'/usr/local')
 			field_value="$application_id"
 		;;

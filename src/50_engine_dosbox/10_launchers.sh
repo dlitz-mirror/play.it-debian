@@ -72,10 +72,7 @@ dosbox_mount_disk_image() {
 
 	local disk_image
 	disk_image=$(dosbox_disk_image_path)
-	if variable_is_empty 'GAME_IMAGE_TYPE'; then
-		GAME_IMAGE_TYPE='iso'
-	fi
-	case "$GAME_IMAGE_TYPE" in
+	case "${GAME_IMAGE_TYPE:-iso}" in
 		('cdrom')
 			if [ -d "$disk_image" ]; then
 				cat <<- EOF

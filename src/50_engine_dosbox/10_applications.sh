@@ -12,13 +12,7 @@ application_prerun_dosbox() {
 	local application
 	application="$1"
 
-	if variable_is_empty "${application}_PRERUN"; then
-		return 0
-	fi
-
-	local application_prerun
-	application_prerun=$(get_value "${application}_PRERUN")
-	printf '%s' "$application_prerun"
+	get_value "${application}_PRERUN"
 }
 
 # DOSBox - Print the post-run actions for the given application.
@@ -35,13 +29,7 @@ application_postrun_dosbox() {
 	local application
 	application="$1"
 
-	if variable_is_empty "${application}_POSTRUN"; then
-		return 0
-	fi
-
-	local application_postrun
-	application_postrun=$(get_value "${application}_POSTRUN")
-	printf '%s' "$application_postrun"
+	get_value "${application}_POSTRUN"
 }
 
 # DOSBox - Print the DOSBox pre-run actions for the given application.
@@ -59,13 +47,7 @@ dosbox_prerun() {
 	local application
 	application="$1"
 
-	if variable_is_empty "${application}_DOSBOX_PRERUN"; then
-		return 0
-	fi
-
-	local dosbox_prerun
-	dosbox_prerun=$(get_value "${application}_DOSBOX_PRERUN")
-	printf '%s' "$dosbox_prerun"
+	get_value "${application}_DOSBOX_PRERUN"
 }
 
 # DOSBox - Print the DOSBox post-run actions for the given application.
@@ -83,11 +65,5 @@ dosbox_postrun() {
 	local application
 	application="$1"
 
-	if variable_is_empty "${application}_DOSBOX_POSTRUN"; then
-		return 0
-	fi
-
-	local dosbox_postrun
-	dosbox_postrun=$(get_value "${application}_DOSBOX_POSTRUN")
-	printf '%s' "$dosbox_postrun"
+	get_value "${application}_DOSBOX_POSTRUN"
 }

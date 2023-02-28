@@ -9,22 +9,32 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	case $OPTION_PACKAGE in
+	local package option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
-			for pkg in "$@"; do pkg_write_arch; done
+			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
+			local pkg
+			for package in "$@"; do
+				pkg="$package"
+				pkg_write_arch
+			done
 		;;
 		('deb')
-			for pkg in "$@"; do pkg_write_deb; done
+			for package in "$@"; do
+				pkg_write_deb "$package"
+			done
 		;;
 		('gentoo')
-			for pkg in "$@"; do pkg_write_gentoo; done
+			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
+			local pkg
+			for package in "$@"; do
+				pkg="$package"
+				pkg_write_gentoo
+			done
 		;;
 		('egentoo')
 			pkg_write_egentoo "$@"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'write_metadata'
-			return 1
 		;;
 	esac
 
@@ -42,13 +52,14 @@ build_pkg() {
 
 	debug_entering_function 'build_pkg'
 
-	local package package_path
 	###
 	# TODO
 	# pkg_build_xxx implicitely depends on the target package being set as $pkg
 	# It should instead be passed as a mandatory argument.
 	###
-	case $OPTION_PACKAGE in
+	local option_package package package_path
+	option_package=$(option_value 'package')
+	case $option_package in
 		('arch')
 			for package in "$@"; do
 				package_path=$(package_path "$package")
@@ -72,10 +83,6 @@ build_pkg() {
 		;;
 		('egentoo')
 			pkg_build_egentoo "$@"
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'build_pkg'
-			return 1
 		;;
 	esac
 
@@ -157,10 +164,12 @@ packages_print_list() {
 	local archive
 	archive="$1"
 
+	local option_package
+	option_package=$(option_value 'package')
 	(
 		# shellcheck disable=SC2030
 		ARCHIVE="$archive"
-		case "$OPTION_PACKAGE" in
+		case "$option_package" in
 			('egentoo')
 				local package_name
 				package_name=$(egentoo_package_name)
@@ -178,25 +187,22 @@ packages_print_list() {
 	)
 }
 
-# get ID of given package
-# USAGE: package_get_id $package
-# RETURNS: package ID, as a non-empty string
-package_get_id() {
-	# single argument should be the package name
+# Print the id of the given package
+# USAGE: package_id $package
+# RETURNS: the package id, as a non-empty string
+package_id() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_id'
 
-	# get package ID from its name
 	local package_id
 	package_id=$(context_value "${package}_ID")
 
-	# if no package-specific ID is set, fall back to game ID
+	# Fall back to the game id if no package id is explicitly set
 	if [ -z "$package_id" ]; then
 		package_id=$(game_id)
 	fi
 
-	# Check that the id fits the format restrictions
+	# Check that the id fits the format restrictions.
 	if ! printf '%s' "$package_id" | \
 		grep --quiet --regexp='^[0-9a-z][-0-9a-z]\+[0-9a-z]$'
 	then
@@ -204,193 +210,163 @@ package_get_id() {
 		return 1
 	fi
 
-	# on Arch Linux, prepend "lib32-" to the ID of 32-bit packages
-	case "$OPTION_PACKAGE" in
+	# Apply tweaks specific to the target package format.
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
-			case "$(package_get_architecture "$package")" in
-				('32')
-					package_id="lib32-${package_id}"
-				;;
-			esac
+			package_id=$(archlinux_package_id "$package_id")
 		;;
-	esac
-
-	# on Gentoo, avoid mixups between numbers in package ID and version number
-	case "$OPTION_PACKAGE" in
 		('gentoo'|'egentoo')
-			package_id=$(printf '%s' "$package_id" | sed 's/-/_/g')
+			package_id=$(gentoo_package_id "$package_id")
 		;;
 	esac
 
 	printf '%s' "$package_id"
-	return 0
 }
 
-# get architecture of given package
-# USAGE: package_get_architecture $package
-# RETURNS: package architecture, as a non-empty string
-package_get_architecture() {
-	# single argument should be the package name
+# Print the architecture of the given package
+# USAGE: package_architecture $package
+# RETURNS: the package architecture, as one of the following values:
+#          - 32
+#          - 64
+#          - all
+package_architecture() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_architecture'
 
-	# get package architecture from its name
 	local package_architecture
 	package_architecture=$(context_value "${package}_ARCH")
 
-	# if no package-specific architecture is set, fall back to "all"
+	# If no archive is explictly set for the given package,
+	# fall back to "all".
 	if [ -z "$package_architecture" ]; then
 		package_architecture='all'
 	fi
 
 	printf '%s' "$package_architecture"
-	return 0
 }
 
-# get architecture string for given package
-# USAGE: package_get_architecture_string $package
-# RETURNS: package architecture, as a non-empty string, ready to include in package meta-data
-package_get_architecture_string() {
-	# single argument should be the package name
+# Print the architecture string of the given package, in the format expected by the packages manager
+# USAGE: package_architecture_string $package
+# RETURNS: the package architecture, in the format expected by the packages manager
+package_architecture_string() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_architecture_string'
 
-	# get package architecture
-	local package_architecture
-	package_architecture=$(package_get_architecture "$package")
-
-	# set package architecture string, based on its architecture and target package format
-	local package_architecture_string
-	case "$OPTION_PACKAGE" in
+	local option_package package_architecture_string
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
-			case "$package_architecture" in
-				('32'|'64')
-					package_architecture_string='x86_64'
-				;;
-				(*)
-					package_architecture_string='any'
-				;;
-			esac
+			package_architecture_string=$(archlinux_package_architecture_string "$package")
 		;;
 		('deb')
-			case "$package_architecture" in
-				('32')
-					package_architecture_string='i386'
-				;;
-				('64')
-					package_architecture_string='amd64'
-				;;
-				(*)
-					package_architecture_string='all'
-				;;
-			esac
+			package_architecture_string=$(debian_package_architecture_string "$package")
 		;;
 		('gentoo'|'egentoo')
-			case "$package_architecture" in
-				('32')
-					package_architecture_string='x86'
-				;;
-				('64')
-					package_architecture_string='amd64'
-				;;
-				(*)
-					package_architecture_string='data' # We could put anything here, it shouldn't be used for package metadata
-				;;
-			esac
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_get_architecture_string'
-			return 1
+			package_architecture_string=$(gentoo_package_architecture_string "$package")
 		;;
 	esac
 
 	printf '%s' "$package_architecture_string"
-	return 0
 }
 
-# get description for given package
-# USAGE: package_get_description $package
-# RETURNS: package description, as a non-empty string
-package_get_description() {
-	# single argument should be the package name
+# Print the desciption of the given package
+# USAGE: package_description $package
+# RETURNS: the package description, a non-empty string
+package_description() {
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_description'
 
-	# get package description from its name
 	local package_description
 	package_description=$(context_value "${package}_DESCRIPTION")
 
-	###
-	# TODO
-	# Check that $script_version is a non-empty strings
-	# Display an explicit error message if it is unset or empty
-	###
-
-	# generate a multi-lines or single-line description based on the target package format
-	local package_description_full game_name
+	# Generate a multi-lines or single-line description based on the target package format
+	local game_name option_package
 	game_name=$(game_name)
-	case "$OPTION_PACKAGE" in
-		('deb')
-			if [ -n "$package_description" ]; then
-				package_description_full='Description: %s - %s'
-				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "${game_name}" "$package_description" "$script_version")
-			else
-				package_description_full='Description: %s'
-				package_description_full="${package_description_full}"'\n ./play.it script version %s'
-				# shellcheck disable=SC2059,SC2154
-				package_description_full=$(printf "$package_description_full" "${game_name}" "$script_version")
-			fi
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('arch')
+			package_description_oneline "$package"
 		;;
-		('arch'|'gentoo')
-			if [ -n "$package_description" ]; then
-				# shellcheck disable=SC2154
-				package_description_full="${game_name} - $package_description - ./play.it script version $script_version"
-			else
-				# shellcheck disable=SC2154
-				package_description_full="${game_name} - ./play.it script version $script_version"
-			fi
+		('deb')
+			package_description_multilines "$package"
+		;;
+		('gentoo'|'egentoo')
+			package_description_oneline "$package"
 		;;
 	esac
-
-	printf '%s' "$package_description_full"
-	return 0
 }
 
-# get "provide" field of given package
-# USAGE: package_get_provide $package
-# RETURNS: provided package ID as a non-empty string, or an empty string is none is provided
-package_get_provide() {
-	# single argument should be the package name
+# Print the desciption of the given package, on several lines
+# USAGE: package_description_multilines $package
+# RETURNS: the package description, a non-empty string,
+#          on several lines
+package_description_multilines() {
+	assert_not_empty 'script_version' 'package_description_multilines'
+
 	local package
 	package="$1"
-	assert_not_empty 'package' 'package_get_provide'
 
-	# get provided package ID from its name
+	local game_name package_description
+	game_name=$(game_name)
+	package_description=$(context_value "${package}_DESCRIPTION")
+	if [ -n "$package_description" ]; then
+		# Silence the following ShellCheck false positive:
+		# script_version is referenced but not assigned.
+		# shellcheck disable=SC2154
+		printf '%s - %s\n ./play.it script version %s' "$game_name" "$package_description" "$script_version"
+	else
+		printf '%s\n ./play.it script version %s' "$game_name" "$script_version"
+	fi
+}
+
+# Print the desciption of the given package, on a single line
+# USAGE: package_description_oneline $package
+# RETURNS: the package description, a non-empty string,
+#          on a single line
+package_description_oneline() {
+	assert_not_empty 'script_version' 'package_description_oneline'
+
+	local package
+	package="$1"
+
+	local game_name package_description
+	game_name=$(game_name)
+	package_description=$(context_value "${package}_DESCRIPTION")
+	if [ -n "$package_description" ]; then
+		printf '%s - %s - ./play.it script version %s' "$game_name" "$package_description" "$script_version"
+	else
+		printf '%s - ./play.it script version %s' "$game_name" "$script_version"
+	fi
+}
+
+# Print the alternative name provided by the given package
+# USAGE: package_provide $package
+# RETURNS: the provided package id as a non-empty string,
+#          or an empty string is none is provided
+package_provide() {
+	local package
+	package="$1"
+
 	local package_provide
 	package_provide=$(context_value "${package}_PROVIDE")
 
-	# if no package is provided, return early
+	# Return early if no alternative package name is provided by the current package.
 	if [ -z "$package_provide" ]; then
 		return 0
 	fi
 
-	# on Gentoo, avoid mixups between numbers in package ID and version number
-	# and add the required "!games-playit/" prefix to the package ID
-	# (https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers)
-	case "$OPTION_PACKAGE" in
+	# Apply Gentoo-specific tweaks.
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('gentoo'|'egentoo')
-			package_provide=$(printf '%s' "$package_provide" | sed 's/-/_/g')
-			package_provide="!games-playit/${package_provide}"
+			package_provide=$(gentoo_package_provide "$package_provide")
 		;;
 	esac
 
 	printf '%s' "$package_provide"
-	return 0
 }
 
 # Print the file name of the given package
@@ -400,10 +376,9 @@ package_name() {
 	local package
 	package="$1"
 
-	assert_not_empty 'OPTION_PACKAGE' 'package_name'
-
-	local package_name
-	case "$OPTION_PACKAGE" in
+	local option_package package_name
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			package_name=$(package_name_archlinux "$package")
 		;;
@@ -415,10 +390,6 @@ package_name() {
 		;;
 		('egentoo')
 			package_name=$(egentoo_package_name)
-		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_name'
-			return 1
 		;;
 	esac
 
@@ -432,11 +403,11 @@ package_path() {
 	local package
 	package="$1"
 
-	assert_not_empty 'OPTION_PACKAGE' 'package_path'
 	assert_not_empty 'PLAYIT_WORKDIR' 'package_path'
 
-	local package_name package_path
-	case "$OPTION_PACKAGE" in
+	local option_package package_name package_path
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('arch')
 			package_path=$(package_path_archlinux "$package")
 		;;
@@ -449,21 +420,32 @@ package_path() {
 		('egentoo')
 			package_path=$(package_path_egentoo "$package")
 		;;
-		(*)
-			error_invalid_argument 'OPTION_PACKAGE' 'package_path'
-			return 1
-		;;
 	esac
 
 	printf '%s/packages/%s' "$PLAYIT_WORKDIR" "$package_path"
 }
 
-# get the maintainer string
-# USAGE: packages_get_maintainer
-# RETURNS: packages maintainer, as a non-empty string
-packages_get_maintainer() {
-	# get maintainer string from /etc/makepkg.conf
+# Print the maintainer string
+# USAGE: package_maintainer
+# RETURNS: the package maintainer, as a non-empty string
+package_maintainer() {
 	local maintainer
+	maintainer=''
+
+	# Try to get a maintainer string from environment variables used by Debian tools.
+	if ! variable_is_empty 'DEBEMAIL'; then
+		if ! variable_is_empty 'DEBFULLNAME'; then
+			maintainer="$DEBFULLNAME <${DEBEMAIL}>"
+		else
+			maintainer="$DEBEMAIL"
+		fi
+	fi
+	if [ -n "$maintainer" ]; then
+		printf '%s' "$maintainer"
+		return 0
+	fi
+
+	# Try to get a maintainer string from /etc/makepkg.conf.
 	if \
 		[ -r '/etc/makepkg.conf' ] \
 		&& grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
@@ -475,18 +457,14 @@ packages_get_maintainer() {
 		else
 			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
 		fi
-	else
-		maintainer=''
 	fi
-
-	# return early if we already have a maintainer string
 	if [ -n "$maintainer" ]; then
 		printf '%s' "$maintainer"
 		return 0
 	fi
 
-	# get current machine hostname
-	# falls back on using "localhost"
+	# Compute a maintainer e-mail from the current hostname and user name,
+	# falling back to "user@localhost".
 	local hostname
 	if command -v 'hostname' >/dev/null 2>&1; then
 		hostname=$(hostname)
@@ -495,11 +473,8 @@ packages_get_maintainer() {
 	else
 		hostname='localhost'
 	fi
-
-	# get current user name
-	# falls back on "user"
 	local username
-	if [ -n "$USER" ]; then
+	if ! variable_is_empty 'USER'; then
 		username="$USER"
 	elif command -v 'whoami' >/dev/null 2>&1; then
 		username=$(whoami)
@@ -508,49 +483,34 @@ packages_get_maintainer() {
 	else
 		username='user'
 	fi
-
 	printf '%s@%s' "$username" "$hostname"
-	return 0
 }
 
-# get the packages version string for a given archive
-# USAGE: packages_get_version $archive
-# RETURNS: packages version, as a non-empty string
-packages_get_version() {
-	# single argument should be the archive name
-	local archive
-	archive="$1"
-	assert_not_empty 'archive' 'packages_get_version'
+# Print the package version string
+# USAGE: package_version
+# RETURNS: the package version, as a non-empty string
+package_version() {
+	assert_not_empty 'script_version' 'package_version'
 
-	###
-	# TODO
-	# Check that $script_version is a non-empty string
-	# Display an explicit error message if it is unset or empty
-	###
-
-	# get the version string for the current archive
-	# falls back on "1.0-1"
-	local packages_version
-	if variable_is_empty "${archive}_VERSION"; then
-		packages_version='1.0-1'
-	else
-		packages_version=$(get_value "${archive}_VERSION")
+	# Get the version string for the current archive.
+	local archive package_version
+	archive=$(context_archive)
+	package_version=$(get_value "${archive}_VERSION")
+	## Fall back on "1.0-1" if no version string is explicitly set.
+	if [ -z "$package_version" ]; then
+		package_version='1.0-1'
 	fi
-	packages_version="${packages_version}+${script_version}"
+	package_version="${package_version}+${script_version}"
 
-	# Portage doesn't like some of our version names (See https://devmanual.gentoo.org/ebuild-writing/file-format/index.html)
-	case "$OPTION_PACKAGE" in
+	# Portage does not like some of our version names
+	# cf. https://devmanual.gentoo.org/ebuild-writing/file-format/index.html
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
 		('gentoo'|'egentoo')
-			set +o errexit
-			packages_version=$(printf '%s' "$packages_version" | grep --extended-regexp --only-matching '^([0-9]{1,18})(\.[0-9]{1,18})*[a-z]?')
-			set -o errexit
-			if [ -z "$packages_version" ]; then
-				packages_version='1.0'
-			fi
-			packages_version="${packages_version}_p$(printf '%s' "$script_version" | sed 's/\.//g')"
+			package_version=$(gentoo_package_version "$package_version")
 		;;
 	esac
 
-	printf '%s' "$packages_version"
-	return 0
+	printf '%s' "$package_version"
 }

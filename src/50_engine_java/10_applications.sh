@@ -18,11 +18,10 @@ application_java_options() {
 
 	# Get the application Java options string from its identifier
 	local application_java_options
-	if variable_is_empty "${application}_JAVA_OPTIONS"; then
-		# Return early if no options string is set.
+	application_java_options=$(get_value "${application}_JAVA_OPTIONS")
+	## Return early if no options string is set.
+	if [ -z "$application_java_options" ]; then
 		return 0
-	else
-		application_java_options=$(get_value "${application}_JAVA_OPTIONS")
 	fi
 
 	# Check that the options string does not span multiple lines

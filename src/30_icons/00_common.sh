@@ -52,14 +52,18 @@ application_icons_list() {
 	local application_type
 	application_type=$(application_type "$application")
 	case "$application_type" in
-		('unity3d')
-			# It is expected that Unity3D games always come with a single icon.
-			printf '%s' "${application}_ICON"
-			return 0
-		;;
 		('wine')
 			# If no value is explicitly set for the icon of a WINE application,
 			# we will fall back to extracting one from the binary.
+			printf '%s' "${application}_ICON"
+			return 0
+		;;
+	esac
+	local application_type_variant
+	application_type_variant=$(application_type_variant "$application")
+	case "$application_type_variant" in
+		('unity3d')
+			# It is expected that Unity3D games always come with a single icon.
 			printf '%s' "${application}_ICON"
 			return 0
 		;;
@@ -112,11 +116,17 @@ icon_path() {
 		application=$(icon_application "$icon")
 		application_type=$(application_type "$application")
 		case "$application_type" in
-			('unity3d')
-				icon_path=$(icon_unity3d_path "$icon")
-			;;
 			('wine')
 				icon_path=$(icon_wine_path "$icon")
+			;;
+		esac
+	fi
+	if [ -z "$icon_path" ]; then
+		local application_type_variant
+		application_type_variant=$(application_type_variant "$application")
+		case "$application_type_variant" in
+			('unity3d')
+				icon_path=$(icon_unity3d_path)
 			;;
 		esac
 	fi
@@ -145,9 +155,9 @@ icon_wrestool_options() {
 
 	# Fetch the custom options string
 	local wrestool_options
-	wrestool_options='--type=14'
-	if ! variable_is_empty "${icon}_WRESTOOL_OPTIONS"; then
-		wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+	wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+	if [ -z "$wrestool_options" ]; then
+		wrestool_options='--type=14'
 	fi
 
 	###

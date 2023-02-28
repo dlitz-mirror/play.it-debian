@@ -1,22 +1,8 @@
-.PHONY: all clean install uninstall dist check shellcheck-library shellcheck-wrapper
+# Build the library
 
-UID := $(shell id --user)
+.PHONY: all clean
 
-ifeq ($(UID),0)
-    prefix = /usr/local
-    bindir = $(prefix)/games
-    datadir = $(prefix)/share/games
-    mandir = $(prefix)/share/man
-else
-    ifeq ($(XDG_DATA_HOME),)
-        XDG_DATA_HOME := $(HOME)/.local/share
-    endif
-    prefix = $(XDG_DATA_HOME)
-    bindir = $(HOME)/.local/bin
-    datadir = $(prefix)
-    mandir = $(prefix)/man
-endif
-
+## The debug code is omitted unless DEBUG is set to 1.
 DEBUG := 0
 
 all: lib/libplayit2.sh
@@ -34,7 +20,29 @@ endif
 clean:
 	rm --force lib/libplayit2.sh
 
-install:
+
+# Install the library, main script, and man pages
+
+.PHONY: install uninstall
+
+## Set the default install paths
+UID := $(shell id --user)
+ifeq ($(UID),0)
+    prefix = /usr/local
+    bindir = $(prefix)/games
+    datadir = $(prefix)/share/games
+    mandir = $(prefix)/share/man
+else
+    ifeq ($(XDG_DATA_HOME),)
+        XDG_DATA_HOME := $(HOME)/.local/share
+    endif
+    prefix = $(XDG_DATA_HOME)
+    bindir = $(HOME)/.local/bin
+    datadir = $(prefix)
+    mandir = $(prefix)/man
+endif
+
+install: all
 	install -D --mode=644 lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
 	install -D man/man6/play.it.6 $(DESTDIR)$(mandir)/man6/play.it.6
@@ -44,7 +52,10 @@ uninstall:
 	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.sh $(DESTDIR)$(mandir)/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) $(DESTDIR)$(datadir)/play.it $(DESTDIR)$(mandir)/man6 $(DESTDIR)$(mandir)/fr/man6
 
+
 # Release preparation
+
+.PHONY: dist
 
 ## The generated tarball is signed with gpg by default,
 ## NO_SIGN should be set to a non-0 value to skip the signature.
@@ -61,7 +72,10 @@ ifeq ($(NO_SIGN),0)
 	gpg --armor --detach-sign dist/$(TARBALL)
 endif
 
+
 # Syntax checks relying on ShellCheck
+
+.PHONY: check shellcheck-library shellcheck-wrapper
 
 check: shellcheck-library shellcheck-wrapper
 
