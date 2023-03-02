@@ -24,7 +24,7 @@ wine_launcher_write() {
 			} >> "$target_file"
 			wine_persistent_regedit_load >> "$target_file"
 			if version_is_at_least '2.22' "$target_version"; then
-				wine_launcher_run >> "$target_file"
+				wine_launcher_run "$application" >> "$target_file"
 			else
 				launcher_write_script_wine_run "$application" "$target_file"
 			fi
@@ -371,7 +371,7 @@ launcher_write_script_wine_application_variables() {
 }
 
 # WINE - Print the snippet handling the actual run of the game
-# USAGE: wine_launcher_run $qapplication
+# USAGE: wine_launcher_run $application
 wine_launcher_run() {
 	local application
 	application="$1"
@@ -386,8 +386,6 @@ wine_launcher_run() {
 
 	EOF
 
-	application_prerun "$application"
-
 	case "$application_type_variant" in
 		('unity3d')
 			# Use a dedicated log file for the current game session
@@ -395,7 +393,10 @@ wine_launcher_run() {
 		;;
 	esac
 
+	application_prerun "$application"
+
 	cat <<- 'EOF'
+
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
