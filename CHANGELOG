@@ -1,3 +1,9 @@
+2.22.1
+
+  * Fix inclusion of pre-run/post-run actions in launchers for WINE games.
+  * Improve handling of pre-run/post-run actions in launchers for native games.
+  * Add support for libbz2.so.1 native library dependency.
+
 2.22.0
 
   * Deprecation notices:
