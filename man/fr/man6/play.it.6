@@ -145,13 +145,33 @@ de paramètres qui seront passés à
 .Nm
 comme s’ils lui avaient été donnés sur la ligne de commande.
 .Sh COMPRESSION
+.Ss Arch Linux
+Lors de la construction de paquets pour Arch Linux (avec --package arch):
+.Bl -tag -compact
+.It --compression speed
+Utilisation de la méthode de compression zstd avec lʼoption --fast=1.
+.It --compression size
+Utilisation de la méthode de compression zstd avec lʼoption -19.
+.It --compression auto
+Cette option nʼest pas pris en charge.
+.El
 .Ss Debian
-Lors de la construction de paquets pour Debian (avec --package deb), utiliser --compression auto suit le comportement par défaut de dpkg-deb. Ce comportement peut être contrôlé par les variables dʼenvironnement DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE et DPKG_DEB_COMPRESSOR_LEVEL. Référez-vous à dpkg-deb(1) pour plus de détails sur la manière dont elles peuvent être utilisées.
+Lors de la construction de paquets pour Debian (avec --package deb):
+.Bl -tag -compact
+.It --compression speed
+Utilisation de la méthode de compression gzip.
+.It --compression size
+Utilisation de la méthode de compression xz.
+.It --compression auto
+Utilisation du comportement par défaut de dpkg-deb. Ce comportement peut être contrôlé par les variables dʼenvironnement DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE et DPKG_DEB_COMPRESSOR_LEVEL. Référez-vous à dpkg-deb(1) pour plus de détails sur la manière dont elles peuvent être utilisées.
+.El
 .Ss Gentoo
-Lors de la construction de paquets pour Gentoo (avec --package gentoo ou --package egentoo), utiliser --compression auto suit le comportement par défaut de ebuild. Ce comportement peut être contrôlé par les variables dʼenvironnement BINPKG_COMPRESS et BINPKG_COMPRESS_FLAGS. Référez-vous à make.conf(5) pour plus de détails sur la manière dont elles peuvent être utilisées.
-.Sh VOIR AUSSI
-.Bl -column
-.Xr dosbox 1
-.Xr scummvm 1
-.Xr wine 1
+Lors de la construction de paquets pour Gentoo (avec --package gentoo ou --package egentoo)
+.Bl -tag -compact
+.It --compression speed
+Utilisation de la méthode de compression gzip.
+.It --compression size
+Utilisation de la méthode de compression bz2.
+.It --compression auto
+Utilisation du comportement par défaut de ebuild. Ce comportement peut être contrôlé par les variables dʼenvironnement BINPKG_COMPRESS et BINPKG_COMPRESS_FLAGS. Référez-vous à make.conf(5) pour plus de détails sur la manière dont elles peuvent être utilisées.
 .El
