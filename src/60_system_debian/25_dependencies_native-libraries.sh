@@ -53,7 +53,7 @@ dependency_package_providing_library_deb() {
 		('libavutil.so.56')
 			package_name='libavutil56'
 		;;
-		('libbz2.so.1.0')
+		('libbz2.so.1.0'|'libbz2.so.1')
 			package_name='libbz2-1.0'
 		;;
 		('libc.so.6')
