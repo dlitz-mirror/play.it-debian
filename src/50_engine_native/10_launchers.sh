@@ -35,8 +35,6 @@ native_launcher_run() {
 
 	EOF
 
-	application_prerun "$application"
-
 	case "$application_type_variant" in
 		('unity3d')
 			# Start pulseaudio if it is available
@@ -66,7 +64,10 @@ native_launcher_run() {
 	# Set loading paths for libraries
 	launcher_native_libraries_paths
 
+	application_prerun "$application"
+
 	cat <<- 'EOF'
+
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
@@ -76,14 +77,14 @@ native_launcher_run() {
 
 	EOF
 
+	application_postrun "$application"
+
 	case "$application_type_variant" in
 		('unity3d')
 			# Stop pulseaudio if it has been started for this game session
 			launcher_unity3d_pulseaudio_stop
 		;;
 	esac
-
-	application_postrun "$application"
 }
 
 # Linux native - Print the path from where the game binary is called

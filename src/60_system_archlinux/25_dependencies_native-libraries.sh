@@ -72,7 +72,7 @@ dependency_package_providing_library_arch() {
 		('libavutil.so.56')
 			package_name='ffmpeg'
 		;;
-		('libbz2.so.1.0')
+		('libbz2.so.1.0'|'libbz2.so.1')
 			package_name='bzip2'
 		;;
 		('libc.so.6')
@@ -492,7 +492,7 @@ dependency_package_providing_library_arch32() {
 		('libavutil.so.56')
 			package_name='lib32-libffmpeg'
 		;;
-		('libbz2.so.1.0')
+		('libbz2.so.1.0'|'libbz2.so.1')
 			package_name='lib32-bzip2'
 		;;
 		('libc.so.6')

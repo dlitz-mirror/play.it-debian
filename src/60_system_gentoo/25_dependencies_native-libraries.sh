@@ -73,7 +73,7 @@ dependency_package_providing_library_gentoo() {
 		('libavutil.so.56')
 			package_name='media-video/ffmpeg'
 		;;
-		('libbz2.so.1.0')
+		('libbz2.so.1.0'|'libbz2.so.1')
 			package_name='app-arch/bzip2'
 		;;
 		('libc.so.6')
@@ -503,7 +503,7 @@ dependency_package_providing_library_gentoo32() {
 		('libavutil.so.56')
 			package_name='media-video/ffmpeg[abi_x86_32]'
 		;;
-		('libbz2.so.1.0')
+		('libbz2.so.1.0'|'libbz2.so.1')
 			package_name='app-arch/bzip2[abi_x86_32]'
 		;;
 		('libc.so.6')

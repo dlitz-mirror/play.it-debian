@@ -139,7 +139,33 @@ command-line parameters that will be passed to
 .Nm
 as if they were given on the command-line.
 .Sh COMPRESSION
+.Ss Arch Linux
+When building packages for Arch Linux (with --package arch):
+.Bl -tag -compact
+.It --compression speed
+Use zstd compression with the flag --fast=1.
+.It --compression size
+Use zstd compression with the flag -19.
+.It --compression auto
+Unsupported option.
+.El
 .Ss Debian
-When building packages for Debian (with --package deb), using --compression auto relies on the default dpkg-deb behaviour. This behaviour can be controlled using the environment variables DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE and DPKG_DEB_COMPRESSOR_LEVEL. See dpkg-deb(1) for more details on how these can be used.
+When building packages for Debian (with --package deb):
+.Bl -tag -compact
+.It --compression speed
+Use gzip compression.
+.It --compression size
+Use xz compression.
+.It --compression auto
+Rely on the default dpkg-deb behaviour. This behaviour can be controlled using the environment variables DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE and DPKG_DEB_COMPRESSOR_LEVEL. See dpkg-deb(1) for more details on how these can be used.
+.El
 .Ss Gentoo
-When building packages for Gentoo (with --package gentoo or --package egentoo), using --compression auto relies on the default ebuild behaviour. This behaviour can be controlled using the environment variables BINPKG_COMPRESS and BINPKG_COMPRESS_FLAGS. See make.conf(5) for more details on how these can be used.
+When building packages for Gentoo (with --package gentoo or --package egentoo)
+.Bl -tag -compact
+.It --compression speed
+Use gzip compression.
+.It --compression size
+Use bzip2 compression.
+.It --compression auto
+Rely on the default ebuild behaviour. This behaviour can be controlled using the environment variables BINPKG_COMPRESS and BINPKG_COMPRESS_FLAGS. See make.conf(5) for more details on how these can be used.
+.El
