@@ -155,8 +155,9 @@ package_debian_field_depends() {
 	local package
 	package="$1"
 
-	local first_item_displayed dependency_string
-	local first_item_displayed=0
+	local dependencies_list first_item_displayed dependency_string
+	dependencies_list=$(dependencies_debian_full_list "$package")
+	first_item_displayed=0
 	while read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
@@ -168,7 +169,7 @@ package_debian_field_depends() {
 			printf ', %s' "$dependency_string"
 		fi
 	done <<- EOF
-	$(dependencies_debian_full_list "$package")
+	$(printf '%s' "$dependencies_list")
 	EOF
 }
 

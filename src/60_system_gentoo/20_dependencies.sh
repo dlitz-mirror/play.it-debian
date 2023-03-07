@@ -188,7 +188,8 @@ dependencies_gentoo_full_list() {
 	package="$1"
 
 	# Include generic dependencies
-	local dependency_generic
+	local dependencies_generic dependency_generic
+	dependencies_generic=$(dependencies_list_generic "$package")
 	while read -r dependency_generic; do
 		# pkg_set_deps_gentoo sets a variable $pkg_deps instead of printing a value,
 		# we prevent it from leaking by setting it to an empty value.
@@ -196,7 +197,7 @@ dependencies_gentoo_full_list() {
 		pkg_set_deps_gentoo $package $dependency_generic
 		printf '%s\n' "$pkg_deps"
 	done <<- EOL
-	$(dependencies_list_generic "$package")
+	$(printf '%s' "$dependencies_generic")
 	EOL
 
 	# Include Gentoo-specific dependencies

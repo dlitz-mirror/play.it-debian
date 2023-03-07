@@ -205,14 +205,15 @@ package_archlinux_fields_depend() {
 	local package
 	package="$1"
 
-	local dependency_string
+	local dependencies_list dependency_string
+	dependencies_list=$(dependencies_archlinux_full_list "$package")
 	while read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
 			continue
 		fi
 		printf 'depend = %s\n' "$dependency_string"
 	done <<- EOL
-	$(dependencies_archlinux_full_list "$package")
+	$(printf '%s' "$dependencies_list")
 	EOL
 }
 

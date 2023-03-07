@@ -41,13 +41,14 @@ games_find_scripts_for_archive() {
 	local archive_name
 	archive_name="$1"
 
-	local regexp
+	local games_sources regexp
+	games_sources=$(games_list_sources)
 	regexp="^ARCHIVE_[0-9A-Z_]\\+=['\"]${archive_name}['\"]"
 	while read -r games_collection; do
 		find "$games_collection" -name play-\*.sh -exec \
 			grep --files-with-matches --regexp="$regexp" {} + | sort
 	done <<- EOF
-	$(games_list_sources)
+	$(printf '%s' "$games_sources")
 	EOF
 
 	return 0

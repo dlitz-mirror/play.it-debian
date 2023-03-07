@@ -273,7 +273,8 @@ dependencies_archlinux_full_list() {
 	packages_list_full=''
 
 	# Include generic dependencies
-	local dependency_generic pkg_deps
+	local dependencies_generic dependency_generic pkg_deps
+	dependencies_generic=$(dependencies_list_generic "$package")
 	while read -r dependency_generic; do
 		# pkg_set_deps_arch sets a variable $pkg_deps instead of printing a value,
 		# we prevent it from leaking by setting it to an empty value.
@@ -282,7 +283,7 @@ dependencies_archlinux_full_list() {
 		packages_list_full="$packages_list_full
 		$pkg_deps"
 	done <<- EOL
-	$(dependencies_list_generic "$package")
+	$(printf '%s' "$dependencies_generic")
 	EOL
 
 	# Include Arch-specific dependencies

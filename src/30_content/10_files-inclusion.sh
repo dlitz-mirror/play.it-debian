@@ -114,6 +114,8 @@ content_inclusion() {
 	# Proceed with the actual files inclusion
 	(
 		cd "$content_path_full"
+		local file_pattern file_patterns
+		file_patterns=$(content_files "$content_id")
 		while read -r file_pattern; do
 			if [ -z "$file_pattern" ]; then
 				continue
@@ -124,7 +126,7 @@ content_inclusion() {
 				content_inclusion_include_pattern "$file_pattern" "$destination_path"
 			fi
 		done <<- EOF
-		$(content_files "$content_id")
+		$(printf '%s' "$file_patterns")
 		EOF
 	)
 }
