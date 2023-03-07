@@ -104,6 +104,15 @@ application_type_guess_from_file() {
 				;;
 			esac
 		;;
+		('application/octet-stream')
+			local file_type_extended
+			file_type_extended=$(LANG=C file --brief --dereference "$application_exe_path")
+			case "$file_type_extended" in
+				('MS-DOS executable')
+					application_type='dosbox'
+				;;
+			esac
+		;;
 	esac
 
 	printf '%s' "$application_type"
