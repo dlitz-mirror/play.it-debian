@@ -64,6 +64,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'dosbox'
 		;;
 		('java')
 			case "$prefix_type" in
@@ -81,6 +84,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'java'
 		;;
 		('native')
 			case "$prefix_type" in
@@ -118,6 +124,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'scummvm'
 		;;
 		('renpy')
 			case "$prefix_type" in
@@ -134,6 +143,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'renpy'
 		;;
 		('residualvm')
 			case "$prefix_type" in
@@ -149,9 +161,15 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'residualvm'
 		;;
 		('wine')
 			wine_launcher_write "$application" "$target_file"
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'wine'
 		;;
 		('mono')
 			case "$prefix_type" in
@@ -174,6 +192,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'mono'
 		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'

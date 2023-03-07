@@ -38,10 +38,9 @@ wine_launcher_write() {
 	esac
 
 	# Automatically add required dependencies to the current package
-	local package
-	package=$(context_package)
-	dependencies_add_generic "$package" 'wine'
 	if ! variable_is_empty 'APP_WINETRICKS'; then
+		local package
+		package=$(context_package)
 		dependencies_add_generic "$package" 'winetricks'
 	fi
 }
