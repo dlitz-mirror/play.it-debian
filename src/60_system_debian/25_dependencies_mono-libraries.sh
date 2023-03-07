@@ -133,5 +133,10 @@ debian_dependency_providing_mono_library() {
 		;;
 	esac
 
-	printf '%s\n' "$package_name"
+	if [ -n "$package_name" ]; then
+		printf '%s' "$package_name"
+		return 0
+	fi
+
+	dependencies_unknown_mono_libraries_add "$library"
 }
