@@ -1,3 +1,9 @@
+2.22.2
+
+  * Improve automatic detection of DOS executables.
+  * Display a list of unknown Mono libraries if some have been required.
+  * Prevent functions failures to be hidden by while loops.
+
 2.22.1
 
   * Fix inclusion of pre-run/post-run actions in launchers for WINE games.
