@@ -16,6 +16,14 @@ print_instructions() {
 		dependencies_unknown_libraries_clear
 	fi
 
+	# Print the list of Mono library dependencies that have been skipped
+	if [ -n "$(dependencies_unknown_mono_libraries_list)" ]; then
+		warning_dependencies_unknown_mono_libraries
+		# Clear list of skipped Mono libraries dependencies,
+		# so it will not be shown again.
+		dependencies_unknown_mono_libraries_clear
+	fi
+
 	# Sort packages by architecture
 	local package package_architecture packages_list_32 packages_list_64 packages_list_all
 	packages_list_32=''

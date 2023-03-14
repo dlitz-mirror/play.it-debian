@@ -146,6 +146,12 @@ dependencies_unknown_libraries_file() {
 	printf '%s/unknown_libraries_list' "$PLAYIT_WORKDIR"
 }
 
+# Print the path to a temporary files used for unknown Mono libraries listing
+# USAGE: dependencies_unknown_mono_libraries_file
+dependencies_unknown_mono_libraries_file() {
+	printf '%s/unknown_mono_libraries_list' "$PLAYIT_WORKDIR"
+}
+
 # Print a list of unknown libraries
 # USAGE: dependencies_unknown_libraries_list
 dependencies_unknown_libraries_list() {
@@ -157,7 +163,24 @@ dependencies_unknown_libraries_list() {
 		return 0
 	fi
 
-	# Display the list of unkown libraries,
+	# Display the list of unknown libraries,
+	# skipping duplicates and empty entries.
+	sort --unique "$unknown_libraries_list" | \
+		grep --invert-match --regexp='^$'
+}
+
+# Print a list of unknown Mono libraries
+# USAGE: dependencies_unknown_mono_libraries_list
+dependencies_unknown_mono_libraries_list() {
+	local unknown_library unknown_libraries_list
+	unknown_libraries_list=$(dependencies_unknown_mono_libraries_file)
+
+	# Return early if there is no unknown library
+	if [ ! -e "$unknown_libraries_list" ]; then
+		return 0
+	fi
+
+	# Display the list of unknown libraries,
 	# skipping duplicates and empty entries.
 	sort --unique "$unknown_libraries_list" | \
 		grep --invert-match --regexp='^$'
@@ -172,12 +195,39 @@ dependencies_unknown_libraries_clear() {
 	rm --force "$unknown_libraries_list"
 }
 
+# Clear the list of unknown Mono libraries
+# USAGE: dependencies_unknown_mono_libraries_clear
+dependencies_unknown_mono_libraries_clear() {
+	local unknown_library unknown_libraries_list
+	unknown_libraries_list=$(dependencies_unknown_mono_libraries_file)
+
+	rm --force "$unknown_libraries_list"
+}
+
 # Add a library to the list of unknown ones
 # USAGE: dependencies_unknown_libraries_add $unknown_library
 dependencies_unknown_libraries_add() {
 	local unknown_library unknown_libraries_list
 	unknown_library="$1"
 	unknown_libraries_list=$(dependencies_unknown_libraries_file)
+
+	# Do nothing if this library is already included in the list
+	if \
+		[ -e "$unknown_libraries_list" ] \
+		&& grep --quiet --fixed-strings --word-regexp "$unknown_library" "$unknown_libraries_list"
+	then
+		return 0
+	fi
+
+	printf '%s\n' "$unknown_library" >> "$unknown_libraries_list"
+}
+
+# Add a Mono library to the list of unknown ones
+# USAGE: dependencies_unknown_mono_libraries_add $unknown_library
+dependencies_unknown_mono_libraries_add() {
+	local unknown_library unknown_libraries_list
+	unknown_library="$1"
+	unknown_libraries_list=$(dependencies_unknown_mono_libraries_file)
 
 	# Do nothing if this library is already included in the list
 	if \

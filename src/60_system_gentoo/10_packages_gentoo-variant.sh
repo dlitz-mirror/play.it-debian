@@ -159,7 +159,8 @@ package_gentoo_field_rdepend() {
 	local package
 	package="$1"
 
-	local first_item_displayed dependency_string
+	local dependencies_list first_item_displayed dependency_string
+	dependencies_list=$(dependencies_gentoo_full_list "$package")
 	first_item_displayed=0
 	while IFS= read -r dependency_string; do
 		if [ -z "$dependency_string" ]; then
@@ -174,7 +175,7 @@ package_gentoo_field_rdepend() {
 			printf '\n\t%s' "$dependency_string"
 		fi
 	done <<- EOL
-	$(dependencies_gentoo_full_list "$package")
+	$(printf '%s' "$dependencies_list")
 	EOL
 }
 

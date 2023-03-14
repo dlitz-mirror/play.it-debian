@@ -138,13 +138,14 @@ dependencies_debian_full_list() {
 	packages_list_full=''
 
 	# Include generic dependencies
-	local dependency_generic dependency_package
+	local dependencies_generic dependency_generic dependency_package
+	dependencies_generic=$(dependencies_list_generic "$package")
 	while read -r dependency_generic; do
 		dependency_package=$(pkg_set_deps_deb "$dependency_generic" "$package")
 		packages_list_full="$packages_list_full
 		$dependency_package"
 	done <<- EOL
-	$(dependencies_list_generic "$package")
+	$(printf '%s' "$dependencies_generic")
 	EOL
 
 	# Include Debian-specific dependencies
