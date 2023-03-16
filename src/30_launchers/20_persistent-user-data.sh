@@ -74,10 +74,14 @@ launcher_print_persistent_paths() {
 	cat <<- 'EOF'
 	USER_PERSISTENT_PATH=$(persistent_user_path)
 	EOF
+
+	local persistent_list_directories persistent_list_files
+	persistent_list_directories=$(persistent_list_directories)
+	persistent_list_files=$(persistent_list_files)
 	cat <<- EOF
 	# Set list of files and directories that should be saved in persistent paths
-	USER_PERSISTENT_DIRECTORIES='$(persistent_list_directories)'
-	USER_PERSISTENT_FILES='$(persistent_list_files)'
+	USER_PERSISTENT_DIRECTORIES='${persistent_list_directories}'
+	USER_PERSISTENT_FILES='${persistent_list_files}'
 	EOF
 }
 

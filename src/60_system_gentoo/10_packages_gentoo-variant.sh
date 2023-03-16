@@ -47,8 +47,10 @@ pkg_write_gentoo() {
 	EOF
 
 	# fakeroot >=1.25.1 considers all files belong to root by default
+	local field_rdepend
+	field_rdepend=$(package_gentoo_field_rdepend "$pkg")
 	cat >> "$target" <<- EOF
-	RDEPEND="$(package_gentoo_field_rdepend "$pkg")"
+	RDEPEND="$field_rdepend"
 
 	src_unpack() {
 		mkdir --parents "\$S"
@@ -59,17 +61,21 @@ pkg_write_gentoo() {
 	EOF
 
 	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
+		local postinst_command
+		postinst_command=$(get_value "${pkg}_POSTINST_RUN")
 		cat >> "$target" <<- EOF
 		pkg_postinst() {
-		$(get_value "${pkg}_POSTINST_RUN")
+		$postinst_command
 		}
 		EOF
 	fi
 
 	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
+		local prerm_command
+		prerm_command=$(get_value "${pkg}_PRERM_RUN")
 		cat >> "$target" <<- EOF
 		pkg_prerm() {
-		$(get_value "${pkg}_PRERM_RUN")
+		$prerm_command
 		}
 		EOF
 	fi

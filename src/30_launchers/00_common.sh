@@ -241,16 +241,16 @@ launcher_write_script_game_variables() {
 	local file
 	file="$1"
 
-	local game_id
+	local game_id path_game_data
 	game_id=$(game_id)
+	path_game_data=$(path_game_data)
 	cat >> "$file" <<- EOF
 	# Set game-specific values
 
 	GAME_ID='${game_id}'
-	PATH_GAME='$(path_game_data)'
+	PATH_GAME='${path_game_data}'
 
 	EOF
-	return 0
 }
 
 # write launcher script pre-run actions
@@ -260,13 +260,16 @@ launcher_write_script_prerun() {
 	application="$1"
 	file="$2"
 
+	local application_prerun
+	application_prerun=$(application_prerun "$application")
+
 	# Return early if there are no pre-run actions for the given application
-	if [ -z "$(application_prerun "$application")" ]; then
+	if [ -z "$application_prerun" ]; then
 		return 0
 	fi
 
 	cat >> "$file" <<- EOF
-	$(application_prerun "$application")
+	$application_prerun
 
 	EOF
 }
@@ -278,13 +281,16 @@ launcher_write_script_postrun() {
 	application="$1"
 	file="$2"
 
+	local application_postrun
+	application_postrun=$(application_postrun "$application")
+
 	# Return early if there are no post-run actions for the given application
-	if [ -z "$(application_postrun "$application")" ]; then
+	if [ -z "$application_postrun" ]; then
 		return 0
 	fi
 
 	cat >> "$file" <<- EOF
-	$(application_postrun "$application")
+	$application_postrun
 
 	EOF
 }
@@ -309,17 +315,20 @@ launcher_desktop() {
 	local application
 	application="$1"
 
-	local application_icon
+	local application_name application_icon application_category launcher_desktop_exec
+	application_name=$(application_name "$application")
 	application_icon=$(application_id "$application")
+	application_category=$(application_category "$application")
+	launcher_desktop_exec=$(launcher_desktop_exec "$application")
 
 	cat <<- EOF
 	[Desktop Entry]
 	Version=1.0
 	Type=Application
-	Name=$(application_name "$application")
+	Name=$application_name
 	Icon=$application_icon
-	$(launcher_desktop_exec "$application")
-	Categories=$(application_category "$application")
+	$launcher_desktop_exec
+	Categories=$application_category
 	EOF
 }
 

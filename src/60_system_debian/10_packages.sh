@@ -73,24 +73,26 @@ pkg_write_deb() {
 
 	# Write postinst/prerm scripts, enforce correct permissions.
 	if ! variable_is_empty "${package}_POSTINST_RUN"; then
-		local postinst_script
+		local postinst_script postinst_command
 		postinst_script="${control_directory}/postinst"
+		postinst_command=$(get_value "${package}_POSTINST_RUN")
 		cat > "$postinst_script" <<- EOF
 		#!/bin/sh -e
 
-		$(get_value "${package}_POSTINST_RUN")
+		$postinst_command
 
 		exit 0
 		EOF
 		chmod 755 "$postinst_script"
 	fi
 	if ! variable_is_empty "${package}_PRERM_RUN"; then
-		local prerm_script
+		local prerm_script prerm_command
 		prerm_script="${control_directory}/prerm"
+		prerm_command=$(get_value "${package}_PRERM_RUN")
 		cat > "$prerm_script" <<- EOF
 		#!/bin/sh -e
 
-		$(get_value "${package}_PRERM_RUN")
+		$prerm_command
 
 		exit 0
 		EOF
