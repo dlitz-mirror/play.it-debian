@@ -13,11 +13,8 @@ write_metadata() {
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
-			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
-			local pkg
 			for package in "$@"; do
-				pkg="$package"
-				pkg_write_arch
+				pkg_write_arch "$package"
 			done
 		;;
 		('deb')

@@ -1,12 +1,8 @@
-# write .pkg.tar package meta-data
-# USAGE: pkg_write_arch
+# Arch Linux - Write metadata for the given package
+# USAGE: pkg_write_arch $package
 pkg_write_arch() {
-	###
-	# TODO
-	# $package should be passed as a function argument, not inherited from the calling function
-	###
 	local package
-	package="$pkg"
+	package="$1"
 
 	local package_path target
 	package_path=$(package_path "$package")
