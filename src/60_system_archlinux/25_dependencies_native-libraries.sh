@@ -361,6 +361,9 @@ dependency_package_providing_library_arch() {
 		('libudev.so.1')
 			package_name='libudev.so=1-64'
 		;;
+		('libutil.so.1')
+			package_name='glibc'
+		;;
 		('libuuid.so.1')
 			package_name='util-linux-libs'
 		;;
@@ -420,6 +423,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('libxmp.so.4')
 			package_name='libxmp'
+		;;
+		('libXmu.so.6')
+			package_name='libxmu'
 		;;
 		('libXrandr.so.2')
 			package_name='libxrandr'
@@ -786,6 +792,9 @@ dependency_package_providing_library_arch32() {
 		('libudev.so.1')
 			package_name='lib32-systemd'
 		;;
+		('libutil.so.1')
+			package_name='lib32-glibc'
+		;;
 		('libuuid.so.1')
 			package_name='lib32-util-linux'
 		;;
@@ -846,6 +855,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libxmp.so.4')
 			package_name='lib32-libxmp-git'
+		;;
+		('libXmu.so.6')
+			package_name='lib32-libxmu'
 		;;
 		('libXrandr.so.2')
 			package_name='lib32-libxrandr'
