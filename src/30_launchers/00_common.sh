@@ -34,6 +34,11 @@ launcher_write_script() {
 	if ! launcher_target_presence_check "$application"; then
 		local application_exe
 		application_exe=$(application_exe "$application")
+		## Check that application binary has been found
+		if [ -z "$application_exe" ]; then
+			error_application_exe_empty "$application"
+			return 1
+		fi
 		error_launcher_missing_binary "$application_exe"
 		return 1
 	fi
@@ -210,6 +215,11 @@ launcher_write_script() {
 		('native')
 			local application_exe application_exe_path
 			application_exe=$(application_exe "$application")
+			## Check that application binary has been found
+			if [ -z "$application_exe" ]; then
+				error_application_exe_empty "$application"
+				return 1
+			fi
 			application_exe_path=$(application_exe_path "$application_exe")
 			chmod +x "$application_exe_path"
 		;;
@@ -236,6 +246,11 @@ launcher_target_presence_check() {
 
 	local application_exe application_exe_path
 	application_exe=$(application_exe "$application")
+	## Check that application binary has been found
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application"
+		return 1
+	fi
 	application_exe_path=$(application_exe_path "$application_exe")
 	test -f "$application_exe_path"
 }

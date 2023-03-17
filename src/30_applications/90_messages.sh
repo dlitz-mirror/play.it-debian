@@ -94,27 +94,25 @@ error_application_id_invalid() {
 	printf "$message" "$application" "$application_id"
 }
 
-# display an error when APP_xxx_EXE is unset but the application requires it
-# USAGE: error_application_exe_empty $application $application_type
+# Error: APP_xxx_EXE is unset but has been required
+# USAGE: error_application_exe_empty $application
 error_application_exe_empty() {
-	local application application_type
+	local application
 	application="$1"
-	application_type="$2"
 
 	local message
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
-			message='%s nʼest pas défini, mais cette valeur est requise pour les applications utilisant le type "%s".\n'
+			message='%s nʼest pas défini, mais cette valeur est requise.\n'
 		;;
 		('en')
-			message='%s is not set, but is required for applications using "%" type.\n'
+			message='%s is not set, but is required.\n'
 		;;
 	esac
 
 	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "${application}_EXE" "$application_type"
+	printf "$message" "${application}_EXE"
 }
 
 # The applications list for the current game script is empty

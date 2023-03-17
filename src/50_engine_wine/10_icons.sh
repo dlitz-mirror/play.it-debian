@@ -21,5 +21,11 @@ icon_wine_path() {
 	fi
 
 	# Print the path to the game binary.
-	application_exe "$application"
+	application_exe=$(application_exe "$application")
+	## Check that application binary has been found
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application"
+		return 1
+	fi
+	printf '%s' "$application_exe"
 }

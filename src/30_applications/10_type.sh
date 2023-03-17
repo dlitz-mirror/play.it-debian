@@ -63,6 +63,11 @@ application_type_guess_from_file() {
 	# Compute path to application binary
 	local application_exe application_exe_path
 	application_exe=$(application_exe "$application")
+	## Check that application binary has been found
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application"
+		return 1
+	fi
 	application_exe_path=$(application_exe_path "$application_exe")
 
 	# Return early if no binary file can be found for the given application.
