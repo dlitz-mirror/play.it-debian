@@ -5,8 +5,12 @@ content_inclusion_default() {
 	local packages_list
 	packages_list=$(packages_get_list)
 
-	local package
+	local package unity3d_plugins
 	for package in $packages_list; do
+		unity3d_plugins=$(unity3d_plugins)
+		if [ -n "$unity3d_plugins" ]; then
+			content_inclusion_unity3d_plugins "$package"
+		fi
 		content_inclusion_default_libraries "$package"
 		content_inclusion_default_game_data "$package"
 		content_inclusion_default_documentation "$package"
