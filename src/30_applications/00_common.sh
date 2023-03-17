@@ -173,7 +173,7 @@ application_exe_escaped() {
 	application_exe=$(application_exe "$application")
 	## Check that application binary has been found
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application"
+		error_application_exe_empty "$application" 'application_exe_escaped'
 		return 1
 	fi
 	# If the file name includes single quotes, replace each one with: '\''

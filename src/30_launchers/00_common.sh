@@ -36,7 +36,7 @@ launcher_write_script() {
 		application_exe=$(application_exe "$application")
 		## Check that application binary has been found
 		if [ -z "$application_exe" ]; then
-			error_application_exe_empty "$application"
+			error_application_exe_empty "$application" 'launcher_write_script'
 			return 1
 		fi
 		error_launcher_missing_binary "$application_exe"
@@ -217,7 +217,7 @@ launcher_write_script() {
 			application_exe=$(application_exe "$application")
 			## Check that application binary has been found
 			if [ -z "$application_exe" ]; then
-				error_application_exe_empty "$application"
+				error_application_exe_empty "$application" 'launcher_write_script'
 				return 1
 			fi
 			application_exe_path=$(application_exe_path "$application_exe")
@@ -248,7 +248,7 @@ launcher_target_presence_check() {
 	application_exe=$(application_exe "$application")
 	## Check that application binary has been found
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application"
+		error_application_exe_empty "$application" 'launcher_target_presence_check'
 		return 1
 	fi
 	application_exe_path=$(application_exe_path "$application_exe")

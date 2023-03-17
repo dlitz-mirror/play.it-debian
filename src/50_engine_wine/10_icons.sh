@@ -24,7 +24,7 @@ icon_wine_path() {
 	application_exe=$(application_exe "$application")
 	## Check that application binary has been found
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application"
+		error_application_exe_empty "$application" 'icon_wine_path'
 		return 1
 	fi
 	printf '%s' "$application_exe"
