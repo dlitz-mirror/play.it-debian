@@ -6,15 +6,8 @@ application_unity3d_exe() {
 	local application
 	application="$1"
 
-	local unity3d_name
-	unity3d_name=$(unity3d_name)
-
-	# FIXME - A critical error should be thrown if UNITY3D_NAME is not set.
-	if [ -z "$unity3d_name" ]; then
-		return 0
-	fi
-
-	# Compute the file name from the package architecture and UNITY3D_NAME.
+	# Compute the file name from the package architecture and UNITY3D_NAME,
+	# or return early if the current package is not supposed to include binaries.
 	local package package_architecture architecture_suffix
 	package=$(context_package)
 	package_architecture=$(package_architecture "$package")
@@ -25,6 +18,11 @@ application_unity3d_exe() {
 		('64')
 			architecture_suffix='.x86_64'
 		;;
+		('all')
+			return 0
+		;;
 	esac
+	local unity3d_name
+	unity3d_name=$(unity3d_name)
 	printf '%s%s' "$unity3d_name" "$architecture_suffix"
 }
