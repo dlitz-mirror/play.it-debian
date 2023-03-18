@@ -380,7 +380,9 @@ dependency_package_providing_library_arch() {
 			package_name='libvorbis'
 		;;
 		('libvulkan.so.1')
-			package_name='vulkan-icd-loader'
+			package_name='
+			vulkan-icd-loader
+			vulkan-driver'
 		;;
 		('libX11.so.6')
 			package_name='libx11'
@@ -812,7 +814,9 @@ dependency_package_providing_library_arch32() {
 			package_name='lib32-libvorbis'
 		;;
 		('libvulkan.so.1')
-			package_name='lib32-vulkan-icd-loader'
+			package_name='
+			lib32-vulkan-icd-loader
+			lib32-vulkan-driver'
 		;;
 		('libX11.so.6')
 			package_name='lib32-libx11'
