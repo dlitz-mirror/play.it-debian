@@ -344,6 +344,9 @@ dependency_package_providing_library_deb() {
 		('libudev.so.1')
 			package_name='libudev1'
 		;;
+		('libutil.so.1')
+			package_name='libc6'
+		;;
 		('libuuid.so.1')
 			package_name='libuuid1'
 		;;
@@ -405,6 +408,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libxmp.so.4')
 			package_name='libxmp4'
+		;;
+		('libXmu.so.6')
+			package_name='libxmu6'
 		;;
 		('libXrandr.so.2')
 			package_name='libxrandr2'

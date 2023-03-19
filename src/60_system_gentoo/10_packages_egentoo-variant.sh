@@ -42,6 +42,11 @@ pkg_write_egentoo() {
 	mkdir --parents "${option_output_dir}/overlay/games-playit/${package_id}"
 	ebuild_path=$(realpath "${option_output_dir}/overlay/games-playit/${package_id}/${package_name}.ebuild")
 
+	local field_keywords field_rdepend field_bdepend
+	field_keywords=$(egentoo_field_keywords "$@")
+	field_rdepend=$(egentoo_field_rdepend "$@")
+	field_bdepend=$(printf "$build_deps")
+
 	cat > "$ebuild_path" << EOF
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -51,14 +56,14 @@ RESTRICT="fetch strip binchecks"
 
 inherit $inherits
 
-KEYWORDS="$(egentoo_field_keywords "$@")"
+KEYWORDS="$field_keywords"
 DESCRIPTION="Ebuild automatically generated with ./play.it"
 HOMEPAGE="https://forge.dotslashplay.it/play.it"
 SRC_URI="$package_filename"
 SLOT="0"
 
-RDEPEND="$(egentoo_field_rdepend "$@")"
-BDEPEND="$(printf "$build_deps")"
+RDEPEND="$field_rdepend"
+BDEPEND="$field_bdepend"
 
 S=\${WORKDIR}
 

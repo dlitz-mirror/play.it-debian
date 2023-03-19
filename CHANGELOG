@@ -1,3 +1,14 @@
+2.22.3
+
+  * Ensure function return codes are never hidden behind cat calls.
+  * Ensure package architecture is always fetched using the dedicated function.
+  * Run a late requirements check for icons extraction.
+  * Add support for missing native libraries dependencies:
+    - libutil.so.1
+    - libXmu.so.6
+  * Arch Linux: Rework packages metadata generation to no longer rely on a variable leak.
+  * Arch Linux: Fix libvulkan.so.1 dependency.
+
 2.22.2
 
   * Improve automatic detection of DOS executables.

@@ -369,6 +369,9 @@ dependency_package_providing_library_gentoo() {
 		('libudev.so.1')
 			package_name='virtual/libudev'
 		;;
+		('libutil.so.1')
+			package_name='sys-libs/glibc'
+		;;
 		('libuuid.so.1')
 			package_name='sys-apps/util-linux'
 		;;
@@ -428,6 +431,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libxmp.so.4')
 			package_name='media-libs/libxmp'
+		;;
+		('libXmu.so.6')
+			package_name='x11-libs/libXmu'
 		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr'
@@ -799,6 +805,9 @@ dependency_package_providing_library_gentoo32() {
 		('libudev.so.1')
 			package_name='virtual/libudev[abi_x86_32]'
 		;;
+		('libutil.so.1')
+			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
+		;;
 		('libuuid.so.1')
 			package_name='sys-apps/util-linux[abi_x86_32]'
 		;;
@@ -858,6 +867,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libxmp.so.4')
 			package_name='media-libs/libxmp[abi_x86_32]'
+		;;
+		('libXmu.so.6')
+			package_name='x11-libs/libXmu[abi_x86_32]'
 		;;
 		('libXrandr.so.2')
 			package_name='x11-libs/libXrandr[abi_x86_32]'
