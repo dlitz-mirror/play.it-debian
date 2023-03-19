@@ -15,6 +15,14 @@ icons_inclusion() {
 		return 0
 	fi
 
+	# A late requirements check is run here,
+	# in case it was skipped earlier because of an empty icons list.
+	# This can happen if both the application type and icon are implicit,
+	# like with WINE games where the icons source is the game binary.
+	# Failing here is not ideal because the archive contents extraction already happened,
+	# but at least the failure is explicit instead of silent.
+	requirements_check_icons
+
 	# If no applications are explicitely listed,
 	# try to fetch the icons for all applications.
 	if [ "$#" -eq 0 ]; then

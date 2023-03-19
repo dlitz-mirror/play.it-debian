@@ -274,15 +274,28 @@ check_deps() {
 	local option_icons
 	option_icons=$(option_value 'icons')
 	if [ "$option_icons" -eq 1 ]; then
-		local icons_requirements requirement
-		icons_requirements=$(requirements_list_icons)
-		for requirement in $icons_requirements; do
-			if ! command -v "$requirement" >/dev/null 2>&1; then
-				error_dependency_not_found "$requirement"
-				return 1
-			fi
-		done
+		requirements_check_icons
 	fi
+}
+
+# Check the presence of the required commands for icons extraction
+# USAGE: requirements_check_icons
+requirements_check_icons() {
+	# Return early if icons inclusion has been disabled.
+	local option_icons
+	option_icons=$(option_value 'icons')
+	if [ "$option_icons" -eq 0 ]; then
+		return 0
+	fi
+
+	local icons_requirements requirement
+	icons_requirements=$(requirements_list_icons)
+	for requirement in $icons_requirements; do
+		if ! command -v "$requirement" >/dev/null 2>&1; then
+			error_dependency_not_found "$requirement"
+			return 1
+		fi
+	done
 }
 
 # output what a command is provided by
