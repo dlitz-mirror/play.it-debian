@@ -448,11 +448,11 @@ package_maintainer() {
 		&& grep --quiet '^PACKAGER=' '/etc/makepkg.conf'
 	then
 		if grep --quiet '^PACKAGER=".*"' '/etc/makepkg.conf'; then
-			maintainer=$(sed 's/^PACKAGER="\(.*\)"/\1/' '/etc/makepkg.conf')
+			maintainer=$(sed --silent 's/^PACKAGER="\(.*\)"/\1/p' '/etc/makepkg.conf')
 		elif grep --quiet "^PACKAGER='.*'" '/etc/makepkg.conf'; then
-			maintainer=$(sed "s/^PACKAGER='\\(.*\\)'/\\1/" '/etc/makepkg.conf')
+			maintainer=$(sed --silent "s/^PACKAGER='\\(.*\\)'/\\1/p" '/etc/makepkg.conf')
 		else
-			maintainer=$(sed 's/^PACKAGER=\(.*\)/\1/' '/etc/makepkg.conf')
+			maintainer=$(sed --silent 's/^PACKAGER=\(.*\)/\1/p' '/etc/makepkg.conf')
 		fi
 	fi
 	if [ -n "$maintainer" ]; then
