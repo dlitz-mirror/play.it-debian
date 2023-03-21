@@ -511,3 +511,29 @@ package_version() {
 
 	printf '%s' "$package_version"
 }
+
+# Print the list of package names provided by the given package
+# This list is used to ensure conflicting packages can not be installed at the same time.
+# USAGE: package_provides $package
+# RETURN: a list of provided package names,
+#         one per line,
+#         or an empty string
+package_provides() {
+	local package
+	package="$1"
+
+	local package_provides
+	package_provides=$(context_value "${package}_PROVIDES")
+
+	# Return early if there is no package name to print
+	if [ -z "$package_provides" ]; then
+		return 0
+	fi
+
+	# Skip empty lines,
+	# ignore grep error state if there is nothing to return.
+	set +o errexit
+	printf '%s' "$package_provides" | \
+		grep --invert-match --regexp='^$'
+	set -o errexit
+}

@@ -15,13 +15,13 @@ debian_package_metadata_control() {
 			cut --fields=1
 	)
 
-	local package_architecture package_depends package_description package_id package_maintainer package_version
+	local package_architecture package_depends package_description package_id package_maintainer package_provides package_version
 	package_architecture=$(package_architecture_string "$package")
 	package_depends=$(package_debian_field_depends "$package")
 	package_description=$(package_description "$package")
 	package_id=$(package_id "$package")
 	package_maintainer=$(package_maintainer)
-	package_provide=$(package_provide_legacy "$package")
+	package_provides=$(debian_field_provides "$package")
 	package_version=$(package_version)
 
 	cat <<- EOF
@@ -33,11 +33,9 @@ debian_package_metadata_control() {
 	Installed-Size: $package_size
 	Section: non-free/games
 	EOF
-	if [ -n "$package_provide" ]; then
+	if [ -n "$package_provides" ]; then
 		cat <<- EOF
-		Conflicts: $package_provide
-		Provides: $package_provide
-		Replaces: $package_provide
+		$package_provides
 		EOF
 	fi
 	if [ -n "$package_depends" ]; then
@@ -173,6 +171,37 @@ package_debian_field_depends() {
 	done <<- EOF
 	$(printf '%s' "$dependencies_list")
 	EOF
+}
+
+# Debian - Print the contents of the "Conflicts", "Provides" and "Replaces" fields
+# USAGE: debian_field_provides $package
+debian_field_provides() {
+	local package
+	package="$1"
+
+	local package_provides
+	package_provides=$(package_provides "$package")
+
+	# Return early if there is no package name provided
+	if [ -z "$package_provides" ]; then
+		return 0
+	fi
+
+	local packages_list package_name
+	packages_list=''
+	while read -r package_name; do
+		if [ -z "$packages_list" ]; then
+			packages_list="$package_name"
+		else
+			packages_list="$packages_list, $package_name"
+		fi
+	done <<- EOL
+	$(printf '%s' "$package_provides")
+	EOL
+
+	printf 'Conflicts: %s\n' "$packages_list"
+	printf 'Provides: %s\n' "$packages_list"
+	printf 'Replaces: %s\n' "$packages_list"
 }
 
 # Print the file name of the given package

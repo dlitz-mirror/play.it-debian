@@ -159,32 +159,6 @@ pkg_build_gentoo() {
 	export ${pkg}_PKG
 }
 
-# Gentoo - Print "RDEPEND" field
-# USAGE: package_gentoo_field_rdepend $package
-package_gentoo_field_rdepend() {
-	local package
-	package="$1"
-
-	local dependencies_list first_item_displayed dependency_string
-	dependencies_list=$(dependencies_gentoo_full_list "$package")
-	first_item_displayed=0
-	while IFS= read -r dependency_string; do
-		if [ -z "$dependency_string" ]; then
-			continue
-		fi
-		# Gentoo policy is that dependencies should be displayed one per line,
-		# and indentation is to be done using tabulations.
-		if [ "$first_item_displayed" -eq 0 ]; then
-			printf '%s' "$dependency_string"
-			first_item_displayed=1
-		else
-			printf '\n\t%s' "$dependency_string"
-		fi
-	done <<- EOL
-	$(printf '%s' "$dependencies_list")
-	EOL
-}
-
 # Print the file name of the given package
 # USAGE: package_name_gentoo $package
 # RETURNS: the file name, as a string
