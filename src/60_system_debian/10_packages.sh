@@ -21,7 +21,7 @@ debian_package_metadata_control() {
 	package_description=$(package_description "$package")
 	package_id=$(package_id "$package")
 	package_maintainer=$(package_maintainer)
-	package_provide=$(package_provide "$package")
+	package_provide=$(package_provide_legacy "$package")
 	package_version=$(package_version)
 
 	cat <<- EOF

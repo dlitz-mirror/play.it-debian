@@ -366,34 +366,6 @@ package_description_oneline() {
 	fi
 }
 
-# Print the alternative name provided by the given package
-# USAGE: package_provide $package
-# RETURNS: the provided package id as a non-empty string,
-#          or an empty string is none is provided
-package_provide() {
-	local package
-	package="$1"
-
-	local package_provide
-	package_provide=$(context_value "${package}_PROVIDE")
-
-	# Return early if no alternative package name is provided by the current package.
-	if [ -z "$package_provide" ]; then
-		return 0
-	fi
-
-	# Apply Gentoo-specific tweaks.
-	local option_package
-	option_package=$(option_value 'package')
-	case "$option_package" in
-		('gentoo'|'egentoo')
-			package_provide=$(gentoo_package_provide "$package_provide")
-		;;
-	esac
-
-	printf '%s' "$package_provide"
-}
-
 # Print the file name of the given package
 # USAGE: package_name $package
 # RETURNS: the file name, as a string

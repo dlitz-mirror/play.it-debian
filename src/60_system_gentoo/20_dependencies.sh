@@ -159,7 +159,7 @@ pkg_set_deps_gentoo() {
 						packages_list=$(packages_get_list)
 						for tested_package in $packages_list; do
 							if [ "$tested_package" != "$package" ]; then
-								package_provide=$(package_provide "$tested_package")
+								package_provide=$(package_provide_legacy "$tested_package")
 								if [ "$package_provide" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
 									pkg_dep="|| ( ${pkg_dep} )"
 								fi
@@ -224,7 +224,7 @@ dependencies_gentoo_full_list() {
 	$packages_list"
 
 	local package_provide
-	package_provide=$(package_provide "$package")
+	package_provide=$(package_provide_legacy "$package")
 	if [ -n "$package_provide" ]; then
 		packages_list_full="$packages_list_full
 		$package_provide"

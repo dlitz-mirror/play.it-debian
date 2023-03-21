@@ -281,21 +281,6 @@ gentoo_package_architecture_string() {
 	printf '%s' "$package_architecture_string"
 }
 
-# Tweak the alternative name provided by a package, to ensure compatibility with portage
-# cf. https://devmanual.gentoo.org/general-concepts/dependencies/index.html#blockers
-# USAGE: gentoo_package_provide $provided_package_id
-# RETURNS: the provided package id as a non-empty string
-gentoo_package_provide() {
-	local provided_package_id
-	provided_package_id="$1"
-
-	# Avoid mixups between numbers in package ID and version number.
-	provided_package_id=$(gentoo_package_id "$provided_package_id")
-
-	# Add the required "!games-playit/" prefix to the package ID.
-	printf '!games-playit/%s' "$provided_package_id"
-}
-
 # Tweak the given package id to ensure compatibility with portage
 # USAGE: gentoo_package_id $package_id
 # RETURNS: the package id, as a non-empty string
