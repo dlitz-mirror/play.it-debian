@@ -525,6 +525,15 @@ package_provides() {
 	local package_provides
 	package_provides=$(context_value "${package}_PROVIDES")
 
+	# Fall back to the legacy PKG_xxx_PROVIDE variable,
+	# for game scripts targeting ./play.it ≤ 2.23 only.
+	if \
+		[ -z "$package_provides" ] \
+		&& ! version_is_at_least '2.24' "$target_version"
+	then
+		package_provides=$(package_provide_legacy "$package")
+	fi
+
 	# Return early if there is no package name to print
 	if [ -z "$package_provides" ]; then
 		return 0
