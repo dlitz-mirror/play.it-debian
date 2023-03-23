@@ -23,7 +23,13 @@ wine_launcher_write() {
 				persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
 				if [ -n "$persistent_directories" ]; then
 					wine_persistent "$persistent_directories"
-				elif ! version_is_at_least '2.24' "$target_version"; then
+				elif \
+					! version_is_at_least '2.24' "$target_version" && \
+					! variable_is_empty 'APP_WINE_LINK_DIRS'
+				then
+					if version_is_at_least '2.23' "$target_version"; then
+						warning_deprecated_variable 'APP_WINE_LINK_DIRS' 'WINE_PERSISTENT_DIRECTORIES'
+					fi
 					wine_persistent_legacy
 				fi
 				wine_persistent_regedit_environment
