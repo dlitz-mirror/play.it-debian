@@ -477,3 +477,29 @@ warning_deprecated_function() {
 	print_warning > /dev/stderr
 	printf "$message" "$old_function" "$new_function" > /dev/stderr
 }
+
+# Display a warning when a deprecated variable is set.
+# USAGE: warning_deprecated_variable $old_variable $new_variable
+warning_deprecated_variable() {
+	local old_variable new_variable
+	old_variable="$1"
+	new_variable="$2"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La variable suivante est dépréciée : %s\n'
+			message="$message"'Cette nouvelle variable devrait être utilisée à sa place : %s\n\n'
+		;;
+		('en'|*)
+			message='The following variable is deprecated: %s\n'
+			message="$message"'This new variable should be used instead: %s\n\n'
+		;;
+	esac
+
+	# Print the message on the standard error output,
+	# to avoid messing up the regular output of the variable that triggered this warning.
+	print_warning > /dev/stderr
+	printf "$message" "$old_variable" "$new_variable" > /dev/stderr
+}
