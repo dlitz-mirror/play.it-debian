@@ -218,6 +218,11 @@ dependencies_gentoo_full_list() {
 	packages_list_full="$packages_list_full
 	$packages_list"
 
+	# Include dependencies on GStreamer plugins
+	packages_list=$(gentoo_dependencies_gstreamer_all_formats "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
 	local package_provide
 	package_provide=$(package_provide "$package")
 	if [ -n "$package_provide" ]; then

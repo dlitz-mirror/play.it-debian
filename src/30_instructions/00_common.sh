@@ -24,6 +24,14 @@ print_instructions() {
 		dependencies_unknown_mono_libraries_clear
 	fi
 
+	# Print the list of GStreamer media format dependencies that have been skipped
+	if [ -n "$(dependencies_unknown_gstreamer_media_formats_list)" ]; then
+		warning_dependencies_unknown_gstreamer_media_formats
+		# Clear list of skipped media format dependencies,
+		# so it will not be shown again.
+		dependencies_unknown_gstreamer_media_formats_clear
+	fi
+
 	# Sort packages by architecture
 	local package package_architecture packages_list_32 packages_list_64 packages_list_all
 	packages_list_32=''
