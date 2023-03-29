@@ -1,13 +1,12 @@
 # display keywords of an ebuild made of several packages
 # USAGE: egentoo_field_keywords $package…
 egentoo_field_keywords() {
-	local keywords
-
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'egentoo_field_keywords'
 	fi
 
-	local package package_architecture
+	local keywords package package_architecture
+	keywords='x86 amd64'
 	for package in "$@"; do
 		package_architecture=$(package_architecture "$package")
 		case "$package_architecture" in
@@ -21,25 +20,20 @@ egentoo_field_keywords() {
 		esac
 	done
 
-	if test -n "$keywords"; then
-		printf '%s' "$keywords"
-	else
-		printf '%s' 'x86 amd64'
-	fi
+	printf '%s' "$keywords"
 }
 
 # display egentoo ebuild RDEPEND field
 # USAGE: egentoo_field_rdepend $package…
 egentoo_field_rdepend() {
-	local package_64bits
-	local package_32bits
-	local package_data
-
 	if [ $# -eq 0 ]; then
 		error_no_arguments 'egentoo_field_rdepend'
 	fi
 
-	local package package_architecture
+	local package package_architecture package_64bits package_32bits package_data
+	package_64bits=''
+	package_32bits=''
+	package_data=''
 	for package in "$@"; do
 		package_architecture=$(package_architecture "$package")
 		case "$package_architecture" in

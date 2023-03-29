@@ -184,7 +184,7 @@ pkg_build_egentoo() {
 	local tar_command tar_options
 	tar_command='tar'
 	tar_options='--create -P'
-	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
+	if variable_is_empty 'PLAYIT_TAR_IMPLEMENTATION'; then
 		guess_tar_implementation
 	fi
 	case "$PLAYIT_TAR_IMPLEMENTATION" in

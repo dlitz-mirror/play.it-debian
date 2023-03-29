@@ -15,7 +15,9 @@ pkg_set_deps_gentoo() {
 			architecture_suffix=''
 		;;
 	esac
+	local pkg_dep
 	for dep in "$@"; do
+		pkg_dep=''
 		case $dep in
 			('alsa')
 				pkg_dep="media-libs/alsa-lib$architecture_suffix media-plugins/alsa-plugins$architecture_suffix"
@@ -173,10 +175,6 @@ pkg_set_deps_gentoo() {
 			else
 				pkg_deps="$pkg_deps $pkg_dep"
 			fi
-		fi
-		if [ -n "$pkg_overlay" ]; then
-			dependency_gentoo_overlays_add "$pkg_overlay"
-			pkg_overlay=''
 		fi
 	done
 }
