@@ -154,6 +154,34 @@ packages_get_list() {
 	printf '%s' "$packages_list"
 }
 
+# Print the list of all the packages that could be built from the current game script,
+# not restricted to the current archive.
+# USAGE: packages_list_all_archives
+# RETURN: a list of package identifiers,
+#         separated by line breaks,
+#         without duplicates
+packages_list_all_archives() {
+	# Get the list of archives supported by the current game script.
+	local archives_list ARCHIVE
+	archives_list=$(archives_return_list)
+
+	# List the packages that could be generated for each supported archive.
+	local packages_list_full packages_list package
+	packages_list_full=''
+	for ARCHIVE in $archives_list; do
+		packages_list=$(packages_get_list)
+		for package in $packages_list; do
+			packages_list_full="$packages_list_full
+			$package"
+		done
+	done
+
+	# Print the full list of packages, one per line, with no duplicates.
+	printf '%s\n' $packages_list_full | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
 # Print the list of the packages that would be generated from the given archive.
 # USAGE: packages_print_list $archive
 # RETURN: a list of package file names, one per line
