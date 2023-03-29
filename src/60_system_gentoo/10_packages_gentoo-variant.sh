@@ -293,7 +293,7 @@ gentoo_package_provide() {
 	provided_package_id=$(gentoo_package_id "$provided_package_id")
 
 	# Add the required "!games-playit/" prefix to the package ID.
-	printf '!games-playit/%s' "$package_provide"
+	printf '!games-playit/%s' "$provided_package_id"
 }
 
 # Tweak the given package id to ensure compatibility with portage
