@@ -23,7 +23,9 @@ pkg_set_deps_arch32() {
 	for dep in "$@"; do
 		case $dep in
 			('alsa')
-				pkg_dep='lib32-alsa-lib lib32-alsa-plugins'
+				pkg_dep='
+				lib32-alsa-lib
+				lib32-alsa-plugins'
 			;;
 			('dosbox')
 				pkg_dep='dosbox'
@@ -32,7 +34,9 @@ pkg_set_deps_arch32() {
 				pkg_dep='lib32-freetype2'
 			;;
 			('gcc32')
-				pkg_dep='gcc-multilib lib32-gcc-libs'
+				pkg_dep='
+				gcc-multilib
+				lib32-gcc-libs'
 			;;
 			('glibc')
 				pkg_dep='lib32-glibc'
@@ -86,7 +90,9 @@ pkg_set_deps_arch32() {
 				pkg_dep='wine'
 			;;
 			('winetricks')
-				pkg_dep='winetricks xterm'
+				pkg_dep='
+				winetricks
+				xterm'
 			;;
 			('xcursor')
 				pkg_dep='lib32-libxcursor'
@@ -144,7 +150,9 @@ pkg_set_deps_arch64() {
 	for dep in "$@"; do
 		case $dep in
 			('alsa')
-				pkg_dep='alsa-lib alsa-plugins'
+				pkg_dep='
+				alsa-lib
+				alsa-plugins'
 			;;
 			('dosbox')
 				pkg_dep='dosbox'
@@ -153,7 +161,9 @@ pkg_set_deps_arch64() {
 				pkg_dep='freetype2'
 			;;
 			('gcc32')
-				pkg_dep='gcc-multilib lib32-gcc-libs'
+				pkg_dep='
+				gcc-multilib
+				lib32-gcc-libs'
 			;;
 			('glibc')
 				pkg_dep='glibc'
@@ -210,7 +220,9 @@ pkg_set_deps_arch64() {
 				pkg_dep='wine'
 			;;
 			('winetricks')
-				pkg_dep='winetricks'
+				pkg_dep='
+				winetricks
+				xterm'
 			;;
 			('xcursor')
 				pkg_dep='libxcursor'

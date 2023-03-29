@@ -1,3 +1,10 @@
+2.22.4
+
+  * Arch Linux: Fix fetching the maintainer name from /etc/makepkg.conf.
+  * Arch Linux: Fix adding multiple dependencies for a single generic keyword.
+  * Gentoo: Fix support for PKG_xxx_PROVIDE.
+  * Gentoo: Prevent querying of unset variables.
+
 2.22.3
 
   * Ensure function return codes are never hidden behind cat calls.
