@@ -38,3 +38,54 @@ huge_file_split() {
 		rm --force "$file_path"
 	)
 }
+
+# Print the commands concatenating chunks into a single file
+# USAGE: huge_file_concatenate $file_path
+huge_file_concatenate() {
+	local file_path
+	file_path="$1"
+
+	local path_game
+	path_game=$(path_game_data)
+
+	cat <<- EOF
+	# Rebuild a huge file from its chunks
+	huge_file='${path_game}/${file_path}'
+	EOF
+	cat <<- 'EOF'
+	for huge_file_chunk in "${huge_file}."*; do
+	    if [ -e "$huge_file_chunk" ]; then
+	        case "${LANG%_*}" in
+	            ('fr')
+	                message='Reconstruction de %s à partir de ses parties…\n'
+	            ;;
+	            ('en'|*)
+	                message='Rebuilding %s from its chunks…\n'
+	            ;;
+	        esac
+	        printf "$message" "$huge_file"
+	        cat "${huge_file}."* > "$huge_file"
+	        rm "${huge_file}."*
+	        break
+	    fi
+	done
+	EOF
+}
+
+# Print the commands deleting a single file that has been built from its chunks
+# USAGE: huge_file_delete $file_path
+huge_file_delete() {
+	local file_path
+	file_path="$1"
+
+	local path_game
+	path_game=$(path_game_data)
+
+	cat <<- EOF
+	# Delete a huge file that has been built from its chunks
+	huge_file='${path_game}/${file_path}'
+	EOF
+	cat <<- 'EOF'
+	rm --force "$huge_file"
+	EOF
+}
