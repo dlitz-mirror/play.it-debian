@@ -149,25 +149,6 @@ pkg_set_deps_gentoo() {
 					;;
 				esac
 			;;
-			(*)
-				local option_package
-				option_package=$(option_value 'package')
-				case "$option_package" in
-					('gentoo')
-						pkg_dep="games-playit/$(printf '%s' "$dep" | sed 's/-/_/g')"
-						local tested_package packages_list package_provide
-						packages_list=$(packages_get_list)
-						for tested_package in $packages_list; do
-							if [ "$tested_package" != "$package" ]; then
-								package_provide=$(package_provide "$tested_package")
-								if [ "$package_provide" = "$(printf '%s' "!!games-playit/${dep}" | sed 's/-/_/g')" ]; then
-									pkg_dep="|| ( ${pkg_dep} )"
-								fi
-							fi
-						done
-						;;
-				esac
-				;;
 		esac
 		if [ -n "$pkg_dep" ]; then
 			if variable_is_empty 'pkg_deps'; then
@@ -222,13 +203,6 @@ dependencies_gentoo_full_list() {
 	packages_list=$(gentoo_dependencies_gstreamer_all_formats "$package")
 	packages_list_full="$packages_list_full
 	$packages_list"
-
-	local package_provide
-	package_provide=$(package_provide "$package")
-	if [ -n "$package_provide" ]; then
-		packages_list_full="$packages_list_full
-		$package_provide"
-	fi
 
 	printf '%s' "$packages_list_full" | \
 		sed 's/^\s*//g' | \

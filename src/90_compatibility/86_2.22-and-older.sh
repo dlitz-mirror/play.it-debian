@@ -1,5 +1,40 @@
 # Keep compatibility with 2.22 and older
 
+package_provide_legacy() {
+	local package
+	package="$1"
+
+	local package_provide
+	package_provide=$(context_value "${package}_PROVIDE")
+
+	# Return early if no alternative package name is provided by the current package.
+	if [ -z "$package_provide" ]; then
+		return 0
+	fi
+
+	# Apply Gentoo-specific tweaks.
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('gentoo'|'egentoo')
+			package_provide=$(gentoo_package_provide_legacy "$package_provide")
+		;;
+	esac
+
+	printf '%s' "$package_provide"
+}
+
+gentoo_package_provide_legacy() {
+	local provided_package_id
+	provided_package_id="$1"
+
+	# Avoid mixups between numbers in package ID and version number.
+	provided_package_id=$(gentoo_package_id "$provided_package_id")
+
+	# Add the required "!games-playit/" prefix to the package ID.
+	printf '!games-playit/%s' "$provided_package_id"
+}
+
 debian_dpkg_compression_legacy() {
 	local dpkg_options option_compression
 	dpkg_options="$1"
