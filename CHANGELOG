@@ -1,3 +1,14 @@
+2.22.5
+
+  * Use a single function to handle the copy of the game binary into the prefix.
+  * Fix permissions on the manual pages.
+  * Add support for more native libraries dependencies:
+    - libc++.so.1
+    - libc++abi.so.1
+    - libpcre.so.3
+  * Arch Linux: Improve listing of packages providing generic dependencies.
+  * Arch Linux: Prevent querying of unset variables.
+
 2.22.4
 
   * Arch Linux: Fix fetching the maintainer name from /etc/makepkg.conf.
