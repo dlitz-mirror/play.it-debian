@@ -109,6 +109,20 @@ content_inclusion() {
 		return 0
 	fi
 
+	# Debian - Handle huge files by splitting them in 9GB chunks,
+	# and include the chunks in dedicated packages.
+	if [ "$content_id" = "GAME_${package#PKG_}" ]; then
+		local option_package
+		option_package=$(option_value 'package')
+		if [ "$option_package" = 'deb' ]; then
+			local huge_files
+			huge_files=$(huge_files_list "$package")
+			if [ -n "$huge_files" ]; then
+				content_inclusion_chunks "$package"
+			fi
+		fi
+	fi
+
 	# Set path to destination,
 	# ensuring it is an absolute path.
 	local package_path destination_path
