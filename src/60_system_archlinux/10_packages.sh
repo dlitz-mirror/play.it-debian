@@ -106,7 +106,7 @@ pkg_build_arch() {
 
 	local tar_options
 	tar_options='--create'
-	if [ -z "$PLAYIT_TAR_IMPLEMENTATION" ]; then
+	if variable_is_empty 'PLAYIT_TAR_IMPLEMENTATION'; then
 		guess_tar_implementation
 	fi
 	case "$PLAYIT_TAR_IMPLEMENTATION" in
