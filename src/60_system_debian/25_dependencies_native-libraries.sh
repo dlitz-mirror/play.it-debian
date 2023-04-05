@@ -59,6 +59,12 @@ dependency_package_providing_library_deb() {
 		('libc.so.6')
 			package_name='libc6'
 		;;
+		('libc++.so.1')
+			package_name='libc++1'
+		;;
+		('libc++abi.so.1')
+			package_name='libc++abi1'
+		;;
 		('libcairo.so.2')
 			package_name='libcairo2'
 		;;
@@ -232,6 +238,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='libpangoft2-1.0-0'
+		;;
+		('libpcre.so.3')
+			package_name='libpcre3'
 		;;
 		('libphysfs.so.1')
 			package_name='libphysfs1'

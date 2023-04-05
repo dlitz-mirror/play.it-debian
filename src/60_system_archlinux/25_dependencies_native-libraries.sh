@@ -78,6 +78,12 @@ dependency_package_providing_library_arch() {
 		('libc.so.6')
 			package_name='glibc'
 		;;
+		('libc++.so.1')
+			package_name='libc++'
+		;;
+		('libc++abi.so.1')
+			package_name='libc++abi'
+		;;
 		('libcairo.so.2')
 			package_name='cairo'
 		;;
@@ -248,6 +254,10 @@ dependency_package_providing_library_arch() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='pango'
+		;;
+		('libpcre.so.3')
+			# This library is not provided for Arch Linux
+			unset package_name
 		;;
 		('libphysfs.so.1')
 			package_name='physfs'
@@ -506,6 +516,14 @@ dependency_package_providing_library_arch32() {
 		('libc.so.6')
 			package_name='lib32-glibc'
 		;;
+		('libc++.so.1')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
+		;;
+		('libc++abi.so.1')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
+		;;
 		('libcairo.so.2')
 			package_name='lib32-cairo'
 		;;
@@ -680,6 +698,10 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='lib32-pango'
+		;;
+		('libpcre.so.3')
+			# This library is not provided for Arch Linux
+			unset package_name
 		;;
 		('libphysfs.so.1')
 			package_name='lib32-physfs'

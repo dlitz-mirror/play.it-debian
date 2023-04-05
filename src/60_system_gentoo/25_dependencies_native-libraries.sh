@@ -1,64 +1,64 @@
-# Gentoo - Print the package names providing the given native libraries
-# USAGE: gentoo_dependencies_providing_native_libraries $library[…]
-# RETURN: a list of Gentoo package names,
-#         one per line
-gentoo_dependencies_providing_native_libraries() {
-	local library packages_list package
-	packages_list=''
-	for library in "$@"; do
-		package=$(dependency_package_providing_library_gentoo "$library")
-		packages_list="$packages_list
-		$package"
-	done
+	# Gentoo - Print the package names providing the given native libraries
+	# USAGE: gentoo_dependencies_providing_native_libraries $library[…]
+	# RETURN: a list of Gentoo package names,
+	#         one per line
+	gentoo_dependencies_providing_native_libraries() {
+		local library packages_list package
+		packages_list=''
+		for library in "$@"; do
+			package=$(dependency_package_providing_library_gentoo "$library")
+			packages_list="$packages_list
+			$package"
+		done
 
-	printf '%s' "$packages_list" | \
-		sed 's/^\s*//g' | \
-		grep --invert-match --regexp='^$' | \
-		sort --unique
-}
+		printf '%s' "$packages_list" | \
+			sed 's/^\s*//g' | \
+			grep --invert-match --regexp='^$' | \
+			sort --unique
+	}
 
-# Gentoo - Print the package names providing the given native libraries in a 32-bit build
-# USAGE: gentoo_dependencies_providing_native_libraries_32bit $library[…]
-# RETURN: a list of Gentoo package names,
-#         one per line
-gentoo_dependencies_providing_native_libraries_32bit() {
-	local library packages_list package
-	packages_list=''
-	for library in "$@"; do
-		package=$(dependency_package_providing_library_gentoo32 "$library")
-		packages_list="$packages_list
-		$package"
-	done
+	# Gentoo - Print the package names providing the given native libraries in a 32-bit build
+	# USAGE: gentoo_dependencies_providing_native_libraries_32bit $library[…]
+	# RETURN: a list of Gentoo package names,
+	#         one per line
+	gentoo_dependencies_providing_native_libraries_32bit() {
+		local library packages_list package
+		packages_list=''
+		for library in "$@"; do
+			package=$(dependency_package_providing_library_gentoo32 "$library")
+			packages_list="$packages_list
+			$package"
+		done
 
-	printf '%s' "$packages_list" | \
-		sed 's/^\s*//g' | \
-		grep --invert-match --regexp='^$' | \
-		sort --unique
-}
+		printf '%s' "$packages_list" | \
+			sed 's/^\s*//g' | \
+			grep --invert-match --regexp='^$' | \
+			sort --unique
+	}
 
-# Gentoo - Print the package name providing the given native library
-# USAGE: dependency_package_providing_library_gentoo $library $package
-dependency_package_providing_library_gentoo() {
-	local library package package_name pkg_overlay
-	library="$1"
-	package="$2"
-	case "$library" in
-		('ld-linux.so.2')
-			package_name='sys-libs/glibc'
-		;;
-		('ld-linux-x86-64.so.2')
-			package_name='sys-libs/glibc'
-		;;
-		('liballeg.so.4.4')
-			package_name='media-libs/allegro'
-		;;
-		('libasound.so.2')
-			package_name='media-libs/alsa-lib'
-		;;
-		('libasound_module_'*'.so')
-			package_name='media-plugins/alsa-plugins'
-		;;
-		('libatk-1.0.so.0')
+	# Gentoo - Print the package name providing the given native library
+	# USAGE: dependency_package_providing_library_gentoo $library $package
+	dependency_package_providing_library_gentoo() {
+		local library package package_name pkg_overlay
+		library="$1"
+		package="$2"
+		case "$library" in
+			('ld-linux.so.2')
+				package_name='sys-libs/glibc'
+			;;
+			('ld-linux-x86-64.so.2')
+				package_name='sys-libs/glibc'
+			;;
+			('liballeg.so.4.4')
+				package_name='media-libs/allegro'
+			;;
+			('libasound.so.2')
+				package_name='media-libs/alsa-lib'
+			;;
+			('libasound_module_'*'.so')
+				package_name='media-plugins/alsa-plugins'
+			;;
+			('libatk-1.0.so.0')
 			package_name='dev-libs/atk'
 		;;
 		('libaudio.so.2')
@@ -78,6 +78,12 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libc.so.6')
 			package_name='sys-libs/glibc'
+		;;
+		('libc++.so.1')
+			package_name='sys-libs/libcxx'
+		;;
+		('libc++abi.so.1')
+			package_name='sys-libs/libcxxabi'
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo'
@@ -251,6 +257,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango'
+		;;
+		('libpcre.so.3')
+			package_name='dev-libs/libpcre-debian'
 		;;
 		('libphysfs.so.1')
 			package_name='dev-games/physfs'
@@ -515,6 +524,12 @@ dependency_package_providing_library_gentoo32() {
 		('libc.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
+		('libc++.so.1')
+			package_name='sys-libs/libcxx[abi_x86_32]'
+		;;
+		('libc++abi.so.1')
+			package_name='sys-libs/libcxxabi[abi_x86_32]'
+		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo[abi_x86_32]'
 		;;
@@ -687,6 +702,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libpangoft2-1.0.so.0')
 			package_name='x11-libs/pango[abi_x86_32]'
+		;;
+		('libpcre.so.3')
+			package_name='dev-libs/libpcre-debian[abi_x86_32]'
 		;;
 		('libphysfs.so.1')
 			package_name='dev-games/physfs[abi_x86_32]'
