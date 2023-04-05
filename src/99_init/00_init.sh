@@ -168,6 +168,30 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	unset option_list_requirements
 
+	# Check the list of packages that would be built,
+	# exit early if all are already there.
+
+	option_overwrite=$(option_value 'overwrite')
+	if [ "$option_overwrite" -eq 0 ]; then
+		option_output_dir=$(option_value 'output-dir')
+		generated_packages_list=$(packages_print_list "$ARCHIVE")
+		missing_package=0
+		while read -r generated_package; do
+			if [ ! -e "${option_output_dir}/${generated_package}" ]; then
+				missing_package=1
+				break
+			fi
+		done <<- EOL
+		$(printf '%s' "$generated_packages_list")
+		EOL
+		if [ "$missing_package" -eq 0 ]; then
+			info_all_packages_already_built
+			exit 0
+		fi
+		unset option_output_dir generated_packages_list generated_package missing_package
+	fi
+	unset option_overwrite
+
 	# Check the presence of required tools
 
 	check_deps

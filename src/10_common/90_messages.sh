@@ -503,3 +503,20 @@ warning_deprecated_variable() {
 	print_warning > /dev/stderr
 	printf "$message" "$old_variable" "$new_variable" > /dev/stderr
 }
+
+# Information - All the packages are already built, there is no need to run a new build
+# USAGE: info_all_packages_already_built
+info_all_packages_already_built() {
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Tous les paquets sont déjà présents, il nʼy a pas besoin de les reconstruire.\n'
+		;;
+		('en'|*)
+			message='All the packages are already built, there is no need to run a new build.\n'
+		;;
+	esac
+
+	printf "$message"
+}
