@@ -49,7 +49,7 @@ native_launcher_run() {
 
 			# Make a hard copy of the game binary in the current prefix,
 			# otherwise the engine might follow the link and run the game from the system path.
-			launcher_unity3d_copy_binary
+			native_launcher_binary_copy
 
 			# Work around Unity3D poor support for non-US locales
 			launcher_unity3d_force_locale
@@ -57,7 +57,13 @@ native_launcher_run() {
 		(*)
 			# Make a hard copy of the game binary in the current prefix,
 			# otherwise the engine might follow the link and run the game from the system path.
-			native_launcher_binary_copy "$application"
+			local prefix_type
+			prefix_type=$(application_prefix_type "$application")
+			case "$prefix_type" in
+				('symlinks')
+					native_launcher_binary_copy
+				;;
+			esac
 		;;
 	esac
 
@@ -111,34 +117,16 @@ native_launcher_exec_path() {
 }
 
 # Linux native - Print the copy command for the game binary
-# USAGE: native_launcher_binary_copy $application
+# USAGE: native_launcher_binary_copy
 native_launcher_binary_copy() {
-	local application
-	application="$1"
-
-	# Return early if the copy should not be done.
-	local prefix_type
-	prefix_type=$(application_prefix_type "$application")
-	case "$prefix_type" in
-		('symlinks')
-			# The copy is required.
-		;;
-		(*)
-			return 0
-		;;
-	esac
-
 	cat <<- 'EOF'
-	## Copy the game binary into the user prefix
-	if [ -e "${USER_PERSISTENT_PATH}/${APP_EXE}" ]; then
-	    source_dir="$USER_PERSISTENT_PATH"
-	else
-	    source_dir="$PATH_GAME"
+	# Copy the game binary into the user prefix
+	exe_destination="${PATH_PREFIX}/${APP_EXE}"
+	if [ -h "$exe_destination" ]; then
+	    exe_source=$(realpath "$exe_destination")
+	    cp --remove-destination "$exe_source" "$exe_destination"
 	fi
-	(
-	    cd "$source_dir"
-	    cp --parents --dereference --remove-destination "$APP_EXE" "$PATH_PREFIX"
-	)
+
 	EOF
 }
 
