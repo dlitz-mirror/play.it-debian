@@ -274,6 +274,40 @@ archive_get_type() {
 	# Guess archive type from its file name
 	local archive_file
 	archive_file=$(get_value "$archive_identifier")
+	archive_type=$(archive_guess_type_from_name "$archive_file")
+	if [ -n "$archive_type" ]; then
+		printf '%s' "$archive_type"
+		return 0
+	fi
+
+	# Fall back on using the type of the parent archive, if there is one
+	if \
+		printf '%s' "$archive_identifier" | \
+		grep --quiet --word-regexp '^ARCHIVE_.*_PART[0-9]\+$'
+	then
+		local parent_archive
+		parent_archive=$(printf '%s' "$archive_identifier" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
+		archive_type=$(archive_get_type "$parent_archive")
+		if [ -n "$archive_type" ]; then
+			printf '%s' "$archive_type"
+			return 0
+		fi
+	fi
+
+	# Throw an error if no type could be found
+	error_archive_type_not_set "$archive_identifier"
+	return 1
+}
+
+# Guess the archive type from its file name
+# USAGE: archive_guess_type_from_name $archive_file
+# RETURNS: the archive type,
+#          or an empty string is none could be guessed
+archive_guess_type_from_name() {
+	local archive_file
+	archive_file="$1"
+
+	local archive_type
 	case "$archive_file" in
 		(*'.cab')
 			archive_type='cabinet'
@@ -315,28 +349,8 @@ archive_get_type() {
 			archive_type='7z'
 		;;
 	esac
-	if [ -n "$archive_type" ]; then
-		printf '%s' "$archive_type"
-		return 0
-	fi
 
-	# Fall back on using the type of the parent archive, if there is one
-	if \
-		printf '%s' "$archive_identifier" | \
-		grep --quiet --word-regexp '^ARCHIVE_.*_PART[0-9]\+$'
-	then
-		local parent_archive
-		parent_archive=$(printf '%s' "$archive_identifier" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
-		archive_type=$(archive_get_type "$parent_archive")
-		if [ -n "$archive_type" ]; then
-			printf '%s' "$archive_type"
-			return 0
-		fi
-	fi
-
-	# Throw an error if no type could be found
-	error_archive_type_not_set "$archive_identifier"
-	return 1
+	printf '%s' "${archive_type:-}"
 }
 
 # get the extractor for the given archive
