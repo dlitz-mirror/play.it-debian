@@ -280,6 +280,15 @@ archive_get_type() {
 		return 0
 	fi
 
+	# Guess archive type from its headers
+	local archive_path
+	archive_path=$(archive_find_path "$archive")
+	archive_type=$(archive_guess_type_from_headers "$archive_path")
+	if [ -n "$archive_type" ]; then
+		printf '%s' "$archive_type"
+		return 0
+	fi
+
 	# Fall back on using the type of the parent archive, if there is one
 	if \
 		printf '%s' "$archive_identifier" | \
@@ -349,6 +358,26 @@ archive_guess_type_from_name() {
 			archive_type='7z'
 		;;
 	esac
+
+	printf '%s' "${archive_type:-}"
+}
+
+# Guess the archive type from its headers
+# USAGE: archive_guess_type_from_headers $archive_path
+# RETURNS: the archive type,
+#          or an empty string is none could be guessed
+archive_guess_type_from_headers() {
+	local archive_path
+	archive_path="$1"
+
+	local archive_type
+	if head --lines=20 "$archive_path" | grep --quiet 'Makeself'; then
+		if head --lines=50 "$archive_path" | grep --quiet 'script="./startmojo.sh"'; then
+			archive_type='mojosetup'
+		else
+			archive_type='makeself'
+		fi
+	fi
 
 	printf '%s' "${archive_type:-}"
 }
