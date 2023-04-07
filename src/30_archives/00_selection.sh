@@ -327,9 +327,6 @@ archive_guess_type_from_name() {
 		('setup_'*'.exe'|'patch_'*'.exe')
 			archive_type='innosetup'
 		;;
-		('gog_'*'.sh')
-			archive_type='mojosetup'
-		;;
 		(*'.iso')
 			archive_type='iso'
 		;;
