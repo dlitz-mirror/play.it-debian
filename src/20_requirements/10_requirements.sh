@@ -201,6 +201,9 @@ requirements_list_archive_single() {
 		('lha')
 			requirements='lha'
 		;;
+		('makeself')
+			requirements=$(archive_requirements_makeself_list)
+		;;
 		('mojosetup')
 			requirements='bsdtar'
 		;;

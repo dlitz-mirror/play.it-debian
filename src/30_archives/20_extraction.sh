@@ -115,14 +115,17 @@ archive_dependencies_check_from_type() {
 		('lha')
 			archive_dependencies_check_type_lha
 		;;
-		('msi')
-			archive_dependencies_check_type_msi
+		('makeself')
+			archive_requirements_makeself_check
 		;;
 		('mojosetup')
 			archive_dependencies_check_type_mojosetup
 		;;
 		('mojosetup_unzip')
 			archive_dependencies_check_type_mojosetup_unzip
+		;;
+		('msi')
+			archive_dependencies_check_type_msi
 		;;
 		('nullsoft-installer')
 			archive_dependencies_check_type_nullsoft
@@ -269,8 +272,8 @@ archive_extraction_from_type() {
 		('lha')
 			archive_extraction_lha "$archive" "$destination_directory"
 		;;
-		('msi')
-			archive_extraction_msi "$archive" "$destination_directory"
+		('makeself')
+			archive_extraction_makeself "$archive" "$destination_directory"
 		;;
 		('mojosetup')
 			archive_extraction_mojosetup "$archive" "$destination_directory"
@@ -278,6 +281,9 @@ archive_extraction_from_type() {
 		('mojosetup_unzip')
 			warning_archive_type_deprecated "$archive"
 			archive_extraction_mojosetup_unzip "$archive" "$destination_directory"
+		;;
+		('msi')
+			archive_extraction_msi "$archive" "$destination_directory"
 		;;
 		('nullsoft-installer')
 			archive_extraction_nullsoft "$archive" "$destination_directory"
