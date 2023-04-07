@@ -119,10 +119,11 @@ archive_dependencies_check_from_type() {
 			archive_requirements_makeself_check
 		;;
 		('mojosetup')
-			archive_dependencies_check_type_mojosetup
+			archive_requirements_mojosetup_check
 		;;
 		('mojosetup_unzip')
-			archive_dependencies_check_type_mojosetup_unzip
+			# WARNING - This archive type is deprecated.
+			archive_requirements_mojosetup_check
 		;;
 		('msi')
 			archive_dependencies_check_type_msi
@@ -280,7 +281,7 @@ archive_extraction_from_type() {
 		;;
 		('mojosetup_unzip')
 			warning_archive_type_deprecated "$archive"
-			archive_extraction_mojosetup_unzip "$archive" "$destination_directory"
+			archive_extraction_mojosetup "$archive" "$destination_directory"
 		;;
 		('msi')
 			archive_extraction_msi "$archive" "$destination_directory"

@@ -205,7 +205,7 @@ requirements_list_archive_single() {
 			requirements=$(archive_requirements_makeself_list)
 		;;
 		('mojosetup')
-			requirements='bsdtar'
+			requirements=$(archive_requirements_mojosetup_list)
 		;;
 		('msi')
 			requirements='msiextract'
@@ -233,7 +233,7 @@ requirements_list_archive_single() {
 		;;
 		('mojosetup_unzip')
 			# WARNING - This archive type is deprecated.
-			requirements='unzip'
+			requirements=$(archive_requirements_mojosetup_list)
 		;;
 		('zip_unclean')
 			# WARNING - This archive type is deprecated.

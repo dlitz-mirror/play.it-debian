@@ -1,67 +1,70 @@
-# check the presence of required tools to handle a MojoSetup MakeSelf installer
-# USAGE: archive_dependencies_check_type_mojosetup
-archive_dependencies_check_type_mojosetup() {
-	local required_command
-	for required_command in 'bsdtar' 'unzip'; do
-		if command -v "$required_command" >/dev/null 2>&1; then
-			return 0
+# List the requirements to extract the contents of a MojoSetup installer
+# USAGE: archive_requirements_mojosetup_list
+archive_requirements_mojosetup_list() {
+	# ShellCheck false-positive
+	# Quote this to prevent word splitting.
+	# shellcheck disable=SC2046
+	printf '%s\n' \
+		$(archive_requirements_makeself_list) \
+		'unar'
+}
+
+# Check the presence of required tools to handle a MojoSetup installer
+# USAGE: archive_requirements_mojosetup_check
+archive_requirements_mojosetup_check() {
+	local commands_list required_command
+	commands_list=$(archive_requirements_mojosetup_list)
+	for required_command in $commands_list; do
+		if ! command -v "$required_command" >/dev/null 2>&1; then
+			error_dependency_not_found "$required_command"
+			return 1
 		fi
 	done
-	error_dependency_not_found 'bsdtar'
-	return 1
 }
 
-# check the presence of required tools to handle a MojoSetup MakeSelf installer (using unzip)
-# USAGE: archive_dependencies_check_type_mojosetup_unzip
-archive_dependencies_check_type_mojosetup_unzip() {
-	# WARNING - This function is deprecated.
-	if command -v 'unzip' >/dev/null 2>&1; then
-		return 0
-	fi
-	error_dependency_not_found 'unzip'
-	return 1
-}
-
-# extract the content of a MojoSetup MakeSelf installer
+# Extract the content of a MojoSetup installer
 # USAGE: archive_extraction_mojosetup $archive $destination_directory
 archive_extraction_mojosetup() {
 	local archive destination_directory
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_mojosetup'
-	assert_not_empty 'destination_directory' 'archive_extraction_mojosetup'
 
-	if command -v 'bsdtar' >/dev/null 2>&1; then
-		archive_extraction_using_bsdtar "$archive" "$destination_directory"
-	elif command -v 'unzip' >/dev/null 2>&1; then
-		# Data extraction using unzip will end in a failure state even if nothing went wrong.
-		set +o errexit
-		archive_extraction_using_unzip "$archive" "$destination_directory" 2>/dev/null
-		set -o errexit
-		set_standard_permissions "$destination_directory"
-	else
-		error_archive_no_extractor_found 'mojosetup'
-		return 1
-	fi
-}
+	local archive_path
+	archive_path=$(archive_find_path "$archive")
 
-# extract the content of a MojoSetup MakeSelf installer (using unzip)
-# USAGE: archive_extraction_mojosetup_unzip $archive $destination_directory
-archive_extraction_mojosetup_unzip() {
-	# WARNING - This function is deprecated.
-	local archive destination_directory
-	archive="$1"
-	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_mojosetup_unzip'
-	assert_not_empty 'destination_directory' 'archive_extraction_mojosetup_unzip'
+	# Fetch the archive properties
+	local archive_header_length archive_makeself_offset archive_mojosetup_filesize archive_offset
+	archive_header_length=$( \
+		head --lines=200 "$archive_path" | \
+		sed --silent 's/^\s*offset=`head -n \([0-9]\+\) "$1" | wc -c | tr -d " "`\s*/\1/p' \
+	)
+	archive_makeself_offset=$(head --lines="$archive_header_length" "$archive_path" | wc --bytes | tr --delete ' ')
+	archive_mojosetup_filesize=$( \
+		head --lines=200 "$archive_path" | \
+		sed --silent 's/^\s*filesizes="\([0-9]\+\)"\s*/\1/p' \
+	)
+	archive_offset=$((archive_makeself_offset + archive_mojosetup_filesize))
 
-	if command -v 'unzip' >/dev/null 2>&1; then
-		set +o errexit
-		archive_extraction_using_unzip "$archive" "$destination_directory" 2>/dev/null
-		set -o errexit
-		set_standard_permissions "$destination_directory"
-	else
-		error_archive_no_extractor_found 'mojosetup'
-		return 1
-	fi
+	# Extract the .zip archive containing the game data
+	local archive_game_data
+	archive_game_data="${destination_directory}/mojosetup-game-data.zip"
+	dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null > "$archive_game_data"
+
+	# Extract the game data
+
+	## For some reason the extraction with unzip fails with:
+	##
+	## End-of-central-directory signature not found.  Either this file is not
+    ## a zipfile, or it constitutes one disk of a multi-part archive.  In the
+    ## latter case the central directory and zipfile comment will be found on
+    ## the last disk(s) of this archive.
+	##
+	## Despite this error, listing the archive contents with zipinfo does not fail.
+	## Using unar instead, the extraction works with no error.
+
+	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" 1>/dev/null
+	rm "$archive_game_data"
+
+	# Apply minimal permissions on extracted files
+	set_standard_permissions "$destination_directory"
 }
