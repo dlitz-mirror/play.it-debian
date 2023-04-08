@@ -33,16 +33,9 @@ archive_extraction_mojosetup() {
 	archive_path=$(archive_find_path "$archive")
 
 	# Fetch the archive properties
-	local archive_header_length archive_makeself_offset archive_mojosetup_filesize archive_offset
-	archive_header_length=$( \
-		head --lines=200 "$archive_path" | \
-		sed --silent 's/^\s*offset=`head -n \([0-9]\+\) "$1" | wc -c | tr -d " "`\s*/\1/p' \
-	)
-	archive_makeself_offset=$(head --lines="$archive_header_length" "$archive_path" | wc --bytes | tr --delete ' ')
-	archive_mojosetup_filesize=$( \
-		head --lines=200 "$archive_path" | \
-		sed --silent 's/^\s*filesizes="\([0-9]\+\)"\s*/\1/p' \
-	)
+	local archive_makeself_offset archive_mojosetup_filesize archive_offset
+	archive_makeself_offset=$(makeself_offset "$archive_path")
+	archive_mojosetup_filesize=$(makeself_filesize "$archive_path")
 	archive_offset=$((archive_makeself_offset + archive_mojosetup_filesize))
 
 	# Extract the .zip archive containing the game data
