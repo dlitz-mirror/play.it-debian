@@ -66,9 +66,7 @@ build_pkg() {
 		;;
 		('deb')
 			for package in "$@"; do
-				package_path=$(package_path "$package")
-				export pkg="$package" # See TODO
-				pkg_build_deb "$package_path"
+				pkg_build_deb "$package"
 			done
 		;;
 		('gentoo')

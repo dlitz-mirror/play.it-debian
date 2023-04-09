@@ -91,10 +91,13 @@ pkg_write_deb() {
 }
 
 # Build a .deb package from the given path
-# USAGE: pkg_build_deb $package_path
+# USAGE: pkg_build_deb $package
 pkg_build_deb() {
+	local package
+	package="$1"
+
 	local package_path
-	package_path="$1"
+	package_path=$(package_path "$package")
 
 	local option_output_dir generated_package_name generated_package_path
 	option_output_dir=$(option_value 'output-dir')
