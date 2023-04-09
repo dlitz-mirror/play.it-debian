@@ -6,22 +6,14 @@ debian_package_metadata_control() {
 	local package
 	package="$1"
 
-	# Compute the package size, in kilobytes.
-	local package_path package_size
-	package_path=$(package_path "$package")
-	package_size=$(
-		du --total --block-size=1K --summarize "$package_path" | \
-			tail --lines=1 | \
-			cut --fields=1
-	)
-
-	local package_architecture package_depends package_description package_id package_maintainer package_provides package_version
+	local package_architecture package_depends package_description package_id package_maintainer package_provides package_size package_version
 	package_architecture=$(package_architecture_string "$package")
 	package_depends=$(package_debian_field_depends "$package")
 	package_description=$(package_description "$package")
 	package_id=$(package_id "$package")
 	package_maintainer=$(package_maintainer)
 	package_provides=$(debian_field_provides "$package")
+	package_size=$(debian_package_size "$package")
 	package_version=$(package_version)
 
 	cat <<- EOF
@@ -147,6 +139,25 @@ pkg_build_deb() {
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
 		--build "$package_path" "$generated_package_path" 1>/dev/null
+}
+
+# Debian - Compute the package installed size
+# USAGE: debian_package_size $package
+# RETURN: the package contents size, in kilobytes
+debian_package_size() {
+	local package
+	package="$1"
+
+	# Compute the package size, in kilobytes.
+	local package_path package_size
+	package_path=$(package_path "$package")
+	package_size=$(
+		du --total --block-size=1K --summarize "$package_path" | \
+			tail --lines=1 | \
+			cut --fields=1
+	)
+
+	printf '%s' "$package_size"
 }
 
 # Debian - Print contents of "Depends" field
