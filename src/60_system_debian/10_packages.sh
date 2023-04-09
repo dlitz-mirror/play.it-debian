@@ -137,6 +137,13 @@ pkg_build_deb() {
 		;;
 	esac
 
+	# Use old .deb format if the package is going over the size limit for the modern format
+	local package_size
+	package_size=$(debian_package_size "$package")
+	if [ "$package_size" -gt 9700000 ]; then
+		dpkg_options="${dpkg_options} --deb-format=0.939000"
+	fi
+
 	# Run the actual package generation, using dpkg-deb
 	information_package_building "${generated_package_name}.deb"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
