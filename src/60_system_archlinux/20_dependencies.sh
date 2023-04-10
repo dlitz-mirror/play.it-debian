@@ -1,22 +1,3 @@
-# Arch Linux - Set list of generic dependencies
-# USAGE: pkg_set_deps_arch $dep[…]
-pkg_set_deps_arch() {
-	# FIXME - $package should be passed as a function argument, not inherited from the calling function
-	local package
-	package="$pkg"
-
-	local package_architecture
-	package_architecture=$(package_architecture "$package")
-	case "$package_architecture" in
-		('32')
-			pkg_set_deps_arch32 "$@"
-		;;
-		(*)
-			pkg_set_deps_arch64 "$@"
-		;;
-	esac
-}
-
 # Arch Linux - Set list of generic dependencies (32-bit)
 # USAGE: pkg_set_deps_arch32 $dep[…]
 pkg_set_deps_arch32() {
@@ -285,13 +266,23 @@ dependencies_archlinux_full_list() {
 	packages_list_full=''
 
 	# Include generic dependencies
+	local package_architecture generic_dependencies_command
+	package_architecture=$(package_architecture "$package")
+	case "$package_architecture" in
+		('32')
+			generic_dependencies_command='pkg_set_deps_arch32'
+		;;
+		(*)
+			generic_dependencies_command='pkg_set_deps_arch64'
+		;;
+	esac
 	local dependencies_generic dependency_generic pkg_deps
 	dependencies_generic=$(dependencies_list_generic "$package")
 	while read -r dependency_generic; do
 		# pkg_set_deps_arch sets a variable $pkg_deps instead of printing a value,
 		# we prevent it from leaking by setting it to an empty value.
 		pkg_deps=''
-		pkg_set_deps_arch $dependency_generic
+		"$generic_dependencies_command" $dependency_generic
 		packages_list_full="$packages_list_full
 		$pkg_deps"
 	done <<- EOL

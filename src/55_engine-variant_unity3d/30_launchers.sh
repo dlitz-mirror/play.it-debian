@@ -61,20 +61,6 @@ launcher_unity3d_dedicated_log() {
 	EOF
 }
 
-# Print the snippet making a hard copy of the game binary in the prefix
-# USAGE: launcher_unity3d_copy_binary
-# RETURN: the code snippet, a multi-lines string, indented with four spaces
-launcher_unity3d_copy_binary() {
-	cat <<- 'EOF'
-	# Make a hard copy of the game binary in the current prefix,
-	# otherwise the engine might follow the link and run the game from the system path.
-	if [ -h "$APP_EXE" ]; then
-	    cp --remove-destination "$(realpath "$APP_EXE")" "$APP_EXE"
-	fi
-
-	EOF
-}
-
 # Print the snippet setting forcing the use of a US-like locale
 # USAGE: launcher_unity3d_force_locale
 # RETURN: the code snippet, a multi-lines string
