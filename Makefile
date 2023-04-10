@@ -45,8 +45,8 @@ endif
 install: all
 	install -D --mode=644 lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
-	install -D man/man6/play.it.6 $(DESTDIR)$(mandir)/man6/play.it.6
-	install -D man/fr/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
+	install -D --mode=644 man/man6/play.it.6 $(DESTDIR)$(mandir)/man6/play.it.6
+	install -D --mode=644 man/fr/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
 
 uninstall:
 	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.sh $(DESTDIR)$(mandir)/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
