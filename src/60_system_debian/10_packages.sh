@@ -142,6 +142,7 @@ pkg_build_deb() {
 	package_size=$(debian_package_size "$package")
 	if [ "$package_size" -gt 9700000 ]; then
 		warning_debian_size_limit "$package"
+		export PLAYIT_DEBIAN_OLD_DEB_FORMAT=1
 		dpkg_options="${dpkg_options} --deb-format=0.939000"
 	fi
 

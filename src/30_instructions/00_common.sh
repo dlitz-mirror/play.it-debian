@@ -80,7 +80,7 @@ print_instructions() {
 				print_instructions_arch "$@"
 			;;
 			('deb')
-				print_instructions_deb "$@"
+				debian_install_instructions "$@"
 			;;
 			('gentoo')
 				print_instructions_gentoo "$@"
@@ -95,7 +95,6 @@ print_instructions() {
 
 # print installation instructions, for a given architecture
 # USAGE: print_instructions_architecture_specific $pkg[…]
-# CALLS: print_instructions_arch print_instructions_deb print_instructions_gentoo
 print_instructions_architecture_specific() {
 	local architecture_variant
 	architecture_variant="${1}-bit"
@@ -109,7 +108,7 @@ print_instructions_architecture_specific() {
 			print_instructions_arch "$@"
 		;;
 		('deb')
-			print_instructions_deb "$@"
+			debian_install_instructions "$@"
 		;;
 		('gentoo')
 			print_instructions_gentoo "$@"
