@@ -141,6 +141,7 @@ pkg_build_deb() {
 	local package_size
 	package_size=$(debian_package_size "$package")
 	if [ "$package_size" -gt 9700000 ]; then
+		warning_debian_size_limit "$package"
 		dpkg_options="${dpkg_options} --deb-format=0.939000"
 	fi
 
