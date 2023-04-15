@@ -140,7 +140,8 @@ application_id() {
 
 # print the file name of the given application
 # USAGE: application_exe $application
-# RETURN: the application file name
+# RETURN: the application file name,
+#         or an empty string is none is set
 application_exe() {
 	local application application_exe
 	application="$1"
@@ -157,12 +158,6 @@ application_exe() {
 		esac
 	fi
 
-	# Check that the file name is not empty
-	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application" "$application_type"
-		return 1
-	fi
-
 	printf '%s' "$application_exe"
 }
 
@@ -173,8 +168,16 @@ application_exe() {
 application_exe_escaped() {
 	local application
 	application="$1"
+
+	local application_exe
+	application_exe=$(application_exe "$application")
+	## Check that application binary has been found
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application" 'application_exe_escaped'
+		return 1
+	fi
 	# If the file name includes single quotes, replace each one with: '\''
-	application_exe "$application" | sed "s/'/'\\\''/g"
+	printf '%s' "$application_exe" | sed "s/'/'\\\''/g"
 }
 
 # Print the full path to the application binary.

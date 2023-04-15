@@ -19,7 +19,19 @@ wine_launcher_write() {
 			{
 				wine_winetricks_wrapper
 				wine_prefix_wineprefix_build
-				wine_prefix_persistent_links
+				local persistent_directories
+				persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
+				if [ -n "$persistent_directories" ]; then
+					wine_persistent "$persistent_directories"
+				elif \
+					! version_is_at_least '2.24' "$target_version" && \
+					! variable_is_empty 'APP_WINE_LINK_DIRS'
+				then
+					if version_is_at_least '2.23' "$target_version"; then
+						warning_deprecated_variable 'APP_WINE_LINK_DIRS' 'WINE_PERSISTENT_DIRECTORIES'
+					fi
+					wine_persistent_legacy
+				fi
 				wine_persistent_regedit_environment
 			} >> "$target_file"
 			wine_persistent_regedit_load >> "$target_file"
@@ -38,10 +50,9 @@ wine_launcher_write() {
 	esac
 
 	# Automatically add required dependencies to the current package
-	local package
-	package=$(context_package)
-	dependencies_add_generic "$package" 'wine'
 	if ! variable_is_empty 'APP_WINETRICKS'; then
+		local package
+		package=$(context_package)
 		dependencies_add_generic "$package" 'winetricks'
 	fi
 }
@@ -203,37 +214,31 @@ wine_prefix_wineprefix_build() {
 	EOF
 }
 
-# WINE - Set links required for persistent paths diversion
-# USAGE: wine_prefix_persistent_links
-wine_prefix_persistent_links() {
+# WINE - Divert paths from the WINE prefix to persistent storage
+# USAGE: wine_persistent $directories_list
+wine_persistent() {
+	local directories_list
+	directories_list="$1"
+
+	# Return early if there is no path to divert
+	if [ -z "$directories_list" ]; then
+		return 0
+	fi
+
+	cat <<- EOF
+	# Divert paths from the WINE prefix to persistent storage
+	WINE_PERSISTENT_DIRECTORIES="$directories_list"
+	EOF
 	cat <<- 'EOF'
-	# Move files that should be diverted to persistent paths to the game directory
-	printf '%s' "$APP_WINE_LINK_DIRS" | grep ':' | while read -r line; do
-	    prefix_dir="$PATH_PREFIX/${line%%:*}"
-	    wine_dir="$WINEPREFIX/drive_c/${line#*:}"
-	    mkdir --parents "$prefix_dir"
-	    if [ ! -h "$wine_dir" ]; then
-	        if [ -d "$wine_dir" ]; then
-	            # A basic recursive cp will not work due to the presence of symbolic links to directories in the destination.
-	            (
-	                cd "$prefix_dir"
-	                find . -type l
-	            ) | while read -r link; do
-	                if [ -e "${wine_dir}/${link}" ]; then
-	                    cp --no-clobber --recursive "${wine_dir}/${link}"/* "${prefix_dir}/${link}"/
-	                    rm --force --recursive "${wine_dir:?}/${link}"
-	                fi
-	            done
-	            cp --no-clobber --no-target-directory --recursive "$wine_dir" "$prefix_dir"
-	            rm --force --recursive "$wine_dir"
-	        fi
-	        if [ ! -d "$prefix_dir" ]; then
-	            mkdir --parents "$prefix_dir"
-	        fi
-	        mkdir --parents "$(dirname "$wine_dir")"
-	        ln --symbolic "$prefix_dir" "$wine_dir"
+	while read -r directory; do
+	    if [ -z "$directory" ]; then
+	        continue
 	    fi
-	done
+	    persistent_path_diversion "${WINEPREFIX}/drive_c" "${USER_PERSISTENT_PATH}/wineprefix" "$directory"
+	done <<- EOL
+	$(printf "$WINE_PERSISTENT_DIRECTORIES")
+	EOL
+
 	EOF
 }
 
@@ -354,17 +359,15 @@ launcher_write_script_wine_application_variables() {
 	application="$1"
 	file="$2"
 
-	local application_exe application_options wine_link_dirs
+	local application_exe application_options
 	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
-	wine_link_dirs=$(get_value 'APP_WINE_LINK_DIRS')
 
 	cat >> "$file" <<- EOF
 	# Set application-specific values
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
-	APP_WINE_LINK_DIRS="$wine_link_dirs"
 
 	EOF
 	return 0

@@ -136,6 +136,46 @@ launcher_prefix_function_persistent_populate_prefix() {
 	EOF
 }
 
+# Print the function used to divert a given path to persistent storage
+# USAGE: persistent_path_diversion
+persistent_path_diversion() {
+	cat <<- 'EOF'
+	# Replace a given directory in a prefix by a link to another directory in persistent storage
+	# USAGE: persistent_path_diversion $path_source $path_destination $directory
+	persistent_path_diversion() {
+	    local path_source path_destination directory
+	    path_source="$1"
+	    path_destination="$2"
+	    directory="$3"
+
+	    # If the target directory does not already exist in persistent storage,
+	    # copy it from the prefix (if existing) or create a new empty one.
+	    if [ ! -e "${path_destination}/${directory}" ]; then
+	        if [ -e "${path_source}/${directory}" ]; then
+	            (
+	                cd "$path_source"
+	                cp --dereference --parents --recursive \
+	                    "$directory" \
+	                    "$path_destination"
+				)
+	        else
+	            mkdir --parents "${path_destination}/${directory}"
+	        fi
+	    fi
+
+	    # Replace the directory in the prefix by a link to the one in persistent storage.
+	    if [ ! -h "${path_source}/${directory}" ]; then
+	        local directory_parent
+	        directory_parent=$(dirname "${path_source}/${directory}")
+	        rm --recursive --force "${path_source:?}/${directory}"
+	        mkdir --parents "$directory_parent"
+	        ln --symbolic "${path_destination}/${directory}" "${path_source}/${directory}"
+	    fi
+	}
+
+	EOF
+}
+
 # print function initializing persistent directories
 # USAGE: launcher_prefix_function_persistent_init_directories
 launcher_prefix_function_persistent_init_directories() {
@@ -154,22 +194,7 @@ launcher_prefix_function_persistent_init_directories() {
 	                continue
 	            fi
 	            while read -r directory; do
-	                if [ ! -e "${USER_PERSISTENT_PATH}/${directory}" ]; then
-	                    # If the target directory does not already exist in persistent storage,
-	                    # copy it from the prefix (if existing) or create a new empty one.
-	                    if [ -e "$directory" ]; then
-	                        cp --dereference --parents --recursive \
-	                            "$directory" \
-	                            "${USER_PERSISTENT_PATH}"
-	                    else
-	                        mkdir --parents "${USER_PERSISTENT_PATH}/${directory}"
-	                    fi
-	                fi
-	                # Replace the directory in the prefix by a link to the one in persistent storage.
-	                directory_parent=$(dirname "$directory")
-	                rm --recursive --force "$directory"
-	                mkdir --parents "$directory_parent"
-	                ln --symbolic "${USER_PERSISTENT_PATH}/${directory}" "$directory"
+	                persistent_path_diversion "$PATH_PREFIX" "$USER_PERSISTENT_PATH" "$directory"
 	            done <<- EOL
 	            $(expand_path_pattern "$directory_pattern")
 	            EOL
@@ -260,6 +285,7 @@ launcher_prefix_function_persistent_update_from_prefix() {
 # print functions handling persistent storage
 # USAGE: launcher_prefix_functions_persistent
 launcher_prefix_functions_persistent() {
+	persistent_path_diversion
 	launcher_prefix_function_expand_path_pattern
 	launcher_prefix_function_persistent_populate_prefix
 	launcher_prefix_function_persistent_init_directories

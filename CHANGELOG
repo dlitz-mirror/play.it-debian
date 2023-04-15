@@ -1,3 +1,57 @@
+2.23.0
+
+  * Deprecation notices:
+    * Game scripts targeting ./play.it ≥ 2.23 can no longer use the legacy compression values, see "Compression methods rework" in the 2.22.0 section for more details.
+    * Trying to expand an unset variable triggers an error, for game scripts targeting ./play.it ≥ 2.23.
+    * APP_WINE_LINK_DIRS is deprecated, setting it from a game script targeting ./play.it ≥ 2.23 triggers a warning. For games scripts targeting ./play.it ≥ 2.24, it will by ignored silently. See "Improved support for WINE games" below for more details.
+    * PKG_xxx_PROVIDE is deprecated, setting it from a game script targeting ./play.it ≥ 2.23 triggers a warning. For games scripts targeting ./play.it ≥ 2.24, it will by ignored silently. See "Packages metadata improvements" below for more details.
+
+  * Dependencies handling improvements:
+    * The generation of a launcher for the following application types automatically adds the required dependency to the current package:
+      - dosbox
+      - java
+      - mono
+      - renpy
+      - residualvm
+      - scummvm
+      - wine
+    * Dependencies on media formats decoded by GStreamer can be listed using a new variable: PKG_xxx_DEPENDENCIES_GSTREAMER_PLUGINS.
+      The following formats are supported:
+      - avidemux
+      - decodebin
+      - deinterlace
+      - audio/x-wma, wmaversion=(int)1
+      - video/quicktime, variant=(string)iso
+      - video/x-ms-asf
+      - video/x-msvideo
+      - video/x-wmv, wmvversion=(int)1
+
+  * Application type improvements:
+    * The application type can be guessed from the game binary even if it is not in the current package.
+
+  * Packages generation improvements:
+    * A package can now provide/conflict with multiple package names, using a new variable PKG_xxx_PROVIDES
+      One provided name should be written on each line, using line breaks as the list separator.
+    * If all packages are already built, the execution stops early to avoid unnecessary resources and time usage.
+    * Debian: Automatically use old .deb format (0.939000) to avoid size limits.
+
+  * Improved support for Unity3D games:
+    * Shipped plugins for Unity3D games can now be listed using a new dedicated variable: UNITY3D_PLUGINS.
+      If it is set to a non-empty value, it is used during the call to "content_inclusion_default" to include the listed plugins into the path dedicated to shipped libraries. Plugins that are not listed are removed to ensure they are not included later by some "CONTENT_xxx_FILES" greedy pattern.
+
+  * Improved support for WINE games:
+    * A new variable is used to list the paths that should be diverted from the WINE prefix: WINE_PERSISTENT_DIRECTORIES
+      Its value is a list of paths relative to $WINEPREFIX/drive_c, one per line.
+
+  * Improved handling of huge files (>9GB):
+    * Files that are bigger than 9GB should be listed using a dedicated variable: HUGE_FILES_xxx
+      "xxx" is the suffix of the package that includes these files by default, so a list for PKG_DATA would be named HUGE_FILES_DATA.
+    * The files split is done only when building .deb packages, as Arch Linux and Gentoo packages have no size limit.
+
+  * Improved support for Makeself and MojoSetup archives:
+    * The type declaration can be omitted for MojoSetup archives.
+    * Support is added for Makeself archives.
+
 2.22.5
 
   * Use a single function to handle the copy of the game binary into the prefix.

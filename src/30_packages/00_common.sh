@@ -66,9 +66,7 @@ build_pkg() {
 		;;
 		('deb')
 			for package in "$@"; do
-				package_path=$(package_path "$package")
-				export pkg="$package" # See TODO
-				pkg_build_deb "$package_path"
+				pkg_build_deb "$package"
 			done
 		;;
 		('gentoo')
@@ -152,6 +150,34 @@ packages_get_list() {
 	fi
 
 	printf '%s' "$packages_list"
+}
+
+# Print the list of all the packages that could be built from the current game script,
+# not restricted to the current archive.
+# USAGE: packages_list_all_archives
+# RETURN: a list of package identifiers,
+#         separated by line breaks,
+#         without duplicates
+packages_list_all_archives() {
+	# Get the list of archives supported by the current game script.
+	local archives_list ARCHIVE
+	archives_list=$(archives_return_list)
+
+	# List the packages that could be generated for each supported archive.
+	local packages_list_full packages_list package
+	packages_list_full=''
+	for ARCHIVE in $archives_list; do
+		packages_list=$(packages_get_list)
+		for package in $packages_list; do
+			packages_list_full="$packages_list_full
+			$package"
+		done
+	done
+
+	# Print the full list of packages, one per line, with no duplicates.
+	printf '%s\n' $packages_list_full | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
 }
 
 # Print the list of the packages that would be generated from the given archive.
@@ -338,34 +364,6 @@ package_description_oneline() {
 	fi
 }
 
-# Print the alternative name provided by the given package
-# USAGE: package_provide $package
-# RETURNS: the provided package id as a non-empty string,
-#          or an empty string is none is provided
-package_provide() {
-	local package
-	package="$1"
-
-	local package_provide
-	package_provide=$(context_value "${package}_PROVIDE")
-
-	# Return early if no alternative package name is provided by the current package.
-	if [ -z "$package_provide" ]; then
-		return 0
-	fi
-
-	# Apply Gentoo-specific tweaks.
-	local option_package
-	option_package=$(option_value 'package')
-	case "$option_package" in
-		('gentoo'|'egentoo')
-			package_provide=$(gentoo_package_provide "$package_provide")
-		;;
-	esac
-
-	printf '%s' "$package_provide"
-}
-
 # Print the file name of the given package
 # USAGE: package_name $package
 # RETURNS: the file name, as a string
@@ -510,4 +508,39 @@ package_version() {
 	esac
 
 	printf '%s' "$package_version"
+}
+
+# Print the list of package names provided by the given package
+# This list is used to ensure conflicting packages can not be installed at the same time.
+# USAGE: package_provides $package
+# RETURN: a list of provided package names,
+#         one per line,
+#         or an empty string
+package_provides() {
+	local package
+	package="$1"
+
+	local package_provides
+	package_provides=$(context_value "${package}_PROVIDES")
+
+	# Fall back to the legacy PKG_xxx_PROVIDE variable,
+	# for game scripts targeting ./play.it ≤ 2.23 only.
+	if \
+		[ -z "$package_provides" ] \
+		&& ! version_is_at_least '2.24' "$target_version"
+	then
+		package_provides=$(package_provide_legacy "$package")
+	fi
+
+	# Return early if there is no package name to print
+	if [ -z "$package_provides" ]; then
+		return 0
+	fi
+
+	# Skip empty lines,
+	# ignore grep error state if there is nothing to return.
+	set +o errexit
+	printf '%s' "$package_provides" | \
+		grep --invert-match --regexp='^$'
+	set -o errexit
 }

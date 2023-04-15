@@ -6,22 +6,14 @@ debian_package_metadata_control() {
 	local package
 	package="$1"
 
-	# Compute the package size, in kilobytes.
-	local package_path package_size
-	package_path=$(package_path "$package")
-	package_size=$(
-		du --total --block-size=1K --summarize "$package_path" | \
-			tail --lines=1 | \
-			cut --fields=1
-	)
-
-	local package_architecture package_depends package_description package_id package_maintainer package_version
+	local package_architecture package_depends package_description package_id package_maintainer package_provides package_size package_version
 	package_architecture=$(package_architecture_string "$package")
 	package_depends=$(package_debian_field_depends "$package")
 	package_description=$(package_description "$package")
 	package_id=$(package_id "$package")
 	package_maintainer=$(package_maintainer)
-	package_provide=$(package_provide "$package")
+	package_provides=$(debian_field_provides "$package")
+	package_size=$(debian_package_size "$package")
 	package_version=$(package_version)
 
 	cat <<- EOF
@@ -33,11 +25,9 @@ debian_package_metadata_control() {
 	Installed-Size: $package_size
 	Section: non-free/games
 	EOF
-	if [ -n "$package_provide" ]; then
+	if [ -n "$package_provides" ]; then
 		cat <<- EOF
-		Conflicts: $package_provide
-		Provides: $package_provide
-		Replaces: $package_provide
+		$package_provides
 		EOF
 	fi
 	if [ -n "$package_depends" ]; then
@@ -101,10 +91,13 @@ pkg_write_deb() {
 }
 
 # Build a .deb package from the given path
-# USAGE: pkg_build_deb $package_path
+# USAGE: pkg_build_deb $package
 pkg_build_deb() {
+	local package
+	package="$1"
+
 	local package_path
-	package_path="$1"
+	package_path=$(package_path "$package")
 
 	local option_output_dir generated_package_name generated_package_path
 	option_output_dir=$(option_value 'output-dir')
@@ -144,11 +137,39 @@ pkg_build_deb() {
 		;;
 	esac
 
+	# Use old .deb format if the package is going over the size limit for the modern format
+	local package_size
+	package_size=$(debian_package_size "$package")
+	if [ "$package_size" -gt 9700000 ]; then
+		warning_debian_size_limit "$package"
+		export PLAYIT_DEBIAN_OLD_DEB_FORMAT=1
+		dpkg_options="${dpkg_options} --deb-format=0.939000"
+	fi
+
 	# Run the actual package generation, using dpkg-deb
 	information_package_building "${generated_package_name}.deb"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
 		--build "$package_path" "$generated_package_path" 1>/dev/null
+}
+
+# Debian - Compute the package installed size
+# USAGE: debian_package_size $package
+# RETURN: the package contents size, in kilobytes
+debian_package_size() {
+	local package
+	package="$1"
+
+	# Compute the package size, in kilobytes.
+	local package_path package_size
+	package_path=$(package_path "$package")
+	package_size=$(
+		du --total --block-size=1K --summarize "$package_path" | \
+			tail --lines=1 | \
+			cut --fields=1
+	)
+
+	printf '%s' "$package_size"
 }
 
 # Debian - Print contents of "Depends" field
@@ -173,6 +194,37 @@ package_debian_field_depends() {
 	done <<- EOF
 	$(printf '%s' "$dependencies_list")
 	EOF
+}
+
+# Debian - Print the contents of the "Conflicts", "Provides" and "Replaces" fields
+# USAGE: debian_field_provides $package
+debian_field_provides() {
+	local package
+	package="$1"
+
+	local package_provides
+	package_provides=$(package_provides "$package")
+
+	# Return early if there is no package name provided
+	if [ -z "$package_provides" ]; then
+		return 0
+	fi
+
+	local packages_list package_name
+	packages_list=''
+	while read -r package_name; do
+		if [ -z "$packages_list" ]; then
+			packages_list="$package_name"
+		else
+			packages_list="$packages_list, $package_name"
+		fi
+	done <<- EOL
+	$(printf '%s' "$package_provides")
+	EOL
+
+	printf 'Conflicts: %s\n' "$packages_list"
+	printf 'Provides: %s\n' "$packages_list"
+	printf 'Replaces: %s\n' "$packages_list"
 }
 
 # Print the file name of the given package

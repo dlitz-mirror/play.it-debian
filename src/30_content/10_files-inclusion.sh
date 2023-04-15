@@ -5,8 +5,12 @@ content_inclusion_default() {
 	local packages_list
 	packages_list=$(packages_get_list)
 
-	local package
+	local package unity3d_plugins
 	for package in $packages_list; do
+		unity3d_plugins=$(unity3d_plugins)
+		if [ -n "$unity3d_plugins" ]; then
+			content_inclusion_unity3d_plugins "$package"
+		fi
 		content_inclusion_default_libraries "$package"
 		content_inclusion_default_game_data "$package"
 		content_inclusion_default_documentation "$package"
@@ -103,6 +107,20 @@ content_inclusion() {
 	content_path_full="${PLAYIT_WORKDIR}/gamedata/${content_path}"
 	if [ ! -e "$content_path_full" ]; then
 		return 0
+	fi
+
+	# Debian - Handle huge files by splitting them in 9GB chunks,
+	# and include the chunks in dedicated packages.
+	if [ "$content_id" = "GAME_${package#PKG_}" ]; then
+		local option_package
+		option_package=$(option_value 'package')
+		if [ "$option_package" = 'deb' ]; then
+			local huge_files
+			huge_files=$(huge_files_list "$package")
+			if [ -n "$huge_files" ]; then
+				content_inclusion_chunks "$package"
+			fi
+		fi
 	fi
 
 	# Set path to destination,

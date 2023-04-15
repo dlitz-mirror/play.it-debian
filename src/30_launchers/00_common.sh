@@ -34,6 +34,11 @@ launcher_write_script() {
 	if ! launcher_target_presence_check "$application"; then
 		local application_exe
 		application_exe=$(application_exe "$application")
+		## Check that application binary has been found
+		if [ -z "$application_exe" ]; then
+			error_application_exe_empty "$application" 'launcher_write_script'
+			return 1
+		fi
 		error_launcher_missing_binary "$application_exe"
 		return 1
 	fi
@@ -64,6 +69,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'dosbox'
 		;;
 		('java')
 			case "$prefix_type" in
@@ -81,6 +89,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'java'
 		;;
 		('native')
 			case "$prefix_type" in
@@ -118,6 +129,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'scummvm'
 		;;
 		('renpy')
 			case "$prefix_type" in
@@ -134,6 +148,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'renpy'
 		;;
 		('residualvm')
 			case "$prefix_type" in
@@ -149,9 +166,15 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'residualvm'
 		;;
 		('wine')
 			wine_launcher_write "$application" "$target_file"
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'wine'
 		;;
 		('mono')
 			case "$prefix_type" in
@@ -174,6 +197,9 @@ launcher_write_script() {
 					return 1
 				;;
 			esac
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'mono'
 		;;
 	esac
 	cat >> "$target_file" <<- 'EOF'
@@ -189,6 +215,11 @@ launcher_write_script() {
 		('native')
 			local application_exe application_exe_path
 			application_exe=$(application_exe "$application")
+			## Check that application binary has been found
+			if [ -z "$application_exe" ]; then
+				error_application_exe_empty "$application" 'launcher_write_script'
+				return 1
+			fi
 			application_exe_path=$(application_exe_path "$application_exe")
 			chmod +x "$application_exe_path"
 		;;
@@ -215,6 +246,11 @@ launcher_target_presence_check() {
 
 	local application_exe application_exe_path
 	application_exe=$(application_exe "$application")
+	## Check that application binary has been found
+	if [ -z "$application_exe" ]; then
+		error_application_exe_empty "$application" 'launcher_target_presence_check'
+		return 1
+	fi
 	application_exe_path=$(application_exe_path "$application_exe")
 	test -f "$application_exe_path"
 }

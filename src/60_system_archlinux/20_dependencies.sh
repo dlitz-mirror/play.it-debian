@@ -308,6 +308,11 @@ dependencies_archlinux_full_list() {
 	packages_list_full="$packages_list_full
 	$packages_list"
 
+	# Include dependencies on GStreamer plugins
+	packages_list=$(archlinux_dependencies_gstreamer_all_formats "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
 	printf '%s' "$packages_list_full" | \
 		sed 's/^\s*//g' | \
 		grep --invert-match --regexp='^$' | \
