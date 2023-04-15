@@ -403,6 +403,9 @@ wine_launcher_run() {
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
+	## Silence ShellCheck false-positive
+	## Double quote to prevent globbing and word splitting.
+	# shellcheck disable=SC2086
 	$(wine_command) "$APP_EXE" $APP_OPTIONS "$@"
 	game_exit_status=$?
 	set -o errexit
