@@ -157,7 +157,7 @@ persistent_path_diversion() {
 	                cp --dereference --parents --recursive \
 	                    "$directory" \
 	                    "$path_destination"
-				)
+	            )
 	        else
 	            mkdir --parents "${path_destination}/${directory}"
 	        fi
