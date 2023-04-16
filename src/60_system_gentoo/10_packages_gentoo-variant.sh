@@ -1,3 +1,17 @@
+# Gentoo - Print path to ebuild file for the given package
+# USAGE: gentoo_ebuild_path $package
+# RETURN: the path to the .ebuild file
+gentoo_ebuild_path() {
+	local package
+	package="$1"
+
+	local package_id package_name
+	package_id=$(package_id "$package")
+	package_name=$(package_name "$package")
+
+	printf '%s/%s/gentoo-overlay/games-playit/%s/%s.ebuild' "$PLAYIT_WORKDIR" "$package" "$package_id" "${package_name%.tbz2}"
+}
+
 # write .ebuild package meta-data
 # USAGE: pkg_write_gentoo
 pkg_write_gentoo() {
@@ -19,7 +33,7 @@ pkg_write_gentoo() {
 	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/files/install"
 	local package_version target
 	package_version=$(package_version)
-	target="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
+	target=$(gentoo_ebuild_path "$pkg")
 
 	cat > "$target" <<- EOF
 	EAPI=7
@@ -81,49 +95,40 @@ pkg_write_gentoo() {
 	fi
 }
 
-# build .tbz2 gentoo package
-# USAGE: pkg_build_gentoo $pkg_path
-# NEEDED VARS: (LANG) PLAYIT_WORKDIR
-# CALLED BY: build_pkg
-pkg_build_gentoo() {
-	# FIXME - $pkg should be passed as a function argument, not inherited from the calling function
-	local package_id package_version pkg_filename_base
-	package_version=$(package_version)
-	package_id=$(package_id "$pkg")
-	pkg_filename_base="${package_id}-${package_version}.tbz2"
-
-	# Get packages list for the current game
-	local packages_list
-	packages_list=$(packages_get_list)
-
-	local current_package_id
-	for package in $packages_list; do
-		current_package_id=$(package_id "$package")
-		if [ "$package" != "$pkg" ] && [ "${current_package_id}" = "$package_id" ]; then
-			pkg_filename_base="$(package_architecture_string "$pkg")/$pkg_filename_base"
-			mkdir --parents "$(dirname "$pkg_filename_base")"
-		fi
+# Gentoo ("gentoo" variant) - Build a list of packages
+# USAGE: gentoo_packages_build $package[…]
+gentoo_packages_build() {
+	local package
+	for package in "$@"; do
+		gentoo_package_build_single "$package"
 	done
-	local option_output_dir pkg_filename
-	option_output_dir=$(option_value 'output-dir')
-	pkg_filename="${option_output_dir}/${pkg_filename_base}"
+}
 
+# Gentoo ("gentoo" variant) - Build a single package
+# USAGE: gentoo_package_build_single $package
+gentoo_package_build_single() {
+	local package
+	package="$1"
+
+	local package_path package_name generated_package_path generated_package_directory
+	package_path=$(package_path "$package")
+	package_name=$(package_name "$package")
+	generated_package_path="${package_path}.tbz2"
+	generated_package_directory=$(dirname "$generated_package_path")
+
+	# Skip packages already existing,
+	# unless called with --overwrite.
 	local option_overwrite
 	option_overwrite=$(option_value 'overwrite')
-	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
-		information_package_already_exists "$pkg_filename_base"
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg}_PKG
+	if \
+		[ "$option_overwrite" -eq 0 ] \
+		&& [ -e "$generated_package_path" ]
+	then
+		information_package_already_exists "$package_name"
 		return 0
 	fi
 
-	information_package_building "$pkg_filename_base"
-
-	mkdir --parents "$PLAYIT_WORKDIR/portage-tmpdir"
-	local ebuild_path
-	ebuild_path="$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/${package_id}-${package_version}.ebuild"
-	ebuild "$ebuild_path" manifest 1>/dev/null
-
+	# Set compression setting
 	local option_compression binkpg_compress
 	option_compression=$(option_value 'compression')
 	case "$option_compression" in
@@ -145,18 +150,24 @@ pkg_build_gentoo() {
 			fi
 		;;
 	esac
-	if [ -n "$binkpg_compress" ]; then
-		debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-		PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" BINPKG_COMPRESS="$binkpg_compress" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
-	else
-		debug_external_command "PORTAGE_TMPDIR=\"$PLAYIT_WORKDIR/portage-tmpdir\" PKGDIR=\"$PLAYIT_WORKDIR/gentoo-pkgdir\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-		PORTAGE_TMPDIR="$PLAYIT_WORKDIR/portage-tmpdir" PKGDIR="$PLAYIT_WORKDIR/gentoo-pkgdir" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
-	fi
-	mv "$PLAYIT_WORKDIR/gentoo-pkgdir/games-playit/${package_id}-${package_version}.tbz2" "$pkg_filename"
-	rm --recursive "$PLAYIT_WORKDIR/portage-tmpdir"
 
-	eval ${pkg}_PKG=\"$pkg_filename\"
-	export ${pkg}_PKG
+	# Run the actual package generation, using ebuild
+	information_package_building "$package_name"
+	mkdir --parents "${PLAYIT_WORKDIR}/portage-tmpdir"
+	local ebuild_path
+	ebuild_path=$(gentoo_ebuild_path "$package")
+	ebuild "$ebuild_path" manifest 1>/dev/null
+
+	if [ -n "$binkpg_compress" ]; then
+		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+		PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir" PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir" BINPKG_COMPRESS="$binkpg_compress" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+	else
+		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+		PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir" PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+	fi
+	mkdir --parents "$generated_package_directory"
+	mv "${PLAYIT_WORKDIR}/gentoo-pkgdir/games-playit/${package_name}" "$generated_package_path"
+	rm --recursive "${PLAYIT_WORKDIR}/portage-tmpdir"
 }
 
 # Print the file name of the given package
@@ -171,6 +182,7 @@ package_name_gentoo() {
 	package_version=$(package_version)
 	package_name="${package_id}-${package_version}.tbz2"
 
+	# Avoid paths collisions when building multiple architecture variants for a same package
 	local packages_list current_package current_package_id
 	packages_list=$(packages_get_list)
 	for current_package in $packages_list; do

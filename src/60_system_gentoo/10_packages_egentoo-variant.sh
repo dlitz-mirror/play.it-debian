@@ -167,11 +167,11 @@ egentoo_package_compression_command_auto() {
 	printf '%s' "$compression_command"
 }
 
-# builds dummy egentoo package
-# USAGE: pkg_build_egentoo PKG_xxx
-pkg_build_egentoo() {
+# Gentoo ("egentoo" variant) - Build dummy package
+# USAGE: egentoo_packages_build $package[…]
+egentoo_packages_build() {
 	if [ $# -eq 0 ]; then
-		error_no_arguments 'pkg_build_egentoo'
+		error_no_arguments 'egentoo_packages_build'
 	fi
 
 	local option_output_dir package_name package_filename
