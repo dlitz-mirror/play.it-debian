@@ -58,11 +58,7 @@ build_pkg() {
 	option_package=$(option_value 'package')
 	case $option_package in
 		('arch')
-			for package in "$@"; do
-				package_path=$(package_path "$package")
-				export pkg="$package" # See TODO
-				pkg_build_arch "$package_path"
-			done
+			archlinux_packages_build "$@"
 		;;
 		('deb')
 			debian_packages_build "$@"

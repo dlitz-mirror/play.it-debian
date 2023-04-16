@@ -75,22 +75,44 @@ pkg_write_arch() {
 	fi
 }
 
-# build .pkg.tar package
-# USAGE: pkg_build_arch $pkg_path
-pkg_build_arch() {
-	local option_output_dir pkg_filename
-	option_output_dir=$(option_value 'output-dir')
-	pkg_filename=$(realpath "${option_output_dir}/$(basename "$1").pkg.tar")
+# Arch Linux - Build a list of packages
+# USAGE: archlinux_packages_build $package[…]
+archlinux_packages_build() {
+	local package
+	for package in "$@"; do
+		archlinux_package_build_single "$package"
+	done
+}
 
+# Arch Linux - Build a single package
+# USAGE: archlinux_package_build_single $package
+archlinux_package_build_single() {
+	local package
+	package="$1"
+
+	local package_path
+	package_path=$(package_path "$package")
+
+	local option_output_dir package_name generated_package_path
+	option_output_dir=$(option_value 'output-dir')
+	package_name=$(package_name "$package")
+	## The path to the generated package must be an absolute path,
+	## because we do not run the tar call from the current directory.
+	generated_package_path=$(realpath "${option_output_dir}/${package_name}")
+
+	# Skip packages already existing,
+	# unless called with --overwrite.
 	local option_overwrite
 	option_overwrite=$(option_value 'overwrite')
-	if [ -e "$pkg_filename" ] && [ "$option_overwrite" -eq 0 ]; then
-		information_package_already_exists "$(basename "$pkg_filename")"
-		eval ${pkg}_PKG=\"$pkg_filename\"
-		export ${pkg?}_PKG
+	if \
+		[ "$option_overwrite" -eq 0 ] \
+		&& [ -e "$generated_package_path" ]
+	then
+		information_package_already_exists "$package_name"
 		return 0
 	fi
 
+	# Set basic tar options
 	local tar_options
 	tar_options='--create'
 	if variable_is_empty 'PLAYIT_TAR_IMPLEMENTATION'; then
@@ -109,51 +131,46 @@ pkg_build_arch() {
 		;;
 	esac
 
+	# Set compression setting
 	local option_compression tar_compress_program
 	option_compression=$(option_value 'compression')
-	case $option_compression in
+	case "$option_compression" in
 		('none')
 			tar_compress_program=''
 		;;
 		('speed')
 			tar_compress_program='zstd --fast=1'
-			pkg_filename="${pkg_filename}.zst"
 		;;
 		('size')
 			tar_compress_program='zstd -19'
-			pkg_filename="${pkg_filename}.zst"
 		;;
 		('gzip'|'xz'|'bzip2'|'zstd')
 			if ! version_is_at_least '2.23' "$target_version"; then
 				tar_compress_program=$(archlinux_tar_compress_program_legacy "$option_compression")
-				pkg_filename=$(archlinux_package_name_legacy "$pkg_filename" "$option_compression")
 			fi
 		;;
 	esac
 
-	information_package_building "$(basename "$pkg_filename")"
-
+	# Run the actual package generation, using tar
+	information_package_building "$package_name"
 	(
-		cd "$1"
-		local files
-		files='.PKGINFO *'
+		cd "$package_path"
+		local package_contents
+		package_contents='.PKGINFO *'
 		if [ -e '.INSTALL' ]; then
-			files=".INSTALL $files"
+			package_contents=".INSTALL $package_contents"
 		fi
 		if [ -e '.MTREE' ]; then
-			files=".MTREE $files"
+			package_contents=".MTREE $package_contents"
 		fi
 		if [ -n "$tar_compress_program" ]; then
-			debug_external_command "tar $tar_options --use-compress-program=\"$tar_compress_program\" --file \"$pkg_filename\" $files"
-			tar $tar_options --use-compress-program="$tar_compress_program" --file "$pkg_filename" $files
+			debug_external_command "tar $tar_options --use-compress-program=\"$tar_compress_program\" --file \"$generated_package_path\" $package_contents"
+			tar $tar_options --use-compress-program="$tar_compress_program" --file "$generated_package_path" $package_contents
 		else
-			debug_external_command "tar $tar_options --file \"$pkg_filename\" $files"
-			tar $tar_options --file "$pkg_filename" $files
+			debug_external_command "tar $tar_options --file \"$generated_package_path\" $package_contents"
+			tar $tar_options --file "$generated_package_path" $package_contents
 		fi
 	)
-
-	eval ${pkg}_PKG=\"$pkg_filename\"
-	export ${pkg?}_PKG
 }
 
 # creates .MTREE in package
@@ -246,7 +263,7 @@ package_name_archlinux() {
 	package_id=$(package_id "$package")
 	package_version=$(package_version)
 	package_architecture=$(package_architecture_string "$package")
-	package_name="${package_id}_${package_version}_${package_architecture}.tar"
+	package_name="${package_id}_${package_version}_${package_architecture}.pkg.tar"
 
 	local option_compression
 	option_compression=$(option_value 'compression')
@@ -277,7 +294,7 @@ package_path_archlinux() {
 
 	local package_name package_path
 	package_name=$(package_name "$package")
-	package_path="${package_name%.tar*}"
+	package_path="${package_name%.pkg.tar*}"
 
 	printf '%s' "$package_path"
 }
