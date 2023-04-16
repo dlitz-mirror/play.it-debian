@@ -51,10 +51,10 @@ dependencies_list_native_libraries_packages() {
 			package_architecture=$(package_architecture "$package")
 			case "$package_architecture" in
 				('32')
-					gentoo_dependencies_providing_native_libraries_32bit $required_native_libraries
+					gentoo_dependencies_providing_native_libraries_32bit "$package" $required_native_libraries
 				;;
 				(*)
-					gentoo_dependencies_providing_native_libraries $required_native_libraries
+					gentoo_dependencies_providing_native_libraries "$package" $required_native_libraries
 				;;
 			esac
 		;;

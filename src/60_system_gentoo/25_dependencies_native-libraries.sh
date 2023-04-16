@@ -1,36 +1,44 @@
 # Gentoo - Print the package names providing the given native libraries
-# USAGE: gentoo_dependencies_providing_native_libraries $library[…]
+# USAGE: gentoo_dependencies_providing_native_libraries $package $library[…]
 # RETURN: a list of Gentoo package names,
 #         one per line
 gentoo_dependencies_providing_native_libraries() {
-	local library packages_list package
-	packages_list=''
+	local package
+	package="$1"
+	shift 1
+
+	local library native_packages_list native_package
+	native_packages_list=''
 	for library in "$@"; do
-		package=$(dependency_package_providing_library_gentoo "$library")
-		packages_list="$packages_list
-		$package"
+		native_package=$(dependency_package_providing_library_gentoo "$library" "$package")
+		native_packages_list="$native_packages_list
+		$native_package"
 	done
 
-	printf '%s' "$packages_list" | \
+	printf '%s' "$native_packages_list" | \
 		sed 's/^\s*//g' | \
 		grep --invert-match --regexp='^$' | \
 		sort --unique
 }
 
 # Gentoo - Print the package names providing the given native libraries in a 32-bit build
-# USAGE: gentoo_dependencies_providing_native_libraries_32bit $library[…]
+# USAGE: gentoo_dependencies_providing_native_libraries_32bit $package $library[…]
 # RETURN: a list of Gentoo package names,
 #         one per line
 gentoo_dependencies_providing_native_libraries_32bit() {
-	local library packages_list package
-	packages_list=''
+	local package
+	package="$1"
+	shift 1
+
+	local library native_packages_list native_package
+	native_packages_list=''
 	for library in "$@"; do
-		package=$(dependency_package_providing_library_gentoo32 "$library")
-		packages_list="$packages_list
-		$package"
+		native_package=$(dependency_package_providing_library_gentoo32 "$library" "$package")
+		native_packages_list="$native_packages_list
+		$native_package"
 	done
 
-	printf '%s' "$packages_list" | \
+	printf '%s' "$native_packages_list" | \
 		sed 's/^\s*//g' | \
 		grep --invert-match --regexp='^$' | \
 		sort --unique
@@ -472,7 +480,7 @@ dependency_package_providing_library_gentoo() {
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
-		if [ -n "$pkg_overlay" ]; then
+		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
 		fi
 		return 0
@@ -917,7 +925,7 @@ dependency_package_providing_library_gentoo32() {
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
-		if [ -n "$pkg_overlay" ]; then
+		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
 		fi
 		return 0
