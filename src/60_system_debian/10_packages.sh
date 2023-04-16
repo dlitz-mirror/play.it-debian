@@ -90,19 +90,28 @@ pkg_write_deb() {
 	fi
 }
 
-# Build a .deb package from the given path
-# USAGE: pkg_build_deb $package
-pkg_build_deb() {
+# Debian - Build a list of packages
+# USAGE: debian_packages_build $package[…]
+debian_packages_build() {
+	local package
+	for package in "$@"; do
+		debian_package_build_single "$package"
+	done
+}
+
+# Debian - Build a single package
+# USAGE: debian_package_build_single $package
+debian_package_build_single() {
 	local package
 	package="$1"
 
 	local package_path
 	package_path=$(package_path "$package")
 
-	local option_output_dir generated_package_name generated_package_path
+	local option_output_dir package_name generated_package_path
 	option_output_dir=$(option_value 'output-dir')
-	generated_package_name=$(basename "$package_path")
-	generated_package_path="${option_output_dir}/${generated_package_name}.deb"
+	package_name=$(package_name "$package")
+	generated_package_path="${option_output_dir}/${package_name}"
 
 	# Skip packages already existing,
 	# unless called with --overwrite.
@@ -112,7 +121,7 @@ pkg_build_deb() {
 		[ "$option_overwrite" -eq 0 ] \
 		&& [ -e "$generated_package_path" ]
 	then
-		information_package_already_exists "${generated_package_name}.deb"
+		information_package_already_exists "$package_name"
 		return 0
 	fi
 
@@ -147,10 +156,19 @@ pkg_build_deb() {
 	fi
 
 	# Run the actual package generation, using dpkg-deb
-	information_package_building "${generated_package_name}.deb"
+	local package_generation_return_code
+	information_package_building "$package_name"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
+	set +o errexit
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
 		--build "$package_path" "$generated_package_path" 1>/dev/null
+	package_generation_return_code=$?
+	set -o errexit
+
+	if [ $package_generation_return_code -ne 0 ]; then
+		error_package_generation_failed "$package_name"
+		return 1
+	fi
 }
 
 # Debian - Compute the package installed size

@@ -148,3 +148,25 @@ error_package_id_invalid() {
 	# shellcheck disable=SC2059
 	printf "$message" "$package_id"
 }
+
+# Error: The generation of the given package failed.
+# USAGE: error_package_generation_failed $package_name
+error_package_generation_failed() {
+	local package_name
+	package_name="$1"
+
+	local message
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='La génération du paquet suivant a échoué : %s\n'
+			message="$message"'Merci de signaler cet échec sur notre système de suivi : %s\n\n'
+		;;
+		('en'|*)
+			message='The generation of the following package failed: %s\n'
+			message="$message"'Please report this error on our bugs tracker: %s\n\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$package_name" "$PLAYIT_BUG_TRACKER_URL"
+}

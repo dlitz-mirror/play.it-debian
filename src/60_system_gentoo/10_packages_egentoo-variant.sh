@@ -167,11 +167,11 @@ egentoo_package_compression_command_auto() {
 	printf '%s' "$compression_command"
 }
 
-# builds dummy egentoo package
-# USAGE: pkg_build_egentoo PKG_xxx
-pkg_build_egentoo() {
+# Gentoo ("egentoo" variant) - Build dummy package
+# USAGE: egentoo_packages_build $package[…]
+egentoo_packages_build() {
 	if [ $# -eq 0 ]; then
-		error_no_arguments 'pkg_build_egentoo'
+		error_no_arguments 'egentoo_packages_build'
 	fi
 
 	local option_output_dir package_name package_filename
@@ -257,17 +257,29 @@ pkg_build_egentoo() {
 		export "${package}_PKG=$package_filename"
 	done
 
+	# Run the actual package generation, using tar
+	local package_generation_return_code
 	information_package_building "$(basename "$package_filename")"
+	if [ -z "$compression_command" ]; then
+		debug_external_command "\"$tar_command\" $tar_options --file \"$package_filename\" $packages_paths"
+		set +o errexit
+		# shellcheck disable=SC2046
+		"$tar_command" $tar_options --file "$package_filename" $packages_paths
+		package_generation_return_code=$?
+		set -o errexit
+	else
+		debug_external_command "\"$tar_command\" $tar_options $packages_paths | \"$compression_command\" $compression_options > \"$package_filename\""
+		set +o errexit
+		"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
+		package_generation_return_code=$?
+		set -o errexit
+	fi
 
-		if [ -z "$compression_command" ]; then
-			debug_external_command "\"$tar_command\" $tar_options --file \"$package_filename\" $packages_paths"
-			# shellcheck disable=SC2046
-			"$tar_command" $tar_options --file "$package_filename" $packages_paths
-		else
-			debug_external_command "\"$tar_command\" $tar_options $packages_paths | \"$compression_command\" $compression_options > \"$package_filename\""
-			"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
-		fi
-	}
+	if [ $package_generation_return_code -ne 0 ]; then
+		error_package_generation_failed "$package_name"
+		return 1
+	fi
+}
 
 # Get the path to the directory where the given package is prepared,
 # relative to the directory where all packages are stored
