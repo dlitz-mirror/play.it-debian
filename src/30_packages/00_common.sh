@@ -65,9 +65,7 @@ build_pkg() {
 			done
 		;;
 		('deb')
-			for package in "$@"; do
-				pkg_build_deb "$package"
-			done
+			debian_packages_build "$@"
 		;;
 		('gentoo')
 			for package in "$@"; do
