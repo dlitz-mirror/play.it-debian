@@ -152,8 +152,9 @@ archlinux_package_build_single() {
 	esac
 
 	# Run the actual package generation, using tar
+	local package_generation_return_code
 	information_package_building "$package_name"
-	(
+	package_generation_return_code=$(
 		cd "$package_path"
 		local package_contents
 		package_contents='.PKGINFO *'
@@ -165,12 +166,24 @@ archlinux_package_build_single() {
 		fi
 		if [ -n "$tar_compress_program" ]; then
 			debug_external_command "tar $tar_options --use-compress-program=\"$tar_compress_program\" --file \"$generated_package_path\" $package_contents"
+			set +o errexit
 			tar $tar_options --use-compress-program="$tar_compress_program" --file "$generated_package_path" $package_contents
+			package_generation_return_code=$?
+			set -o errexit
 		else
 			debug_external_command "tar $tar_options --file \"$generated_package_path\" $package_contents"
+			set +o errexit
 			tar $tar_options --file "$generated_package_path" $package_contents
+			package_generation_return_code=$?
+			set -o errexit
 		fi
+		printf '%s' "$package_generation_return_code"
 	)
+
+	if [ $package_generation_return_code -ne 0 ]; then
+		error_package_generation_failed "$package_name"
+		return 1
+	fi
 }
 
 # creates .MTREE in package

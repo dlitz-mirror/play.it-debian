@@ -156,10 +156,19 @@ debian_package_build_single() {
 	fi
 
 	# Run the actual package generation, using dpkg-deb
+	local package_generation_return_code
 	information_package_building "$package_name"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
+	set +o errexit
 	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
 		--build "$package_path" "$generated_package_path" 1>/dev/null
+	package_generation_return_code=$?
+	set -o errexit
+
+	if [ $package_generation_return_code -ne 0 ]; then
+		error_package_generation_failed "$package_name"
+		return 1
+	fi
 }
 
 # Debian - Compute the package installed size
