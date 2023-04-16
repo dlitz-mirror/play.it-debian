@@ -32,7 +32,7 @@ pkg_write_arch() {
 	$package_fields_depend
 	EOF
 	if [ -n "$package_provides" ]; then
-		cat <<- EOF
+		cat >> "$target" <<- EOF
 		$package_provides
 		EOF
 	fi
@@ -213,20 +213,8 @@ archlinux_field_provides() {
 		return 0
 	fi
 
-	local packages_list package_name
-	packages_list=''
-	while read -r package_name; do
-		if [ -z "$packages_list" ]; then
-			packages_list="$package_name"
-		else
-			packages_list="$packages_list, $package_name"
-		fi
-	done <<- EOL
-	$(printf '%s' "$package_provides")
-	EOL
-
-	printf 'conflict: %s\n' $packages_list
-	printf 'provides: %s\n' $packages_list
+	printf 'conflict: %s\n' $package_provides
+	printf 'provides: %s\n' $package_provides
 }
 
 # Arch Linux - Print list of "depend" fields
