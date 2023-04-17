@@ -83,8 +83,33 @@ path_icons() {
 # Print install path for native libraries.
 # USAGE: path_libraries
 path_libraries() {
-	local install_prefix game_id
+	local install_prefix target_system game_id
 	install_prefix=$(option_value 'prefix')
+	target_system=$(option_value 'package')
 	game_id=$(game_id)
-	printf '%s/lib/games/%s' "$install_prefix" "$game_id"
+
+	local path_pattern
+	## Set default value
+	path_pattern='%s/lib/games/%s'
+	## Override default value if required
+	case "$target_system" in
+		('arch')
+			local package package_architecture
+			package=$(context_package)
+			package_architecture=$(package_architecture "$package")
+			if [ "$package_architecture" = '32' ]; then
+				path_pattern='%s/lib32/games/%s'
+			fi
+		;;
+		('gentoo'|'egentoo')
+			local package package_architecture
+			package=$(context_package)
+			package_architecture=$(package_architecture "$package")
+			if [ "$package_architecture" = '64' ]; then
+				path_pattern='%s/lib64/games/%s'
+			fi
+		;;
+	esac
+
+	printf "$path_pattern" "$install_prefix" "$game_id"
 }
