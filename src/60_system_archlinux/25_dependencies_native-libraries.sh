@@ -186,6 +186,9 @@ dependency_package_providing_library_arch() {
 		('libgtk-x11-2.0.so.0')
 			package_name='gtk2'
 		;;
+		('libgtk-3.so.0')
+			package_name='gtk3'
+		;;
 		('libICE.so.6')
 			package_name='libice'
 		;;
@@ -625,6 +628,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='lib32-gtk2'
+		;;
+		('libgtk-3.so.0')
+			package_name='lib32-gtk3'
 		;;
 		('libICE.so.6')
 			package_name='lib32-libice'

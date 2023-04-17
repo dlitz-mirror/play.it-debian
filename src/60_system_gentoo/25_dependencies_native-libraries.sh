@@ -197,6 +197,9 @@ dependency_package_providing_library_gentoo() {
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2'
 		;;
+		('libgtk-3.so.0')
+			package_name='x11-libs/gtk+:3'
+		;;
 		('libICE.so.6')
 			package_name='x11-libs/libICE'
 		;;
@@ -641,6 +644,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2[abi_x86_32]'
+		;;
+		('libgtk-3.so.0')
+			package_name='x11-libs/gtk+:3[abi_x86_32]'
 		;;
 		('libICE.so.6')
 			package_name='x11-libs/libICE[abi_x86_32]'
