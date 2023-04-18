@@ -13,9 +13,7 @@ write_metadata() {
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
-			for package in "$@"; do
-				pkg_write_arch "$package"
-			done
+			archlinux_packages_metadata "$@"
 		;;
 		('deb')
 			debian_packages_metadata "$@"
