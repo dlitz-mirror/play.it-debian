@@ -18,9 +18,7 @@ write_metadata() {
 			done
 		;;
 		('deb')
-			for package in "$@"; do
-				pkg_write_deb "$package"
-			done
+			debian_packages_metadata "$@"
 		;;
 		('gentoo')
 			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
