@@ -1,3 +1,12 @@
+2.23.2
+
+  * Fix warning displayed on unsupported GStreamer media format.
+  * Fix content inclusion when using legacy ARCHIVE_xxx_FILES variables.
+  * Do not generate an empty list of unsupported GStreamer decoders.
+  * Add support for extra GStreamer decoders.
+  * Add support for extra native libraries.
+  * Avoid querying unset variables.
+
 2.23.1
 
   * Display an explicit error on package building failure.
