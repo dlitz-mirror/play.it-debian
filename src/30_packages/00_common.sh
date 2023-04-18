@@ -9,7 +9,7 @@ write_metadata() {
 
 	debug_entering_function 'write_metadata'
 
-	local package option_package
+	local option_package
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
@@ -19,15 +19,10 @@ write_metadata() {
 			debian_packages_metadata "$@"
 		;;
 		('gentoo')
-			# FIXME - $pkg should be passed as a function argument, not inherited from the current function
-			local pkg
-			for package in "$@"; do
-				pkg="$package"
-				pkg_write_gentoo
-			done
+			gentoo_packages_metadata "$@"
 		;;
 		('egentoo')
-			pkg_write_egentoo "$@"
+			egentoo_packages_metadata "$@"
 		;;
 	esac
 

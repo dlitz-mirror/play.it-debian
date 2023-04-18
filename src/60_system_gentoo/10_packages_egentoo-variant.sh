@@ -1,6 +1,6 @@
-# write .ebuild package meta-data
-# USAGE: pkg_write_egentoo PKG_xxx
-pkg_write_egentoo() {
+# Gentoo ("egentoo" variant) - Write the metadata for the listed packages
+# USAGE: egentoo_packages_metadata $package[…]
+egentoo_packages_metadata() {
 	local build_deps
 	local package_filename
 	local ebuild_path
