@@ -1,63 +1,33 @@
-# write package meta-data
-# USAGE: write_metadata [$pkg…]
-write_metadata() {
+# Generate packages from the given list
+# USAGE: packages_generation $package[…]
+packages_generation() {
+	# If not explicit packages list is given, generate all packages
 	if [ $# -eq 0 ]; then
-		# shellcheck disable=SC2046
-		write_metadata $(packages_get_list)
-		return 0
+		local packages_list
+		packages_list=$(packages_get_list)
+		packages_generation $packages_list
 	fi
-
-	debug_entering_function 'write_metadata'
 
 	local option_package
 	option_package=$(option_value 'package')
 	case "$option_package" in
 		('arch')
 			archlinux_packages_metadata "$@"
-		;;
-		('deb')
-			debian_packages_metadata "$@"
-		;;
-		('gentoo')
-			gentoo_packages_metadata "$@"
-		;;
-		('egentoo')
-			egentoo_packages_metadata "$@"
-		;;
-	esac
-
-	debug_leaving_function 'write_metadata'
-}
-
-# Build the final packages.
-# USAGE: build_pkg [$pkg…]
-build_pkg() {
-	if [ $# -eq 0 ]; then
-		# shellcheck disable=SC2046
-		build_pkg $(packages_get_list)
-		return 0
-	fi
-
-	debug_entering_function 'build_pkg'
-
-	local option_package
-	option_package=$(option_value 'package')
-	case "$option_package" in
-		('arch')
 			archlinux_packages_build "$@"
 		;;
 		('deb')
+			debian_packages_metadata "$@"
 			debian_packages_build "$@"
 		;;
 		('gentoo')
+			gentoo_packages_metadata "$@"
 			gentoo_packages_build "$@"
 		;;
 		('egentoo')
+			egentoo_packages_metadata "$@"
 			egentoo_packages_build "$@"
 		;;
 	esac
-
-	debug_leaving_function 'build_pkg'
 }
 
 # Guess output package type based on current OS
