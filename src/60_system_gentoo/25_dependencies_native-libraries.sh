@@ -1,64 +1,72 @@
-	# Gentoo - Print the package names providing the given native libraries
-	# USAGE: gentoo_dependencies_providing_native_libraries $library[…]
-	# RETURN: a list of Gentoo package names,
-	#         one per line
-	gentoo_dependencies_providing_native_libraries() {
-		local library packages_list package
-		packages_list=''
-		for library in "$@"; do
-			package=$(dependency_package_providing_library_gentoo "$library")
-			packages_list="$packages_list
-			$package"
-		done
+# Gentoo - Print the package names providing the given native libraries
+# USAGE: gentoo_dependencies_providing_native_libraries $package $library[…]
+# RETURN: a list of Gentoo package names,
+#         one per line
+gentoo_dependencies_providing_native_libraries() {
+	local package
+	package="$1"
+	shift 1
 
-		printf '%s' "$packages_list" | \
-			sed 's/^\s*//g' | \
-			grep --invert-match --regexp='^$' | \
-			sort --unique
-	}
+	local library native_packages_list native_package
+	native_packages_list=''
+	for library in "$@"; do
+		native_package=$(dependency_package_providing_library_gentoo "$library" "$package")
+		native_packages_list="$native_packages_list
+		$native_package"
+	done
 
-	# Gentoo - Print the package names providing the given native libraries in a 32-bit build
-	# USAGE: gentoo_dependencies_providing_native_libraries_32bit $library[…]
-	# RETURN: a list of Gentoo package names,
-	#         one per line
-	gentoo_dependencies_providing_native_libraries_32bit() {
-		local library packages_list package
-		packages_list=''
-		for library in "$@"; do
-			package=$(dependency_package_providing_library_gentoo32 "$library")
-			packages_list="$packages_list
-			$package"
-		done
+	printf '%s' "$native_packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
 
-		printf '%s' "$packages_list" | \
-			sed 's/^\s*//g' | \
-			grep --invert-match --regexp='^$' | \
-			sort --unique
-	}
+# Gentoo - Print the package names providing the given native libraries in a 32-bit build
+# USAGE: gentoo_dependencies_providing_native_libraries_32bit $package $library[…]
+# RETURN: a list of Gentoo package names,
+#         one per line
+gentoo_dependencies_providing_native_libraries_32bit() {
+	local package
+	package="$1"
+	shift 1
 
-	# Gentoo - Print the package name providing the given native library
-	# USAGE: dependency_package_providing_library_gentoo $library $package
-	dependency_package_providing_library_gentoo() {
-		local library package package_name pkg_overlay
-		library="$1"
-		package="$2"
-		case "$library" in
-			('ld-linux.so.2')
-				package_name='sys-libs/glibc'
-			;;
-			('ld-linux-x86-64.so.2')
-				package_name='sys-libs/glibc'
-			;;
-			('liballeg.so.4.4')
-				package_name='media-libs/allegro'
-			;;
-			('libasound.so.2')
-				package_name='media-libs/alsa-lib'
-			;;
-			('libasound_module_'*'.so')
-				package_name='media-plugins/alsa-plugins'
-			;;
-			('libatk-1.0.so.0')
+	local library native_packages_list native_package
+	native_packages_list=''
+	for library in "$@"; do
+		native_package=$(dependency_package_providing_library_gentoo32 "$library" "$package")
+		native_packages_list="$native_packages_list
+		$native_package"
+	done
+
+	printf '%s' "$native_packages_list" | \
+		sed 's/^\s*//g' | \
+		grep --invert-match --regexp='^$' | \
+		sort --unique
+}
+
+# Gentoo - Print the package name providing the given native library
+# USAGE: dependency_package_providing_library_gentoo $library $package
+dependency_package_providing_library_gentoo() {
+	local library package package_name pkg_overlay
+	library="$1"
+	package="$2"
+	case "$library" in
+		('ld-linux.so.2')
+			package_name='sys-libs/glibc'
+		;;
+		('ld-linux-x86-64.so.2')
+			package_name='sys-libs/glibc'
+		;;
+		('liballeg.so.4.4')
+			package_name='media-libs/allegro'
+		;;
+		('libasound.so.2')
+			package_name='media-libs/alsa-lib'
+		;;
+		('libasound_module_'*'.so')
+			package_name='media-plugins/alsa-plugins'
+		;;
+		('libatk-1.0.so.0')
 			package_name='dev-libs/atk'
 		;;
 		('libaudio.so.2')
@@ -188,6 +196,9 @@
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2'
+		;;
+		('libgtk-3.so.0')
+			package_name='x11-libs/gtk+:3'
 		;;
 		('libICE.so.6')
 			package_name='x11-libs/libICE'
@@ -472,7 +483,7 @@
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
-		if [ -n "$pkg_overlay" ]; then
+		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
 		fi
 		return 0
@@ -633,6 +644,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgtk-x11-2.0.so.0')
 			package_name='x11-libs/gtk+:2[abi_x86_32]'
+		;;
+		('libgtk-3.so.0')
+			package_name='x11-libs/gtk+:3[abi_x86_32]'
 		;;
 		('libICE.so.6')
 			package_name='x11-libs/libICE[abi_x86_32]'
@@ -917,7 +931,7 @@ dependency_package_providing_library_gentoo32() {
 
 	if [ -n "$package_name" ]; then
 		printf '%s' "$package_name"
-		if [ -n "$pkg_overlay" ]; then
+		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
 		fi
 		return 0

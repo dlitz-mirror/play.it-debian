@@ -49,35 +49,20 @@ build_pkg() {
 
 	debug_entering_function 'build_pkg'
 
-	###
-	# TODO
-	# pkg_build_xxx implicitely depends on the target package being set as $pkg
-	# It should instead be passed as a mandatory argument.
-	###
-	local option_package package package_path
+	local option_package
 	option_package=$(option_value 'package')
-	case $option_package in
+	case "$option_package" in
 		('arch')
-			for package in "$@"; do
-				package_path=$(package_path "$package")
-				export pkg="$package" # See TODO
-				pkg_build_arch "$package_path"
-			done
+			archlinux_packages_build "$@"
 		;;
 		('deb')
-			for package in "$@"; do
-				pkg_build_deb "$package"
-			done
+			debian_packages_build "$@"
 		;;
 		('gentoo')
-			for package in "$@"; do
-				package_path=$(package_path "$package")
-				export pkg="$package" # See TODO
-				pkg_build_gentoo "$package_path"
-			done
+			gentoo_packages_build "$@"
 		;;
 		('egentoo')
-			pkg_build_egentoo "$@"
+			egentoo_packages_build "$@"
 		;;
 	esac
 

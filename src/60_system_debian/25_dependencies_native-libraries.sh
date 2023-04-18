@@ -170,6 +170,9 @@ dependency_package_providing_library_deb() {
 		('libgtk-x11-2.0.so.0')
 			package_name='libgtk2.0-0'
 		;;
+		('libgtk-3.so.0')
+			package_name='libgtk-3-0'
+		;;
 		('libICE.so.6')
 			package_name='libice6'
 		;;

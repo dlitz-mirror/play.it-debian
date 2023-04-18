@@ -1,19 +1,22 @@
-# print installation instructions for Arch Linux
-# USAGE: print_instructions_arch $pkg[…]
+# Arch Linux - Print installation instructions
+# USAGE: print_instructions_arch $package[…]
 print_instructions_arch() {
-	local pkg_path
-	local str_format
+	local option_output_dir string_format
+	option_output_dir=$(option_value 'output-dir')
+	if printf '%s' "$option_output_dir" | grep --quiet --fixed-strings ' '; then
+		string_format=' "%s"'
+	else
+		string_format=' %s'
+	fi
+
 	printf 'pacman -U'
 
-	for pkg in "$@"; do
-		pkg_path=$(realpath "$(get_value "${pkg}_PKG")")
-		if [ -z "${pkg_path##* *}" ]; then
-			str_format=' "%s"'
-		else
-			str_format=' %s'
-		fi
-		printf "$str_format" "$pkg_path"
+	local package package_name package_output
+	for package in "$@"; do
+		package_name=$(package_name "$package")
+		package_output=$(realpath "${option_output_dir}/${package_name}")
+		printf "$string_format" "$package_output"
 	done
+
 	printf '\n'
 }
-

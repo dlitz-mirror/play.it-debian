@@ -1,3 +1,11 @@
+2.23.1
+
+  * Display an explicit error on package building failure.
+  * Fix install path for native libraries.
+  * Add support for more native libraries dependencies.
+  * Arch Linux: Fix filling "conflict" and "provides" in package metadata.
+  * Gentoo: Fix setting the list of dependencies on native libraries.
+
 2.23.0
 
   * Deprecation notices:
