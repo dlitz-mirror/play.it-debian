@@ -57,7 +57,4 @@ archive_extraction_mojosetup() {
 
 	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" 1>/dev/null
 	rm "$archive_game_data"
-
-	# Apply minimal permissions on extracted files
-	set_standard_permissions "$destination_directory"
 }

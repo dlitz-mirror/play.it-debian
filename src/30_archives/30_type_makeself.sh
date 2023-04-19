@@ -49,9 +49,6 @@ archive_extraction_makeself() {
 		} 2>/dev/null | \
 		gzip --stdout --decompress | \
 		tar xf - --directory="$destination_directory"
-
-	# Apply minimal permissions on extracted files
-	set_standard_permissions "$destination_directory"
 }
 
 # Makeself - Get the offset of the given file

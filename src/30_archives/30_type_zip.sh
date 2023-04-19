@@ -39,7 +39,6 @@ archive_extraction_zip_unclean() {
 		set +o errexit
 		archive_extraction_using_unzip "$archive" "$destination_directory" 2>/dev/null
 		set -o errexit
-		set_standard_permissions "$destination_directory"
 	else
 		error_archive_no_extractor_found 'zip'
 		return 1

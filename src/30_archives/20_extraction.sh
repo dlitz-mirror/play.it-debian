@@ -178,6 +178,9 @@ archive_extraction() {
 	else
 		archive_extraction_from_type "$archive" "$destination_directory"
 	fi
+
+	# Apply minimal permissions on extracted files
+	set_standard_permissions "$destination_directory"
 }
 
 # extract data from the target archive, using the specified extractor

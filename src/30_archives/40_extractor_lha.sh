@@ -13,5 +13,4 @@ archive_extraction_using_lha() {
 	# Due to its unusual command syntax, lha extractor has no support for ARCHIVE_xxx_EXTRACTOR_OPTIONS
 	debug_external_command "lha -ew=\"$destination_directory\" \"$archive_path\" >/dev/null"
 	lha -ew="$destination_directory" "$archive_path" >/dev/null
-	set_standard_permissions "$destination_directory"
 }

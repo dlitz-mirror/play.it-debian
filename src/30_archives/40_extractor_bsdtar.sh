@@ -14,5 +14,4 @@ archive_extraction_using_bsdtar() {
 	extractor_options=$(archive_extractor_options "$archive")
 	debug_external_command "bsdtar $extractor_options --directory \"$destination_directory\" --extract --file \"$archive_path\""
 	bsdtar $extractor_options --directory "$destination_directory" --extract --file "$archive_path"
-	set_standard_permissions "$destination_directory"
 }
