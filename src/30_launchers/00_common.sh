@@ -222,10 +222,6 @@ launcher_write_script() {
 	esac
 	launcher_exit >> "$target_file"
 
-	# The generated launcher scripts use spaces for indentation,
-	# these must be replaced with tabulations.
-	sed --in-place --regexp-extended 's/( ){4}/\t/g' "$target_file"
-
 	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
 		('native')
@@ -285,15 +281,17 @@ launcher_headers() {
 # Print the exit actions common to all launcher scripts
 # USAGE: launcher_exit
 launcher_exit() {
-	cat <<- 'EOF'
-	# Return the game exit code
+	{
+		cat <<- 'EOF'
+		# Return the game exit code
 
-	if [ -n "$game_exit_status" ]; then
-	    exit "$game_exit_status"
-	else
-	    exit 0
-	fi
-	EOF
+		if [ -n "$game_exit_status" ]; then
+		    exit "$game_exit_status"
+		else
+		    exit 0
+		fi
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # Print the variables common to all launchers for the current game

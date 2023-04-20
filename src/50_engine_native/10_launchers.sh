@@ -136,15 +136,17 @@ native_launcher_exec_path() {
 # Linux native - Print the copy command for the game binary
 # USAGE: native_launcher_binary_copy
 native_launcher_binary_copy() {
-	cat <<- 'EOF'
-	# Copy the game binary into the user prefix
-	exe_destination="${PATH_PREFIX}/${APP_EXE}"
-	if [ -h "$exe_destination" ]; then
-	    exe_source=$(realpath "$exe_destination")
-	    cp --remove-destination "$exe_source" "$exe_destination"
-	fi
+	{
+		cat <<- 'EOF'
+		# Copy the game binary into the user prefix
+		exe_destination="${PATH_PREFIX}/${APP_EXE}"
+		if [ -h "$exe_destination" ]; then
+		    exe_source=$(realpath "$exe_destination")
+		    cp --remove-destination "$exe_source" "$exe_destination"
+		fi
 
-	EOF
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # Linux native - Print libraries loading path.
@@ -163,17 +165,19 @@ launcher_native_libraries_paths() {
 	PLAYIT_LIBS_PATH_SYSTEM='${path_system}'
 	PLAYIT_LIBS_PATH_USER="${path_user}"
 	EOF
-	cat <<- 'EOF'
-	if [ -n "$PLAYIT_LIBS_PATH_LEGACY" ]; then
-	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_LEGACY}:${LD_LIBRARY_PATH}"
-	fi
-	if [ -e "$PLAYIT_LIBS_PATH_SYSTEM" ]; then
-	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_SYSTEM}:${LD_LIBRARY_PATH}"
-	fi
-	if [ -e "$PLAYIT_LIBS_PATH_USER" ]; then
-	    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_USER}:${LD_LIBRARY_PATH}"
-	fi
-	export LD_LIBRARY_PATH
+	{
+		cat <<- 'EOF'
+		if [ -n "$PLAYIT_LIBS_PATH_LEGACY" ]; then
+		    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_LEGACY}:${LD_LIBRARY_PATH}"
+		fi
+		if [ -e "$PLAYIT_LIBS_PATH_SYSTEM" ]; then
+		    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_SYSTEM}:${LD_LIBRARY_PATH}"
+		fi
+		if [ -e "$PLAYIT_LIBS_PATH_USER" ]; then
+		    LD_LIBRARY_PATH="${PLAYIT_LIBS_PATH_USER}:${LD_LIBRARY_PATH}"
+		fi
+		export LD_LIBRARY_PATH
 
-	EOF
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }

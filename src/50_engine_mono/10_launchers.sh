@@ -38,7 +38,7 @@ mono_launcher_run() {
 	$application_prerun
 	$libraries_paths
 	$launcher_tweaks
-    ## Do not exit on application failure,
+	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
 	mono \$MONO_OPTIONS "\$APP_EXE" \$APP_OPTIONS "\$@"

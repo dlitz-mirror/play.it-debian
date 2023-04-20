@@ -72,18 +72,21 @@ wine_renderer_launcher_snippet_wined3d() {
 	# Use WineD3D for Direct3D rendering, with the "$wined3d_backend" backend
 	wined3d_backend="$wined3d_backend"
 	EOF
-	cat <<- 'EOF'
-	if command -v winetricks >/dev/null 2>&1; then
-	    winetricks_wrapper renderer=$wined3d_backend
-	else
-	    message="\\033[1;33mWarning:\\033[0m\\n"
-	    message="${message}WineD3D backend could not be set to ${wined3d_backend}.\\n"
-	    message="${message}The game might run with display or performance issues.\\n"
-	    printf "\\n${message}\\n"
-	fi
-	# Wait a bit to ensure there is no lingering wine process
-	sleep 1s
-	EOF
+	{
+		cat <<- 'EOF'
+		if command -v winetricks >/dev/null 2>&1; then
+		    winetricks_wrapper renderer=$wined3d_backend
+		else
+		    message="\\033[1;33mWarning:\\033[0m\\n"
+		    message="${message}WineD3D backend could not be set to ${wined3d_backend}.\\n"
+		    message="${message}The game might run with display or performance issues.\\n"
+		    printf "\\n${message}\\n"
+		fi
+		# Wait a bit to ensure there is no lingering wine process
+		sleep 1s
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 
 	# Automatically add required dependencies to the current package
 	local package dependency_library
@@ -105,30 +108,33 @@ wine_renderer_launcher_snippet_wined3d() {
 # Print the snippet to include to launchers to use DXVK as the Direct3D renderer
 # USAGE: wine_renderer_launcher_snippet_dxvk
 wine_renderer_launcher_snippet_dxvk() {
-	cat <<- 'EOF'
-	# Use DXVK for Direct3D 9/10/11 rendering
-	if \
-	    command -v dxvk-setup >/dev/null 2>&1 && \
-	    command -v wine-development >/dev/null 2>&1
-	then
-	    ## Run dxvk-setup, spawning a terminal if required
-	    ## to ensure it is not silently running in the background.
-	    if [ ! -t 0 ] && command -v xterm >/dev/null; then
-	        xterm -e dxvk-setup install --development
-	    else
-	        dxvk-setup install --development
-	    fi
-	elif command -v winetricks >/dev/null 2>&1; then
-	    winetricks_wrapper dxvk
-	else
-	    message="\\033[1;33mWarning:\\033[0m\\n"
-	    message="${message}DXVK patches could not be installed in the WINE prefix.\\n"
-	    message="${message}The game might run with display or performance issues.\\n"
-	    printf "\\n${message}\\n"
-	fi
-	# Wait a bit to ensure there is no lingering wine process
-	sleep 1s
-	EOF
+	{
+		cat <<- 'EOF'
+		# Use DXVK for Direct3D 9/10/11 rendering
+		if \
+		    command -v dxvk-setup >/dev/null 2>&1 && \
+		    command -v wine-development >/dev/null 2>&1
+		then
+		    ## Run dxvk-setup, spawning a terminal if required
+		    ## to ensure it is not silently running in the background.
+		    if [ ! -t 0 ] && command -v xterm >/dev/null; then
+		        xterm -e dxvk-setup install --development
+		    else
+		        dxvk-setup install --development
+		    fi
+		elif command -v winetricks >/dev/null 2>&1; then
+		    winetricks_wrapper dxvk
+		else
+		    message="\\033[1;33mWarning:\\033[0m\\n"
+		    message="${message}DXVK patches could not be installed in the WINE prefix.\\n"
+		    message="${message}The game might run with display or performance issues.\\n"
+		    printf "\\n${message}\\n"
+		fi
+		# Wait a bit to ensure there is no lingering wine process
+		sleep 1s
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 
 	# Automatically add required dependencies to the current package
 	local package
@@ -140,19 +146,22 @@ wine_renderer_launcher_snippet_dxvk() {
 # Print the snippet to include to launchers to use vkd3d as the Direct3D renderer
 # USAGE: wine_renderer_launcher_snippet_vkd3d
 wine_renderer_launcher_snippet_vkd3d() {
-	cat <<- 'EOF'
-	# Install vkd3d on first launch
-	if command -v winetricks >/dev/null 2>&1; then
-	    winetricks_wrapper vkd3d
-	else
-	    message="\\033[1;33mWarning:\\033[0m\\n"
-	    message="${message}vkd3d patches could not be installed in the WINE prefix.\\n"
-	    message="${message}The game might run with display or performance issues.\\n"
-	    printf "\\n${message}\\n"
-	fi
-	# Wait a bit to ensure there is no lingering wine process
-	sleep 1s
-	EOF
+	{
+		cat <<- 'EOF'
+		# Install vkd3d on first launch
+		if command -v winetricks >/dev/null 2>&1; then
+		    winetricks_wrapper vkd3d
+		else
+		    message="\\033[1;33mWarning:\\033[0m\\n"
+		    message="${message}vkd3d patches could not be installed in the WINE prefix.\\n"
+		    message="${message}The game might run with display or performance issues.\\n"
+		    printf "\\n${message}\\n"
+		fi
+		# Wait a bit to ensure there is no lingering wine process
+		sleep 1s
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 
 	# Automatically add required dependencies to the current package
 	local package

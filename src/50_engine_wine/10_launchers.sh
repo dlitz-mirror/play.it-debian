@@ -52,20 +52,23 @@ wine_launcher() {
 # WINE - Compute path to WINE prefix
 # USAGE: wine_prefix_wineprefix_path
 wine_prefix_wineprefix_path() {
-	cat <<- 'EOF'
-	# Compute the path to WINE prefix for the current session
-	wineprefix_path() {
-	    # Prefix path can be explicitely set using an environment variable
-	    if [ -n "$WINEPREFIX" ]; then
-	        printf '%s' "$WINEPREFIX"
-	        return 0
-	    fi
-	    # Compute the default prefix path if none has been explicitely set
-	    printf '%s/play.it/wine/%s' \
-	        "${XDG_CACHE_HOME:="$HOME/.cache"}" \
-	        "$GAME_ID"
-	}
-	EOF
+	{
+		cat <<- 'EOF'
+		# Compute the path to WINE prefix for the current session
+		wineprefix_path() {
+		    # Prefix path can be explicitely set using an environment variable
+		    if [ -n "$WINEPREFIX" ]; then
+		        printf '%s' "$WINEPREFIX"
+		        return 0
+		    fi
+		    # Compute the default prefix path if none has been explicitely set
+		    printf '%s/play.it/wine/%s' \
+		        "${XDG_CACHE_HOME:="$HOME/.cache"}" \
+		        "$GAME_ID"
+		}
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Set WINE prefix environment
@@ -109,16 +112,19 @@ wine_prefix_wineprefix_regedit() {
 		return 0
 	fi
 	# Load registry scripts
-	cat <<- EOF
-	# Load registry scripts
-	for regedit_script in $*; do
-	    (
-	        cd "\${WINEPREFIX}/drive_c/\${GAME_ID}"
-	        printf 'Loading registry script: %s\n' "\$regedit_script"
-	        \$(regedit_command) "\$regedit_script"
-	    )
-	done
-	EOF
+	{
+		cat <<- EOF
+		# Load registry scripts
+		for regedit_script in $*; do
+		    (
+		        cd "\${WINEPREFIX}/drive_c/\${GAME_ID}"
+		        printf 'Loading registry script: %s\n' "\$regedit_script"
+		        \$(regedit_command) "\$regedit_script"
+		    )
+		done
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Initial call to winetricks during prefix generation
@@ -141,21 +147,24 @@ wine_prefix_wineprefix_legacy_link() {
 	local path_current path_legacy
 	path_current="$1"
 	path_legacy="$2"
-	cat <<- EOF
-	# Set compatibility link to a legacy user path
-	user_directory="\${WINEPREFIX}/drive_c/users/\${USER}"
-	path_current='${path_current}'
-	path_legacy='${path_legacy}'
-	(
-	    cd "\$user_directory"
-	    if [ ! -e "\${user_directory}/\${path_current}" ]; then
-	        path_current_parent=\$(dirname "\$path_current")
-	        mkdir --parents "\$path_current_parent"
-	        mv "\$path_legacy" "\$path_current"
-	    fi
-	    ln --symbolic "\$path_current" "\$path_legacy"
-	)
-	EOF
+	{
+		cat <<- EOF
+		# Set compatibility link to a legacy user path
+		user_directory="\${WINEPREFIX}/drive_c/users/\${USER}"
+		path_current='${path_current}'
+		path_legacy='${path_legacy}'
+		(
+		    cd "\$user_directory"
+		    if [ ! -e "\${user_directory}/\${path_current}" ]; then
+		        path_current_parent=\$(dirname "\$path_current")
+		        mkdir --parents "\$path_current_parent"
+		        mv "\$path_legacy" "\$path_current"
+		    fi
+		    ln --symbolic "\$path_current" "\$path_legacy"
+		)
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Print the snippet used to generate the WINE prefix
@@ -166,28 +175,31 @@ wine_prefix_wineprefix_build() {
 	# Set WINE prefix environment
 	wine_prefix_wineprefix_environment
 	# Generate the WINE prefix
-	cat <<- 'EOF'
-	# Generate the WINE prefix
-	if ! [ -e "$WINEPREFIX" ]; then
-	    mkdir --parents "$(dirname "$WINEPREFIX")"
-	    # Use LANG=C to avoid localized directory names
-	    LANG=C $(wineboot_command) --init 2>/dev/null
-	    # Wait until the WINE prefix creation is complete
-	    printf "Waiting for the WINE prefix initialization to complete, it might take a couple seconds…\\n"
-	    while [ ! -f "${WINEPREFIX}/system.reg" ]; do
-	        sleep 1s
-	    done
-	    # Link game prefix into WINE prefix
-	    ln --symbolic \
-	        "$PATH_PREFIX" \
-	        "${WINEPREFIX}/drive_c/${GAME_ID}"
-	    # Remove most links pointing outside of the WINE prefix
-	    rm "$WINEPREFIX/dosdevices/z:"
-	    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
-	        rm "$directory"
-	        mkdir "$directory"
-	    done
-	EOF
+	{
+		cat <<- 'EOF'
+		# Generate the WINE prefix
+		if ! [ -e "$WINEPREFIX" ]; then
+		    mkdir --parents "$(dirname "$WINEPREFIX")"
+		    # Use LANG=C to avoid localized directory names
+		    LANG=C $(wineboot_command) --init 2>/dev/null
+		    # Wait until the WINE prefix creation is complete
+		    printf "Waiting for the WINE prefix initialization to complete, it might take a couple seconds…\\n"
+		    while [ ! -f "${WINEPREFIX}/system.reg" ]; do
+		        sleep 1s
+		    done
+		    # Link game prefix into WINE prefix
+		    ln --symbolic \
+		        "$PATH_PREFIX" \
+		        "${WINEPREFIX}/drive_c/${GAME_ID}"
+		    # Remove most links pointing outside of the WINE prefix
+		    rm "$WINEPREFIX/dosdevices/z:"
+		    find "$WINEPREFIX/drive_c/users/$(whoami)" -type l | while read -r directory; do
+		        rm "$directory"
+		        mkdir "$directory"
+		    done
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 	# Set compatibility links to legacy user paths
 	wine_prefix_wineprefix_legacy_link 'AppData/Roaming' 'Application Data'
 	wine_prefix_wineprefix_legacy_link 'Documents' 'My Documents'
@@ -221,17 +233,19 @@ wine_persistent() {
 	# Divert paths from the WINE prefix to persistent storage
 	WINE_PERSISTENT_DIRECTORIES="$directories_list"
 	EOF
-	cat <<- 'EOF'
-	while read -r directory; do
-	    if [ -z "$directory" ]; then
-	        continue
-	    fi
-	    persistent_path_diversion "${WINEPREFIX}/drive_c" "${USER_PERSISTENT_PATH}/wineprefix" "$directory"
-	done <<- EOL
-	$(printf '%s' "$WINE_PERSISTENT_DIRECTORIES")
-	EOL
+	{
+		cat <<- 'EOF'
+		while read -r directory; do
+		    if [ -z "$directory" ]; then
+		        continue
+		    fi
+		    persistent_path_diversion "${WINEPREFIX}/drive_c" "${USER_PERSISTENT_PATH}/wineprefix" "$directory"
+		done <<- EOL
+		$(printf '%s' "$WINE_PERSISTENT_DIRECTORIES")
+		EOL
 
-	EOF
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Set environment for registry keys persistent storage
@@ -250,97 +264,106 @@ wine_persistent_regedit_environment() {
 	cat <<- EOF
 	REGEDIT_PERSISTENT_KEYS='$WINE_REGEDIT_PERSISTENT_KEYS'
 	EOF
-	cat <<- 'EOF'
-	# Convert registry key name to file path
-	regedit_convert_key_to_path() {
-	    printf '%s.reg' "$1" | \
-	        sed 's#\\#/#g' | \
-	        tr '[:upper:]' '[:lower:]'
-	}
-	EOF
+	{
+		cat <<- 'EOF'
+		# Convert registry key name to file path
+		regedit_convert_key_to_path() {
+		    printf '%s.reg' "$1" | \
+		        sed 's#\\#/#g' | \
+		        tr '[:upper:]' '[:lower:]'
+		}
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Store registry keys in a persistent path
 # USAGE: wine_persistent_regedit_store
 wine_persistent_regedit_store() {
-	cat <<- 'EOF'
-	# Store registry keys in a persistent path
-	while read -r registry_key; do
-	    if [ -z "$registry_key" ]; then
-	        continue
-	    fi
-	    registry_dump="${REGEDIT_DUMPS_WINEPREFIX_PATH}/$(regedit_convert_key_to_path "$registry_key")"
-	    registry_dump_directory=$(dirname "$registry_dump")
-	    mkdir --parents "$registry_dump_directory"
-	    printf 'Dumping registry key in "%s".\n' "$registry_dump"
-	    $(regedit_command) -E "$registry_dump" "$registry_key"
-	done <<- EOL
-	$(printf '%s' "$REGEDIT_PERSISTENT_KEYS")
-	EOL
-	if [ -e "$REGEDIT_DUMPS_WINEPREFIX_PATH" ]; then
-	    (
-	        mkdir --parents "$USER_PERSISTENT_PATH_REGEDIT"
-	        cd "$REGEDIT_DUMPS_WINEPREFIX_PATH"
-	        find . -type f \
-	            -exec cp --force --parents --target-directory="$USER_PERSISTENT_PATH_REGEDIT" {} +
-	    )
-	fi
-	EOF
+	{
+		cat <<- 'EOF'
+		# Store registry keys in a persistent path
+		while read -r registry_key; do
+		    if [ -z "$registry_key" ]; then
+		        continue
+		    fi
+		    registry_dump="${REGEDIT_DUMPS_WINEPREFIX_PATH}/$(regedit_convert_key_to_path "$registry_key")"
+		    registry_dump_directory=$(dirname "$registry_dump")
+		    mkdir --parents "$registry_dump_directory"
+		    printf 'Dumping registry key in "%s".\n' "$registry_dump"
+		    $(regedit_command) -E "$registry_dump" "$registry_key"
+		done <<- EOL
+		$(printf '%s' "$REGEDIT_PERSISTENT_KEYS")
+		EOL
+		if [ -e "$REGEDIT_DUMPS_WINEPREFIX_PATH" ]; then
+		    (
+		        mkdir --parents "$USER_PERSISTENT_PATH_REGEDIT"
+		        cd "$REGEDIT_DUMPS_WINEPREFIX_PATH"
+		        find . -type f \
+		            -exec cp --force --parents --target-directory="$USER_PERSISTENT_PATH_REGEDIT" {} +
+		    )
+		fi
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE - Load registry keys from persistent dumps
 # USAGE: wine_persistent_regedit_load
 wine_persistent_regedit_load() {
-	cat <<- 'EOF'
-	# Load registry keys from persistent dumps
-	if [ -e "$USER_PERSISTENT_PATH_REGEDIT" ]; then
-	    (
-	        mkdir --parents "$REGEDIT_DUMPS_WINEPREFIX_PATH"
-	        cd "$USER_PERSISTENT_PATH_REGEDIT"
-	        find . -type f \
-	            -exec cp --force --parents --target-directory="$REGEDIT_DUMPS_WINEPREFIX_PATH" {} +
-	    )
-	fi
-	while read -r registry_key; do
-	    if [ -z "$registry_key" ]; then
-	        continue
-	    fi
-	    registry_dump="${REGEDIT_DUMPS_WINEPREFIX_PATH}/$(regedit_convert_key_to_path "$registry_key")"
-	    if [ -e "$registry_dump" ]; then
-	        printf 'Loading registry key from "%s".\n' "$registry_dump"
-	        $(regedit_command) "$registry_dump"
-	    fi
-	done <<- EOL
-	$(printf '%s' "$REGEDIT_PERSISTENT_KEYS")
-	EOL
+	{
+		cat <<- 'EOF'
+		# Load registry keys from persistent dumps
+		if [ -e "$USER_PERSISTENT_PATH_REGEDIT" ]; then
+		    (
+		        mkdir --parents "$REGEDIT_DUMPS_WINEPREFIX_PATH"
+		        cd "$USER_PERSISTENT_PATH_REGEDIT"
+		        find . -type f \
+		            -exec cp --force --parents --target-directory="$REGEDIT_DUMPS_WINEPREFIX_PATH" {} +
+		    )
+		fi
+		while read -r registry_key; do
+		    if [ -z "$registry_key" ]; then
+		        continue
+		    fi
+		    registry_dump="${REGEDIT_DUMPS_WINEPREFIX_PATH}/$(regedit_convert_key_to_path "$registry_key")"
+		    if [ -e "$registry_dump" ]; then
+		        printf 'Loading registry key from "%s".\n' "$registry_dump"
+		        $(regedit_command) "$registry_dump"
+		    fi
+		done <<- EOL
+		$(printf '%s' "$REGEDIT_PERSISTENT_KEYS")
+		EOL
 
-	EOF
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # print the snippet providing a function returning the path to the `wine` command
 # USAGE: launcher_wine_command_path
-# RETURN: the code snippet, a multi-lines string, indented with four spaces
 launcher_wine_command_path() {
-	cat <<- 'EOF'
-	# Print the path to the `wine` command
-	wine_command() {
-	    if [ -z "$PLAYIT_WINE_CMD" ]; then
-	        command -v wine
-	        return 0
-	    fi
-	    printf '%s' "$PLAYIT_WINE_CMD"
-	}
-	wineboot_command() {
-	    wine_command | sed 's#/wine$#/wineboot#'
-	}
-	wineserver_command() {
-	    wine_command | sed 's#/wine$#/wineserver#'
-	}
-	regedit_command() {
-	    wine_command | sed 's#/wine$#/regedit#'
-	}
+	{
+		cat <<- 'EOF'
+		# Print the path to the `wine` command
+		wine_command() {
+		    if [ -z "$PLAYIT_WINE_CMD" ]; then
+		        command -v wine
+		        return 0
+		    fi
+		    printf '%s' "$PLAYIT_WINE_CMD"
+		}
+		wineboot_command() {
+		    wine_command | sed 's#/wine$#/wineboot#'
+		}
+		wineserver_command() {
+		    wine_command | sed 's#/wine$#/wineserver#'
+		}
+		regedit_command() {
+		    wine_command | sed 's#/wine$#/regedit#'
+		}
 
-	EOF
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # WINE launcher - Print the variables specific to the current application
@@ -407,26 +430,29 @@ wine_launcher_run() {
 # WINE - Apply winetricks verbs, spawning a terminal if required
 # USAGE: wine_winetricks_wrapper
 wine_winetricks_wrapper() {
-	cat <<- 'EOF'
-	# Apply winetricks verbs, spawning a terminal if required
-	winetricks_wrapper() {
-	    # Export custom paths to WINE commands
-	    # so winetricks use them instead of the default paths
-	    WINE=$(wine_command)
-	    WINESERVER=$(wineserver_command)
-	    WINEBOOT=$(wineboot_command)
-	    export WINE WINESERVER WINEBOOT
-	    # Run winetricks, spawning a terminal if required
-	    # to ensure it is not silently running in the background
-	    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
-	        winetricks "$@"
-	    elif command -v xterm >/dev/null; then
-	        xterm -e winetricks "$@"
-	    else
-	        winetricks "$@"
-	    fi
-	    ## Wait a bit for lingering WINE processes to terminate
-	    sleep 1s
-	}
-	EOF
+	{
+		cat <<- 'EOF'
+		# Apply winetricks verbs, spawning a terminal if required
+		winetricks_wrapper() {
+		    # Export custom paths to WINE commands
+		    # so winetricks use them instead of the default paths
+		    WINE=$(wine_command)
+		    WINESERVER=$(wineserver_command)
+		    WINEBOOT=$(wineboot_command)
+		    export WINE WINESERVER WINEBOOT
+		    # Run winetricks, spawning a terminal if required
+		    # to ensure it is not silently running in the background
+		    if [ -t 0 ] || command -v zenity kdialog >/dev/null; then
+		        winetricks "$@"
+		    elif command -v xterm >/dev/null; then
+		        xterm -e winetricks "$@"
+		    else
+		        winetricks "$@"
+		    fi
+		    ## Wait a bit for lingering WINE processes to terminate
+		    sleep 1s
+		}
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
