@@ -69,13 +69,9 @@ launcher_prefix_function_build() {
 	EOF
 }
 
-# write launcher script prefix functions
-# USAGE: launcher_write_script_prefix_functions $file
-# CALLED BY: launcher_write_script
-launcher_write_script_prefix_functions() {
-	local file
-	file="$1"
-	{
+# Print the functions used to generate a symlinks prefix
+# USAGE: launcher_prefix_symlinks_functions
+launcher_prefix_symlinks_functions() {
 		cat <<- 'EOF'
 		# Set userdir- and prefix-related functions
 		EOF
@@ -83,34 +79,12 @@ launcher_write_script_prefix_functions() {
 		launcher_prefix_functions_persistent
 		prefix_generate_links_farm
 		launcher_prefix_function_build
-	} >> "$file"
-	sed --in-place 's/    /\t/g' "$file"
-	return 0
 }
 
-# write launcher script prefix prepare hook
-# USAGE: launcher_write_script_prefix_prepare $file
-launcher_write_script_prefix_prepare() {
-	local file
-	file="$1"
-
-	if ! variable_is_empty 'PREFIX_PREPARE'; then
-		cat >> "$file" <<- EOF
-		$PREFIX_PREPARE
-
-		EOF
-	fi
-
-	return 0
-}
-
-# write launcher script prefix initialization
-# USAGE: launcher_write_script_prefix_build $file
-# CALLED BY: launcher_write_build
-launcher_write_script_prefix_build() {
-	local file
-	file="$1"
-	cat >> "$file" <<- 'EOF'
+# Print the actions used to build a symlinks prefix
+# USAGE: launcher_prefix_symlinks_build
+launcher_prefix_symlinks_build() {
+	cat  <<- 'EOF'
 	# Build user prefix
 
 	PATH_PREFIX=$(prefix_path)
@@ -119,26 +93,24 @@ launcher_write_script_prefix_build() {
 	    "$USER_PERSISTENT_PATH"
 	EOF
 
-	launcher_write_script_prefix_prepare "$file"
+	if [ -n "${PREFIX_PREPARE:-}" ]; then
+		cat <<- EOF
+		$PREFIX_PREPARE
 
-	cat >> "$file" <<- 'EOF'
+		EOF
+	fi
+
+	cat  <<- 'EOF'
 	prefix_build
 
 	EOF
-	sed --in-place 's/    /\t/g' "$file"
-	return 0
 }
 
-# write launcher script prefix cleanup
-# USAGE: launcher_write_script_prefix_cleanup $file
-# CALLED BY: launcher_write_build
-launcher_write_script_prefix_cleanup() {
-	local file
-	file="$1"
-	cat >> "$file" <<- 'EOF'
+# Print the actions used to clean up a symlinks prefix
+# USAGE: launcher_prefix_symlinks_cleanup
+launcher_prefix_symlinks_cleanup() {
+	cat <<- 'EOF'
 	# Clean up user prefix
 	persistent_update_from_prefix
 	EOF
-	sed --in-place 's/    /\t/g' "$file"
-	return 0
 }

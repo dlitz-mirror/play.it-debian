@@ -1,47 +1,39 @@
-# WINE - Write full launcher script
-# USAGE: wine_launcher_write $application $target_file
-wine_launcher_write() {
-	local application target_file prefix_type
+# WINE - Print the content of the launcher script
+# USAGE: wine_launcher $application
+wine_launcher() {
+	local application
 	application="$1"
-	target_file="$2"
-	prefix_type=$(application_prefix_type "$application")
 
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
-			local game_id
-			game_id=$(game_id)
-			launcher_write_script_wine_application_variables "$application" "$target_file"
-			launcher_write_script_game_variables "$target_file"
-			launcher_print_persistent_paths >> "$target_file"
-			launcher_wine_command_path >> "$target_file"
-			launcher_write_script_prefix_functions "$target_file"
-			launcher_write_script_prefix_build "$target_file"
-			{
-				wine_winetricks_wrapper
-				wine_prefix_wineprefix_build
-				local persistent_directories
-				persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
-				if [ -n "$persistent_directories" ]; then
-					wine_persistent "$persistent_directories"
-				elif \
-					! version_is_at_least '2.24' "$target_version" && \
-					! variable_is_empty 'APP_WINE_LINK_DIRS'
-				then
-					if version_is_at_least '2.23' "$target_version"; then
-						warning_deprecated_variable 'APP_WINE_LINK_DIRS' 'WINE_PERSISTENT_DIRECTORIES'
-					fi
-					wine_persistent_legacy
+			wine_launcher_application_variables "$application"
+			launcher_game_variables
+			launcher_print_persistent_paths
+			launcher_wine_command_path
+			launcher_prefix_symlinks_functions
+			launcher_prefix_symlinks_build
+			wine_winetricks_wrapper
+			wine_prefix_wineprefix_build
+			local persistent_directories
+			persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
+			if [ -n "$persistent_directories" ]; then
+				wine_persistent "$persistent_directories"
+			elif \
+				! version_is_at_least '2.24' "$target_version" && \
+				! variable_is_empty 'APP_WINE_LINK_DIRS'
+			then
+				if version_is_at_least '2.23' "$target_version"; then
+					warning_deprecated_variable 'APP_WINE_LINK_DIRS' 'WINE_PERSISTENT_DIRECTORIES'
 				fi
-				wine_persistent_regedit_environment
-			} >> "$target_file"
-			wine_persistent_regedit_load >> "$target_file"
-			if version_is_at_least '2.22' "$target_version"; then
-				wine_launcher_run "$application" >> "$target_file"
-			else
-				launcher_write_script_wine_run "$application" "$target_file"
+				wine_persistent_legacy
 			fi
-			wine_persistent_regedit_store >> "$target_file"
-			launcher_write_script_prefix_cleanup "$target_file"
+			wine_persistent_regedit_environment
+			wine_persistent_regedit_load
+			wine_launcher_run "$application"
+			wine_persistent_regedit_store
+			launcher_prefix_symlinks_cleanup
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"
@@ -351,26 +343,23 @@ launcher_wine_command_path() {
 	EOF
 }
 
-# WINE - write application-specific variables
-# USAGE: launcher_write_script_wine_application_variables $application $file
-# CALLED BY: launcher_write_script
-launcher_write_script_wine_application_variables() {
-	local application file
+# WINE launcher - Print the variables specific to the current application
+# USAGE: wine_launcher_application_variables $application
+wine_launcher_application_variables() {
+	local application
 	application="$1"
-	file="$2"
 
 	local application_exe application_options
 	application_exe=$(application_exe_escaped "$application")
 	application_options=$(application_options "$application")
 
-	cat >> "$file" <<- EOF
+	cat <<- EOF
 	# Set application-specific values
 
 	APP_EXE='$application_exe'
 	APP_OPTIONS="$application_options"
 
 	EOF
-	return 0
 }
 
 # WINE - Print the snippet handling the actual run of the game

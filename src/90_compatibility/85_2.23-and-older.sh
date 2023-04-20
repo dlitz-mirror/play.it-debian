@@ -99,3 +99,10 @@ build_pkg() {
 		;;
 	esac
 }
+
+launcher_write_script_headers() {
+	if version_is_at_least '2.24' "$target_version"; then
+		warning_deprecated_function 'launcher_write_script_headers' 'launcher_headers'
+	fi
+	launcher_headers > "$1"
+}

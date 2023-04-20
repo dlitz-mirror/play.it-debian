@@ -50,19 +50,21 @@ launcher_write_script() {
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
-	launcher_write_script_headers "$target_file"
+	launcher_headers > "$target_file"
 	case "$application_type" in
 		('dosbox')
 			case "$prefix_type" in
 				('symlinks')
-					dosbox_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					dosbox_prefix_function_toupper >> "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					dosbox_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
+					{
+						dosbox_launcher_application_variables "$application"
+						launcher_game_variables
+						launcher_print_persistent_paths
+						launcher_prefix_symlinks_functions
+						dosbox_prefix_function_toupper
+						launcher_prefix_symlinks_build
+						dosbox_launcher_run "$application"
+						launcher_prefix_symlinks_cleanup
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -76,13 +78,15 @@ launcher_write_script() {
 		('java')
 			case "$prefix_type" in
 				('symlinks')
-					java_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					java_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
+					{
+						java_launcher_application_variables "$application"
+						launcher_game_variables
+						launcher_print_persistent_paths
+						launcher_prefix_symlinks_functions
+						launcher_prefix_symlinks_build
+						java_launcher_run "$application"
+						launcher_prefix_symlinks_cleanup
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -96,18 +100,22 @@ launcher_write_script() {
 		('native')
 			case "$prefix_type" in
 				('symlinks')
-					native_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					native_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
+					{
+						native_launcher_application_variables "$application"
+						launcher_game_variables
+						launcher_print_persistent_paths
+						launcher_prefix_symlinks_functions
+						launcher_prefix_symlinks_build
+						native_launcher_run "$application"
+						launcher_prefix_symlinks_cleanup
+					} >> "$target_file"
 				;;
 				('none')
-					native_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					native_launcher_run "$application" >> "$target_file"
+					{
+						native_launcher_application_variables "$application"
+						launcher_game_variables
+						native_launcher_run "$application"
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -118,11 +126,13 @@ launcher_write_script() {
 		('scummvm')
 			case "$prefix_type" in
 				('none')
-					scummvm_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_prerun "$application" "$target_file"
-					scummvm_launcher_run >> "$target_file"
-					launcher_write_script_postrun "$application" "$target_file"
+					{
+						scummvm_launcher_application_variables "$application"
+						launcher_game_variables
+						application_prerun "$application"
+						scummvm_launcher_run
+						application_postrun "$application"
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -136,12 +146,14 @@ launcher_write_script() {
 		('renpy')
 			case "$prefix_type" in
 				('symlinks')
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					renpy_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
+					{
+						launcher_game_variables
+						launcher_print_persistent_paths
+						launcher_prefix_symlinks_functions
+						launcher_prefix_symlinks_build
+						renpy_launcher_run "$application"
+						launcher_prefix_symlinks_cleanup
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -155,11 +167,13 @@ launcher_write_script() {
 		('residualvm')
 			case "$prefix_type" in
 				('none')
-					residualvm_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_prerun "$application" "$target_file"
-					residualvm_launcher_run >> "$target_file"
-					launcher_write_script_postrun "$application" "$target_file"
+					{
+						residualvm_launcher_application_variables "$application"
+						launcher_game_variables
+						application_prerun "$application"
+						residualvm_launcher_run
+						application_postrun "$application"
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -171,7 +185,7 @@ launcher_write_script() {
 			dependencies_add_generic "$package" 'residualvm'
 		;;
 		('wine')
-			wine_launcher_write "$application" "$target_file"
+			wine_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'wine'
@@ -179,18 +193,22 @@ launcher_write_script() {
 		('mono')
 			case "$prefix_type" in
 				('symlinks')
-					mono_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					mono_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
+					{
+						mono_launcher_application_variables "$application"
+						launcher_game_variables
+						launcher_print_persistent_paths
+						launcher_prefix_symlinks_functions
+						launcher_prefix_symlinks_build
+						mono_launcher_run "$application"
+						launcher_prefix_symlinks_cleanup
+					} >> "$target_file"
 				;;
 				('none')
-					mono_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					mono_launcher_run "$application" >> "$target_file"
+					{
+						mono_launcher_application_variables "$application"
+						launcher_game_variables
+						mono_launcher_run "$application"
+					} >> "$target_file"
 				;;
 				(*)
 					error_launchers_prefix_type_unsupported "$application"
@@ -202,13 +220,11 @@ launcher_write_script() {
 			dependencies_add_generic "$package" 'mono'
 		;;
 	esac
-	cat >> "$target_file" <<- 'EOF'
-	if [ -n "$game_exit_status" ]; then
-	    exit $game_exit_status
-	else
-	    exit 0
-	fi
-	EOF
+	launcher_exit >> "$target_file"
+
+	# The generated launcher scripts use spaces for indentation,
+	# these must be replaced with tabulations.
+	sed --in-place --regexp-extended 's/( ){4}/\t/g' "$target_file"
 
 	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
@@ -255,78 +271,42 @@ launcher_target_presence_check() {
 	test -f "$application_exe_path"
 }
 
-# write launcher script headers
-# USAGE: launcher_write_script_headers $file
-# NEEDED VARS: LIBRARY_VERSION
-# CALLED BY: launcher_write_script
-launcher_write_script_headers() {
-	local file
-	file="$1"
-	cat > "$file" <<- EOF
+# Print the headers common to all launcher scripts
+# USAGE: launcher_headers
+launcher_headers() {
+	cat <<- EOF
 	#!/bin/sh
 	# script generated by ./play.it $LIBRARY_VERSION - https://www.dotslashplay.it/
 	set -o errexit
 
 	EOF
-	return 0
 }
 
-# write launcher script game-specific variables
-# USAGE: launcher_write_script_game_variables $file
-launcher_write_script_game_variables() {
-	local file
-	file="$1"
+# Print the exit actions common to all launcher scripts
+# USAGE: launcher_exit
+launcher_exit() {
+	cat <<- 'EOF'
+	# Return the game exit code
 
+	if [ -n "$game_exit_status" ]; then
+	    exit "$game_exit_status"
+	else
+	    exit 0
+	fi
+	EOF
+}
+
+# Print the variables common to all launchers for the current game
+# USAGE: launcher_game_variables
+launcher_game_variables() {
 	local game_id path_game_data
 	game_id=$(game_id)
 	path_game_data=$(path_game_data)
-	cat >> "$file" <<- EOF
+	cat <<- EOF
 	# Set game-specific values
 
-	GAME_ID='${game_id}'
-	PATH_GAME='${path_game_data}'
-
-	EOF
-}
-
-# write launcher script pre-run actions
-# USAGE: launcher_write_script_prerun $application $file
-launcher_write_script_prerun() {
-	local application file
-	application="$1"
-	file="$2"
-
-	local application_prerun
-	application_prerun=$(application_prerun "$application")
-
-	# Return early if there are no pre-run actions for the given application
-	if [ -z "$application_prerun" ]; then
-		return 0
-	fi
-
-	cat >> "$file" <<- EOF
-	$application_prerun
-
-	EOF
-}
-
-# write launcher script post-run actions
-# USAGE: launcher_write_script_postrun $application $file
-launcher_write_script_postrun() {
-	local application file
-	application="$1"
-	file="$2"
-
-	local application_postrun
-	application_postrun=$(application_postrun "$application")
-
-	# Return early if there are no post-run actions for the given application
-	if [ -z "$application_postrun" ]; then
-		return 0
-	fi
-
-	cat >> "$file" <<- EOF
-	$application_postrun
+	GAME_ID='$game_id'
+	PATH_GAME='$path_game_data'
 
 	EOF
 }
