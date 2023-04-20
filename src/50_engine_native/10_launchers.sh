@@ -8,6 +8,7 @@ native_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
+			launcher_headers
 			native_launcher_application_variables "$application"
 			launcher_game_variables
 			launcher_print_persistent_paths
@@ -15,11 +16,14 @@ native_launcher() {
 			launcher_prefix_symlinks_build
 			native_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
+			launcher_exit
 		;;
 		('none')
+			launcher_headers
 			native_launcher_application_variables "$application"
 			launcher_game_variables
 			native_launcher_run "$application"
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"

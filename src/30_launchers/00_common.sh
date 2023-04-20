@@ -50,55 +50,53 @@ launcher_write_script() {
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
-	launcher_headers > "$target_file"
 	case "$application_type" in
 		('dosbox')
-			dosbox_launcher "$application" >> "$target_file"
+			dosbox_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'dosbox'
 		;;
 		('java')
-			java_launcher "$application" >> "$target_file"
+			java_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'java'
 		;;
 		('mono')
-			mono_launcher "$application" >> "$target_file"
+			mono_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'mono'
 		;;
 		('native')
-			native_launcher "$application" >> "$target_file"
+			native_launcher "$application" > "$target_file"
 		;;
 		('renpy')
-			renpy_launcher "$application" >> "$target_file"
+			renpy_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'renpy'
 		;;
 		('residualvm')
-			residualvm_launcher "$application" >> "$target_file"
+			residualvm_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'residualvm'
 		;;
 		('scummvm')
-			scummvm_launcher "$application" >> "$target_file"
+			scummvm_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'scummvm'
 		;;
 		('wine')
-			wine_launcher "$application" >> "$target_file"
+			wine_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'wine'
 		;;
 	esac
-	launcher_exit >> "$target_file"
 
 	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in

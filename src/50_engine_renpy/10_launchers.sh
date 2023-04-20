@@ -8,12 +8,14 @@ renpy_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
+			launcher_headers
 			launcher_game_variables
 			launcher_print_persistent_paths
 			launcher_prefix_symlinks_functions
 			launcher_prefix_symlinks_build
 			renpy_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"

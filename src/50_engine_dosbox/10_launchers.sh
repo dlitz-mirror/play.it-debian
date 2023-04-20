@@ -8,6 +8,7 @@ dosbox_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
+			launcher_headers
 			dosbox_launcher_application_variables "$application"
 			launcher_game_variables
 			launcher_print_persistent_paths
@@ -16,6 +17,7 @@ dosbox_launcher() {
 			launcher_prefix_symlinks_build
 			dosbox_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"

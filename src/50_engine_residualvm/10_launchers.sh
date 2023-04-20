@@ -8,11 +8,13 @@ residualvm_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('none')
+			launcher_headers
 			residualvm_launcher_application_variables "$application"
 			launcher_game_variables
 			application_prerun "$application"
 			residualvm_launcher_run
 			application_postrun "$application"
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"

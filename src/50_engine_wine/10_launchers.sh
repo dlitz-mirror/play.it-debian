@@ -8,6 +8,7 @@ wine_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
+			launcher_headers
 			wine_launcher_application_variables "$application"
 			launcher_game_variables
 			launcher_print_persistent_paths
@@ -34,6 +35,7 @@ wine_launcher() {
 			wine_launcher_run "$application"
 			wine_persistent_regedit_store
 			launcher_prefix_symlinks_cleanup
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"

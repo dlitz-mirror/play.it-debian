@@ -8,6 +8,7 @@ mono_launcher() {
 	prefix_type=$(application_prefix_type "$application")
 	case "$prefix_type" in
 		('symlinks')
+			launcher_headers
 			mono_launcher_application_variables "$application"
 			launcher_game_variables
 			launcher_print_persistent_paths
@@ -15,11 +16,14 @@ mono_launcher() {
 			launcher_prefix_symlinks_build
 			mono_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
+			launcher_exit
 		;;
 		('none')
+			launcher_headers
 			mono_launcher_application_variables "$application"
 			launcher_game_variables
 			mono_launcher_run "$application"
+			launcher_exit
 		;;
 		(*)
 			error_launchers_prefix_type_unsupported "$application"
