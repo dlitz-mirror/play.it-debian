@@ -1,9 +1,8 @@
 # Keep compatibility with 2.23 and older
 
-wine_persistent_legacy() {
-	# Return early if APP_WINE_LINK_DIRS is not set
-	if variable_is_empty 'APP_WINE_LINK_DIRS'; then
-		return 0
+wine_launcher_wineprefix_persistent_legacy() {
+	if version_is_at_least '2.23' "$target_version"; then
+		warning_deprecated_variable 'APP_WINE_LINK_DIRS' 'WINE_PERSISTENT_DIRECTORIES'
 	fi
 
 	cat <<- EOF
@@ -38,6 +37,7 @@ wine_persistent_legacy() {
 		        ln --symbolic "$prefix_dir" "$wine_dir"
 		    fi
 		done
+
 		EOF
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
