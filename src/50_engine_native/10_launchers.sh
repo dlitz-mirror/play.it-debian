@@ -1,3 +1,33 @@
+# Linux native - Print the content of the launcher script
+# USAGE: native_launcher $application
+native_launcher() {
+	local application
+	application="$1"
+
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('symlinks')
+			native_launcher_application_variables "$application"
+			launcher_game_variables
+			launcher_print_persistent_paths
+			launcher_prefix_symlinks_functions
+			launcher_prefix_symlinks_build
+			native_launcher_run "$application"
+			launcher_prefix_symlinks_cleanup
+		;;
+		('none')
+			native_launcher_application_variables "$application"
+			launcher_game_variables
+			native_launcher_run "$application"
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+}
+
 # Linux native - Print application-specific variables
 # USAGE: native_launcher_application_variables $application
 native_launcher_application_variables() {

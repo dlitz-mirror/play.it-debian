@@ -1,3 +1,28 @@
+# Java - Print the content of the launcher script
+# USAGE: java_launcher $application
+java_launcher() {
+	local application
+	application="$1"
+
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('symlinks')
+			java_launcher_application_variables "$application"
+			launcher_game_variables
+			launcher_print_persistent_paths
+			launcher_prefix_symlinks_functions
+			launcher_prefix_symlinks_build
+			java_launcher_run "$application"
+			launcher_prefix_symlinks_cleanup
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+}
+
 # Java - Print application-specific variables
 # USAGE: java_launcher_application_variables $application
 java_launcher_application_variables() {

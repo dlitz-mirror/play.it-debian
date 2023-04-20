@@ -1,3 +1,26 @@
+# ScummVM - Print the content of the launcher script
+# USAGE: scummvm_launcher $application
+scummvm_launcher() {
+	local application
+	application="$1"
+
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('none')
+			scummvm_launcher_application_variables "$application"
+			launcher_game_variables
+			application_prerun "$application"
+			scummvm_launcher_run
+			application_postrun "$application"
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+}
+
 # ScummVM - Print application-specific variables
 # USAGE: scummvm_launcher_application_variables $application
 scummvm_launcher_application_variables() {

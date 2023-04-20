@@ -53,171 +53,49 @@ launcher_write_script() {
 	launcher_headers > "$target_file"
 	case "$application_type" in
 		('dosbox')
-			case "$prefix_type" in
-				('symlinks')
-					{
-						dosbox_launcher_application_variables "$application"
-						launcher_game_variables
-						launcher_print_persistent_paths
-						launcher_prefix_symlinks_functions
-						dosbox_prefix_function_toupper
-						launcher_prefix_symlinks_build
-						dosbox_launcher_run "$application"
-						launcher_prefix_symlinks_cleanup
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			dosbox_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'dosbox'
 		;;
 		('java')
-			case "$prefix_type" in
-				('symlinks')
-					{
-						java_launcher_application_variables "$application"
-						launcher_game_variables
-						launcher_print_persistent_paths
-						launcher_prefix_symlinks_functions
-						launcher_prefix_symlinks_build
-						java_launcher_run "$application"
-						launcher_prefix_symlinks_cleanup
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			java_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'java'
 		;;
-		('native')
-			case "$prefix_type" in
-				('symlinks')
-					{
-						native_launcher_application_variables "$application"
-						launcher_game_variables
-						launcher_print_persistent_paths
-						launcher_prefix_symlinks_functions
-						launcher_prefix_symlinks_build
-						native_launcher_run "$application"
-						launcher_prefix_symlinks_cleanup
-					} >> "$target_file"
-				;;
-				('none')
-					{
-						native_launcher_application_variables "$application"
-						launcher_game_variables
-						native_launcher_run "$application"
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-		;;
-		('scummvm')
-			case "$prefix_type" in
-				('none')
-					{
-						scummvm_launcher_application_variables "$application"
-						launcher_game_variables
-						application_prerun "$application"
-						scummvm_launcher_run
-						application_postrun "$application"
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+		('mono')
+			mono_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'scummvm'
+			dependencies_add_generic "$package" 'mono'
+		;;
+		('native')
+			native_launcher "$application" >> "$target_file"
 		;;
 		('renpy')
-			case "$prefix_type" in
-				('symlinks')
-					{
-						launcher_game_variables
-						launcher_print_persistent_paths
-						launcher_prefix_symlinks_functions
-						launcher_prefix_symlinks_build
-						renpy_launcher_run "$application"
-						launcher_prefix_symlinks_cleanup
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			renpy_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'renpy'
 		;;
 		('residualvm')
-			case "$prefix_type" in
-				('none')
-					{
-						residualvm_launcher_application_variables "$application"
-						launcher_game_variables
-						application_prerun "$application"
-						residualvm_launcher_run
-						application_postrun "$application"
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			residualvm_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'residualvm'
+		;;
+		('scummvm')
+			scummvm_launcher "$application" >> "$target_file"
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'scummvm'
 		;;
 		('wine')
 			wine_launcher "$application" >> "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'wine'
-		;;
-		('mono')
-			case "$prefix_type" in
-				('symlinks')
-					{
-						mono_launcher_application_variables "$application"
-						launcher_game_variables
-						launcher_print_persistent_paths
-						launcher_prefix_symlinks_functions
-						launcher_prefix_symlinks_build
-						mono_launcher_run "$application"
-						launcher_prefix_symlinks_cleanup
-					} >> "$target_file"
-				;;
-				('none')
-					{
-						mono_launcher_application_variables "$application"
-						launcher_game_variables
-						mono_launcher_run "$application"
-					} >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'mono'
 		;;
 	esac
 	launcher_exit >> "$target_file"

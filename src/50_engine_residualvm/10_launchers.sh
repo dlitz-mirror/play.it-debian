@@ -1,3 +1,26 @@
+# ResidualVM - Print the content of the launcher script
+# USAGE: residualvm_launcher $application
+residualvm_launcher() {
+	local application
+	application="$1"
+
+	local prefix_type
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('none')
+			residualvm_launcher_application_variables "$application"
+			launcher_game_variables
+			application_prerun "$application"
+			residualvm_launcher_run
+			application_postrun "$application"
+		;;
+		(*)
+			error_launchers_prefix_type_unsupported "$application"
+			return 1
+		;;
+	esac
+}
+
 # ResidualVM - Print application-specific variables
 # USAGE: residualvm_launcher_application_variables $application
 residualvm_launcher_application_variables() {
