@@ -1,4 +1,4 @@
-# Linux native - Print the content of the launcher script
+# Linux native launcher - Print the script content
 # USAGE: native_launcher $application
 native_launcher() {
 	local application
@@ -9,19 +9,20 @@ native_launcher() {
 	case "$prefix_type" in
 		('symlinks')
 			launcher_headers
-			native_launcher_application_variables "$application"
-			launcher_game_variables
+			native_launcher_environment "$application"
+
+			# Generate the game prefix
 			launcher_print_persistent_paths
 			launcher_prefix_symlinks_functions
 			launcher_prefix_symlinks_build
+
 			native_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
 			launcher_exit
 		;;
 		('none')
 			launcher_headers
-			native_launcher_application_variables "$application"
-			launcher_game_variables
+			native_launcher_environment "$application"
 			native_launcher_run "$application"
 			launcher_exit
 		;;
@@ -32,36 +33,47 @@ native_launcher() {
 	esac
 }
 
-# Linux native - Print application-specific variables
-# USAGE: native_launcher_application_variables $application
-native_launcher_application_variables() {
+# Linux native launcher - Set the environment
+# USAGE: native_launcher_environment $application
+native_launcher_environment() {
 	local application
 	application="$1"
 
-	local application_exe application_libs application_options
+	local game_id path_game application_exe application_options
+	game_id=$(game_id)
+	path_game=$(path_game_data)
 	application_exe=$(application_exe_escaped "$application")
 	application_libs=$(application_libs "$application")
 	application_options=$(application_options "$application")
 
 	cat <<- EOF
-	# Set application-specific values
+	# Set the environment
+
+	GAME_ID='$game_id'
+	PATH_GAME='$path_game'
 	APP_EXE='$application_exe'
 	APP_LIBS='$application_libs'
 	APP_OPTIONS="$application_options"
+
 	EOF
 }
 
-# Linux native - Print the actual call to the game binary
+# Linux native launcher - Run the game binary
 # USAGE: native_launcher_run $application
 native_launcher_run() {
 	local application
 	application="$1"
 
-	local application_type_variant
-	application_type_variant=$(application_type_variant "$application")
-
-	local execution_path
-	execution_path=$(native_launcher_exec_path "$application")
+	local prefix_type execution_path
+	prefix_type=$(application_prefix_type "$application")
+	case "$prefix_type" in
+		('symlinks')
+			execution_path='$PATH_PREFIX'
+		;;
+		('none')
+			execution_path='$PATH_GAME'
+		;;
+	esac
 	cat <<- EOF
 	# Run the game
 
@@ -69,6 +81,8 @@ native_launcher_run() {
 
 	EOF
 
+	local application_type_variant
+	application_type_variant=$(application_type_variant "$application")
 	case "$application_type_variant" in
 		('unity3d')
 			# Start pulseaudio if it is available
@@ -116,7 +130,7 @@ native_launcher_run() {
 	esac
 
 	# Set loading paths for libraries
-	launcher_native_libraries_paths
+	native_launcher_libraries
 
 	application_prerun "$application"
 
@@ -125,10 +139,12 @@ native_launcher_run() {
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
+
 	## Silence ShellCheck false-positive
 	## Double quote to prevent globbing and word splitting.
 	# shellcheck disable=SC2086
 	"./$APP_EXE" $APP_OPTIONS "$@"
+
 	game_exit_status=$?
 	set -o errexit
 
@@ -144,35 +160,13 @@ native_launcher_run() {
 	esac
 }
 
-# Linux native - Print the path from where the game binary is called
-# USAGE: native_launcher_exec_path $application
-native_launcher_exec_path() {
-	local application
-	application="$1"
-
-	local prefix_type
-	prefix_type=$(application_prefix_type "$application")
-	case "$prefix_type" in
-		('symlinks')
-			printf '$PATH_PREFIX'
-			return 0
-		;;
-		('none')
-			printf '$PATH_GAME'
-			return 0
-		;;
-		(*)
-			return 1
-		;;
-	esac
-}
-
-# Linux native - Print the copy command for the game binary
+# Linux native launcher - Copy the game binary into the game prefix
 # USAGE: native_launcher_binary_copy
 native_launcher_binary_copy() {
 	{
 		cat <<- 'EOF'
 		# Copy the game binary into the user prefix
+
 		exe_destination="${PATH_PREFIX}/${APP_EXE}"
 		if [ -h "$exe_destination" ]; then
 		    exe_source=$(realpath "$exe_destination")
@@ -183,21 +177,19 @@ native_launcher_binary_copy() {
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
-# Linux native - Print libraries loading path.
-# USAGE: launcher_native_libraries_paths
-launcher_native_libraries_paths() {
-	local path_system
+# Linux native launcher - Load shipped libraries
+# USAGE: native_launcher_libraries
+native_launcher_libraries() {
+	local path_legacy path_system path_user
+	path_legacy='$APP_LIBS'
 	path_system=$(path_libraries)
-	assert_not_empty 'path_system' 'launcher_native_libraries_paths'
-
-	local path_user
 	path_user='${HOME}/.local/lib/games/${GAME_ID}'
 
 	cat <<- EOF
 	# Set loading paths for libraries
-	PLAYIT_LIBS_PATH_LEGACY="\$APP_LIBS"
-	PLAYIT_LIBS_PATH_SYSTEM='${path_system}'
-	PLAYIT_LIBS_PATH_USER="${path_user}"
+	PLAYIT_LIBS_PATH_LEGACY="$path_legacy"
+	PLAYIT_LIBS_PATH_SYSTEM='$path_system'
+	PLAYIT_LIBS_PATH_USER="$path_user"
 	EOF
 	{
 		cat <<- 'EOF'

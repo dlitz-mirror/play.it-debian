@@ -63,7 +63,7 @@ mono_launcher_run() {
 	exec_path=$(mono_launcher_exec_path "$application")
 	application_prerun=$(application_prerun "$application")
 	application_postrun=$(application_postrun "$application")
-	libraries_paths=$(launcher_native_libraries_paths)
+	libraries_paths=$(native_launcher_libraries)
 	launcher_tweaks=$(mono_launcher_tweaks)
 
 	cat <<- EOF

@@ -52,16 +52,16 @@ java_launcher_run() {
 	local application
 	application="$1"
 
-	local application_prerun application_postrun launcher_native_libraries_paths
+	local application_prerun application_postrun native_launcher_libraries
 	application_prerun=$(application_prerun "$application")
 	application_postrun=$(application_postrun "$application")
-	launcher_native_libraries_paths=$(launcher_native_libraries_paths)
+	native_launcher_libraries=$(native_launcher_libraries)
 
 	cat <<- EOF
 	# Run the game
 	cd "\$PATH_PREFIX"
 	$application_prerun
-	$launcher_native_libraries_paths
+	$native_launcher_libraries
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit

@@ -108,3 +108,10 @@ launcher_write_script_headers() {
 	fi
 	launcher_headers > "$1"
 }
+
+launcher_native_libraries_paths() {
+	if version_is_at_least '2.24' "$target_version"; then
+		warning_deprecated_function 'launcher_native_libraries_paths' 'native_launcher_libraries'
+	fi
+	native_launcher_libraries
+}
