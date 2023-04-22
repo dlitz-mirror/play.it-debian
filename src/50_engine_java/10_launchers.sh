@@ -1,4 +1,4 @@
-# Java - Print the content of the launcher script
+# Java launcher - Print the script content
 # USAGE: java_launcher $application
 java_launcher() {
 	local application
@@ -9,11 +9,13 @@ java_launcher() {
 	case "$prefix_type" in
 		('symlinks')
 			launcher_headers
-			java_launcher_application_variables "$application"
-			launcher_game_variables
+			java_launcher_environment "$application"
+
+			# Generate the game prefix
 			launcher_print_persistent_paths
 			launcher_prefix_symlinks_functions
 			launcher_prefix_symlinks_build
+
 			java_launcher_run "$application"
 			launcher_prefix_symlinks_cleanup
 			launcher_exit
@@ -25,49 +27,65 @@ java_launcher() {
 	esac
 }
 
-# Java - Print application-specific variables
-# USAGE: java_launcher_application_variables $application
-java_launcher_application_variables() {
+# Java launcher - Set the environment
+# USAGE: java_launcher_environment $application
+java_launcher_environment() {
 	local application
 	application="$1"
 
-	local application_exe application_libs application_options application_java_options
+	local game_id path_game application_exe application_options application_java_options
+	game_id=$(game_id)
+	path_game=$(path_game_data)
 	application_exe=$(application_exe_escaped "$application")
 	application_libs=$(application_libs "$application")
 	application_options=$(application_options "$application")
 	application_java_options=$(application_java_options "$application")
 
 	cat <<- EOF
-	# Set application-specific values
+	# Set the environment
+
+	GAME_ID='$game_id'
+	PATH_GAME='$path_game'
 	APP_EXE='$application_exe'
 	APP_LIBS='$application_libs'
 	APP_OPTIONS="$application_options"
 	JAVA_OPTIONS='$application_java_options'
+
 	EOF
 }
 
-# Java - Print the actual call to java
+# Java launcher - Run Java
 # USAGE: java_launcher_run $application
 java_launcher_run() {
 	local application
 	application="$1"
 
-	local application_prerun application_postrun native_launcher_libraries
-	application_prerun=$(application_prerun "$application")
-	application_postrun=$(application_postrun "$application")
-	native_launcher_libraries=$(native_launcher_libraries)
-
-	cat <<- EOF
+	cat <<- 'EOF'
 	# Run the game
-	cd "\$PATH_PREFIX"
-	$application_prerun
-	$native_launcher_libraries
+
+	cd "$PATH_PREFIX"
+
+	EOF
+
+	# Set loading paths for libraries
+	native_launcher_libraries
+
+	application_prerun "$application"
+
+	cat <<- 'EOF'
 	## Do not exit on application failure,
 	## to ensure post-run commands are run.
 	set +o errexit
-	java \$JAVA_OPTIONS -jar "\$APP_EXE" \$APP_OPTIONS "\$@"
-	game_exit_status=\$?
+
+	## Silence ShellCheck false-positive
+	## Double quote to prevent globbing and word splitting.
+	# shellcheck disable=SC2086
+	java $JAVA_OPTIONS -jar "$APP_EXE" $APP_OPTIONS "$@"
+
+	game_exit_status=$?
 	set -o errexit
-	$application_postrun
+
 	EOF
+
+	application_postrun "$application"
 }
