@@ -40,11 +40,18 @@ debian_package_metadata_control() {
 	EOF
 }
 
-# Write the metadata for the given package
-# WARNING: The target package is set in write_metadata,
-#          and passed through a $pkg variable implicitly inherited.
-# USAGE: pkg_write_deb $package
-pkg_write_deb() {
+# Debian - Write the metadata for the listed packages
+# USAGE: debian_packages_metadata $package[…]
+debian_packages_metadata() {
+	local package
+	for package in "$@"; do
+		debian_package_metadata_single "$package"
+	done
+}
+
+# Debian - Write the metadata for the given package
+# USAGE: debian_package_metadata_single $package
+debian_package_metadata_single() {
 	local package
 	package="$1"
 

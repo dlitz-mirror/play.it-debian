@@ -39,3 +39,63 @@ wine_persistent_legacy() {
 	done
 	EOF
 }
+
+write_metadata() {
+	if version_is_at_least '2.24' "$target_version"; then
+		warning_deprecated_function 'write_metadata' 'packages_generation'
+	fi
+
+	# If not explicit packages list is given, write metadata for all packages
+	if [ $# -eq 0 ]; then
+		local packages_list
+		packages_list=$(packages_get_list)
+		write_metadata $packages_list
+	fi
+
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('arch')
+			archlinux_packages_metadata "$@"
+		;;
+		('deb')
+			debian_packages_metadata "$@"
+		;;
+		('gentoo')
+			gentoo_packages_metadata "$@"
+		;;
+		('egentoo')
+			egentoo_packages_metadata "$@"
+		;;
+	esac
+}
+
+build_pkg() {
+	if version_is_at_least '2.24' "$target_version"; then
+		warning_deprecated_function 'build_pkg' 'packages_generation'
+	fi
+
+	# If not explicit packages list is given, build all packages
+	if [ $# -eq 0 ]; then
+		local packages_list
+		packages_list=$(packages_get_list)
+		build_pkg $packages_list
+	fi
+
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('arch')
+			archlinux_packages_build "$@"
+		;;
+		('deb')
+			debian_packages_build "$@"
+		;;
+		('gentoo')
+			gentoo_packages_build "$@"
+		;;
+		('egentoo')
+			egentoo_packages_build "$@"
+		;;
+	esac
+}
