@@ -158,21 +158,6 @@ launcher_exit() {
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
-# Print the variables common to all launchers for the current game
-# USAGE: launcher_game_variables
-launcher_game_variables() {
-	local game_id path_game_data
-	game_id=$(game_id)
-	path_game_data=$(path_game_data)
-	cat <<- EOF
-	# Set game-specific values
-
-	GAME_ID='$game_id'
-	PATH_GAME='$path_game_data'
-
-	EOF
-}
-
 # write the XDG desktop file for the given application
 # USAGE: launcher_write_desktop $application
 launcher_write_desktop() {
