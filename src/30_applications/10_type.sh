@@ -5,7 +5,6 @@
 #         - java
 #         - mono
 #         - native
-#         - renpy
 #         - residualvm
 #         - scummvm
 #         - wine
@@ -36,7 +35,6 @@ application_type() {
 			'java' | \
 			'mono' | \
 			'native' | \
-			'renpy' | \
 			'residualvm' | \
 			'scummvm' | \
 			'wine' \

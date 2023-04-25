@@ -55,9 +55,6 @@ pkg_set_deps_arch32() {
 			('pulseaudio')
 				pkg_dep='pulseaudio'
 			;;
-			('renpy')
-				pkg_dep='renpy'
-			;;
 			('residualvm')
 				pkg_dep='residualvm'
 			;;
@@ -184,9 +181,6 @@ pkg_set_deps_arch64() {
 			;;
 			('pulseaudio')
 				pkg_dep='pulseaudio'
-			;;
-			('renpy')
-				pkg_dep='renpy'
 			;;
 			('residualvm')
 				pkg_dep='residualvm'

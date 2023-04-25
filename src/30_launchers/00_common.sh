@@ -72,12 +72,6 @@ launcher_write_script() {
 		('native')
 			native_launcher "$application" > "$target_file"
 		;;
-		('renpy')
-			renpy_launcher "$application" > "$target_file"
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'renpy'
-		;;
 		('residualvm')
 			residualvm_launcher "$application" > "$target_file"
 			local package
@@ -126,8 +120,8 @@ launcher_target_presence_check() {
 	fi
 
 	case "$application_type" in
-		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
+		('residualvm'|'scummvm')
+			# ResidualVM and ScummVM and games do not rely on a provided binary.
 			return 0
 		;;
 	esac
