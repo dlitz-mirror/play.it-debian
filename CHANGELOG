@@ -1,3 +1,45 @@
+2.24.0
+
+  * Deprecation notices:
+    * The following functions are deprecated:
+      - launcher_native_libraries_paths
+      - launcher_write_script_headers
+    * The following functions are deprecated for game scripts targeting ./play.it ≥ 2.14:
+      - write_metadata
+      - build_pkg
+      See the section "Changes related to packages generation" below for more details.
+    * Support for the following application types is dropped:
+      - renpy
+      - residualvm
+    * Ignoring errors during calls to archive_extraction can no longer be done using `set +o errexit`,
+      because `set -o errexit` is forced after the call to external tools used to handle the archives.
+      The recommended snippet to use instead is:
+      archive_extraction 'SOURCE_ARCHIVE' 2>/dev/null || true
+    * Support for the unused variable PREFIX_PREPARE is dropped.
+    * DOSBox games: The "userdir_toupper_files" function is no longer included in launchers.
+    * Mono games: Support for "APP_xxx_MONO_OPTIONS" is dropped.
+
+  * Improved support for game expansions:
+    * The expansion id is appended to the package id by default.
+      Explicit PKG_xxx_ID declaration is no longer required for expansions.
+
+  * Changes related to packages generation:
+    * A new function is provided for packages generation: packages_generation
+      It replaces the two following functions:
+      - write_metadata
+      - build_pkg
+
+  * Changes related to files extraction from archives:
+    * An extraction log is stored at: ${PLAYIT_WORKDIR}/logs/archive-extraction.log
+    * Minimal permissions are always applied on extracted files.
+    * MojoSetup archives: unzip is used instead of unar to handle the inner archive.
+
+  * Changes specific to ScummVM games:
+    * Allow omitting APPLICATION_xxx_TYPE for ScummVM applications.
+
+  * Changes specific to WINE games:
+    * Throw an explicit error if a required registry script could not be loaded.
+
 2.23.6
 
   * Fix error displayed when an unkown archive type is set.
