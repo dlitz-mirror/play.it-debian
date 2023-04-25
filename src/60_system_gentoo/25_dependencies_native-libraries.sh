@@ -481,7 +481,7 @@ dependency_package_providing_library_gentoo() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
@@ -929,7 +929,7 @@ dependency_package_providing_library_gentoo32() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"

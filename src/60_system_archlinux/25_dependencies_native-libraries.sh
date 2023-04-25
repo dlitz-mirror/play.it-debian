@@ -468,7 +468,7 @@ dependency_package_providing_library_arch() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi
@@ -917,7 +917,7 @@ dependency_package_providing_library_arch32() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi

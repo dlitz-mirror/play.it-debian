@@ -450,7 +450,7 @@ dependency_package_providing_library_deb() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi
