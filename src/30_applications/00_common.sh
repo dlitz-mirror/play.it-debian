@@ -72,7 +72,7 @@ application_prefix_type() {
 	local prefix_type
 	prefix_type='symlinks'
 
-	# ScummVM and ResidualVM applications default to "none".
+	# ScummVM applications default to "none".
 	local application_type
 	application_type=$(application_type "$application")
 	if [ -z "$application_type" ]; then
@@ -80,7 +80,7 @@ application_prefix_type() {
 		return 1
 	fi
 	case "$application_type" in
-		('scummvm'|'residualvm')
+		('scummvm')
 			prefix_type='none'
 		;;
 	esac

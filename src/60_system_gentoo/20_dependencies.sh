@@ -73,9 +73,6 @@ pkg_set_deps_gentoo() {
 			('pulseaudio')
 				pkg_dep='media-sound/pulseaudio'
 			;;
-			('residualvm')
-				pkg_dep='games-engines/residualvm'
-			;;
 			('scummvm')
 				pkg_dep='games-engines/scummvm'
 			;;

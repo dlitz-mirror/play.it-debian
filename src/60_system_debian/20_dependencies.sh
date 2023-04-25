@@ -58,9 +58,6 @@ pkg_set_deps_deb() {
 		('pulseaudio')
 			printf 'pulseaudio:amd64 | pulseaudio'
 		;;
-		('residualvm')
-			printf 'residualvm'
-		;;
 		('scummvm')
 			printf 'scummvm'
 		;;

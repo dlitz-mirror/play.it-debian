@@ -72,12 +72,6 @@ launcher_write_script() {
 		('native')
 			native_launcher "$application" > "$target_file"
 		;;
-		('residualvm')
-			residualvm_launcher "$application" > "$target_file"
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'residualvm'
-		;;
 		('scummvm')
 			scummvm_launcher "$application" > "$target_file"
 			local package
@@ -120,8 +114,8 @@ launcher_target_presence_check() {
 	fi
 
 	case "$application_type" in
-		('residualvm'|'scummvm')
-			# ResidualVM and ScummVM and games do not rely on a provided binary.
+		('scummvm')
+			# ScummVM games do not rely on a provided binary.
 			return 0
 		;;
 	esac
