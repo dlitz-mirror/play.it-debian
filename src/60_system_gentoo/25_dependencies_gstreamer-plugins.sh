@@ -6,6 +6,13 @@ gentoo_dependencies_gstreamer_all_formats() {
 	local package
 	package="$1"
 
+	local required_media_formats
+	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	# Return early if the current package does not require any GStreamer plugin
+	if [ -z "$required_media_formats" ]; then
+		return 0
+	fi
+
 	local package_architecture command_dependencies_for_single_format
 	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
@@ -17,8 +24,7 @@ gentoo_dependencies_gstreamer_all_formats() {
 		;;
 	esac
 
-	local required_media_formats media_format packages_list required_packages
-	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	local media_format packages_list required_packages
 	packages_list=''
 	while read -r media_format; do
 		required_packages=$("$command_dependencies_for_single_format" "$media_format")

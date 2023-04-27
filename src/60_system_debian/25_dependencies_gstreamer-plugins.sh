@@ -6,8 +6,14 @@ debian_dependencies_gstreamer_all_formats() {
 	local package
 	package="$1"
 
-	local required_media_formats media_format packages_list required_packages
+	local required_media_formats
 	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	# Return early if the current package does not require any GStreamer plugin
+	if [ -z "$required_media_formats" ]; then
+		return 0
+	fi
+
+	local media_format packages_list required_packages
 	packages_list=''
 	while read -r media_format; do
 		required_packages=$(debian_dependencies_gstreamer_single_format "$media_format")
