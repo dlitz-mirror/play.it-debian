@@ -62,9 +62,22 @@ archlinux_dependencies_gstreamer_single_format() {
 			package_names='
 			gst-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			gst-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			gst-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			gst-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			gst-plugins-ugly
+			gst-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='
@@ -116,9 +129,22 @@ archlinux_dependencies_gstreamer_single_format_32bit() {
 			package_names='
 			lib32-gst-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			lib32-gst-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			lib32-gst-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			lib32-gst-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			lib32-gst-plugins-ugly
+			lib32-gst-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='

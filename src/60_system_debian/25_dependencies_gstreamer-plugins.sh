@@ -51,9 +51,22 @@ debian_dependencies_gstreamer_single_format() {
 			package_names='
 			gstreamer1.0-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			gstreamer1.0-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			gstreamer1.0-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			gstreamer1.0-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			gstreamer1.0-plugins-ugly
+			gstreamer1.0-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='
