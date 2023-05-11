@@ -301,6 +301,9 @@ dependency_package_providing_library_arch() {
 		('libSDL-1.2.so.0')
 			package_name='sdl'
 		;;
+		('libSDL_image-1.2.so.0')
+			package_name='sdl_image'
+		;;
 		('libSDL_kitchensink.so.1')
 			# This library is not provided for Arch Linux
 			unset package_name
@@ -468,7 +471,7 @@ dependency_package_providing_library_arch() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi
@@ -748,6 +751,9 @@ dependency_package_providing_library_arch32() {
 		('libSDL-1.2.so.0')
 			package_name='lib32-sdl'
 		;;
+		('libSDL_image-1.2.so.0')
+			package_name='lib32-sdl_image'
+		;;
 		('libSDL_kitchensink.so.1')
 			# This library is not provided for Arch Linux
 			unset package_name
@@ -917,7 +923,7 @@ dependency_package_providing_library_arch32() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi

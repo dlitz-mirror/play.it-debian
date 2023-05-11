@@ -284,6 +284,9 @@ dependency_package_providing_library_deb() {
 		('libSDL-1.2.so.0')
 			package_name='libsdl1.2debian'
 		;;
+		('libSDL_image-1.2.so.0')
+			package_name='libsdl-image1.2'
+		;;
 		('libSDL_kitchensink.so.1')
 			package_name='libsdl-kitchensink1'
 		;;
@@ -450,7 +453,7 @@ dependency_package_providing_library_deb() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		return 0
 	fi

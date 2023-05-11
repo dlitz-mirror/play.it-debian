@@ -311,8 +311,11 @@ dependency_package_providing_library_gentoo() {
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl[opengl]'
 		;;
+		('libSDL_image-1.2.so.0')
+			package_name='media-libs/sdl-image'
+		;;
 		('libSDL_kitchensink.so.1')
-			# This library is not provided for Gentonn
+			# This library is not provided for Gentoo
 			unset package_name
 		;;
 		('libSDL_mixer-1.2.so.0')
@@ -481,7 +484,7 @@ dependency_package_providing_library_gentoo() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"
@@ -759,6 +762,9 @@ dependency_package_providing_library_gentoo32() {
 		('libSDL-1.2.so.0')
 			package_name='media-libs/libsdl[abi_x86_32,opengl]'
 		;;
+		('libSDL_image-1.2.so.0')
+			package_name='media-libs/sdl-image[abi_x86_32]'
+		;;
 		('libSDL_kitchensink.so.1')
 			# This library is not provided for Gentoo
 			unset package_name
@@ -929,7 +935,7 @@ dependency_package_providing_library_gentoo32() {
 		;;
 	esac
 
-	if [ -n "$package_name" ]; then
+	if [ -n "${package_name:-}" ]; then
 		printf '%s' "$package_name"
 		if [ -n "${pkg_overlay:-}" ]; then
 			dependency_gentoo_overlays_add "$pkg_overlay"

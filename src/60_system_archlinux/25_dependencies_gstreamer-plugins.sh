@@ -6,6 +6,13 @@ archlinux_dependencies_gstreamer_all_formats() {
 	local package
 	package="$1"
 
+	local required_media_formats
+	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	# Return early if the current package does not require any GStreamer plugin
+	if [ -z "$required_media_formats" ]; then
+		return 0
+	fi
+
 	local package_architecture command_dependencies_for_single_format
 	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
@@ -17,8 +24,7 @@ archlinux_dependencies_gstreamer_all_formats() {
 		;;
 	esac
 
-	local required_media_formats media_format packages_list required_packages
-	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	local media_format packages_list required_packages
 	packages_list=''
 	while read -r media_format; do
 		required_packages=$("$command_dependencies_for_single_format" "$media_format")
@@ -56,9 +62,22 @@ archlinux_dependencies_gstreamer_single_format() {
 			package_names='
 			gst-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			gst-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			gst-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			gst-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			gst-plugins-ugly
+			gst-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='
@@ -110,9 +129,22 @@ archlinux_dependencies_gstreamer_single_format_32bit() {
 			package_names='
 			lib32-gst-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			lib32-gst-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			lib32-gst-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			lib32-gst-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			lib32-gst-plugins-ugly
+			lib32-gst-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='

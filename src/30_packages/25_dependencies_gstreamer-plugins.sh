@@ -8,6 +8,10 @@ dependencies_list_gstreamer_media_formats() {
 
 	local dependencies_gstreamer_plugins
 	dependencies_gstreamer_plugins=$(context_value "${package}_DEPENDENCIES_GSTREAMER_PLUGINS")
+	# Return early if the current package does not require any GStreamer plugin
+	if [ -z "$dependencies_gstreamer_plugins" ]; then
+		return 0
+	fi
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.

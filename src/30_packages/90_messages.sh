@@ -121,7 +121,12 @@ warning_dependencies_unknown_gstreamer_media_formats() {
 	print_warning
 	printf '%s\n' "$message1"
 	# shellcheck disable=SC2046
-	printf -- '- %s\n' $(dependencies_unknown_gstreamer_media_formats_list)
+	local media_format
+	while read -r media_format; do
+		printf -- '- %s\n' "$media_format"
+	done <<- EOL
+	$(dependencies_unknown_gstreamer_media_formats_list)
+	EOL
 	printf '%s\n%s\n' "$message2" "$PLAYIT_BUG_TRACKER_URL"
 }
 

@@ -6,8 +6,14 @@ debian_dependencies_gstreamer_all_formats() {
 	local package
 	package="$1"
 
-	local required_media_formats media_format packages_list required_packages
+	local required_media_formats
 	required_media_formats=$(dependencies_list_gstreamer_media_formats "$package")
+	# Return early if the current package does not require any GStreamer plugin
+	if [ -z "$required_media_formats" ]; then
+		return 0
+	fi
+
+	local media_format packages_list required_packages
 	packages_list=''
 	while read -r media_format; do
 		required_packages=$(debian_dependencies_gstreamer_single_format "$media_format")
@@ -45,9 +51,22 @@ debian_dependencies_gstreamer_single_format() {
 			package_names='
 			gstreamer1.0-plugins-good'
 		;;
+		('application/x-id3')
+			package_names='
+			gstreamer1.0-plugins-good'
+		;;
+		('audio/mpeg, mpegversion=(int)1, layer=(int)3')
+			package_names='
+			gstreamer1.0-plugins-good'
+		;;
 		('audio/x-wma, wmaversion=(int)1')
 			package_names='
 			gstreamer1.0-libav'
+		;;
+		('video/mpeg, systemstream=(boolean)true, mpegversion=(int)1')
+			package_names='
+			gstreamer1.0-plugins-ugly
+			gstreamer1.0-plugins-bad'
 		;;
 		('video/quicktime, variant=(string)iso')
 			package_names='

@@ -63,6 +63,18 @@ content_inclusion_default_game_data() {
 		fi
 		content_inclusion "GAME${index}_${package_suffix}" "$package" "$target_directory"
 	done
+
+	# Try to parse legacy variables for old game scripts
+	if ! version_is_at_least '2.19' "$target_version"; then
+		for index in $(seq 0 9); do
+			# Stop looping at the first unset files list
+			files_list=$(context_name "ARCHIVE_GAME${index}_${package_suffix}_FILES")
+			if [ -z "$files_list" ]; then
+				break
+			fi
+			content_inclusion "GAME${index}_${package_suffix}" "$package" "$target_directory"
+		done
+	fi
 }
 
 # Fetch files from the archive, and include them into the package skeleton.
@@ -87,6 +99,18 @@ content_inclusion_default_documentation() {
 		fi
 		content_inclusion "DOC${index}_${package_suffix}" "$package" "$target_directory"
 	done
+
+	# Try to parse legacy variables for old game scripts
+	if ! version_is_at_least '2.19' "$target_version"; then
+		for index in $(seq 0 9); do
+			# Stop looping at the first unset files list
+			files_list=$(context_name "ARCHIVE_DOC${index}_${package_suffix}_FILES")
+			if [ -z "$files_list" ]; then
+				break
+			fi
+			content_inclusion "DOC${index}_${package_suffix}" "$package" "$target_directory"
+		done
+	fi
 }
 
 # Fetch files from the archive, and include them into the package skeleton.
