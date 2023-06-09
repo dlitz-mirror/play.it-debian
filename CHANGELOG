@@ -1,3 +1,9 @@
+2.23.3
+
+  * Add support for extra native libraries.
+  * Unity3D: Prevent plugins inclusion failure if no architecture-specific directory is shipped.
+  * Unity3D: Prevent a crash on Linux 6.1 by disabling the MAP_32BIT flag with some Unity3D builds.
+
 2.23.2
 
   * Fix warning displayed on unsupported GStreamer media format.
