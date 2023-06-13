@@ -5,8 +5,6 @@
 #         - java
 #         - mono
 #         - native
-#         - renpy
-#         - residualvm
 #         - scummvm
 #         - wine
 #         or an empty string if the type is not set and could not be guessed
@@ -36,8 +34,6 @@ application_type() {
 			'java' | \
 			'mono' | \
 			'native' | \
-			'renpy' | \
-			'residualvm' | \
 			'scummvm' | \
 			'wine' \
 		)
