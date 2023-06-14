@@ -87,9 +87,6 @@ dependency_package_providing_library_arch() {
 		('libcairo.so.2')
 			package_name='cairo'
 		;;
-		('liblcms2.so.2')
-			package_name='lcms2'
-		;;
 		('libcom_err.so.2')
 			package_name='e2fsprogs'
 		;;
@@ -207,8 +204,14 @@ dependency_package_providing_library_arch() {
 		('libkrb5.so.3')
 			package_name='krb5'
 		;;
+		('liblcms2.so.2')
+			package_name='lcms2'
+		;;
 		('libluajit-5.1.so.2')
 			package_name='luajit'
+		;;
+		('liblz4.so.1')
+			package_name='lz4'
 		;;
 		('libm.so.6')
 			package_name='glibc'
@@ -466,6 +469,9 @@ dependency_package_providing_library_arch() {
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm'
 		;;
+		('libyaml-0.so.2')
+			package_name='libyaml'
+		;;
 		('libz.so.1')
 			package_name='zlib'
 		;;
@@ -532,9 +538,6 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libcairo.so.2')
 			package_name='lib32-cairo'
-		;;
-		('liblcms2.so.2')
-			package_name='lib32-lcms2'
 		;;
 		('libcom_err.so.2')
 			package_name='lib32-e2fsprogs'
@@ -654,8 +657,14 @@ dependency_package_providing_library_arch32() {
 		('libkrb5.so.3')
 			package_name='lib32-krb5'
 		;;
+		('liblcms2.so.2')
+			package_name='lib32-lcms2'
+		;;
 		('libluajit-5.1.so.2')
 			package_name='lib32-luajit'
+		;;
+		('liblz4.so.1')
+			package_name='lib32-lz4'
 		;;
 		('libm.so.6')
 			package_name='lib32-glibc'
@@ -917,6 +926,10 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='lib32-libxxf86vm'
+		;;
+		('libyaml-0.so.2')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
 		;;
 		('libz.so.1')
 			package_name='lib32-zlib'

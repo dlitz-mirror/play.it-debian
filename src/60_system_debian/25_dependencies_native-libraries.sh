@@ -68,9 +68,6 @@ dependency_package_providing_library_deb() {
 		('libcairo.so.2')
 			package_name='libcairo2'
 		;;
-		('liblcms2.so.2')
-			package_name='liblcms2-2'
-		;;
 		('libcom_err.so.2')
 			package_name='libcom-err2'
 		;;
@@ -191,8 +188,14 @@ dependency_package_providing_library_deb() {
 		('libkrb5.so.3')
 			package_name='libkrb5-3'
 		;;
+		('liblcms2.so.2')
+			package_name='liblcms2-2'
+		;;
 		('libluajit-5.1.so.2')
 			package_name='libluajit-5.1-2'
+		;;
+		('liblz4.so.1')
+			package_name='liblz4-1'
 		;;
 		('libm.so.6')
 			package_name='libc6'
@@ -447,6 +450,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='libxxf86vm1'
+		;;
+		('libyaml-0.so.2')
+			package_name='libyaml-0-2'
 		;;
 		('libz.so.1')
 			package_name='zlib1g'
