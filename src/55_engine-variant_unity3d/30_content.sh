@@ -21,8 +21,21 @@ content_inclusion_unity3d_plugins() {
 	local package
 	package="$1"
 
-	# Set the plugins source path,
-	# or return early if the current package should not include binaries.
+	# Set the plugins source path
+	local unity3d_name content_path plugins_directory plugins_path
+	unity3d_name=$(unity3d_name)
+	content_path=$(content_path_default)
+	plugins_directory="${content_path}/${unity3d_name}_Data/Plugins"
+	plugins_path="${PLAYIT_WORKDIR}/gamedata/${plugins_directory}"
+
+	local CONTENT_UNITY3D_PLUGINS_FILES target_directory
+	## Silence ShellCheck false-positive
+	## CONTENT_UNITY3D_PLUGINS_FILES appears unused. Verify use (or export if used externally).
+	# shellcheck disable=SC2034
+	CONTENT_UNITY3D_PLUGINS_FILES=$(unity3d_plugins)
+	target_directory=$(path_libraries)
+
+	# Proceed with the actual files inclusion.
 	local package_architecture architecture_string
 	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
@@ -33,54 +46,34 @@ content_inclusion_unity3d_plugins() {
 			architecture_string='x86_64'
 		;;
 		('all')
+			# Return early if the current package should not include binaries.
 			return 0
 		;;
 	esac
-	local unity3d_name content_path plugins_source_path
-	unity3d_name=$(unity3d_name)
-	content_path=$(content_path_default)
-	plugins_source_path="${content_path}/${unity3d_name}_Data/Plugins/${architecture_string}"
+	if [ -d "${plugins_path}/${architecture_string}" ]; then
+		local CONTENT_UNITY3D_PLUGINS_PATH
+		## Silence ShellCheck false-positive
+		## CONTENT_UNITY3D_PLUGINS_PATH appears unused. Verify use (or export if used externally).
+		# shellcheck disable=SC2034
+		CONTENT_UNITY3D_PLUGINS_PATH="${plugins_directory}/${architecture_string}"
+		content_inclusion 'UNITY3D_PLUGINS' "$package" "$target_directory"
 
-	# Proceed with the actual files inclusion.
-	local CONTENT_UNITY3D_PLUGINS_PATH CONTENT_UNITY3D_PLUGINS_FILES target_directory
-	## Silence ShellCheck false-positive
-	## CONTENT_UNITY3D_PLUGINS_PATH appears unused. Verify use (or export if used externally).
-	# shellcheck disable=SC2034
-	CONTENT_UNITY3D_PLUGINS_PATH="$plugins_source_path"
-	## Silence ShellCheck false-positive
-	## CONTENT_UNITY3D_PLUGINS_FILES appears unused. Verify use (or export if used externally).
-	# shellcheck disable=SC2034
-	CONTENT_UNITY3D_PLUGINS_FILES=$(unity3d_plugins)
-	target_directory=$(path_libraries)
-	content_inclusion 'UNITY3D_PLUGINS' "$package" "$target_directory"
-
-	# Delete the remaining plugins for the current architecture,
-	# to prevent them from being included later.
-	plugins_source_path_full="${PLAYIT_WORKDIR}/gamedata/${plugins_source_path}"
-	rm --force "$plugins_source_path_full"/*
-	rmdir --ignore-fail-on-non-empty --parents "$plugins_source_path_full"
+		# Delete the remaining plugins for the current architecture,
+		# to prevent them from being included later.
+		rm --force "${plugins_path}/${architecture_string}"/*
+		rmdir --ignore-fail-on-non-empty --parents "${plugins_path}/${architecture_string}"
+	fi
 
 	# Some games include plugins in the "Plugins" directory,
 	# without using an architecture sub-directory.
-	#
-	# Testing the files architecture would be more careful,
-	# but probably overkill until we find multi-arch games
-	# not using the architecture sub-directories.
-	local plugins_source_path_extra
-	plugins_source_path_extra="${content_path}/${unity3d_name}_Data/Plugins"
-	## Return early if there is no remaining plugin to include
-	if [ ! -e "$plugins_source_path_extra" ]; then
-		return 0
+	if [ -d "$plugins_path" ]; then
+		local CONTENT_UNITY3D_PLUGINS_PATH
+		## Silence ShellCheck false-positive
+		## CONTENT_UNITY3D_PLUGINS_FILES appears unused. Verify use (or export if used externally).
+		# shellcheck disable=SC2034
+		CONTENT_UNITY3D_PLUGINS_PATH="$plugins_directory"
+		content_inclusion 'UNITY3D_PLUGINS' "$package" "$target_directory"
+		rm --force "$plugins_path"/*.*
+		rmdir --ignore-fail-on-non-empty --parents "$plugins_path"
 	fi
-	## Silence ShellCheck false-positive
-	## CONTENT_UNITY3D_PLUGINS_FILES appears unused. Verify use (or export if used externally).
-	# shellcheck disable=SC2034
-	CONTENT_UNITY3D_PLUGINS_PATH="$plugins_source_path_extra"
-	content_inclusion 'UNITY3D_PLUGINS' "$package" "$target_directory"
-
-	# Deletion of the plugins outside of the architecture-specific path should be more careful,
-	# as we do not want to delete the architecture directory if it exists.
-	plugins_source_path_extra_full="${PLAYIT_WORKDIR}/gamedata/${plugins_source_path_extra}"
-	rm --force "$plugins_source_path_full"/*.*
-	rmdir --ignore-fail-on-non-empty --parents "$plugins_source_path_extra_full"
 }

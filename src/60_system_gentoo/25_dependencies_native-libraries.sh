@@ -96,9 +96,6 @@ dependency_package_providing_library_gentoo() {
 		('libcairo.so.2')
 			package_name='x11-libs/cairo'
 		;;
-		('liblcms2.so.2')
-			package_name='media-libs/lcms'
-		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs'
 		;;
@@ -218,8 +215,14 @@ dependency_package_providing_library_gentoo() {
 		('libkrb5.so.3')
 			package_name='app-crypt/mit-krb5'
 		;;
+		('liblcms2.so.2')
+			package_name='media-libs/lcms'
+		;;
 		('libluajit-5.1.so.2')
 			package_name='dev-lang/luajit'
+		;;
+		('liblz4.so.1')
+			package_name='app-arch/lz4'
 		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc'
@@ -479,6 +482,9 @@ dependency_package_providing_library_gentoo() {
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm'
 		;;
+		('libyaml-0.so.2')
+			package_name='dev-libs/libyaml'
+		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1'
 		;;
@@ -546,9 +552,6 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo[abi_x86_32]'
-		;;
-		('liblcms2.so.2')
-			package_name='media-libs/lcms[abi_x86_32]'
 		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs[abi_x86_32]'
@@ -669,8 +672,14 @@ dependency_package_providing_library_gentoo32() {
 		('libkrb5.so.3')
 			package_name='app-crypt/mit-krb5[abi_x86_32]'
 		;;
+		('liblcms2.so.2')
+			package_name='media-libs/lcms[abi_x86_32]'
+		;;
 		('libluajit-5.1.so.2')
 			package_name='dev-lang/luajit[abi_x86_32]'
+		;;
+		('liblz4.so.1')
+			package_name='app-arch/lz4[abi_x86_32]'
 		;;
 		('libm.so.6')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
@@ -929,6 +938,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libXxf86vm.so.1')
 			package_name='x11-libs/libXxf86vm[abi_x86_32]'
+		;;
+		('libyaml-0.so.2')
+			package_name='dev-libs/libyaml[abi_x86_32]'
 		;;
 		('libz.so.1')
 			package_name='sys-libs/zlib:0/1[abi_x86_32]'

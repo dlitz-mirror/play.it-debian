@@ -71,3 +71,57 @@ launcher_unity3d_force_locale() {
 
 	EOF
 }
+
+# Disable the MAP_32BIT flag to prevent a crash one some Linux versions when running a 64-bit build of Unity3D
+# USAGE: unity3d_disable_map32bit
+# RETURN: the code snippet, a multi-lines string, indented with four spaces
+unity3d_disable_map32bit() {
+	# Check that the gcc command is available
+	SCRIPT_DEPS="${SCRIPT_DEPS:-} gcc"
+	check_deps
+
+	local hack_source hack_library
+	hack_source='hacks/disable-map32bit.c'
+	hack_library="${hack_source%.c}.so"
+
+	local package package_path path_game hack_source_path hack_library_path
+	package=$(context_package)
+	package_path=$(package_path "$package")
+	path_game=$(path_game_data)
+	hack_source_path="${package_path}${path_game}/${hack_source}"
+	hack_library_path="${package_path}${path_game}/${hack_library}"
+
+	local hack_directory
+	hack_directory=$(dirname "$hack_source_path")
+	mkdir --parents "$hack_directory"
+	cat > "$hack_source_path" <<- 'EOF'
+	#define _GNU_SOURCE
+	#include <stdlib.h>
+	#include <dlfcn.h>
+	#include <sys/mman.h>
+
+	typedef void *(*orig_mmap_type)(void *addr, size_t length, int prot,
+	                                int flags, int fd, off_t offset);
+
+	void *mmap(void *addr, size_t length, int prot, int flags,
+	           int fd, off_t offset)
+	{
+	    static orig_mmap_type orig_mmap = NULL;
+	    if (orig_mmap == NULL)
+	        orig_mmap = (orig_mmap_type)dlsym(RTLD_NEXT, "mmap");
+
+	    flags &= ~MAP_32BIT;
+
+	    return orig_mmap(addr, length, prot, flags, fd, offset);
+	}
+	EOF
+
+	gcc -Wall -shared "$hack_source_path" -o "$hack_library_path"
+
+	cat <<- EOF
+	# Disable the MAP_32BIT flag to prevent a crash one some Linux versions
+	# when running a 64-bit build of Unity3D.
+	export LD_PRELOAD="\${LD_PRELOAD:-}:${hack_library}"
+
+	EOF
+}
