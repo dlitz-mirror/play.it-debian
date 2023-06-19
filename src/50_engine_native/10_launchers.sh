@@ -53,6 +53,20 @@ native_launcher_run() {
 
 			# Work around Unity3D poor support for non-US locales
 			launcher_unity3d_force_locale
+
+			# Unity3D 4.x and 5.x - Disable the MAP_32BIT flag to prevent a crash one some Linux versions when running a 64-bit build
+			local unity3d_version
+			unity3d_version=$(unity3d_version)
+			case "$unity3d_version" in
+				('4.'*|'5.'*)
+					local package package_architecture
+					package=$(context_package)
+					package_architecture=$(package_architecture "$package")
+					if [ "$package_architecture" = '64' ]; then
+						unity3d_disable_map32bit
+					fi
+				;;
+			esac
 		;;
 		(*)
 			# Make a hard copy of the game binary in the current prefix,
