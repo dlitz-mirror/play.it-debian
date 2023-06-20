@@ -11,6 +11,6 @@ archive_extraction_using_tar() {
 
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
-	debug_external_command "tar --verbose $extractor_options --extract --file \"$archive_path\" --directory \"$destination_directory\" >> \"$log_file\" 2>&1"
+	printf 'tar --verbose %s --extract --file "%s" --directory "%s"\n' "$extractor_options" "$archive_path" "$destination_directory" >> "$log_file"
 	tar --verbose $extractor_options --extract --file "$archive_path" --directory "$destination_directory" >> "$log_file" 2>&1
 }

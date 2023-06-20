@@ -10,6 +10,6 @@ archive_extraction_using_lha() {
 	archive_path=$(archive_find_path "$archive")
 
 	# Due to its unusual command syntax, lha extractor has no support for ARCHIVE_xxx_EXTRACTOR_OPTIONS
-	debug_external_command "lha -ew=\"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'lha -ew="%s" "%s"\n' "$destination_directory" "$archive_path" >> "$log_file"
 	lha -ew="$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }

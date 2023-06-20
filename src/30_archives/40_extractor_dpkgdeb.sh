@@ -11,6 +11,6 @@ archive_extraction_using_dpkgdeb() {
 
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
-	debug_external_command "dpkg-deb --verbose $extractor_options --extract \"$archive_path\" \"$destination_directory\" >> \"$log_file\" 2>&1"
+	printf 'dpkg-deb --verbose %s --extract "%s" "%s"\n' "$extractor_options" "$archive_path" "$destination_directory" >> "$log_file"
 	dpkg-deb --verbose $extractor_options --extract "$archive_path" "$destination_directory" >> "$log_file" 2>&1
 }

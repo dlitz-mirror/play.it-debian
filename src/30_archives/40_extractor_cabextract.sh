@@ -14,6 +14,6 @@ archive_extraction_using_cabextract() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-L'
 	fi
-	debug_external_command "cabextract $extractor_options -d \"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'cabextract %s -d "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	cabextract $extractor_options -d "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }

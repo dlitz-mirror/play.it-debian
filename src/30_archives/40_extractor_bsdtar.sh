@@ -11,6 +11,6 @@ archive_extraction_using_bsdtar() {
 
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
-	debug_external_command "bsdtar --verbose $extractor_options --directory \"$destination_directory\" --extract --file \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'bsdtar --verbose %s --directory "%s" --extract --file "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	bsdtar --verbose $extractor_options --directory "$destination_directory" --extract --file "$archive_path" >> "$log_file" 2>&1
 }

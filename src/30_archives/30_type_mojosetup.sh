@@ -42,7 +42,11 @@ archive_extraction_mojosetup() {
 	# Extract the .zip archive containing the game data
 	local archive_game_data
 	archive_game_data="${destination_directory}/mojosetup-game-data.zip"
-	dd if="$archive_path" ibs="$archive_offset" skip=1 2>/dev/null > "$archive_game_data"
+	## Silence ShellCheck false-positive
+	## Consider using { cmd1; cmd2; } >> file instead of individual redirects.
+	# shellcheck disable=SC2129
+	printf 'dd if="%s" ibs="%s" skip=1 > "%s"\n' "$archive_path" "$archive_offset" "$archive_game_data" >> "$log_file"
+	dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
 
 	# Extract the game data
 
@@ -56,6 +60,7 @@ archive_extraction_mojosetup() {
 	## Despite this error, listing the archive contents with zipinfo does not fail.
 	## Using unar instead, the extraction works with no error.
 
+	printf 'unar -force-overwrite -no-directory -output-directory "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
 	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
 	rm "$archive_game_data"
 }

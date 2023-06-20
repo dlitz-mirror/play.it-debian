@@ -14,6 +14,6 @@ archive_extraction_using_unar() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-force-overwrite -no-directory'
 	fi
-	debug_external_command "unar $extractor_options -output-directory \"$destination_directory\" $extractor_options \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'unar %s -output-directory "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	unar $extractor_options -output-directory "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }

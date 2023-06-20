@@ -14,6 +14,6 @@ archive_extraction_using_7za() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-y'
 	fi
-	debug_external_command "7za x $extractor_options -o\"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf '7za x %s -o"%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	7za x $extractor_options -o"$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }

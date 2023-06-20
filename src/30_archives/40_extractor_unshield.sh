@@ -14,7 +14,7 @@ archive_extraction_using_unshield() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-L'
 	fi
-	debug_external_command "unshield $extractor_options -d \"$destination_directory\" x \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'unshield %s -d "%s" x "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	unshield $extractor_options -d "$destination_directory" x "$archive_path" >> "$log_file" 2>&1
 }
 

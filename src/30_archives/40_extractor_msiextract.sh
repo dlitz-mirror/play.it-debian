@@ -11,7 +11,7 @@ archive_extraction_using_msiextract() {
 
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
-	debug_external_command "msiextract $extractor_options --directory \"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'msiextract %s --directory "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	msiextract $extractor_options --directory "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 	tolower "$destination_directory"
 }

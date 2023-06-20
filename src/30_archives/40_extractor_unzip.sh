@@ -11,6 +11,6 @@ archive_extraction_using_unzip() {
 
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
-	debug_external_command "unzip $extractor_options -d \"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'unzip %s -d "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	unzip $extractor_options -d "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }

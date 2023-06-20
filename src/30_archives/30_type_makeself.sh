@@ -43,6 +43,12 @@ archive_extraction_makeself() {
 	archive_bytes=$((archive_filesize % archive_block_size))
 
 	# Proceed with the contents extraction
+	{
+		printf 'dd if="%s" ibs="%s" skip=1 obs=1024 conv=sync 2>/dev/null | ' "$archive_path" "$archive_offset"
+		printf '{ test "%s" -gt 0 && dd ibs=1024 obs=1024 count="%s" ; ' "$archive_blocks" "$archive_blocks"
+		printf 'test "%s" -gt 0 && dd ibs=1 obs=1024 count="%s" ; } 2>/dev/null | ' "$archive_bytes" "$archive_bytes"
+		printf 'gzip --stdout --decompress | tar xvf - --directory="%s"\n' "$destination_directory"
+	} >> "$log_file"
 	dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null | \
 		{
 			test "$archive_blocks" -gt 0 && dd ibs=1024 obs=1024 count="$archive_blocks" ; \

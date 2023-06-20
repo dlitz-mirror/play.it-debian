@@ -19,7 +19,7 @@ archive_extraction_using_innoextract() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='--lowercase'
 	fi
-	debug_external_command "innoextract $extractor_options --extract --output-dir \"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	printf 'innoextract %s --extract --output-dir "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
 	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }
 
