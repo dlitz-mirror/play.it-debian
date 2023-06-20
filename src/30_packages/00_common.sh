@@ -169,6 +169,12 @@ package_id() {
 	# Fall back to the game id if no package id is explicitly set
 	if [ -z "$package_id" ]; then
 		package_id=$(game_id)
+		## Include the expansion id if one is available.
+		local expansion_id
+		expansion_id=$(expansion_id)
+		if [ -n "$expansion_id" ]; then
+			package_id="${package_id}-${expansion_id}"
+		fi
 	fi
 
 	# Check that the id fits the format restrictions.
