@@ -160,9 +160,11 @@ archive_dependencies_check_from_type() {
 archive_extraction() {
 	local archive
 	archive="$1"
+	assert_not_empty 'archive' 'archive_extraction'
 
 	local archive_path archive_name
 	archive_path=$(archive_find_path "$archive")
+	assert_not_empty 'archive_path' 'archive_extraction'
 	archive_name=$(basename "$archive_path")
 
 	information_archive_data_extraction "$archive_name"

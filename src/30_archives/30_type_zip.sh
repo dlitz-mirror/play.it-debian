@@ -15,9 +15,6 @@ archive_extraction_zip() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_zip'
-	assert_not_empty 'destination_directory' 'archive_extraction_zip'
-	assert_not_empty 'log_file' 'archive_extraction_zip'
 
 	if command -v 'unzip' >/dev/null 2>&1; then
 		archive_extraction_using_unzip "$archive" "$destination_directory" "$log_file"
@@ -35,9 +32,6 @@ archive_extraction_zip_unclean() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_zip_unclean'
-	assert_not_empty 'destination_directory' 'archive_extraction_zip_unclean'
-	assert_not_empty 'log_file' 'archive_extraction_zip_unclean'
 
 	if command -v 'unzip' >/dev/null 2>&1; then
 		set +o errexit

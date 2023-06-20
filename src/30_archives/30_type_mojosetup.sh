@@ -29,9 +29,6 @@ archive_extraction_mojosetup() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_mojosetup'
-	assert_not_empty 'destination_directory' 'archive_extraction_mojosetup'
-	assert_not_empty 'log_file' 'archive_extraction_mojosetup'
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")

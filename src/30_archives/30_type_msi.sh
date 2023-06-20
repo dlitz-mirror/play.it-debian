@@ -15,9 +15,6 @@ archive_extraction_msi() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_msi'
-	assert_not_empty 'destination_directory' 'archive_extraction_msi'
-	assert_not_empty 'log_file' 'archive_extraction_msi'
 
 	if command -v 'msiextract' >/dev/null 2>&1; then
 		archive_extraction_using_msiextract "$archive" "$destination_directory" "$log_file"

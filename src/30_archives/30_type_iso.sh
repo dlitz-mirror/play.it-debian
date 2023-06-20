@@ -15,9 +15,6 @@ archive_extraction_iso() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_iso'
-	assert_not_empty 'destination_directory' 'archive_extraction_iso'
-	assert_not_empty 'log_file' 'archive_extraction_iso'
 
 	if command -v 'bsdtar' >/dev/null 2>&1; then
 		archive_extraction_using_bsdtar "$archive" "$destination_directory" "$log_file"

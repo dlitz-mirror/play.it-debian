@@ -5,9 +5,6 @@ archive_extraction_using_innoextract() {
 	archive="$1"
 	destination_directory="$2"
 	log_file="$3"
-	assert_not_empty 'archive' 'archive_extraction_using_innoextract'
-	assert_not_empty 'destination_directory' 'archive_extraction_using_innoextract'
-	assert_not_empty 'log_file' 'archive_extraction_using_innoextract'
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -32,7 +29,6 @@ archive_extraction_using_innoextract() {
 archive_extraction_using_innoextract_is_supported() {
 	local archive_path
 	archive_path="$1"
-	assert_not_empty 'archive_path' 'archive_extraction_using_innoextract_is_supported'
 
 	# Use innoextract internal check
 	if innoextract --list --silent "$archive_path" 2>&1 1>/dev/null | \
