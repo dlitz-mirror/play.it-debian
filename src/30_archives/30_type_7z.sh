@@ -12,20 +12,22 @@ archive_dependencies_check_type_7z() {
 }
 
 # extract the content of a 7z archive
-# USAGE: archive_extraction_7z $archive $destination_directory
+# USAGE: archive_extraction_7z $archive $destination_directory $log_file
 archive_extraction_7z() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 	assert_not_empty 'archive' 'archive_extraction_7z'
 	assert_not_empty 'destination_directory' 'archive_extraction_7z'
+	assert_not_empty 'log_file' 'archive_extraction_7z'
 
 	if command -v '7zr' >/dev/null 2>&1; then
-		archive_extraction_using_7zr "$archive" "$destination_directory"
+		archive_extraction_using_7zr "$archive" "$destination_directory" "$log_file"
 	elif command -v '7za' >/dev/null 2>&1; then
-		archive_extraction_using_7za "$archive" "$destination_directory"
+		archive_extraction_using_7za "$archive" "$destination_directory" "$log_file"
 	elif command -v 'unar' >/dev/null 2>&1; then
-		archive_extraction_using_unar "$archive" "$destination_directory"
+		archive_extraction_using_unar "$archive" "$destination_directory" "$log_file"
 	else
 		error_archive_no_extractor_found '7z'
 		return 1

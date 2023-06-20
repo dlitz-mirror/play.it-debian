@@ -1,11 +1,13 @@
 # extract the content of an archive using innoextract
-# USAGE: archive_extraction_using_innoextract $archive $destination_directory
+# USAGE: archive_extraction_using_innoextract $archive $destination_directory $log_file
 archive_extraction_using_innoextract() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 	assert_not_empty 'archive' 'archive_extraction_using_innoextract'
 	assert_not_empty 'destination_directory' 'archive_extraction_using_innoextract'
+	assert_not_empty 'log_file' 'archive_extraction_using_innoextract'
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -18,10 +20,10 @@ archive_extraction_using_innoextract() {
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
 	if [ -z "$extractor_options" ]; then
-		extractor_options='--progress=1 --silent --lowercase'
+		extractor_options='--lowercase'
 	fi
-	debug_external_command "innoextract $extractor_options --extract --output-dir \"$destination_directory\" \"$archive_path\" 2>/dev/null"
-	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" 2>/dev/null
+	debug_external_command "innoextract $extractor_options --extract --output-dir \"$destination_directory\" \"$archive_path\" >> \"$log_file\" 2>&1"
+	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" >> "$log_file" 2>&1
 }
 
 # check that the InnoSetup archive can be processed by the available innoextract version

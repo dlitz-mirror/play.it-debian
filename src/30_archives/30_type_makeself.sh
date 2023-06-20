@@ -24,11 +24,15 @@ archive_requirements_makeself_check() {
 }
 
 # Extract the content of a Makeself installer
-# USAGE: archive_extraction_makeself $archive $destination_directory
+# USAGE: archive_extraction_makeself $archive $destination_directory $log_file
 archive_extraction_makeself() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
+	assert_not_empty 'archive' 'archive_extraction_makeself'
+	assert_not_empty 'destination_directory' 'archive_extraction_makeself'
+	assert_not_empty 'log_file' 'archive_extraction_makeself'
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -48,7 +52,7 @@ archive_extraction_makeself() {
 			test "$archive_bytes" -gt 0 && dd ibs=1 obs=1024 count="$archive_bytes" ;
 		} 2>/dev/null | \
 		gzip --stdout --decompress | \
-		tar xf - --directory="$destination_directory"
+		tar xvf - --directory="$destination_directory" >> "$log_file" 2>&1
 }
 
 # Makeself - Get the offset of the given file

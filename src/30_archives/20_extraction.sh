@@ -171,12 +171,18 @@ archive_extraction() {
 	destination_directory="${PLAYIT_WORKDIR}/gamedata"
 	mkdir --parents "$destination_directory"
 
+	# Get the path to the extraction log file
+	local log_file log_directory
+	log_file=$(archive_extraction_log_path)
+	log_directory=$(dirname "$log_file")
+	mkdir --parents "$log_directory"
+
 	local archive_extractor
 	archive_extractor=$(archive_extractor "$archive")
 	if [ -n "$archive_extractor" ]; then
-		archive_extraction_using_extractor "$archive" "$destination_directory"
+		archive_extraction_using_extractor "$archive" "$destination_directory" "$log_file"
 	else
-		archive_extraction_from_type "$archive" "$destination_directory"
+		archive_extraction_from_type "$archive" "$destination_directory" "$log_file"
 	fi
 
 	# Apply minimal permissions on extracted files
@@ -184,50 +190,51 @@ archive_extraction() {
 }
 
 # extract data from the target archive, using the specified extractor
-# USAGE: archive_extraction_using_extractor $archive $destination_directory
+# USAGE: archive_extraction_using_extractor $archive $destination_directory $log_file
 archive_extraction_using_extractor() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 
 	local archive_extractor
 	archive_extractor=$(archive_extractor "$archive")
 	case "$archive_extractor" in
 		('7za')
-			archive_extraction_using_7za "$archive" "$destination_directory"
+			archive_extraction_using_7za "$archive" "$destination_directory" "$log_file"
 		;;
 		('7zr')
-			archive_extraction_using_7zr "$archive" "$destination_directory"
+			archive_extraction_using_7zr "$archive" "$destination_directory" "$log_file"
 		;;
 		('bsdtar')
-			archive_extraction_using_bsdtar "$archive" "$destination_directory"
+			archive_extraction_using_bsdtar "$archive" "$destination_directory" "$log_file"
 		;;
 		('cabextract')
-			archive_extraction_using_cabextract "$archive" "$destination_directory"
+			archive_extraction_using_cabextract "$archive" "$destination_directory" "$log_file"
 		;;
 		('dpkg-deb')
-			archive_extraction_using_dpkgdeb "$archive" "$destination_directory"
+			archive_extraction_using_dpkgdeb "$archive" "$destination_directory" "$log_file"
 		;;
 		('innoextract')
-			archive_extraction_using_innoextract "$archive" "$destination_directory"
+			archive_extraction_using_innoextract "$archive" "$destination_directory" "$log_file"
 		;;
 		('lha')
-			archive_extraction_using_lha "$archive" "$destination_directory"
+			archive_extraction_using_lha "$archive" "$destination_directory" "$log_file"
 		;;
 		('msiextract')
-			archive_extraction_using_msiextract "$archive" "$destination_directory"
+			archive_extraction_using_msiextract "$archive" "$destination_directory" "$log_file"
 		;;
 		('tar')
-			archive_extraction_using_tar "$archive" "$destination_directory"
+			archive_extraction_using_tar "$archive" "$destination_directory" "$log_file"
 		;;
 		('unar')
-			archive_extraction_using_unar "$archive" "$destination_directory"
+			archive_extraction_using_unar "$archive" "$destination_directory" "$log_file"
 		;;
 		('unshield')
-			archive_extraction_using_unshield "$archive" "$destination_directory"
+			archive_extraction_using_unshield "$archive" "$destination_directory" "$log_file"
 		;;
 		('unzip')
-			archive_extraction_using_unzip "$archive" "$destination_directory"
+			archive_extraction_using_unzip "$archive" "$destination_directory" "$log_file"
 		;;
 		(*)
 			error_archive_extractor_invalid "$archive_extractor"
@@ -237,69 +244,70 @@ archive_extraction_using_extractor() {
 }
 
 # extract data from the target archive, guessing the extractor from the given type
-# USAGE: archive_extraction_from_type $archive $destination_directory
+# USAGE: archive_extraction_from_type $archive $destination_directory $log_file
 archive_extraction_from_type() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 
 	local archive_type
 	archive_type=$(archive_get_type "$archive")
 	case "$archive_type" in
 		('7z')
-			archive_extraction_7z "$archive" "$destination_directory"
+			archive_extraction_7z "$archive" "$destination_directory" "$log_file"
 		;;
 		('cabinet')
-			archive_extraction_cabinet "$archive" "$destination_directory"
+			archive_extraction_cabinet "$archive" "$destination_directory" "$log_file"
 		;;
 		('debian')
-			archive_extraction_debian "$archive" "$destination_directory"
+			archive_extraction_debian "$archive" "$destination_directory" "$log_file"
 		;;
 		('innosetup')
-			archive_extraction_innosetup "$archive" "$destination_directory"
+			archive_extraction_innosetup "$archive" "$destination_directory" "$log_file"
 		;;
 		('innosetup_nolowercase')
 			warning_archive_type_deprecated "$archive"
 			export ${archive}_EXTRACTOR_OPTIONS='--progress=1 --silent'
-			archive_extraction_innosetup "$archive" "$destination_directory"
+			archive_extraction_innosetup "$archive" "$destination_directory" "$log_file"
 		;;
 		('installshield')
-			archive_extraction_installshield "$archive" "$destination_directory"
+			archive_extraction_installshield "$archive" "$destination_directory" "$log_file"
 		;;
 		('iso')
-			archive_extraction_iso "$archive" "$destination_directory"
+			archive_extraction_iso "$archive" "$destination_directory" "$log_file"
 		;;
 		('lha')
-			archive_extraction_lha "$archive" "$destination_directory"
+			archive_extraction_lha "$archive" "$destination_directory" "$log_file"
 		;;
 		('makeself')
-			archive_extraction_makeself "$archive" "$destination_directory"
+			archive_extraction_makeself "$archive" "$destination_directory" "$log_file"
 		;;
 		('mojosetup')
-			archive_extraction_mojosetup "$archive" "$destination_directory"
+			archive_extraction_mojosetup "$archive" "$destination_directory" "$log_file"
 		;;
 		('mojosetup_unzip')
 			warning_archive_type_deprecated "$archive"
-			archive_extraction_mojosetup "$archive" "$destination_directory"
+			archive_extraction_mojosetup "$archive" "$destination_directory" "$log_file"
 		;;
 		('msi')
-			archive_extraction_msi "$archive" "$destination_directory"
+			archive_extraction_msi "$archive" "$destination_directory" "$log_file"
 		;;
 		('nullsoft-installer')
-			archive_extraction_nullsoft "$archive" "$destination_directory"
+			archive_extraction_nullsoft "$archive" "$destination_directory" "$log_file"
 		;;
 		('rar')
-			archive_extraction_rar "$archive" "$destination_directory"
+			archive_extraction_rar "$archive" "$destination_directory" "$log_file"
 		;;
 		('tar'|'tar.bz2'|'tar.gz'|'tar.xz')
-			archive_extraction_tar "$archive" "$destination_directory"
+			archive_extraction_tar "$archive" "$destination_directory" "$log_file"
 		;;
 		('zip')
-			archive_extraction_zip "$archive" "$destination_directory"
+			archive_extraction_zip "$archive" "$destination_directory" "$log_file"
 		;;
 		('zip_unclean')
 			warning_archive_type_deprecated "$archive"
-			archive_extraction_zip_unclean "$archive" "$destination_directory"
+			archive_extraction_zip_unclean "$archive" "$destination_directory" "$log_file"
 		;;
 		(*)
 			error_archive_type_invalid "$archive_type"

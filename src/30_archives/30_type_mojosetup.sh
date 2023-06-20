@@ -23,11 +23,15 @@ archive_requirements_mojosetup_check() {
 }
 
 # Extract the content of a MojoSetup installer
-# USAGE: archive_extraction_mojosetup $archive $destination_directory
+# USAGE: archive_extraction_mojosetup $archive $destination_directory $log_file
 archive_extraction_mojosetup() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
+	assert_not_empty 'archive' 'archive_extraction_mojosetup'
+	assert_not_empty 'destination_directory' 'archive_extraction_mojosetup'
+	assert_not_empty 'log_file' 'archive_extraction_mojosetup'
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -55,6 +59,6 @@ archive_extraction_mojosetup() {
 	## Despite this error, listing the archive contents with zipinfo does not fail.
 	## Using unar instead, the extraction works with no error.
 
-	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" 1>/dev/null
+	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
 	rm "$archive_game_data"
 }
