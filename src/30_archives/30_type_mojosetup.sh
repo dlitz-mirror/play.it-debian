@@ -46,7 +46,15 @@ archive_extraction_mojosetup() {
 	## Consider using { cmd1; cmd2; } >> file instead of individual redirects.
 	# shellcheck disable=SC2129
 	printf 'dd if="%s" ibs="%s" skip=1 > "%s"\n' "$archive_path" "$archive_offset" "$archive_game_data" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 
 	# Extract the game data
 
@@ -61,6 +69,14 @@ archive_extraction_mojosetup() {
 	## Using unar instead, the extraction works with no error.
 
 	printf 'unar -force-overwrite -no-directory -output-directory "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 	rm "$archive_game_data"
 }

@@ -12,5 +12,13 @@ archive_extraction_using_bsdtar() {
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
 	printf 'bsdtar --verbose %s --directory "%s" --extract --file "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	bsdtar --verbose $extractor_options --directory "$destination_directory" --extract --file "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }

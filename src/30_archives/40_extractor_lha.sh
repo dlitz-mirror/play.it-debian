@@ -11,5 +11,13 @@ archive_extraction_using_lha() {
 
 	# Due to its unusual command syntax, lha extractor has no support for ARCHIVE_xxx_EXTRACTOR_OPTIONS
 	printf 'lha -ew="%s" "%s"\n' "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	lha -ew="$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }

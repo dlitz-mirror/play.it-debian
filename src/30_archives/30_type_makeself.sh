@@ -49,6 +49,8 @@ archive_extraction_makeself() {
 		printf 'test "%s" -gt 0 && dd ibs=1 obs=1024 count="%s" ; } 2>/dev/null | ' "$archive_bytes" "$archive_bytes"
 		printf 'gzip --stdout --decompress | tar xvf - --directory="%s"\n' "$destination_directory"
 	} >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null | \
 		{
 			test "$archive_blocks" -gt 0 && dd ibs=1024 obs=1024 count="$archive_blocks" ; \
@@ -56,6 +58,12 @@ archive_extraction_makeself() {
 		} 2>/dev/null | \
 		gzip --stdout --decompress | \
 		tar xvf - --directory="$destination_directory" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
 
 # Makeself - Get the offset of the given file

@@ -15,5 +15,13 @@ archive_extraction_using_unar() {
 		extractor_options='-force-overwrite -no-directory'
 	fi
 	printf 'unar %s -output-directory "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	unar $extractor_options -output-directory "$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }

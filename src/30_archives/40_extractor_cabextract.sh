@@ -15,5 +15,13 @@ archive_extraction_using_cabextract() {
 		extractor_options='-L'
 	fi
 	printf 'cabextract %s -d "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	cabextract $extractor_options -d "$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
