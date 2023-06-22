@@ -227,3 +227,40 @@ information_archives_list() {
 	done
 }
 
+# Error - Invalid value used for archive type
+# USAGE: error_archive_type_invalid $archive_type
+error_archive_type_invalid() {
+	local archive_type
+	archive_type="$1"
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='La valeur suivante ne correspond pas à un type dʼarchive connu : "%s"\n'
+		;;
+		('en'|*)
+			message='The following value is not a valid archive type: "%s"\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$archive_type"
+}
+
+# Error - Invalid value used for archive extractor
+# USAGE: error_archive_extractor_invalid $archive_extractor
+error_archive_extractor_invalid() {
+	local archive_extractor
+	archive_extractor="$1"
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='La valeur suivante ne correspond pas à un extracteur dʼarchive connu : "%s"\n'
+		;;
+		('en'|*)
+			message='The following value is not a valid archive extractor: "%s"\n'
+		;;
+	esac
+	print_error
+	printf "$message" "$archive_extractor"
+}
