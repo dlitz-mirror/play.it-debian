@@ -31,26 +31,6 @@ print_warning() {
 	printf '\n\033[1;33m%s\033[0m\n' "$string"
 }
 
-# display an error when a function has been called with an invalid argument
-# USAGE: error_invalid_argument $var_name $calling_function
-error_invalid_argument() {
-	local var value func
-	var="$1"
-	value="$(get_value "$var")"
-	func="$2"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Valeur incorrecte pour %s appelée par %s : %s\n'
-		;;
-		('en'|*)
-			message='Invalid value for %s called by %s: %s\n'
-		;;
-	esac
-	print_error
-	printf "$message" "$var" "$func" "$value"
-}
-
 # display an error when a file is expected and something else has been given
 # USAGE: error_not_a_file $param
 error_not_a_file() {
