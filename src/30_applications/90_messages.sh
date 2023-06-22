@@ -1,9 +1,10 @@
-# display an error when an unknown application type is used
+# Error - An unknown application type is used
 # USAGE: error_unknown_application_type $app_type
 error_unknown_application_type() {
-	local message application_type
+	local application_type
 	application_type="$1"
-	# shellcheck disable=SC2031
+
+	local message
 	case "${LANG%_*}" in
 		('fr')
 			message='Le type dʼapplication "%s" est inconnu.\n'
@@ -14,20 +15,19 @@ error_unknown_application_type() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	)
 }
 
-# Display an error when no application type could be found.
+# Error - No application type could be found
 # USAGE: error_no_application_type $application
 error_no_application_type() {
 	local application
 	application="$1"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le type de lʼapplication "%s" nʼest pas défini, et nʼa pas pu être détecté automatiquement.\n'
@@ -38,20 +38,19 @@ error_no_application_type() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$application" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$application" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	)
 }
 
-# Display an error when an unknown prefix type is requested.
+# Error - An unknown prefix type is requested
 # USAGE: error_unknown_prefix_type $prefix_type
 error_unknown_prefix_type() {
 	local prefix_type
 	prefix_type="$1"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le type de préfixe "%s" est inconnu.\n'
@@ -62,12 +61,13 @@ error_unknown_prefix_type() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-
-	print_error
-	printf "$message" "$prefix_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$prefix_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	)
 }
 
-# display an error when using an invalid format for an application id
+# Error - An invalid format is used for the given application id
 # USAGE: error_application_id_invalid $application $application_id
 error_application_id_invalid() {
 	local application application_id
@@ -75,7 +75,6 @@ error_application_id_invalid() {
 	application_id="$2"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼid fourni pour lʼapplication %s ne correspond pas au format attendu : "%s"\n'
@@ -88,13 +87,13 @@ error_application_id_invalid() {
 			message="$message"' and can not begin nor end with an hyphen.\n'
 		;;
 	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$application" "$application_id"
+	(
+		print_error
+		printf "$message" "$application" "$application_id"
+	)
 }
 
-# Error: APP_xxx_EXE is unset but has been required
+# Error - APP_xxx_EXE is unset but has been required
 # USAGE: error_application_exe_empty $application $function_name
 error_application_exe_empty() {
 	local application function_name
@@ -102,7 +101,6 @@ error_application_exe_empty() {
 	function_name="$2"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='%s nʼest pas défini, mais cette valeur est requise par la fonction "%s".\n'
@@ -111,16 +109,16 @@ error_application_exe_empty() {
 			message='%s is not set, but is required by the "%s" function.\n'
 		;;
 	esac
-
-	print_error
-	printf "$message" "${application}_EXE" "$function_name"
+	(
+		print_error
+		printf "$message" "${application}_EXE" "$function_name"
+	)
 }
 
-# The applications list for the current game script is empty
+# Error - The applications list for the current game script is empty
 # USAGE: error_applications_list_empty
 error_applications_list_empty() {
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La liste dʼapplications à prendre en charge pour ce jeu semble vide'
@@ -133,7 +131,9 @@ error_applications_list_empty() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-
-	print_error
-	printf "$message" "$PLAYIT_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$PLAYIT_BUG_TRACKER_URL"
+	)
 }
+

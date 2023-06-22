@@ -1,23 +1,3 @@
-# display a warning when output package format guessing failed
-# USAGE: warning_package_format_guessing_failed $fallback_value
-warning_package_format_guessing_failed() {
-	local message fallback_value
-	fallback_value="$1"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Lʼauto-détection du format de paquet le plus adapté a échoué.\n'
-			message="$message"'Le format de paquet %s sera utilisé par défaut.\n'
-		;;
-		('en'|*)
-			message='Most pertinent package format auto-detection failed.\n'
-			message="$message"'%s package format will be used by default.\n'
-		;;
-	esac
-	print_warning
-	printf "$message" "$fallback_value"
-}
-
 # display a notification when trying to build a package that already exists
 # USAGE: information_package_already_exists $file
 information_package_already_exists() {
@@ -51,6 +31,26 @@ information_package_building() {
 	esac
 	# shellcheck disable=SC2059
 	printf "$message" "$file"
+}
+
+# display a warning when output package format guessing failed
+# USAGE: warning_package_format_guessing_failed $fallback_value
+warning_package_format_guessing_failed() {
+	local message fallback_value
+	fallback_value="$1"
+	# shellcheck disable=SC2031
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼauto-détection du format de paquet le plus adapté a échoué.\n'
+			message="$message"'Le format de paquet %s sera utilisé par défaut.\n'
+		;;
+		('en'|*)
+			message='Most pertinent package format auto-detection failed.\n'
+			message="$message"'%s package format will be used by default.\n'
+		;;
+	esac
+	print_warning
+	printf "$message" "$fallback_value"
 }
 
 # Display a list of unknown libraries from packages dependencies
@@ -130,12 +130,13 @@ warning_dependencies_unknown_gstreamer_media_formats() {
 	printf '%s\n%s\n' "$message2" "$PLAYIT_BUG_TRACKER_URL"
 }
 
-# Display an error when using an invalid format for package id.
+# Error - The provided package id uses an invalid format
 # USAGE: error_package_id_invalid $package_id
 error_package_id_invalid() {
-	local package_id message
+	local package_id
 	package_id="$1"
-	# shellcheck disable=SC2031
+
+	local message
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼid de paquet fourni ne correspond pas au format attendu : "%s"\n'
@@ -148,20 +149,19 @@ error_package_id_invalid() {
 			message="$message"' and can not begin nor end with an hyphen.\n'
 		;;
 	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$package_id"
+	(
+		print_error
+		printf "$message" "$package_id"
+	)
 }
 
-# Error: The generation of the given package failed.
+# Error - The generation of the given package failed.
 # USAGE: error_package_generation_failed $package_name
 error_package_generation_failed() {
 	local package_name
 	package_name="$1"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='La génération du paquet suivant a échoué : %s\n'
@@ -172,6 +172,9 @@ error_package_generation_failed() {
 			message="$message"'Please report this error on our bugs tracker: %s\n\n'
 		;;
 	esac
-	print_error
-	printf "$message" "$package_name" "$PLAYIT_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$package_name" "$PLAYIT_BUG_TRACKER_URL"
+	)
 }
+
