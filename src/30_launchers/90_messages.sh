@@ -1,10 +1,11 @@
-# Display an error when trying to write a launcher for a missing binary
+# Error - A binary file is missing
 # USAGE: error_launcher_missing_binary $binary
 # CALLS: print_error
 error_launcher_missing_binary() {
-	local binary message
+	local binary
 	binary="$1"
-	# shellcheck disable=SC2031
+
+	local message
 	case "${LANG%_*}" in
 		('fr')
 			message='Le fichier suivant est introuvable, mais la création dʼun lanceur pour celui-ci a été demandée : %s\n'
@@ -15,15 +16,19 @@ error_launcher_missing_binary() {
 			message="$message"'Please report this issue on our bug tracker: %s\n'
 		;;
 	esac
-	print_error
-	printf "$message" "$binary" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$binary" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	)
 }
 
-# Display an error when trying to use an unsupported prefix type for the given application type.
+# Error - The requested prefix type is not compatible with the given application type
 # USAGE: error_launchers_prefix_type_unsupported $application
 error_launchers_prefix_type_unsupported() {
-	local application application_type prefix_type
+	local application
 	application="$1"
+
+	local application_type prefix_type
 	application_type=$(application_type "$application")
 	if [ -z "$application_type" ]; then
 		error_no_application_type "$application"
@@ -32,7 +37,6 @@ error_launchers_prefix_type_unsupported() {
 	prefix_type=$(application_prefix_type "$application")
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Le type de préfixe "%s" ne peut pas être utilisé pour une application du type "%s".\n'
@@ -43,7 +47,9 @@ error_launchers_prefix_type_unsupported() {
 			message="$message"'Please report this issue in our bug tracker: %s\n'
 		;;
 	esac
-
-	print_error
-	printf "$message" "$prefix_type" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	(
+		print_error
+		printf "$message" "$prefix_type" "$application_type" "$PLAYIT_GAMES_BUG_TRACKER_URL"
+	)
 }
+

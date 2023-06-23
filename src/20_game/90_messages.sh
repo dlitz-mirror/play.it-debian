@@ -1,9 +1,10 @@
-# display an error when using an invalid format for game id
+# Error - An invalid format is used for game id
 # USAGE: error_game_id_invalid $game_id
 error_game_id_invalid() {
-	local game_id message
+	local game_id
 	game_id="$1"
-	# shellcheck disable=SC2031
+
+	local message
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼid de jeu fourni ne correspond pas au format attendu : "%s"\n'
@@ -16,9 +17,9 @@ error_game_id_invalid() {
 			message="$message"' and can not begin nor end with an hyphen.\n'
 		;;
 	esac
-
-	print_error
-	# shellcheck disable=SC2059
-	printf "$message" "$game_id"
+	(
+		print_error
+		printf "$message" "$game_id"
+	)
 }
 

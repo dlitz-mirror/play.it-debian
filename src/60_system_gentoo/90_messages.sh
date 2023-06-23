@@ -70,12 +70,16 @@ info_package_to_distfiles() {
 	printf "$message"
 }
 
-# Display an error when an unknown architecture string is used
+# Error - An unknown architecture string is used
 # USAGE: error_unknown_gentoo_architecture_string $arch_string $caller
 error_unknown_gentoo_architecture_string() {
-	local message arch_string caller
+	local arch_string caller
 	arch_string="$1"
 	caller="$2"
+
+	local message
+	## Silence ShellCheck false-positive
+	## LANG was modified in a subshell. That change might be lost.
 	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
@@ -85,6 +89,9 @@ error_unknown_gentoo_architecture_string() {
 			message='“%s” architecture, used in %s, is unknown on Gentoo.\n'
 			;;
 	esac
-	print_error
-	printf "$message" "$arch_string" "$caller"
+	(
+		print_error
+		printf "$message" "$arch_string" "$caller"
+	)
 }
+

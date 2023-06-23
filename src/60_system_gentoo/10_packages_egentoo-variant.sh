@@ -6,10 +6,6 @@ pkg_write_egentoo() {
 	local ebuild_path
 	local inherits
 
-	if [ $# -eq 0 ]; then
-		error_no_arguments 'pkg_write_egentoo'
-	fi
-
 	inherits="xdg"
 
 	# Ensure that $build_deps is set.
@@ -170,10 +166,6 @@ egentoo_package_compression_command_auto() {
 # Gentoo ("egentoo" variant) - Build dummy package
 # USAGE: egentoo_packages_build $package[…]
 egentoo_packages_build() {
-	if [ $# -eq 0 ]; then
-		error_no_arguments 'egentoo_packages_build'
-	fi
-
 	local option_output_dir package_name package_filename
 	option_output_dir=$(option_value 'output-dir')
 	mkdir --parents "${option_output_dir}/packages"

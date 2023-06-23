@@ -16,7 +16,7 @@ debug_entering_function() {
 		case "$debug_level" in
 			([0-9]) ;;
 			(*)
-				error_invalid_argument 'debug_level' 'debug_entering_function'
+				# TODO - Display an explicit error message
 				return 1
 			;;
 		esac
@@ -51,7 +51,7 @@ debug_leaving_function() {
 		case "$debug_level" in
 			([0-9]) ;;
 			(*)
-				error_invalid_argument 'debug_level' 'debug_entering_function'
+				# TODO - Display an explicit error message
 				return 1
 			;;
 		esac

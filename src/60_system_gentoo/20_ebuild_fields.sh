@@ -1,10 +1,6 @@
 # display keywords of an ebuild made of several packages
 # USAGE: egentoo_field_keywords $package…
 egentoo_field_keywords() {
-	if [ $# -eq 0 ]; then
-		error_no_arguments 'egentoo_field_keywords'
-	fi
-
 	local keywords package package_architecture
 	keywords='x86 amd64'
 	for package in "$@"; do
@@ -26,10 +22,6 @@ egentoo_field_keywords() {
 # display egentoo ebuild RDEPEND field
 # USAGE: egentoo_field_rdepend $package…
 egentoo_field_rdepend() {
-	if [ $# -eq 0 ]; then
-		error_no_arguments 'egentoo_field_rdepend'
-	fi
-
 	local package package_architecture package_64bits package_32bits package_data
 	package_64bits=''
 	package_32bits=''

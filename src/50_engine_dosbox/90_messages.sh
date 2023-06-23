@@ -1,11 +1,10 @@
-# Display an error when a DOSBox image disk was not found
+# Error - The DOSBox image disk was not found
 # USAGE: error_dosbox_disk_image_no_found $disk_image
 error_dosbox_disk_image_no_found() {
 	local disk_image
 	disk_image="$1"
 
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='Lʼimage de disque suivante nʼa pas été trouvée : %s\n'
@@ -14,7 +13,9 @@ error_dosbox_disk_image_no_found() {
 			message='The following disk image could not be found: %s\n'
 		;;
 	esac
-
-	print_error
-	printf "$message" "$disk_image"
+	(
+		print_error
+		printf "$message" "$disk_image"
+	)
 }
+
