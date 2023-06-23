@@ -60,6 +60,27 @@ dependency_package_providing_library_gentoo() {
 		('liballeg.so.4.4')
 			package_name='media-libs/allegro'
 		;;
+		('liballegro.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_acodec.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_audio.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_font.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_image.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_primitives.so.5.2')
+			package_name='media-libs/allegro'
+		;;
+		('liballegro_ttf.so.5.2')
+			package_name='media-libs/allegro'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib'
 		;;
@@ -217,6 +238,9 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('liblcms2.so.2')
 			package_name='media-libs/lcms'
+		;;
+		('liblua5.3.so.0')
+			package_name='dev-lang/lua'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='dev-lang/luajit'
@@ -517,6 +541,27 @@ dependency_package_providing_library_gentoo32() {
 		('liballeg.so.4.4')
 			package_name='media-libs/allegro[abi_x86_32]'
 		;;
+		('liballegro.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_acodec.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_audio.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_font.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_image.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_primitives.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
+		('liballegro_ttf.so.5.2')
+			package_name='media-libs/allegro[abi_x86_32]'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib[abi_x86_32]'
 		;;
@@ -674,6 +719,9 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('liblcms2.so.2')
 			package_name='media-libs/lcms[abi_x86_32]'
+		;;
+		('liblua5.3.so.0')
+			package_name='dev-lang/lua[abi_x86_32]'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='dev-lang/luajit[abi_x86_32]'

@@ -32,6 +32,27 @@ dependency_package_providing_library_deb() {
 		('liballeg.so.4.4')
 			package_name='liballegro4.4'
 		;;
+		('liballegro.so.5.2')
+			package_name='liballegro5.2'
+		;;
+		('liballegro_acodec.so.5.2')
+			package_name='liballegro-acodec5.2'
+		;;
+		('liballegro_audio.so.5.2')
+			package_name='liballegro-audio5.2'
+		;;
+		('liballegro_font.so.5.2')
+			package_name='liballegro5.2'
+		;;
+		('liballegro_image.so.5.2')
+			package_name='liballegro-image5.2'
+		;;
+		('liballegro_primitives.so.5.2')
+			package_name='liballegro5.2'
+		;;
+		('liballegro_ttf.so.5.2')
+			package_name='liballegro-ttf5.2'
+		;;
 		('libasound.so.2')
 			package_name='libasound2'
 		;;
@@ -190,6 +211,9 @@ dependency_package_providing_library_deb() {
 		;;
 		('liblcms2.so.2')
 			package_name='liblcms2-2'
+		;;
+		('liblua5.3.so.0')
+			package_name='liblua5.3-0'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='libluajit-5.1-2'
