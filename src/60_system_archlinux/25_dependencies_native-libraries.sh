@@ -51,6 +51,27 @@ dependency_package_providing_library_arch() {
 		('liballeg.so.4.4')
 			package_name='allegro4'
 		;;
+		('liballegro.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_acodec.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_audio.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_font.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_image.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_primitives.so.5.2')
+			package_name='allegro'
+		;;
+		('liballegro_ttf.so.5.2')
+			package_name='allegro'
+		;;
 		('libasound.so.2')
 			package_name='alsa-lib'
 		;;
@@ -206,6 +227,9 @@ dependency_package_providing_library_arch() {
 		;;
 		('liblcms2.so.2')
 			package_name='lcms2'
+		;;
+		('liblua5.3.so.0')
+			package_name='lua'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='luajit'
@@ -500,6 +524,27 @@ dependency_package_providing_library_arch32() {
 		('liballeg.so.4.4')
 			package_name='lib32-allegro4'
 		;;
+		('liballegro.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_acodec.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_audio.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_font.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_image.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_primitives.so.5.2')
+			package_name='lib32-allegro'
+		;;
+		('liballegro_ttf.so.5.2')
+			package_name='lib32-allegro'
+		;;
 		('libasound.so.2')
 			package_name='lib32-alsa-lib'
 		;;
@@ -659,6 +704,9 @@ dependency_package_providing_library_arch32() {
 		;;
 		('liblcms2.so.2')
 			package_name='lib32-lcms2'
+		;;
+		('liblua5.3.so.0')
+			package_name='lib32-lua'
 		;;
 		('libluajit-5.1.so.2')
 			package_name='lib32-luajit'

@@ -67,7 +67,7 @@ archive_dependencies_check_using_extractor() {
 			# Supported extractor, no error to throw.
 		;;
 		(*)
-			error_invalid_argument "${archive}_EXTRACTOR" 'archive_extraction'
+			error_archive_extractor_invalid "$archive_extractor"
 			return 1
 		;;
 	esac
@@ -227,11 +227,7 @@ archive_extraction_using_extractor() {
 			archive_extraction_using_unzip "$archive" "$destination_directory"
 		;;
 		(*)
-			###
-			# TODO
-			# A more specific error message could be used.
-			###
-			error_invalid_argument "${archive}_EXTRACTOR" 'archive_extraction'
+			error_archive_extractor_invalid "$archive_extractor"
 			return 1
 		;;
 	esac
@@ -303,13 +299,8 @@ archive_extraction_from_type() {
 			archive_extraction_zip_unclean "$archive" "$destination_directory"
 		;;
 		(*)
-			###
-			# TODO
-			# A more specific error message could be used.
-			###
-			error_invalid_argument "${archive}_TYPE" 'archive_extraction'
+			error_archive_type_invalid "$archive_extractor"
 			return 1
 		;;
 	esac
 }
-
