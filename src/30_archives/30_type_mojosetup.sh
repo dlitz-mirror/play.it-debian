@@ -41,7 +41,7 @@ archive_extraction_mojosetup() {
 	# Extract the .zip archive containing the game data
 	local archive_game_data
 	archive_game_data="${destination_directory}/mojosetup-game-data.zip"
-	dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null > "$archive_game_data"
+	dd if="$archive_path" ibs="$archive_offset" skip=1 2>/dev/null > "$archive_game_data"
 
 	# Extract the game data
 
