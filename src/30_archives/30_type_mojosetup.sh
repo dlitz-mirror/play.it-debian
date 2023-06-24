@@ -23,11 +23,12 @@ archive_requirements_mojosetup_check() {
 }
 
 # Extract the content of a MojoSetup installer
-# USAGE: archive_extraction_mojosetup $archive $destination_directory
+# USAGE: archive_extraction_mojosetup $archive $destination_directory $log_file
 archive_extraction_mojosetup() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -41,7 +42,19 @@ archive_extraction_mojosetup() {
 	# Extract the .zip archive containing the game data
 	local archive_game_data
 	archive_game_data="${destination_directory}/mojosetup-game-data.zip"
-	dd if="$archive_path" ibs="$archive_offset" skip=1 2>/dev/null > "$archive_game_data"
+	## Silence ShellCheck false-positive
+	## Consider using { cmd1; cmd2; } >> file instead of individual redirects.
+	# shellcheck disable=SC2129
+	printf 'dd if="%s" ibs="%s" skip=1 > "%s"\n' "$archive_path" "$archive_offset" "$archive_game_data" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 
 	# Extract the game data
 
@@ -55,6 +68,15 @@ archive_extraction_mojosetup() {
 	## Despite this error, listing the archive contents with zipinfo does not fail.
 	## Using unar instead, the extraction works with no error.
 
-	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" 1>/dev/null
+	printf 'unar -force-overwrite -no-directory -output-directory "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 	rm "$archive_game_data"
 }

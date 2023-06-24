@@ -24,11 +24,12 @@ archive_requirements_makeself_check() {
 }
 
 # Extract the content of a Makeself installer
-# USAGE: archive_extraction_makeself $archive $destination_directory
+# USAGE: archive_extraction_makeself $archive $destination_directory $log_file
 archive_extraction_makeself() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -42,13 +43,27 @@ archive_extraction_makeself() {
 	archive_bytes=$((archive_filesize % archive_block_size))
 
 	# Proceed with the contents extraction
+	{
+		printf 'dd if="%s" ibs="%s" skip=1 obs=1024 conv=sync 2>/dev/null | ' "$archive_path" "$archive_offset"
+		printf '{ test "%s" -gt 0 && dd ibs=1024 obs=1024 count="%s" ; ' "$archive_blocks" "$archive_blocks"
+		printf 'test "%s" -gt 0 && dd ibs=1 obs=1024 count="%s" ; } 2>/dev/null | ' "$archive_bytes" "$archive_bytes"
+		printf 'gzip --stdout --decompress | tar xvf - --directory="%s"\n' "$destination_directory"
+	} >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
 	dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null | \
 		{
 			test "$archive_blocks" -gt 0 && dd ibs=1024 obs=1024 count="$archive_blocks" ; \
 			test "$archive_bytes" -gt 0 && dd ibs=1 obs=1024 count="$archive_bytes" ;
 		} 2>/dev/null | \
 		gzip --stdout --decompress | \
-		tar xf - --directory="$destination_directory"
+		tar xvf - --directory="$destination_directory" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
 
 # Makeself - Get the offset of the given file

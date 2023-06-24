@@ -9,16 +9,15 @@ archive_dependencies_check_type_iso() {
 }
 
 # extract the content of an ISO9660 CD-ROM image
-# USAGE: archive_extraction_iso $archive $destination_directory
+# USAGE: archive_extraction_iso $archive $destination_directory $log_file
 archive_extraction_iso() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_iso'
-	assert_not_empty 'destination_directory' 'archive_extraction_iso'
+	log_file="$3"
 
 	if command -v 'bsdtar' >/dev/null 2>&1; then
-		archive_extraction_using_bsdtar "$archive" "$destination_directory"
+		archive_extraction_using_bsdtar "$archive" "$destination_directory" "$log_file"
 	else
 		error_archive_no_extractor_found 'iso'
 		return 1

@@ -283,3 +283,33 @@ error_archive_extractor_invalid() {
 	)
 }
 
+# Error - Archive data extraction failed
+# USAGE: error_archive_extraction_failure $archive
+error_archive_extraction_failure() {
+	local archive
+	archive="$1"
+
+	local archive_path archive_name
+	archive_path=$(get_value "$archive")
+	archive_name=$(basename "$archive_path")
+
+	local log_file
+	log_file=$(archive_extraction_log_path)
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='Lʼextraction des données depuis lʼarchive suivante a échoué : %s\n'
+			message="$message"'Vous pouvez obtenir plus de détails dans le fichier journal : %s\n'
+		;;
+		('en'|*)
+			message='Data extraction from the following archive failed: %s\n'
+			message="$message"'You can get more details from the following log file: %s\n'
+		;;
+	esac
+	(
+		print_error
+		printf "$message" "$archive_name" "$log_file"
+	)
+}
+

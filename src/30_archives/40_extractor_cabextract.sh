@@ -1,11 +1,10 @@
 # extract the content of an archive using cabextract
-# USAGE: archive_extraction_using_cabextract $archive $destination_directory
+# USAGE: archive_extraction_using_cabextract $archive $destination_directory $log_file
 archive_extraction_using_cabextract() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_using_cabextract'
-	assert_not_empty 'destination_directory' 'archive_extraction_using_cabextract'
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -13,8 +12,16 @@ archive_extraction_using_cabextract() {
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
 	if [ -z "$extractor_options" ]; then
-		extractor_options='-L -q'
+		extractor_options='-L'
 	fi
-	debug_external_command "cabextract $extractor_options -d \"$destination_directory\" \"$archive_path\""
-	cabextract $extractor_options -d "$destination_directory" "$archive_path"
+	printf 'cabextract %s -d "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	cabextract $extractor_options -d "$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }

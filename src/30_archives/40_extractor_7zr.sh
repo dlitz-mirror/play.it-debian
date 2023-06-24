@@ -1,11 +1,10 @@
 # extract the content of an archive using 7zr
-# USAGE: archive_extraction_using_7zr $archive $destination_directory
+# USAGE: archive_extraction_using_7zr $archive $destination_directory $log_file
 archive_extraction_using_7zr() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_using_7zr'
-	assert_not_empty 'destination_directory' 'archive_extraction_using_7zr'
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -15,6 +14,14 @@ archive_extraction_using_7zr() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-y'
 	fi
-	debug_external_command "7zr x $extractor_options -o\"$destination_directory\" \"$archive_path\" 1>/dev/null"
-	7zr x $extractor_options -o"$destination_directory" "$archive_path" 1>/dev/null
+	printf '7zr x %s -o"%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	7zr x $extractor_options -o"$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
