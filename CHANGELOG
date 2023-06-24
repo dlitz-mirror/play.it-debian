@@ -1,3 +1,7 @@
+2.23.5
+
+  * MojoSetup archives: Fix the extraction of the inner .zip archive.
+
 2.23.4
 
   * Prevent output redirection from leaking after error messages.
