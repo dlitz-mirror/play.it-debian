@@ -6,7 +6,7 @@ archive_requirements_mojosetup_list() {
 	# shellcheck disable=SC2046
 	printf '%s\n' \
 		$(archive_requirements_makeself_list) \
-		'unar'
+		'unzip'
 }
 
 # Check the presence of required tools to handle a MojoSetup installer
@@ -57,21 +57,10 @@ archive_extraction_mojosetup() {
 	fi
 
 	# Extract the game data
-
-	## For some reason the extraction with unzip fails with:
-	##
-	## End-of-central-directory signature not found.  Either this file is not
-    ## a zipfile, or it constitutes one disk of a multi-part archive.  In the
-    ## latter case the central directory and zipfile comment will be found on
-    ## the last disk(s) of this archive.
-	##
-	## Despite this error, listing the archive contents with zipinfo does not fail.
-	## Using unar instead, the extraction works with no error.
-
-	printf 'unar -force-overwrite -no-directory -output-directory "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
+	printf 'unzip -d "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
 	local archive_extraction_return_code
 	set +o errexit
-	unar -force-overwrite -no-directory -output-directory "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
+	unzip -d "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
 	archive_extraction_return_code=$?
 	set -o errexit
 	if [ $archive_extraction_return_code -ne 0 ]; then
@@ -80,3 +69,4 @@ archive_extraction_mojosetup() {
 	fi
 	rm "$archive_game_data"
 }
+
