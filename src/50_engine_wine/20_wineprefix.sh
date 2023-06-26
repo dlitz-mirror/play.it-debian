@@ -123,24 +123,7 @@ wine_launcher_wineprefix_generate() {
 	fi
 
 	# Load registry scripts
-	if [ -n "${APP_REGEDIT:-}" ]; then
-		{
-			cat <<- EOF
-			    ## Load registry scripts
-			    registry_scripts='$APP_REGEDIT'
-			EOF
-			cat <<- 'EOF'
-			    for registry_script in $registry_scripts; do
-			        (
-			            cd "${WINEPREFIX}/drive_c/${GAME_ID}"
-			            printf 'Loading registry script: %s\n' "$registry_script"
-			            $(regedit_command) "$registry_script"
-			        )
-			    done
-
-			EOF
-		} | sed --regexp-extended 's/( ){4}/\t/g'
-	fi
+	regedit_initial
 
 	# Set Direct3D renderer
 	wine_launcher_renderer

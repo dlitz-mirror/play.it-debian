@@ -29,6 +29,45 @@ wine_launcher_regedit_environment() {
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
+# WINE launcher - Load registry keys during prefix initialization
+# USAGE: regedit_initial
+regedit_initial() {
+	# Return early if there is no key to load during prefix initilization
+	if [ -z "${APP_REGEDIT:-}" ]; then
+		return 0
+	fi
+
+	{
+		cat <<- EOF
+		    ## Load registry scripts
+		    registry_scripts='$APP_REGEDIT'
+		EOF
+		cat <<- 'EOF'
+		    (
+		        cd "${WINEPREFIX}/drive_c/${GAME_ID}"
+		        for registry_script in $registry_scripts; do
+		            printf 'Loading registry script: %s\n' "$registry_script"
+		            if [ ! -e "$registry_script" ]; then
+		                printf '\n\033[1;31mError:\033[0m\n'
+		                printf 'Failed to load required registry script: %s\n' "$registry_script"
+		                exit 1
+		            fi
+		            set +o errexit
+		            $(regedit_command) "$registry_script"
+		            regedit_return_code=$?
+		            set -o errexit
+		            if [ $regedit_return_code -ne 0 ]; then
+		                printf '\n\033[1;31mError:\033[0m\n'
+		                printf 'Failed to load required registry script: %s\n' "$registry_script"
+		                exit 1
+		            fi
+		        done
+		    )
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
+}
+
 # WINE launcher - Store registry keys in a persistent path
 # USAGE: wine_launcher_regedit_store
 wine_launcher_regedit_store() {
