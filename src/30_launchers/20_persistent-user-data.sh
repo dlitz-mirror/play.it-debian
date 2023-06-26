@@ -1,3 +1,45 @@
+# Set path for persistent storage of user data, and populate the game prefix from the persistent storage
+# USAGE: persistent_storage_initialization
+persistent_storage_initialization() {
+	{
+		cat <<- 'EOF'
+		# Set path for persistent storage of user data
+		persistent_user_path() {
+		    # The path can be explicitely set using an environment variable
+		    if [ -n "$PLAYIT_PERSISTENT_USER_PATH" ]; then
+		        printf '%s' "$PLAYIT_PERSISTENT_USER_PATH"
+		        return 0
+		    fi
+		    # Compute the default path if none has been explicitly set
+		    printf '%s/games/%s' \
+		        "${XDG_DATA_HOME:=$HOME/.local/share}" \
+		        "$GAME_ID"
+		}
+		USER_PERSISTENT_PATH=$(persistent_user_path)
+		mkdir --parents "$USER_PERSISTENT_PATH"
+
+		# Populate the prefix from persistent files
+		(
+		    cd "$USER_PERSISTENT_PATH"
+		    find -L . -type f ! -path './wine/*' | while read -r file; do
+		        persistent_file="${USER_PERSISTENT_PATH}/${file}"
+		        prefix_file="${PATH_PREFIX}/${file}"
+		        if \
+		            [ ! -e "$prefix_file" ] || \
+		            [ "$(realpath "$prefix_file")" != "$(realpath "$persistent_file")" ]
+		        then
+		            mkdir --parents "$(dirname "$prefix_file")"
+		            ln --symbolic --force --no-target-directory \
+		                "$persistent_file" \
+		                "$prefix_file"
+		        fi
+		    done
+		)
+
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
+}
+
 # print a list of directories that should be saved in persistent paths
 # USAGE: persistent_list_directories
 # RETURNS: a list of paths to directories, one per line
@@ -48,36 +90,9 @@ persistent_list_files() {
 	set -o noglob
 }
 
-# Print function computing the path for persistent storage of user data
-# USAGE: persistent_function_user_path
-persistent_function_user_path() {
-	{
-		cat <<- 'EOF'
-		# Print path to directory used for persistent storage of user data
-		persistent_user_path() {
-		    # The path can be explicitely set using an environment variable
-		    if [ -n "$PLAYIT_PERSISTENT_USER_PATH" ]; then
-		        printf '%s' "$PLAYIT_PERSISTENT_USER_PATH"
-		        return 0
-		    fi
-		    # Compute the default path if none has been explicitly set
-		    printf '%s/games/%s' \
-		        "${XDG_DATA_HOME:=$HOME/.local/share}" \
-		        "$GAME_ID"
-		}
-
-		EOF
-	} | sed --regexp-extended 's/( ){4}/\t/g'
-}
-
 # print list of variables setting persistent paths
 # USAGE: launcher_print_persistent_paths
 launcher_print_persistent_paths() {
-	persistent_function_user_path
-	cat <<- 'EOF'
-	USER_PERSISTENT_PATH=$(persistent_user_path)
-	EOF
-
 	local persistent_list_directories persistent_list_files
 	persistent_list_directories=$(persistent_list_directories)
 	persistent_list_files=$(persistent_list_files)
@@ -110,35 +125,6 @@ launcher_prefix_function_expand_path_pattern() {
 		    else
 		        printf '%s\n' "$pattern"
 		    fi
-		}
-
-		EOF
-	} | sed --regexp-extended 's/( ){4}/\t/g'
-}
-
-# print function populating the prefix from persistent files
-# USAGE: launcher_prefix_function_persistent_populate_prefix
-launcher_prefix_function_persistent_populate_prefix() {
-	{
-		cat <<- 'EOF'
-		# Populate the prefix from persistent files
-		persistent_populate_prefix() {
-		    (
-		        cd "$USER_PERSISTENT_PATH"
-		        find -L . -type f ! -path './wine/*' | while read -r file; do
-		            persistent_file="${USER_PERSISTENT_PATH}/${file}"
-		            prefix_file="${PATH_PREFIX}/${file}"
-		            if \
-		                [ ! -e "$prefix_file" ] || \
-		                [ "$(realpath "$prefix_file")" != "$(realpath "$persistent_file")" ]
-		            then
-		                mkdir --parents "$(dirname "$prefix_file")"
-		                ln --symbolic --force --no-target-directory \
-		                    "$persistent_file" \
-		                    "$prefix_file"
-		            fi
-		        done
-		    )
 		}
 
 		EOF
@@ -307,8 +293,8 @@ launcher_prefix_function_persistent_update_from_prefix() {
 launcher_prefix_functions_persistent() {
 	persistent_path_diversion
 	launcher_prefix_function_expand_path_pattern
-	launcher_prefix_function_persistent_populate_prefix
 	launcher_prefix_function_persistent_init_directories
 	launcher_prefix_function_persistent_init_files
 	launcher_prefix_function_persistent_update_from_prefix
 }
+
