@@ -67,7 +67,6 @@ launcher_prefix_symlinks_functions() {
 		# Set userdir- and prefix-related functions
 		EOF
 		prefix_function_prefix_path
-		launcher_prefix_functions_persistent
 		prefix_generate_links_farm
 }
 
@@ -81,25 +80,6 @@ launcher_prefix_symlinks_build() {
 	mkdir --parents "$PATH_PREFIX"
 	prefix_generate_links_farm
 
-	EOF
-
-	# Set path for persistent storage of user data,
-	# and populate the game prefix from the persistent storage
-	persistent_storage_initialization
-
-	cat  <<- 'EOF'
-	persistent_init_directories
-	persistent_init_files
-
-	EOF
-}
-
-# Print the actions used to clean up a symlinks prefix
-# USAGE: launcher_prefix_symlinks_cleanup
-launcher_prefix_symlinks_cleanup() {
-	cat <<- 'EOF'
-	# Clean up user prefix
-	persistent_update_from_prefix
 	EOF
 }
 

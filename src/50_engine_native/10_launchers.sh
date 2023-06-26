@@ -12,12 +12,21 @@ native_launcher() {
 			native_launcher_environment "$application"
 
 			# Generate the game prefix
-			launcher_print_persistent_paths
 			launcher_prefix_symlinks_functions
 			launcher_prefix_symlinks_build
 
+			# Set up the paths diversion to persistent storage
+			persistent_storage_initialization
+			persistent_storage_common
+			persistent_path_diversion
+			persistent_storage_update_directories
+			persistent_storage_update_files
+
 			native_launcher_run "$application"
-			launcher_prefix_symlinks_cleanup
+
+			# Update persistent storage with files from the current prefix
+			persistent_storage_update_files_from_prefix
+
 			launcher_exit
 		;;
 		('none')
