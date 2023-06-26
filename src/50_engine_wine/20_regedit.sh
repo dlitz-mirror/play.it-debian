@@ -43,13 +43,26 @@ regedit_initial() {
 		    registry_scripts='$APP_REGEDIT'
 		EOF
 		cat <<- 'EOF'
-		    for registry_script in $registry_scripts; do
-		        (
-		            cd "${WINEPREFIX}/drive_c/${GAME_ID}"
+		    (
+		        cd "${WINEPREFIX}/drive_c/${GAME_ID}"
+		        for registry_script in $registry_scripts; do
 		            printf 'Loading registry script: %s\n' "$registry_script"
+		            if [ ! -e "$registry_script" ]; then
+		                printf '\n\033[1;31mError:\033[0m\n'
+		                printf 'Failed to load required registry script: %s\n' "$registry_script"
+		                exit 1
+		            fi
+		            set +o errexit
 		            $(regedit_command) "$registry_script"
-		        )
-		    done
+		            regedit_return_code=$?
+		            set -o errexit
+		            if [ $regedit_return_code -ne 0 ]; then
+		                printf '\n\033[1;31mError:\033[0m\n'
+		                printf 'Failed to load required registry script: %s\n' "$registry_script"
+		                exit 1
+		            fi
+		        done
+		    )
 
 		EOF
 	} | sed --regexp-extended 's/( ){4}/\t/g'
