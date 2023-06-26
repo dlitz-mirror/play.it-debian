@@ -12,9 +12,15 @@ wine_launcher() {
 			wine_launcher_environment "$application"
 
 			# Generate the game prefix
-			launcher_print_persistent_paths
 			launcher_prefix_symlinks_functions
 			launcher_prefix_symlinks_build
+
+			# Set up the paths diversion to persistent storage
+			persistent_storage_initialization
+			persistent_storage_common
+			persistent_path_diversion
+			persistent_storage_update_directories
+			persistent_storage_update_files
 
 			# Generate the WINE prefix
 			wine_launcher_wineprefix_environment
@@ -30,7 +36,9 @@ wine_launcher() {
 			# Handle persistent storage of registry keys
 			wine_launcher_regedit_store
 
-			launcher_prefix_symlinks_cleanup
+			# Update persistent storage with files from the current prefix
+			persistent_storage_update_files_from_prefix
+
 			launcher_exit
 		;;
 		(*)
