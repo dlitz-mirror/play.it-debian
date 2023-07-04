@@ -16,8 +16,17 @@ application_type() {
 	application_type=$(context_value "${application}_TYPE")
 
 	# If no type has been explicitely set, try to guess one
+	## Try to detect ScummVM applications
 	if [ -z "$application_type" ]; then
-		if ! variable_is_empty 'PLAYIT_WORKDIR'; then
+		local application_scummid
+		application_scummid=$(application_scummvm_scummid "$application")
+		if [ -n "$application_scummid" ]; then
+			application_type='scummvm'
+		fi
+	fi
+	## Try to detect the application type based of the binary MIME type
+	if [ -z "$application_type" ]; then
+		if [ -n "${PLAYIT_WORKDIR:-}" ]; then
 			application_type=$(application_type_guess_from_file "$application")
 		fi
 	fi
