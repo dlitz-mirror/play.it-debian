@@ -29,6 +29,10 @@ scummvm_launcher_environment() {
 	local path_game application_scummid application_options
 	path_game=$(path_game_data)
 	application_scummid=$(application_scummvm_scummid "$application")
+	if [ -z "$application_scummid" ]; then
+		error_application_scummid_invalid "$application" "$application_scummid"
+		return 1
+	fi
 	application_options=$(application_options "$application")
 
 	cat <<- EOF

@@ -1,23 +1,18 @@
-# print the ScummVM id for the given application
+# Print the ScummVM id for the given application
 # USAGE: application_scummvm_scummid $application
-# RETURN: the ScummVM id
+# RETURN: the ScummVM id, or an empty string if none is set
 application_scummvm_scummid() {
-	# Check that the application uses the scummvm type
-	local application application_type
+	local application
 	application="$1"
-	application_type=$(application_type "$application")
-	if [ -z "$application_type" ]; then
-		error_no_application_type "$application"
-		return 1
-	fi
-	if [ "$application_type" != 'scummvm' ]; then
-		error_application_wrong_type 'application_scummvm_scummid' "$application_type"
-		return 1
-	fi
 
 	# Get the application ScummVM id from its identifier
 	local application_scummid
 	application_scummid=$(context_value "${application}_SCUMMID")
+
+	# Return early if no ScummVM id is set
+	if [ -z "$application_scummid" ]; then
+		return 0
+	fi
 
 	# Check that the id fits the ScummVM id format
 	# Allowed formats are:
