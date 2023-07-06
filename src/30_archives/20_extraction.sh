@@ -299,7 +299,7 @@ archive_extraction_from_type() {
 			archive_extraction_zip_unclean "$archive" "$destination_directory"
 		;;
 		(*)
-			error_archive_type_invalid "$archive_extractor"
+			error_archive_type_invalid "$archive_type"
 			return 1
 		;;
 	esac

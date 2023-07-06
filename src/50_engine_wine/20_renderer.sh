@@ -96,8 +96,10 @@ wine_renderer_launcher_snippet_wined3d() {
 			dependency_library='libvulkan.so.1'
 		;;
 	esac
-	dependencies_add_native_libraries "$package" "$dependency_library"
 	dependencies_add_generic "$package" 'winetricks'
+	if [ -n "${dependency_library:-}" ]; then
+		dependencies_add_native_libraries "$package" "$dependency_library"
+	fi
 }
 
 # Print the snippet to include to launchers to use DXVK as the Direct3D renderer
