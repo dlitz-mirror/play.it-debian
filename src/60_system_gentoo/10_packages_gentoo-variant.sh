@@ -12,83 +12,90 @@ gentoo_ebuild_path() {
 	printf '%s/%s/gentoo-overlay/games-playit/%s/%s.ebuild' "$PLAYIT_WORKDIR" "$package" "$package_id" "${package_name%.tbz2}"
 }
 
-# write .ebuild package meta-data
-# USAGE: pkg_write_gentoo
-pkg_write_gentoo() {
-	###
-	# TODO
-	# $pkg should be passed as a function argument, not inherited from the calling function
-	###
+# Gentoo ("gentoo" variant) - Write the metadata for the listed packages
+# USAGE: gentoo_packages_metadata $package[…]
+gentoo_packages_metadata() {
+	local package
+	for package in "$@"; do
+		gentoo_package_metadata_single "$package"
+	done
+}
 
-	local package_path package_id
-	package_path=$(package_path "$pkg")
-	package_id=$(package_id "$pkg")
+# Gentoo ("gentoo" variant) - Write the metadata for the given package
+# USAGE: gentoo_package_metadata_single $package
+gentoo_package_metadata_single() {
+	local package
+	package="$1"
 
-	mkdir --parents \
-		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata" \
-		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles" \
-		"$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/files"
-	printf '%s\n' "masters = gentoo" > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/metadata/layout.conf"
-	printf '%s\n' 'games-playit' > "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/profiles/categories"
-	ln --symbolic --force --no-target-directory "$package_path" "$PLAYIT_WORKDIR/$pkg/gentoo-overlay/games-playit/${package_id}/files/install"
-	local package_version target
-	package_version=$(package_version)
-	target=$(gentoo_ebuild_path "$pkg")
+	local package_id overlay_path
+	overlay_path="${PLAYIT_WORKDIR}/${package}/gentoo-overlay"
 
-	cat > "$target" <<- EOF
-	EAPI=7
-	RESTRICT="fetch strip binchecks"
+	mkdir --parents "${overlay_path}/metadata"
+	cat > "${overlay_path}/metadata/layout.conf" <<- EOF
+	masters = gentoo
 	EOF
-	local package_architecture pkg_architectures
-	package_architecture=$(package_architecture "$pkg")
+
+	mkdir --parents "${overlay_path}/profiles"
+	cat > "${overlay_path}/profiles/categories" <<- EOF
+	games-playit
+	EOF
+
+	local package_id package_path
+	package_id=$(package_id "$package")
+	package_path=$(package_path "$package")
+	mkdir --parents "${overlay_path}/games-playit/${package_id}/files"
+	ln --symbolic --force --no-target-directory \
+		"$package_path" \
+		"${overlay_path}/games-playit/${package_id}/files/install"
+
+	local ebuild_path package_architecture ebuild_keywords ebuild_description ebuild_rdepend
+	ebuild_path=$(gentoo_ebuild_path "$package")
+	ebuild_description=$(ebuild_description "$package")
+	ebuild_rdepend=$(package_gentoo_ebuild_rdepend "$pkg")
+	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
 		('32')
-			pkg_architectures='-* x86 amd64'
+			ebuild_keywords='-* x86 amd64'
 		;;
 		('64')
-			pkg_architectures='-* amd64'
+			ebuild_keywords='-* amd64'
 		;;
 		(*)
-			pkg_architectures='x86 amd64' #data packages
+			ebuild_keywords='x86 amd64' # data packages
 		;;
 	esac
-	local package_description
-	package_description=$(package_description "$pkg")
-	cat >> "$target" <<- EOF
-	KEYWORDS="$pkg_architectures"
-	DESCRIPTION="${package_description}"
+	cat > "$ebuild_path" <<- EOF
+	EAPI=7
+	RESTRICT="fetch strip binchecks"
+	KEYWORDS="$ebuild_keywords"
+	DESCRIPTION="$ebuild_description"
 	SLOT="0"
+	RDEPEND="$ebuild_rdepend"
 	EOF
-
-	# fakeroot >=1.25.1 considers all files belong to root by default
-	local field_rdepend
-	field_rdepend=$(package_gentoo_field_rdepend "$pkg")
-	cat >> "$target" <<- EOF
-	RDEPEND="$field_rdepend"
-
+	cat >> "$ebuild_path" <<- 'EOF'
 	src_unpack() {
-		mkdir --parents "\$S"
+		mkdir --parents "$S"
 	}
 	src_install() {
-		cp --recursive --link \$FILESDIR/install/* \$ED/
+		cp --recursive --link $FILESDIR/install/* $ED/
 	}
 	EOF
 
-	if ! variable_is_empty "${pkg}_POSTINST_RUN"; then
+	if ! variable_is_empty "${package}_POSTINST_RUN"; then
 		local postinst_command
-		postinst_command=$(get_value "${pkg}_POSTINST_RUN")
-		cat >> "$target" <<- EOF
-		pkg_postinst() {
+		postinst_command=$(get_value "${package}_POSTINST_RUN")
+		cat >> "$ebuild_path" <<- EOF
+		package_postinst() {
 		$postinst_command
 		}
 		EOF
 	fi
 
-	if ! variable_is_empty "${pkg}_PRERM_RUN"; then
+	if ! variable_is_empty "${package}_PRERM_RUN"; then
 		local prerm_command
-		prerm_command=$(get_value "${pkg}_PRERM_RUN")
-		cat >> "$target" <<- EOF
-		pkg_prerm() {
+		prerm_command=$(get_value "${package}_PRERM_RUN")
+		cat >> "$ebuild_path" <<- EOF
+		package_prerm() {
 		$prerm_command
 		}
 		EOF

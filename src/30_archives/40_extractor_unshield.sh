@@ -1,11 +1,10 @@
 # extract the content of an archive using unshield
-# USAGE: archive_extraction_using_unshield $archive $destination_directory
+# USAGE: archive_extraction_using_unshield $archive $destination_directory $log_file
 archive_extraction_using_unshield() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_using_unshield'
-	assert_not_empty 'destination_directory' 'archive_extraction_using_unshield'
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -15,7 +14,15 @@ archive_extraction_using_unshield() {
 	if [ -z "$extractor_options" ]; then
 		extractor_options='-L'
 	fi
-	debug_external_command "unshield $extractor_options -d \"$destination_directory\" x \"$archive_path\" >/dev/null"
-	unshield $extractor_options -d "$destination_directory" x "$archive_path" >/dev/null
+	printf 'unshield %s -d "%s" x "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	unshield $extractor_options -d "$destination_directory" x "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
 

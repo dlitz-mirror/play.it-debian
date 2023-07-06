@@ -1,6 +1,15 @@
-# Arch Linux - Write metadata for the given package
-# USAGE: pkg_write_arch $package
-pkg_write_arch() {
+# Arch Linux - Write the metadata for the listed packages
+# USAGE: archlinux_packages_metadata $package[…]
+archlinux_packages_metadata() {
+	local package
+	for package in "$@"; do
+		archlinux_package_metadata_single "$package"
+	done
+}
+
+# Arch Linux - Write the metadata for the given package
+# USAGE: archlinux_package_metadata_single $package
+archlinux_package_metadata_single() {
 	local package
 	package="$1"
 

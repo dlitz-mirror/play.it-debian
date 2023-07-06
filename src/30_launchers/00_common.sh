@@ -50,165 +50,41 @@ launcher_write_script() {
 	mkdir --parents "$(dirname "$target_file")"
 	touch "$target_file"
 	chmod 755 "$target_file"
-	launcher_write_script_headers "$target_file"
 	case "$application_type" in
 		('dosbox')
-			case "$prefix_type" in
-				('symlinks')
-					dosbox_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					dosbox_prefix_function_toupper >> "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					dosbox_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			dosbox_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'dosbox'
 		;;
 		('java')
-			case "$prefix_type" in
-				('symlinks')
-					java_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					java_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			java_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'java'
 		;;
-		('native')
-			case "$prefix_type" in
-				('symlinks')
-					native_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					native_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				('none')
-					native_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					native_launcher_run "$application" >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-		;;
-		('scummvm')
-			case "$prefix_type" in
-				('none')
-					scummvm_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_prerun "$application" "$target_file"
-					scummvm_launcher_run >> "$target_file"
-					launcher_write_script_postrun "$application" "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'scummvm'
-		;;
-		('renpy')
-			case "$prefix_type" in
-				('symlinks')
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					renpy_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'renpy'
-		;;
-		('residualvm')
-			case "$prefix_type" in
-				('none')
-					residualvm_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_write_script_prerun "$application" "$target_file"
-					residualvm_launcher_run >> "$target_file"
-					launcher_write_script_postrun "$application" "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'residualvm'
-		;;
-		('wine')
-			wine_launcher_write "$application" "$target_file"
-			local package
-			package=$(context_package)
-			dependencies_add_generic "$package" 'wine'
-		;;
 		('mono')
-			case "$prefix_type" in
-				('symlinks')
-					mono_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					launcher_print_persistent_paths >> "$target_file"
-					launcher_write_script_prefix_functions "$target_file"
-					launcher_write_script_prefix_build "$target_file"
-					mono_launcher_run "$application" >> "$target_file"
-					launcher_write_script_prefix_cleanup "$target_file"
-				;;
-				('none')
-					mono_launcher_application_variables "$application" >> "$target_file"
-					launcher_write_script_game_variables "$target_file"
-					mono_launcher_run "$application" >> "$target_file"
-				;;
-				(*)
-					error_launchers_prefix_type_unsupported "$application"
-					return 1
-				;;
-			esac
+			mono_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
 			dependencies_add_generic "$package" 'mono'
 		;;
+		('native')
+			native_launcher "$application" > "$target_file"
+		;;
+		('scummvm')
+			scummvm_launcher "$application" > "$target_file"
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'scummvm'
+		;;
+		('wine')
+			wine_launcher "$application" > "$target_file"
+			local package
+			package=$(context_package)
+			dependencies_add_generic "$package" 'wine'
+		;;
 	esac
-	cat >> "$target_file" <<- 'EOF'
-	if [ -n "$game_exit_status" ]; then
-	    exit $game_exit_status
-	else
-	    exit 0
-	fi
-	EOF
 
 	# For native applications, add execution permissions to the game binary file.
 	case "$application_type" in
@@ -238,8 +114,8 @@ launcher_target_presence_check() {
 	fi
 
 	case "$application_type" in
-		('residualvm'|'scummvm'|'renpy')
-			# ResidualVM, ScummVM and Ren'Py games do not rely on a provided binary.
+		('scummvm')
+			# ScummVM games do not rely on a provided binary.
 			return 0
 		;;
 	esac
@@ -255,80 +131,31 @@ launcher_target_presence_check() {
 	test -f "$application_exe_path"
 }
 
-# write launcher script headers
-# USAGE: launcher_write_script_headers $file
-# NEEDED VARS: LIBRARY_VERSION
-# CALLED BY: launcher_write_script
-launcher_write_script_headers() {
-	local file
-	file="$1"
-	cat > "$file" <<- EOF
+# Print the headers common to all launcher scripts
+# USAGE: launcher_headers
+launcher_headers() {
+	cat <<- EOF
 	#!/bin/sh
 	# script generated by ./play.it $LIBRARY_VERSION - https://www.dotslashplay.it/
 	set -o errexit
 
 	EOF
-	return 0
 }
 
-# write launcher script game-specific variables
-# USAGE: launcher_write_script_game_variables $file
-launcher_write_script_game_variables() {
-	local file
-	file="$1"
+# Print the exit actions common to all launcher scripts
+# USAGE: launcher_exit
+launcher_exit() {
+	{
+		cat <<- 'EOF'
+		# Return the game exit code
 
-	local game_id path_game_data
-	game_id=$(game_id)
-	path_game_data=$(path_game_data)
-	cat >> "$file" <<- EOF
-	# Set game-specific values
-
-	GAME_ID='${game_id}'
-	PATH_GAME='${path_game_data}'
-
-	EOF
-}
-
-# write launcher script pre-run actions
-# USAGE: launcher_write_script_prerun $application $file
-launcher_write_script_prerun() {
-	local application file
-	application="$1"
-	file="$2"
-
-	local application_prerun
-	application_prerun=$(application_prerun "$application")
-
-	# Return early if there are no pre-run actions for the given application
-	if [ -z "$application_prerun" ]; then
-		return 0
-	fi
-
-	cat >> "$file" <<- EOF
-	$application_prerun
-
-	EOF
-}
-
-# write launcher script post-run actions
-# USAGE: launcher_write_script_postrun $application $file
-launcher_write_script_postrun() {
-	local application file
-	application="$1"
-	file="$2"
-
-	local application_postrun
-	application_postrun=$(application_postrun "$application")
-
-	# Return early if there are no post-run actions for the given application
-	if [ -z "$application_postrun" ]; then
-		return 0
-	fi
-
-	cat >> "$file" <<- EOF
-	$application_postrun
-
-	EOF
+		if [ -n "$game_exit_status" ]; then
+		    exit "$game_exit_status"
+		else
+		    exit 0
+		fi
+		EOF
+	} | sed --regexp-extended 's/( ){4}/\t/g'
 }
 
 # write the XDG desktop file for the given application

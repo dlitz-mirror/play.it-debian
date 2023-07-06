@@ -1,11 +1,10 @@
 # extract the content of an archive using innoextract
-# USAGE: archive_extraction_using_innoextract $archive $destination_directory
+# USAGE: archive_extraction_using_innoextract $archive $destination_directory $log_file
 archive_extraction_using_innoextract() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_using_innoextract'
-	assert_not_empty 'destination_directory' 'archive_extraction_using_innoextract'
+	log_file="$3"
 
 	local archive_path
 	archive_path=$(archive_find_path "$archive")
@@ -18,10 +17,18 @@ archive_extraction_using_innoextract() {
 	local extractor_options
 	extractor_options=$(archive_extractor_options "$archive")
 	if [ -z "$extractor_options" ]; then
-		extractor_options='--progress=1 --silent --lowercase'
+		extractor_options='--lowercase'
 	fi
-	debug_external_command "innoextract $extractor_options --extract --output-dir \"$destination_directory\" \"$archive_path\" 2>/dev/null"
-	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" 2>/dev/null
+	printf 'innoextract %s --extract --output-dir "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
+	local archive_extraction_return_code
+	set +o errexit
+	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" >> "$log_file" 2>&1
+	archive_extraction_return_code=$?
+	set -o errexit
+	if [ $archive_extraction_return_code -ne 0 ]; then
+		error_archive_extraction_failure "$archive"
+		return 1
+	fi
 }
 
 # check that the InnoSetup archive can be processed by the available innoextract version
@@ -30,7 +37,6 @@ archive_extraction_using_innoextract() {
 archive_extraction_using_innoextract_is_supported() {
 	local archive_path
 	archive_path="$1"
-	assert_not_empty 'archive_path' 'archive_extraction_using_innoextract_is_supported'
 
 	# Use innoextract internal check
 	if innoextract --list --silent "$archive_path" 2>&1 1>/dev/null | \

@@ -1,10 +1,16 @@
-# set defaults rights on files (755 for dirs & 644 for regular files)
-# USAGE: set_standard_permissions $dir[…]
+# Apply minimal permissions on all files in the given paths:
+# - 755 for directories
+# - 644 for files
+# USAGE: set_standard_permissions $path[…]
 set_standard_permissions() {
-	for dir in "$@"; do
-		[  -d "$dir" ] || return 1
-		find "$dir" -type d -exec chmod 755 '{}' +
-		find "$dir" -type f -exec chmod 644 '{}' +
+	local path
+	for path in "$@"; do
+		# Error out if something does not look like a path to a directory
+		if [ ! -d "$path" ]; then
+			return 1
+		fi
+		find "$path" -type d -exec chmod 755 '{}' +
+		find "$path" -type f -exec chmod 644 '{}' +
 	done
 }
 

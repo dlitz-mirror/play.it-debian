@@ -42,16 +42,15 @@ archive_dependencies_check_type_tarxz() {
 }
 
 # extract the content of a .tar archive
-# USAGE: archive_extraction_tar $archive $destination_directory
+# USAGE: archive_extraction_tar $archive $destination_directory $log_file
 archive_extraction_tar() {
-	local archive destination_directory
+	local archive destination_directory log_file
 	archive="$1"
 	destination_directory="$2"
-	assert_not_empty 'archive' 'archive_extraction_tar'
-	assert_not_empty 'destination_directory' 'archive_extraction_tar'
+	log_file="$3"
 
 	if command -v 'tar' >/dev/null 2>&1; then
-		archive_extraction_using_tar "$archive" "$destination_directory"
+		archive_extraction_using_tar "$archive" "$destination_directory" "$log_file"
 	else
 		error_archive_no_extractor_found 'tar'
 		return 1
