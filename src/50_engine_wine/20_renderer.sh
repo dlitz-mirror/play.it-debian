@@ -100,7 +100,7 @@ wine_launcher_renderer_wined3d() {
 			dependency_library='libvulkan.so.1'
 		;;
 	esac
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 	if [ -n "${dependency_library:-}" ]; then
 		dependencies_add_native_libraries "$package" "$dependency_library"
 	fi
@@ -142,7 +142,7 @@ wine_launcher_renderer_dxvk() {
 	local package
 	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 }
 
 # WINE launcher - Use vkd3d for Direct3D rendering
@@ -170,5 +170,5 @@ wine_launcher_renderer_vkd3d() {
 	local package
 	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 }

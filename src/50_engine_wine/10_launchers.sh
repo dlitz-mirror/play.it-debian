@@ -51,7 +51,7 @@ wine_launcher() {
 	if ! variable_is_empty 'APP_WINETRICKS'; then
 		local package
 		package=$(context_package)
-		dependencies_add_generic "$package" 'winetricks'
+		dependencies_add_command "$package" 'winetricks'
 	fi
 }
 

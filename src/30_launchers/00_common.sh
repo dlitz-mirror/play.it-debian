@@ -55,19 +55,19 @@ launcher_write_script() {
 			dosbox_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'dosbox'
+			dependencies_add_command "$package" 'dosbox'
 		;;
 		('java')
 			java_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'java'
+			dependencies_add_command "$package" 'java'
 		;;
 		('mono')
 			mono_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'mono'
+			dependencies_add_command "$package" 'mono'
 		;;
 		('native')
 			native_launcher "$application" > "$target_file"
@@ -76,13 +76,13 @@ launcher_write_script() {
 			scummvm_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'scummvm'
+			dependencies_add_command "$package" 'scummvm'
 		;;
 		('wine')
 			wine_launcher "$application" > "$target_file"
 			local package
 			package=$(context_package)
-			dependencies_add_generic "$package" 'wine'
+			dependencies_add_command "$package" 'wine'
 		;;
 	esac
 
