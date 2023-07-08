@@ -39,6 +39,10 @@ archlinux_dependencies_single_command() {
 
 	local package_names
 	case "$required_command" in
+		('dos2unix')
+			package_names='
+			dos2unix'
+		;;
 		('dosbox')
 			package_names='
 			dosbox'
@@ -51,6 +55,18 @@ archlinux_dependencies_single_command() {
 			package_names='
 			mono'
 		;;
+		('mpv')
+			package_names='
+			mpv'
+		;;
+		('openmw-iniimporter')
+			package_names='
+			openmw'
+		;;
+		('openmw-launcher')
+			package_names='
+			openmw'
+		;;
 		('pulseaudio')
 			package_names='
 			pulseaudio'
@@ -58,6 +74,10 @@ archlinux_dependencies_single_command() {
 		('scummvm')
 			package_names='
 			scummvm'
+		;;
+		('vcmilauncher')
+			package_names='
+			vcmi'
 		;;
 		('wine')
 			package_names='

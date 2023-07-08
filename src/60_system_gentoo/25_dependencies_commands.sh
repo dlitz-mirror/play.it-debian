@@ -38,9 +38,12 @@ gentoo_dependencies_single_command() {
 	package="$1"
 	required_command="$2"
 
-
 	local package_names
 	case "$required_command" in
+		('dos2unix')
+			package_names='
+			app-text/dos2unix'
+		;;
 		('dosbox')
 			package_names='
 			games-emulation/dosbox'
@@ -53,6 +56,18 @@ gentoo_dependencies_single_command() {
 			package_names='
 			dev-lang/mono'
 		;;
+		('mpv')
+			package_names='
+			media-video/mpv'
+		;;
+		('openmw-iniimporter')
+			package_names='
+			games-engines/openmw'
+		;;
+		('openmw-launcher')
+			package_names='
+			games-engines/openmw'
+		;;
 		('pulseaudio')
 			package_names='
 			media-sound/pulseaudio'
@@ -60,6 +75,11 @@ gentoo_dependencies_single_command() {
 		('scummvm')
 			package_names='
 			games-engines/scummvm'
+		;;
+		('vcmilauncher')
+			dependency_gentoo_overlays_add 'https://cgit.gentoo.org/proj/gamerlay.git'
+			package_names='
+			games-strategy/vcmi'
 		;;
 		('wine')
 			local package_architecture

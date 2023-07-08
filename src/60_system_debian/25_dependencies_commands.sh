@@ -40,6 +40,10 @@ debian_dependencies_single_command() {
 
 	local package_names
 	case "$required_command" in
+		('dos2unix')
+			package_names='
+			dos2unix'
+		;;
 		('dosbox')
 			package_names='
 			dosbox'
@@ -52,6 +56,18 @@ debian_dependencies_single_command() {
 			package_names='
 			mono-runtime'
 		;;
+		('mpv')
+			package_names='
+			mpv:amd64 | mpv'
+		;;
+		('openmw-iniimporter')
+			package_names='
+			openmw-launcher'
+		;;
+		('openmw-launcher')
+			package_names='
+			openmw-launcher'
+		;;
 		('pulseaudio')
 			package_names='
 			pulseaudio:amd64 | pulseaudio'
@@ -59,6 +75,10 @@ debian_dependencies_single_command() {
 		('scummvm')
 			package_names='
 			scummvm'
+		;;
+		('vcmilauncher')
+			package_names='
+			vcmi'
 		;;
 		('wine')
 			local package_architecture
