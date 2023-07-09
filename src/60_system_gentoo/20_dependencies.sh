@@ -22,9 +22,6 @@ pkg_set_deps_gentoo() {
 			('alsa')
 				pkg_dep="media-libs/alsa-lib$architecture_suffix media-plugins/alsa-plugins$architecture_suffix"
 			;;
-			('dosbox')
-				pkg_dep="games-emulation/dosbox"
-			;;
 			('freetype')
 				pkg_dep="media-libs/freetype$architecture_suffix"
 			;;
@@ -46,9 +43,6 @@ pkg_set_deps_gentoo() {
 			('gtk2')
 				pkg_dep="x11-libs/gtk+:2$architecture_suffix"
 			;;
-			('java')
-				pkg_dep='virtual/jre'
-			;;
 			('json')
 				pkg_dep="dev-libs/json-c$architecture_suffix"
 			;;
@@ -61,52 +55,30 @@ pkg_set_deps_gentoo() {
 			('libxrandr')
 				pkg_dep="x11-libs/libXrandr$architecture_suffix"
 			;;
-			('mono')
-				pkg_dep="dev-lang/mono$architecture_suffix"
-			;;
 			('nss')
 				pkg_dep="dev-libs/nss$architecture_suffix"
 			;;
 			('openal')
 				pkg_dep="media-libs/openal$architecture_suffix"
 			;;
-			('pulseaudio')
-				pkg_dep='media-sound/pulseaudio'
-			;;
-			('scummvm')
-				pkg_dep='games-engines/scummvm'
-			;;
 			('sdl2')
 				pkg_dep="media-libs/libsdl2$architecture_suffix"
-			;;
-			('wine')
-				case "$package_architecture" in
-					('32') pkg_set_deps_gentoo "$package" 'wine32' ;;
-					('64') pkg_set_deps_gentoo "$package" 'wine64' ;;
-				esac
-			;;
-			('wine32')
-				pkg_dep='virtual/wine[abi_x86_32]'
-			;;
-			('wine64')
-				pkg_dep='virtual/wine[abi_x86_64]'
-			;;
-			('winetricks')
-				pkg_dep='app-emulation/winetricks
-				|| (
-					x11-terms/xterm
-					gnome-extra/zenity
-					kde-apps/kdialog
-				)'
 			;;
 			('xcursor')
 				pkg_dep="x11-libs/libXcursor$architecture_suffix"
 			;;
-			('xgamma')
-				pkg_dep='x11-apps/xgamma'
-			;;
-			('xrandr')
-				pkg_dep='x11-apps/xrandr'
+			( \
+				'dosbox' | \
+				'java' | \
+				'mono' | \
+				'pulseaudio' | \
+				'scummvm' | \
+				'wine' | \
+				'winetricks' | \
+				'xgamma' | \
+				'xrandr' \
+			)
+				gentoo_dependencies_single_command "$package" "$dependency_keyword"
 			;;
 			( \
 				'libasound.so.2' | \
@@ -182,6 +154,11 @@ dependencies_gentoo_full_list() {
 
 	local packages_list packages_list_full
 	packages_list_full=''
+
+	# Include dependencies on commands
+	packages_list=$(gentoo_dependencies_all_commands "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
 
 	# Include dependencies on native libraries
 	packages_list=$(dependencies_list_native_libraries_packages "$package")

@@ -10,9 +10,6 @@ pkg_set_deps_deb() {
 		('alsa')
 			printf 'libasound2-plugins'
 		;;
-		('dosbox')
-			printf 'dosbox'
-		;;
 		('freetype')
 			printf 'libfreetype6'
 		;;
@@ -31,9 +28,6 @@ pkg_set_deps_deb() {
 		('gtk2')
 			printf 'libgtk2.0-0'
 		;;
-		('java')
-			printf 'default-jre:amd64 | java-runtime:amd64 | default-jre | java-runtime'
-		;;
 		('json')
 			printf 'libjson-c3 | libjson-c2 | libjson0'
 		;;
@@ -46,44 +40,30 @@ pkg_set_deps_deb() {
 		('libxrandr')
 			printf 'libxrandr2'
 		;;
-		('mono')
-			printf 'mono-runtime'
-		;;
 		('nss')
 			printf 'libnss3'
 		;;
 		('openal')
 			printf 'libopenal1'
 		;;
-		('pulseaudio')
-			printf 'pulseaudio:amd64 | pulseaudio'
-		;;
-		('scummvm')
-			printf 'scummvm'
-		;;
 		('sdl2')
 			printf 'libsdl2-2.0-0'
-		;;
-		('wine')
-			local package package_architecture
-			package_architecture=$(package_architecture "$package")
-			case "$package_architecture" in
-				('32')
-					printf 'wine32 | wine32-development | wine-stable-i386 | wine-devel-i386 | wine-staging-i386, wine:amd64 | wine'
-				;;
-				('64')
-					printf 'wine64 | wine64-development | wine-stable-amd64 | wine-devel-amd64 | wine-staging-amd64, wine'
-				;;
-			esac
-		;;
-		('winetricks')
-			printf 'winetricks, xterm:amd64 | xterm | zenity:amd64 | zenity | kdialog:amd64 | kdialog'
 		;;
 		('xcursor')
 			printf 'libxcursor1'
 		;;
-		('xgamma'|'xrandr')
-			printf 'x11-xserver-utils:amd64 | x11-xserver-utils'
+		( \
+			'dosbox' | \
+			'java' | \
+			'mono' | \
+			'pulseaudio' | \
+			'scummvm' | \
+			'wine' | \
+			'winetricks' | \
+			'xgamma' | \
+			'xrandr' \
+		)
+			debian_dependencies_single_command "$package" "$dependency_keyword"
 		;;
 		( \
 			'libgdk_pixbuf-2.0.so.0' | \
@@ -150,6 +130,11 @@ dependencies_debian_full_list() {
 		packages_list_full="$packages_list_full
 		$packages_list"
 	fi
+
+	# Include dependencies on commands
+	packages_list=$(debian_dependencies_all_commands "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
 
 	# Include dependencies on native libraries
 	packages_list=$(dependencies_list_native_libraries_packages "$package")

@@ -8,8 +8,20 @@ print_instructions() {
 		return 0
 	fi
 
+	# Print the list of runtime commands that have been skipped
+	local unknown_commands
+	unknown_commands=$(dependencies_unknown_commands_list)
+	if [ -n "$unknown_commands" ]; then
+		warning_dependencies_unknown_commands
+		# Clear list of skipped libraries dependencies,
+		# so it will not be shown again.
+		dependencies_unknown_commands_clear
+	fi
+
 	# Print the list of library dependencies that have been skipped
-	if [ -n "$(dependencies_unknown_libraries_list)" ]; then
+	local unknown_libraries
+	unknown_libraries=$(dependencies_unknown_libraries_list)
+	if [ -n "$unknown_libraries" ]; then
 		warning_dependencies_unknown_libraries
 		# Clear list of skipped libraries dependencies,
 		# so it will not be shown again.
@@ -17,7 +29,9 @@ print_instructions() {
 	fi
 
 	# Print the list of Mono library dependencies that have been skipped
-	if [ -n "$(dependencies_unknown_mono_libraries_list)" ]; then
+	local unknown_mono_libraries
+	unknown_mono_libraries=$(dependencies_unknown_mono_libraries_list)
+	if [ -n "$unknown_mono_libraries" ]; then
 		warning_dependencies_unknown_mono_libraries
 		# Clear list of skipped Mono libraries dependencies,
 		# so it will not be shown again.
@@ -25,7 +39,9 @@ print_instructions() {
 	fi
 
 	# Print the list of GStreamer media format dependencies that have been skipped
-	if [ -n "$(dependencies_unknown_gstreamer_media_formats_list)" ]; then
+	local unknown_gstreamer_media_formats
+	unknown_gstreamer_media_formats=$(dependencies_unknown_gstreamer_media_formats_list)
+	if [ -n "$unknown_gstreamer_media_formats" ]; then
 		warning_dependencies_unknown_gstreamer_media_formats
 		# Clear list of skipped media format dependencies,
 		# so it will not be shown again.
