@@ -140,7 +140,7 @@ icon_path() {
 	printf '%s' "$icon_path"
 }
 
-# print the wrestool options string for the given .exe icon
+# Print the wrestool options string for the given .exe icon
 # USAGE: icon_wrestool_options $icon
 # RETURN: the options string to pass to wrestool
 icon_wrestool_options() {
@@ -153,11 +153,22 @@ icon_wrestool_options() {
 		return 1
 	fi
 
-	# Fetch the custom options string
 	local wrestool_options
 	wrestool_options=$(get_value "${icon}_WRESTOOL_OPTIONS")
+
+	# Fall back on a default value based on the game engine
 	if [ -z "$wrestool_options" ]; then
-		wrestool_options='--type=14'
+		local application application_type_variant
+		application=$(icon_application "$icon")
+		application_type_variant=$(application_type_variant "$application")
+		case "$application_type_variant" in
+			('unrealengine4')
+				wrestool_options=$(unrealengine4_icon_wrestool_options_default)
+			;;
+			(*)
+				wrestool_options='--type=14'
+			;;
+		esac
 	fi
 
 	###
