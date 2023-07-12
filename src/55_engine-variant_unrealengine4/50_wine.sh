@@ -15,3 +15,10 @@ unrealengine4_wine_persistent_directories_default() {
 	printf 'users/${USER}/AppData/Local/%s/Saved' "$unrealengine4_name"
 }
 
+# Unreal Engine 4 - Print a default list of winetricks verb that should be applied during the WINE prefix initialization
+# USAGE: unrealengine4_wine_winetricks_verbs_default
+# RETURN: A list of winetricks verbs
+unrealengine4_wine_winetricks_verbs_default() {
+	printf '%s' 'vcrun2019'
+}
+
