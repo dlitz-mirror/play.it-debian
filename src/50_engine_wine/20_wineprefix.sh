@@ -112,11 +112,13 @@ wine_launcher_wineprefix_generate() {
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 
 	# Run initial winetricks call
-	if [ -n "${APP_WINETRICKS:-}" ]; then
+	local winetricks_verbs
+	winetricks_verbs=$(wine_winetricks_verbs)
+	if [ -n "$winetricks_verbs" ]; then
 		{
 			cat <<- EOF
 			    ## Run initial winetricks call
-			    winetricks_wrapper $APP_WINETRICKS
+			    winetricks_wrapper ${winetricks_verbs}
 
 			EOF
 		} | sed --regexp-extended 's/( ){4}/\t/g'
