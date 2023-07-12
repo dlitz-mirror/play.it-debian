@@ -92,7 +92,7 @@ persistent_storage_common() {
 persistent_path_diversion() {
 	local persistent_list_directories wine_persistent_directories
 	persistent_list_directories=$(persistent_list_directories)
-	wine_persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
+	wine_persistent_directories=$(wine_persistent_directories)
 
 	# Return early if the current game script does not use paths diversion
 	if \

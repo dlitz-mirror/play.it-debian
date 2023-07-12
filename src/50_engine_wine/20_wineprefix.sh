@@ -138,7 +138,7 @@ wine_launcher_wineprefix_generate() {
 # USAGE: wine_launcher_wineprefix_persistent
 wine_launcher_wineprefix_persistent() {
 	local persistent_directories
-	persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
+	persistent_directories=$(wine_persistent_directories)
 	if [ -n "$persistent_directories" ]; then
 		cat <<- EOF
 		# Divert paths from the WINE prefix to persistent storage
