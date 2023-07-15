@@ -3,7 +3,20 @@
 # RETURN: A list of path to directories,
 #         separated by line breaks.
 wine_persistent_directories() {
-	context_value 'WINE_PERSISTENT_DIRECTORIES'
+	local persistent_directories
+	persistent_directories=$(context_value 'WINE_PERSISTENT_DIRECTORIES')
+
+	# Fall back on default values based on the game engine
+	if [ -z "$persistent_directories" ]; then
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			persistent_directories=$(unrealengine4_wine_persistent_directories_default)
+		fi
+	fi
+
+	printf '%s' "$persistent_directories"
 }
 
 # WINE - Print the list of winetricks verb that should be applied during the WINE prefix initialization
@@ -11,6 +24,19 @@ wine_persistent_directories() {
 # RETURN: A list of winetricks verbs,
 #         the list can be empty.
 wine_winetricks_verbs() {
-	context_value 'APP_WINETRICKS'
+	local winetricks_verbs
+	winetricks_verbs=$(context_value 'APP_WINETRICKS')
+
+	# Fall back on default values based on the game engine
+	if [ -z "$winetricks_verbs" ]; then
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			winetricks_verbs=$(unrealengine4_wine_winetricks_verbs_default)
+		fi
+	fi
+
+	printf '%s' "$winetricks_verbs"
 }
 

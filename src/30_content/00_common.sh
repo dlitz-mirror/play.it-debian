@@ -66,6 +66,12 @@ content_files() {
 		if [ -n "$unity3d_name" ]; then
 			content_files=$(unity3d_content_files_default "$content_id")
 		fi
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			content_files=$(unrealengine4_content_files_default "$content_id")
+		fi
 	fi
 
 	printf '%s' "$content_files"

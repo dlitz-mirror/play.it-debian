@@ -5,7 +5,17 @@ wine_renderer_name() {
 	# if it is explicitely set.
 	local direct3d_renderer
 	direct3d_renderer="${WINE_DIRECT3D_RENDERER:-}"
-	## Fall back to using the default renderer
+
+	# Fall back on a default renderer based on the game engine
+	if [ -z "$direct3d_renderer" ]; then
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			direct3d_renderer=$(unrealengine4_wine_renderer_name_default)
+		fi
+	fi
+	# Fall back to using the default renderer
 	if [ -z "$direct3d_renderer" ]; then
 		direct3d_renderer='default'
 	fi

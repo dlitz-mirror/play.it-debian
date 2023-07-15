@@ -1,22 +1,33 @@
-# Print the list of GStreamer media formats required by a given package
-# USAGE: dependencies_list_gstreamer_media_formats $package
-# RETURNS: a list of GStreamer plugin names,
+# Print the list of GStreamer decoders required by a given package
+# USAGE: dependencies_list_gstreamer_decoders $package
+# RETURNS: a list of GStreamer decoders,
 #          one per line
-dependencies_list_gstreamer_media_formats() {
+dependencies_list_gstreamer_decoders() {
 	local package
 	package="$1"
 
-	local dependencies_gstreamer_plugins
-	dependencies_gstreamer_plugins=$(context_value "${package}_DEPENDENCIES_GSTREAMER_PLUGINS")
-	# Return early if the current package does not require any GStreamer plugin
-	if [ -z "$dependencies_gstreamer_plugins" ]; then
+	local gstreamer_decoders
+	gstreamer_decoders=$(context_value "${package}_DEPENDENCIES_GSTREAMER_PLUGINS")
+
+	# Fall back on a default list based on the game engine
+	if [ -z "$gstreamer_decoders" ]; then
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			gstreamer_decoders=$(unrealengine4_dependencies_list_gstreamer_decoders_default "$package")
+		fi
+	fi
+
+	# Return early if the current package does not require any GStreamer decoder
+	if [ -z "$gstreamer_decoders" ]; then
 		return 0
 	fi
 
 	# Always return a list with no duplicate entry,
 	# excluding empty lines.
 	# Ignore grep error return if there is nothing to print.
-	printf '%s' "$dependencies_gstreamer_plugins" | \
+	printf '%s' "$gstreamer_decoders" | \
 		sort --unique | \
 		grep --invert-match --regexp='^$' || true
 }
