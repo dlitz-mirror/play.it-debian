@@ -14,6 +14,9 @@ set_temp_directories() {
 	local game_id
 	game_id=$(game_id)
 	PLAYIT_WORKDIR=$(mktemp --directory --tmpdir="$temporary_directory_path" "${game_id}.XXXXX")
+	## Ensure that we are always using an absolute path for PLAYIT_WORKDIR,
+	## to avoid issues when a relative path has been used with the ./play.it --tmpdir option.
+	PLAYIT_WORKDIR=$(realpath "$PLAYIT_WORKDIR")
 	debug_creating_directory "$PLAYIT_WORKDIR"
 	export PLAYIT_WORKDIR
 
