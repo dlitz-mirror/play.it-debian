@@ -153,7 +153,7 @@ application_exe() {
 		application_type_variant=$(application_type_variant "$application")
 		case "$application_type_variant" in
 			('unity3d')
-				application_exe=$(application_unity3d_exe "$application")
+				application_exe=$(unity3d_application_exe_default "$application")
 			;;
 		esac
 	fi

@@ -47,7 +47,6 @@ content_files() {
 	local content_id
 	content_id="$1"
 
-	# Use the context-specific files list if available
 	local content_files
 	content_files=$(context_value "CONTENT_${content_id}_FILES")
 
@@ -59,5 +58,16 @@ content_files() {
 		content_files=$(content_files_legacy "$content_id")
 	fi
 
+	# Fall back on default files lists for specific engines
+	if [ -z "$content_files" ]; then
+		## Unity3D
+		local unity3d_name
+		unity3d_name=$(unity3d_name)
+		if [ -n "$unity3d_name" ]; then
+			content_files=$(unity3d_content_files_default "$content_id")
+		fi
+	fi
+
 	printf '%s' "$content_files"
 }
+

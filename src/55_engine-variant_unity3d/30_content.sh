@@ -77,3 +77,99 @@ content_inclusion_unity3d_plugins() {
 		rmdir --ignore-fail-on-non-empty --parents "$plugins_path"
 	fi
 }
+
+# Unity3D - Print the list of files to include from the archive for a given identifier
+# USAGE: unity3d_content_files_default $content_id
+# RETURN: a list of paths relative to the path for the given identifier,
+#         line breaks are used as separator between each item,
+#         this list can include globbing patterns,
+#         this list can be empty
+unity3d_content_files_default() {
+	local content_id
+	content_id="$1"
+
+	local unity3d_name
+	unity3d_name=$(unity3d_name)
+
+	local applications_list application application_type
+	applications_list=$(applications_list)
+	if [ -z "$applications_list" ]; then
+		error_applications_list_empty
+	fi
+	## FIXME - Trim leading spaces from the application list, this should be done by the applications_list function.
+	application=$(printf '%s' "$applications_list" | grep --only-matching '[^ ].*' | cut --delimiter=' ' --fields=1)
+	application_type=$(application_type "$application")
+
+	local content_files
+	case "$content_id" in
+		('GAME_BIN')
+			case "$application_type" in
+				('native')
+					content_files="
+					MonoBleedingEdge
+					${unity3d_name}_Data/Mono
+					${unity3d_name}_Data/MonoBleedingEdge
+					${unity3d_name}.x86_64
+					${unity3d_name}.x86
+					${unity3d_name}
+					*.so"
+				;;
+				('wine')
+					content_files="
+					Mono
+					mono
+					MonoBleedingEdge
+					monobleedingedge
+					${unity3d_name}_Data/Mono
+					${unity3d_name}_data/mono
+					${unity3d_name}_Data/MonoBleedingEdge
+					${unity3d_name}_data/monobleedingedge
+					${unity3d_name}_Data/Plugins
+					${unity3d_name}_data/plugins
+					${unity3d_name}.exe
+					*.dll"
+				;;
+			esac
+		;;
+		('GAME_BIN32')
+			case "$application_type" in
+				('native')
+					content_files="
+					MonoBleedingEdge/x86
+					${unity3d_name}_Data/Mono/x86
+					${unity3d_name}_Data/MonoBleedingEdge/x86
+					${unity3d_name}.x86
+					${unity3d_name}"
+				;;
+			esac
+		;;
+		('GAME_BIN64')
+			case "$application_type" in
+				('native')
+					content_files="
+					MonoBleedingEdge/x86_64
+					${unity3d_name}_Data/Mono/x86_64
+					${unity3d_name}_Data/MonoBleedingEdge/x86_64
+					${unity3d_name}.x86_64
+					${unity3d_name}"
+				;;
+			esac
+		;;
+		('GAME_DATA')
+			case "$application_type" in
+				('native')
+					content_files="
+					${unity3d_name}_Data"
+				;;
+				('wine')
+					content_files="
+					${unity3d_name}_Data
+					${unity3d_name}_data"
+				;;
+			esac
+		;;
+	esac
+
+	printf '%s' "${content_files:-}"
+}
+
