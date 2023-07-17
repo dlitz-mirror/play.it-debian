@@ -1,3 +1,20 @@
+# WINE - Set default value for WINEDLLOVERRIDES
+# USAGE: wine_dlloverrides_default
+# RETURN: the default value to use for WINEDLLOVERRIDES,
+#         if it is not set in the user environment.
+wine_dlloverrides_default() {
+	# A default value can be set from the game script,
+	# using the variable WINE_DLLOVERRIDES_DEFAULT.
+	local wine_dlloverrides
+	wine_dlloverrides=$(context_value 'WINE_DLLOVERRIDES_DEFAULT')
+	# Fall back on a default value
+	if [ -z "$wine_dlloverrides" ]; then
+		wine_dlloverrides='winemenubuilder.exe,mscoree,mshtml='
+	fi
+
+	printf '%s' "$wine_dlloverrides"
+}
+
 # WINE launcher - Set the WINE prefix environment
 # USAGE: wine_launcher_wineprefix_environment
 wine_launcher_wineprefix_environment() {
@@ -56,6 +73,8 @@ wine_launcher_wineprefix_environment() {
 	esac
 
 	# Set variables used for WINE prefix
+	local wine_dlloverrides_default
+	wine_dlloverrides_default=$(wine_dlloverrides_default)
 	cat <<- EOF
 	# Set variables used for WINE prefix
 	WINEARCH='$wine_architecture'
@@ -65,7 +84,7 @@ wine_launcher_wineprefix_environment() {
 	## - creation of desktop entries
 	## - installation of Mono
 	## - installation of Gecko
-	WINEDLLOVERRIDES="\${WINEDLLOVERRIDES:=winemenubuilder.exe,mscoree,mshtml=}"
+	WINEDLLOVERRIDES="\${WINEDLLOVERRIDES:=${wine_dlloverrides_default}}"
 	## Work around WINE bug 41639 - Wine with freetype 2.7 causes font rendering issues
 	## cf. https://bugs.winehq.org/show_bug.cgi?id=41639
 	FREETYPE_PROPERTIES='truetype:interpreter-version=35'
