@@ -2,14 +2,6 @@
 # USAGE: games_list_sources
 # RETURNS: A list of directories, separated by line breaks
 games_list_sources() {
-	# If the "play.it" command has been called from a local git repository,
-	# includes its shipped game scripts collection
-	local shipped_collection
-	shipped_collection="$(dirname "$0")/play.it-2/games"
-	if [ -d "$shipped_collection" ]; then
-		printf '%s\n' "$shipped_collection"
-	fi
-
 	# Include the current user game scripts collections
 	local user_collections_basedir
 	user_collections_basedir="${XDG_DATA_HOME:=$HOME/.local/share}/play.it/games"
@@ -30,8 +22,6 @@ games_list_sources() {
 			find "$system_collections_basedir" -mindepth 1 -maxdepth 1 -type d | sort
 		fi
 	done
-
-	return 0
 }
 
 # Return a list of game scripts providing support for the given archive name
