@@ -80,6 +80,16 @@ if [ "${option_list_available_scripts:-0}" -eq 1 ]; then
 fi
 unset option_list_available_scripts
 
+# Display the full list of supported-games,
+# if called with --list-supported-games.
+
+option_list_supported_games=$(option_value 'list-supported-games')
+if [ "${option_list_supported_games:-0}" -eq 1 ]; then
+	games_list_supported_all
+	exit 0
+fi
+unset option_list_supported_games
+
 # Exit with an error if no archive is provided
 
 if [ -z "$SOURCE_ARCHIVE" ]; then

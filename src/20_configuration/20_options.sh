@@ -19,6 +19,7 @@ options_init_default() {
 	option_update_default 'list-available-scripts' 0
 	option_update_default 'list-packages' 0
 	option_update_default 'list-requirements' 0
+	option_update_default 'list-supported-games' 0
 	option_update_default 'overwrite' 0
 	option_update_default 'show-game-script' 0
 	option_update_default 'version' 0
@@ -237,6 +238,13 @@ option_validity_check() {
 				;;
 			esac
 		;;
+		('list-supported-games')
+			case "$option_value" in
+				(0|1)
+					return 0
+				;;
+			esac
+		;;
 		('mtree')
 			case "$option_value" in
 				(0|1)
@@ -254,6 +262,7 @@ option_validity_check() {
 				'list-available-scripts' \
 				'list-packages' \
 				'list-requirements' \
+				'list-supported-games' \
 				'show-game-script' \
 				'version'
 			do
@@ -312,6 +321,7 @@ option_validity_check() {
 				'list-available-scripts' \
 				'list-packages' \
 				'list-requirements' \
+				'list-supported-games' \
 				'show-game-script' \
 				'version'
 			do

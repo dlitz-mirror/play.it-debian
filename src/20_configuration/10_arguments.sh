@@ -11,6 +11,7 @@ parse_arguments() {
 				'--list-available-scripts' | \
 				'--list-packages' | \
 				'--list-requirements' | \
+				'--list-supported-games' | \
 				'--overwrite' | \
 				'--show-game-script' | \
 				'--version' \
