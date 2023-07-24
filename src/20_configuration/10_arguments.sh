@@ -8,6 +8,7 @@ parse_arguments() {
 		case "$1" in
 			( \
 				'--help' | \
+				'--list-available-scripts' | \
 				'--list-packages' | \
 				'--list-requirements' | \
 				'--overwrite' | \
@@ -216,3 +217,4 @@ argument_value() {
 		cut --delimiter="$cut_delimiter" --fields=2- | \
 		sed 's/^--//'
 }
+

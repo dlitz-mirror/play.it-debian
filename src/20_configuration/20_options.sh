@@ -16,6 +16,7 @@ options_init_default() {
 	# Boolean options disabled by default
 	option_update_default 'debug' 0
 	option_update_default 'help' 0
+	option_update_default 'list-available-scripts' 0
 	option_update_default 'list-packages' 0
 	option_update_default 'list-requirements' 0
 	option_update_default 'overwrite' 0
@@ -215,6 +216,13 @@ option_validity_check() {
 				;;
 			esac
 		;;
+		('list-available-scripts')
+			case "$option_value" in
+				(0|1)
+					return 0
+				;;
+			esac
+		;;
 		('list-packages')
 			case "$option_value" in
 				(0|1)
@@ -243,6 +251,7 @@ option_validity_check() {
 			local noop_option noop_option_value
 			for noop_option in \
 				'help' \
+				'list-available-scripts' \
 				'list-packages' \
 				'list-requirements' \
 				'show-game-script' \
@@ -300,6 +309,7 @@ option_validity_check() {
 			local noop_option noop_option_value
 			for noop_option in \
 				'help' \
+				'list-available-scripts' \
 				'list-packages' \
 				'list-requirements' \
 				'show-game-script' \
@@ -427,3 +437,4 @@ options_compatibility_check() {
 		esac
 	fi
 }
+

@@ -24,35 +24,50 @@ games_list_sources() {
 	done
 }
 
-# Return a list of game scripts providing support for the given archive name
+# List all available game scripts
+# USAGE: games_list_scripts_all
+# RETURN: a list of available game scripts,
+#         separated by line breaks
+games_list_scripts_all() {
+	local games_sources
+	games_sources=$(games_list_sources)
+
+	# Return early if no game script could be found
+	if [ -z "$games_sources" ]; then
+		return 0
+	fi
+
+	while read -r games_collection; do
+		find "$games_collection" -name play-\*.sh | sort
+	done <<- EOF
+	$(printf '%s' "$games_sources")
+	EOF
+}
+
+# List the game scripts providing support for the given archive name
 # USAGE: games_find_scripts_for_archive $archive_name
-# RETURNS: A list of game scripts, separated by line breaks
+# RETURN: a list of game scripts,
+#         separated by line breaks
 games_find_scripts_for_archive() {
 	local archive_name
 	archive_name="$1"
 
-	local games_sources regexp
-	games_sources=$(games_list_sources)
-	regexp="^ARCHIVE_[0-9A-Z_]\\+=['\"]${archive_name}['\"]"
-	while read -r games_collection; do
-		find "$games_collection" -name play-\*.sh -exec \
-			grep --files-with-matches --regexp="$regexp" {} + | sort
-	done <<- EOF
-	$(printf '%s' "$games_sources")
-	EOF
-
-	return 0
+	## xargs return code is ignored,
+	## to prevent a failure state if no available script has support for the given archive.
+	set +o errexit
+	games_list_scripts_all | xargs grep \
+		--files-with-matches \
+		--regexp="^ARCHIVE_[0-9A-Z_]\\+=['\"]${archive_name}['\"]"
+	set -o errexit
 }
 
-# Returns the first game script with support with the given archive name
+# Print the path to the first game script with support with the given archive name
 # USAGE: games_find_script_for_archive $archive_name
-# RETURNS: A single game script
+# RETURN: the path to a single game script
 games_find_script_for_archive() {
 	local archive_name
 	archive_name="$1"
 
 	games_find_scripts_for_archive "$archive_name" | head --lines=1
-
-	return 0
 }
 
