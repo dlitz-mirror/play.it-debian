@@ -153,11 +153,6 @@ archlinux_package_build_single() {
 		('size')
 			tar_compress_program='zstd -19'
 		;;
-		('gzip'|'xz'|'bzip2'|'zstd')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				tar_compress_program=$(archlinux_tar_compress_program_legacy "$option_compression")
-			fi
-		;;
 	esac
 
 	# Run the actual package generation, using tar
@@ -295,11 +290,6 @@ package_name_archlinux() {
 		;;
 		('size')
 			package_name="${package_name}.zst"
-		;;
-		('gzip'|'xz'|'bzip2'|'zstd')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				package_name=$(archlinux_package_name_legacy "$package_name" "$option_compression")
-			fi
 		;;
 	esac
 

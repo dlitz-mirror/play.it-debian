@@ -179,15 +179,6 @@ option_validity_check() {
 					return 0
 				;;
 			esac
-			if ! version_is_at_least '2.23' "$target_version"; then
-				option_validity_check_compression_legacy "$option_value"
-				# Ensure the warning is only displayed once
-				if variable_is_empty 'PLAYIT_WARNING_LEGACY_COMPRESSION_SHOWN'; then
-					warning_option_value_deprecated "$option_name" "$option_value"
-					export PLAYIT_WARNING_LEGACY_COMPRESSION_SHOWN=1
-				fi
-				return 0
-			fi
 		;;
 		('debug')
 			case "$option_value" in
@@ -377,72 +368,6 @@ options_compatibility_check() {
 				# --compression auto has not been implemented for Arch Linux packages yet.
 				error_incompatible_options 'package' 'compression'
 				return 1
-			;;
-		esac
-	fi
-
-	# Check the compatibility of the "package" and "compression" values,
-	# when using legacy compression values.
-	if ! version_is_at_least '2.23' "$target_version"; then
-		local option_package option_compression
-		option_package=$(option_value 'package')
-		option_compression=$(option_value 'compression')
-		case "$option_package" in
-			('arch')
-				case "$option_compression" in
-					('none'|'speed'|'size')
-						# Valid combination (current value)
-					;;
-					('gzip'|'xz'|'bzip2'|'zstd')
-						# Valid combination (legacy value)
-					;;
-					(*)
-						error_incompatible_options 'package' 'compression'
-						return 1
-					;;
-				esac
-			;;
-			('deb')
-				case "$option_compression" in
-					('none'|'speed'|'size'|'auto')
-						# Valid combination (current value)
-					;;
-					('gzip'|'xz')
-						# Valid combination (legacy value)
-					;;
-					(*)
-						error_incompatible_options 'package' 'compression'
-						return 1
-					;;
-				esac
-			;;
-			('gentoo')
-				case "$option_compression" in
-					('none'|'speed'|'size'|'auto')
-						# Valid combination (current value)
-					;;
-					('gzip'|'xz'|'bzip2'|'zstd'|'lz4'|'lzip'|'lzop')
-						# Valid combination (legacy value)
-					;;
-					(*)
-						error_incompatible_options 'package' 'compression'
-						return 1
-					;;
-				esac
-			;;
-			('egentoo')
-				case "$option_compression" in
-					('none'|'speed'|'size'|'auto')
-						# Valid combination (current value)
-					;;
-					('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
-						# Valid combination (legacy value)
-					;;
-					(*)
-						error_incompatible_options 'package' 'compression'
-						return 1
-					;;
-				esac
 			;;
 		esac
 	fi

@@ -166,11 +166,6 @@ debian_package_build_single() {
 				dpkg_options="${dpkg_options} -Zgzip"
 			fi
 		;;
-		('gzip'|'xz')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				dpkg_options=$(debian_dpkg_compression_legacy "$dpkg_options" "$option_compression")
-			fi
-		;;
 	esac
 
 	# Run the actual package generation, using dpkg-deb
