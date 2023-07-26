@@ -77,6 +77,17 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	unset option_version
 
+	# If called with --list-supported-games,
+	# print the list of games supported by the current game script,
+	# then exit early.
+
+	option_list_supported_games=$(option_value 'list-supported-games')
+	if [ "${option_list_supported_games:-0}" -eq 1 ]; then
+		games_list_supported
+		exit 0
+	fi
+	unset option_list_supported_games
+
 	# Try to detect the host distribution if no package format has been explicitely set
 
 	if ! option_is_set 'package'; then
