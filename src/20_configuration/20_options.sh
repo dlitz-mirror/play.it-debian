@@ -1,28 +1,28 @@
 # Set default values for all options
 # USAGE: options_init_default
 options_init_default() {
-	option_update_default 'checksum' 'md5'
-	option_update_default 'compression' 'none'
-	option_update_default 'output-dir' "$PWD"
-	option_update_default 'package' 'deb'
-	option_update_default 'prefix' '/usr'
-	option_update_default 'tmpdir' "${TMPDIR:-/tmp}"
-
-	# Boolean options enabled by default
-	option_update_default 'free-space-check' 1
-	option_update_default 'icons' 1
-	option_update_default 'mtree' 1
-
-	# Boolean options disabled by default
-	option_update_default 'debug' 0
-	option_update_default 'help' 0
-	option_update_default 'list-available-scripts' 0
-	option_update_default 'list-packages' 0
-	option_update_default 'list-requirements' 0
-	option_update_default 'list-supported-games' 0
-	option_update_default 'overwrite' 0
-	option_update_default 'show-game-script' 0
-	option_update_default 'version' 0
+	# Using a direct export call here instead of relying on option_update_default
+	# massively improves performances when running a lot of ./play.it calls,
+	# like what is done by the --list-supported-games option.
+	export \
+		PLAYIT_DEFAULT_OPTION_CHECKSUM='md5' \
+		PLAYIT_DEFAULT_OPTION_COMPRESSION='none' \
+		PLAYIT_DEFAULT_OPTION_OUTPUT_DIR="$PWD" \
+		PLAYIT_DEFAULT_OPTION_PACKAGE='deb' \
+		PLAYIT_DEFAULT_OPTION_PREFIX='/usr' \
+		PLAYIT_DEFAULT_OPTION_TMPDIR="${TPMDIR:-/tmp}" \
+		PLAYIT_DEFAULT_OPTION_FREE_SPACE_CHECK=1 \
+		PLAYIT_DEFAULT_OPTION_ICONS=1 \
+		PLAYIT_DEFAULT_OPTION_MTREE=1 \
+		PLAYIT_DEFAULT_OPTION_DEBUG=0 \
+		PLAYIT_DEFAULT_OPTION_HELP=0 \
+		PLAYIT_DEFAULT_OPTION_LIST_AVAILABLE_SCRIPTS=0 \
+		PLAYIT_DEFAULT_OPTION_LIST_PACKAGES=0 \
+		PLAYIT_DEFAULT_OPTION_LIST_REQUIREMENTS=0 \
+		PLAYIT_DEFAULT_OPTION_LIST_SUPPORTED_GAMES=0 \
+		PLAYIT_DEFAULT_OPTION_OVERWRITE=0 \
+		PLAYIT_DEFAULT_OPTION_SHOW_GAME_SCRIPT=0 \
+		PLAYIT_DEFAULT_OPTION_VERSION=0
 }
 
 # Test is a given option is set
