@@ -25,20 +25,6 @@ options_init_default() {
 		PLAYIT_DEFAULT_OPTION_VERSION=0
 }
 
-# Test is a given option is set
-# USAGE: option_is_set $option_name
-# RETURN: 0 if the option is set,
-#         1 if it is unset
-option_is_set() {
-	local option_name
-	option_name="$1"
-
-	local option_variable
-	option_variable=$(option_variable "$option_name")
-
-	! variable_is_empty "$option_variable"
-}
-
 # Get the name of the variable used to store the value of the given option
 # USAGE: option_variable $option_name
 # RETURN: the variable name
@@ -122,30 +108,22 @@ option_update_default() {
 
 # Get the value of the given option
 # USAGE: option_value $option_name
-# RETURN: the option value,
-#         or an empty string if it is not set
+# RETURN: the option value
 option_value() {
 	local option_name
 	option_name="$1"
 
-	local option_variable
+	local option_variable option_value
 	option_variable=$(option_variable "$option_name")
+	option_value=$(get_value "$option_variable")
+	if [ -n "$option_value" ]; then
+		printf '%s' "$option_value"
+		return 0
+	fi
 
+	# If no value is explicitly set, return the default one
+	option_variable=$(option_variable_default "$option_name")
 	get_value "$option_variable"
-}
-
-# Get the default value of the given option
-# USAGE: option_value_default $option_name
-# RETURN: the default option value,
-#         or an empty string if none is set
-option_value_default() {
-	local option_name
-	option_name="$1"
-
-	local option_variable_default
-	option_variable_default=$(option_variable_default "$option_name")
-
-	get_value "$option_variable_default"
 }
 
 # Check the validity of the given option
