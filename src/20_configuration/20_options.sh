@@ -112,8 +112,6 @@ option_update() {
 	option_variable=$(option_variable "$option_name")
 	export $option_variable="$option_value"
 
-	option_validity_check "$option_name"
-
 	if ! version_is_at_least '2.23' "$target_version"; then
 		option_export_legacy "$option_name"
 	fi
@@ -129,17 +127,6 @@ option_update_default() {
 	local option_variable
 	option_variable=$(option_variable_default "$option_name")
 	export $option_variable="$option_value"
-
-	case "$option_name" in
-		('output-dir'|'tmpdir')
-			# Directory existence check should be skipped when setting default options,
-			# because we might be in a no-op situation (--help, --version, etc.)
-			# but we do not know about it yet.
-		;;
-		(*)
-			option_validity_check "$option_name"
-		;;
-	esac
 }
 
 # Get the value of the given option
@@ -162,208 +149,235 @@ option_value() {
 	get_value "$option_variable"
 }
 
-# Check the validity of the given option
-# USAGE: option_validity_check $option_name
-# RETURN: nothing if the option value is valid,
+# Check the validity of all options
+# USAGE: options_validity_check
+# RETURN: nothing if all option values are valid,
 #         throw an error otherwise
-option_validity_check() {
-	local option_name
-	option_name="$1"
-
-	# The "option_value" function can not be used here,
-	# to avoid a loop between "option_value" and the current function.
-	local option_variable option_value
-	option_variable=$(option_variable "$option_name")
-	option_value=$(get_value "$option_variable")
-	if [ -z "$option_value" ]; then
-		option_variable=$(option_variable_default "$option_name")
-		option_value=$(get_value "$option_variable")
-	fi
-	case "$option_name" in
-		('checksum')
-			case "$option_value" in
-				('md5'|'none')
-					return 0
-				;;
-			esac
-		;;
-		('compression')
-			case "$option_value" in
-				('none'|'speed'|'size'|'auto')
-					return 0
-				;;
-			esac
-		;;
-		('debug')
-			case "$option_value" in
-				([0-9])
-					return 0
-				;;
-			esac
-		;;
-		('free-space-check')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('help')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('icons')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('list-available-scripts')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('list-packages')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('list-requirements')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('list-supported-games')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('mtree')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('output-dir')
-			# Check that the value of "output-dir" is a path to a writable directory.
-
-			## This check is not useful if a no-op option has been set.
-			local noop_option noop_option_value
-			for noop_option in \
-				'help' \
-				'list-available-scripts' \
-				'list-packages' \
-				'list-requirements' \
-				'list-supported-games' \
-				'show-game-script' \
-				'version'
-			do
-				noop_option_value=$(option_value "$noop_option")
-				if [ "${noop_option_value:-0}" -eq 1 ]; then
-					return 0
-				fi
-			done
-
-			local output_dir_path
-			output_dir_path=$(printf '%s' "$option_value" | sed "s#^~/#${HOME}/#")
-			if [ ! -d "$output_dir_path" ]; then
-				error_not_a_directory "$output_dir_path"
-				return 1
-			fi
-			if [ ! -w "$output_dir_path" ]; then
-				error_not_writable "$output_dir_path"
-				return 1
-			fi
-			return 0
-		;;
-		('overwrite')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('package')
-			case "$option_value" in
-				('arch'|'deb'|'gentoo'|'egentoo')
-					return 0
-				;;
-			esac
-		;;
-		('prefix')
-			# Check that the value of "prefix" is representing an absolute path.
-			if printf '%s' "$option_value" | grep --quiet --regexp '^/'; then
-				return 0
-			fi
-		;;
-		('show-game-script')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
-		('tmpdir')
-			# Check that the value of "tmpdir" is a path to a writable directory.
-
-			## This check is not useful if a no-op option has been set.
-			local noop_option noop_option_value
-			for noop_option in \
-				'help' \
-				'list-available-scripts' \
-				'list-packages' \
-				'list-requirements' \
-				'list-supported-games' \
-				'show-game-script' \
-				'version'
-			do
-				noop_option_value=$(option_value "$noop_option")
-				if [ "${noop_option_value:-0}" -eq 1 ]; then
-					return 0
-				fi
-			done
-
-			local tmpdir_path
-			tmpdir_path=$(printf '%s' "$option_value" | sed "s#^~/#${HOME}/#")
-			if [ ! -d "$tmpdir_path" ]; then
-				error_not_a_directory "$tmpdir_path"
-				return 1
-			fi
-			if [ ! -w "$tmpdir_path" ]; then
-				error_not_writable "$tmpdir_path"
-				return 1
-			fi
-			return 0
-		;;
-		('version')
-			case "$option_value" in
-				(0|1)
-					return 0
-				;;
-			esac
-		;;
+options_validity_check() {
+	local option_checksum
+	option_checksum=$(option_value 'checksum')
+	case "$option_checksum" in
+		('md5'|'none') ;;
 		(*)
-			error_option_unknown "$option_name"
+			error_option_invalid 'checksum' "$option_checksum"
 			return 1
 		;;
 	esac
 
-	# Throw an error if we are not in one of the valid cases
-	error_option_invalid "$option_name" "$option_value"
-	return 1
+	local option_compression
+	option_compression=$(option_value 'compression')
+	case "$option_compression" in
+		('none'|'speed'|'size'|'auto') ;;
+		(*)
+			error_option_invalid 'compression' "$option_compression"
+			return 1
+		;;
+	esac
+
+	local option_debug
+	option_debug=$(option_value 'debug')
+	case "$option_debug" in
+		([0-9]) ;;
+		(*)
+			error_option_invalid 'debug' "$option_debug"
+			return 1
+		;;
+	esac
+
+	local option_free_space_check
+	option_free_space_check=$(option_value 'free-space-check')
+	case "$option_free_space_check" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'free-space-check' "$option_free_space_check"
+			return 1
+		;;
+	esac
+
+	local option_help
+	option_help=$(option_value 'help')
+	case "$option_help" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'help' "$option_help"
+			return 1
+		;;
+	esac
+
+	local option_icons
+	option_icons=$(option_value 'icons')
+	case "$option_icons" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'icons' "$option_icons"
+			return 1
+		;;
+	esac
+
+	local option_list_available_scripts
+	option_list_available_scripts=$(option_value 'list-available-scripts')
+	case "$option_list_available_scripts" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'list-available-scripts' "$option_list_available_scripts"
+			return 1
+		;;
+	esac
+
+	local option_list_packages
+	option_list_packages=$(option_value 'list-packages')
+	case "$option_list_packages" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'list-packages' "$option_list_packages"
+			return 1
+		;;
+	esac
+
+	local option_list_requirements
+	option_list_requirements=$(option_value 'list-requirements')
+	case "$option_list_requirements" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'list-requirements' "$option_list_requirements"
+			return 1
+		;;
+	esac
+
+	local option_list_supported_games
+	option_list_supported_games=$(option_value 'list-supported-games')
+	case "$option_list_supported_games" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'list-supported-games' "$option_list_supported_games"
+			return 1
+		;;
+	esac
+
+	local option_mtree
+	option_mtree=$(option_value 'mtree')
+	case "$option_mtree" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'mtree' "$option_mtree"
+			return 1
+		;;
+	esac
+
+	local option_output_dir
+	option_output_dir=$(option_value 'output-dir')
+	# Check that the value of "output-dir" is a path to a writable directory.
+	## This check is not useful if a no-op option has been set.
+	local noop_option noop_option_value noop_option_set
+	noop_option_set=0
+	for noop_option in \
+		'help' \
+		'list-available-scripts' \
+		'list-packages' \
+		'list-requirements' \
+		'list-supported-games' \
+		'show-game-script' \
+		'version'
+	do
+		noop_option_value=$(option_value "$noop_option")
+		if [ "$noop_option_value" -eq 1 ]; then
+			noop_option_set=1
+			break
+		fi
+	done
+	if [ "$noop_option_set" = 0 ]; then
+		local output_dir_path
+		output_dir_path=$(printf '%s' "$option_output_dir" | sed "s#^~/#${HOME}/#")
+		if [ ! -d "$output_dir_path" ]; then
+			error_not_a_directory "$output_dir_path"
+			return 1
+		fi
+		if [ ! -w "$output_dir_path" ]; then
+			error_not_writable "$output_dir_path"
+			return 1
+		fi
+	fi
+
+	local option_overwrite
+	option_overwrite=$(option_value 'overwrite')
+	case "$option_overwrite" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'overwrite' "$option_overwrite"
+			return 1
+		;;
+	esac
+
+	local option_package
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('arch'|'deb'|'gentoo'|'egentoo') ;;
+		(*)
+			error_option_invalid 'package' "$option_package"
+			return 1
+		;;
+	esac
+
+	local option_prefix
+	option_prefix=$(option_value 'prefix')
+	# Check that the value of "prefix" is representing an absolute path.
+	if printf '%s' "$option_prefix" | grep --quiet --invert-match --regexp '^/'; then
+		return 0
+	fi
+
+	local option_show_game_script
+	option_show_game_script=$(option_value 'show-game-script')
+	case "$option_show_game_script" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'show-game-script' "$option_show_game_script"
+			return 1
+		;;
+	esac
+
+	local option_tmpdir
+	option_tmpdir=$(option_value 'tmpdir')
+	# Check that the value of "tmpdir" is a path to a writable directory.
+	## This check is not useful if a no-op option has been set.
+	local noop_option noop_option_value noop_option_set
+	noop_option_set=0
+	for noop_option in \
+		'help' \
+		'list-available-scripts' \
+		'list-packages' \
+		'list-requirements' \
+		'list-supported-games' \
+		'show-game-script' \
+		'version'
+	do
+		noop_option_value=$(option_value "$noop_option")
+		if [ "$noop_option_value" -eq 1 ]; then
+			noop_option_set=1
+			break
+		fi
+	done
+	if [ "$noop_option_set" = 0 ]; then
+		local tmpdir_path
+		tmpdir_path=$(printf '%s' "$option_tmpdir" | sed "s#^~/#${HOME}/#")
+		if [ ! -d "$tmpdir_path" ]; then
+			error_not_a_directory "$tmpdir_path"
+			return 1
+		fi
+		if [ ! -w "$tmpdir_path" ]; then
+			error_not_writable "$tmpdir_path"
+			return 1
+		fi
+	fi
+
+	local option_version
+	option_version=$(option_value 'version')
+	case "$option_version" in
+		(0|1) ;;
+		(*)
+			error_option_invalid 'version' "$option_version"
+			return 1
+		;;
+	esac
 }
 
 # Check the compatibility of all set options

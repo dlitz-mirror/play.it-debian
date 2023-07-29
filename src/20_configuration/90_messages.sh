@@ -19,27 +19,6 @@ warning_option_value_deprecated() {
 	printf "$message" "$option_name" "$option_value" >/dev/stderr
 }
 
-# Error - An unknown option has been provided
-# USAGE: error_option_unknown $option_name
-error_option_unknown() {
-	local option_name
-	option_name="$1"
-
-	local message
-	case "${LANG%_*}" in
-		('fr')
-			message='Option inconnue : %s\n'
-		;;
-		('en'|*)
-			message='Unkown option: %s\n'
-		;;
-	esac
-	(
-		print_error
-		printf "$message" "$option_name"
-	)
-}
-
 # Error - An invalid value has been provided for the given option
 # USAGE: error_option_invalid $option_name $option_value
 error_option_invalid() {

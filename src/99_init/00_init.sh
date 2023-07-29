@@ -84,14 +84,9 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	unset option_list_supported_games
 
-	# Check the presence of required paths set by default options (like the configuration file),
-	# as these are skipped by options_init_default.
+	# Check the validity of all options
 
-	option_validity_check 'output-dir'
-	option_validity_check 'tmpdir'
-
-	# Throw an error if incompatible options are set
-
+	options_validity_check
 	options_compatibility_check
 
 	# Find the main archive
