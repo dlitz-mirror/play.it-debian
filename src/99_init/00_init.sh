@@ -84,23 +84,6 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	fi
 	unset option_list_supported_games
 
-	# Try to detect the host distribution if no package format has been explicitely set
-
-	## We can not use option_value here, because we do not want to fall back on the default value.
-	option_package_variable=$(option_variable 'package')
-	option_package_value=$(get_value "$option_package_variable")
-	if [ -z "$option_package_value" ]; then
-		option_package_value=$(package_format_guess)
-		if [ -n "$option_package_value" ]; then
-			option_update 'package' "$option_package_value"
-		else
-			## Fall back on the default value only if no more sensible value could be guessed from the environment.
-			option_package_value=$(option_value 'package')
-			warning_package_format_guessing_failed "$option_package_value"
-		fi
-	fi
-	unset option_package_variable option_package_value
-
 	# Check the presence of required paths set by default options (like the configuration file),
 	# as these are skipped by options_init_default.
 

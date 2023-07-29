@@ -30,50 +30,6 @@ packages_generation() {
 	esac
 }
 
-# Guess output package type based on current OS
-# USAGE: package_format_guess
-package_format_guess() {
-	# Get OS codename.
-	local guessed_host_os
-	if [ -e '/etc/os-release' ]; then
-		guessed_host_os=$(grep '^ID=' '/etc/os-release' | cut --delimiter='=' --fields=2)
-	elif command -v lsb_release >/dev/null 2>&1; then
-		guessed_host_os=$(lsb_release --id --short | tr '[:upper:]' '[:lower:]')
-	fi
-
-	# Return the most appropriate package type.
-	local package_type
-	case "$guessed_host_os" in
-		( \
-			'debian' | \
-			'ubuntu' | \
-			'linuxmint' | \
-			'handylinux' \
-		)
-			package_type='deb'
-		;;
-		( \
-			'arch' | \
-			'artix' | \
-			'manjaro' | \
-			'manjarolinux' | \
-			'endeavouros' | \
-			'steamos' \
-		)
-			package_type='arch'
-		;;
-		( \
-			'gentoo' \
-		)
-			package_type='gentoo'
-		;;
-	esac
-
-	# Print guessed package type.
-	# This is an empty string if the current OS is not known.
-	printf '%s' "$package_type"
-}
-
 # Print the full list of packages that should be built from the current archive
 # If no value is set to PACKAGES_LIST or some archive-specific variant of PACKAGES_LIST,
 # the following default value is returned: "PKG_MAIN".

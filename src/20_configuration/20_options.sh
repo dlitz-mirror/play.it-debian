@@ -1,6 +1,42 @@
 # Set default values for all options
 # USAGE: options_init_default
 options_init_default() {
+	# Try to guess the desired package format based on the host system
+	local default_package_format
+	## Get system codename.
+	local host_system
+	if [ -e '/etc/os-release' ]; then
+		host_system=$(grep '^ID=' '/etc/os-release' | cut --delimiter='=' --fields=2)
+	elif command -v lsb_release >/dev/null 2>&1; then
+		host_system=$(lsb_release --id --short | tr '[:upper:]' '[:lower:]')
+	fi
+	## Set the most appropriate package type for the current system.
+	case "${host_system:-}" in
+		( \
+			'debian' | \
+			'ubuntu' | \
+			'linuxmint' | \
+			'handylinux' \
+		)
+			default_package_format='deb'
+		;;
+		( \
+			'arch' | \
+			'artix' | \
+			'manjaro' | \
+			'manjarolinux' | \
+			'endeavouros' | \
+			'steamos' \
+		)
+			default_package_format='arch'
+		;;
+		( \
+			'gentoo' \
+		)
+			default_package_format='gentoo'
+		;;
+	esac
+
 	# Using a direct export call here instead of relying on option_update_default
 	# massively improves performances when running a lot of ./play.it calls,
 	# like what is done by the --list-supported-games option.
@@ -8,7 +44,7 @@ options_init_default() {
 		PLAYIT_DEFAULT_OPTION_CHECKSUM='md5' \
 		PLAYIT_DEFAULT_OPTION_COMPRESSION='none' \
 		PLAYIT_DEFAULT_OPTION_OUTPUT_DIR="$PWD" \
-		PLAYIT_DEFAULT_OPTION_PACKAGE='deb' \
+		PLAYIT_DEFAULT_OPTION_PACKAGE="${default_package_format:-deb}" \
 		PLAYIT_DEFAULT_OPTION_PREFIX='/usr' \
 		PLAYIT_DEFAULT_OPTION_TMPDIR="${TPMDIR:-/tmp}" \
 		PLAYIT_DEFAULT_OPTION_FREE_SPACE_CHECK=1 \
