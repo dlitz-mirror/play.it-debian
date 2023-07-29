@@ -12,6 +12,16 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
+	# Check early if ./play.it has been called in games listing mode,
+	# since most of the initialization steps are not required in this mode.
+
+	option_list_supported_games=$(option_value 'list-supported-games')
+	if [ "${option_list_supported_games:-0}" -eq 1 ]; then
+		games_list_supported
+		exit 0
+	fi
+	unset option_list_supported_games
+
 	# Unset variables that we do not want to import from the user environment
 
 	unset SOURCE_ARCHIVE

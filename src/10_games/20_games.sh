@@ -28,7 +28,9 @@ games_list_supported_all() {
 
 	local script
 	for script in $scripts_list; do
-		$script --list-supported-games
+		## Passing the --list-supported-games switch is not required,
+		## because $PLAYIT_OPTION_LIST_SUPPORTED_GAMES is already set.
+		$script
 	done | sort --unique
 }
 
