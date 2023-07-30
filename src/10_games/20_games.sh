@@ -26,11 +26,12 @@ games_list_supported_all() {
 	local scripts_list
 	scripts_list=$(games_list_scripts_all)
 
-	local script
-	for script in $scripts_list; do
-		## Passing the --list-supported-games switch is not required,
-		## because $PLAYIT_OPTION_LIST_SUPPORTED_GAMES is already set.
-		$script
-	done | sort --unique
+	local available_threads
+	available_threads=$(nproc)
+	## Passing the --list-supported-games switch is not required,
+	## because $PLAYIT_OPTION_LIST_SUPPORTED_GAMES is already set.
+	printf '%s' "$scripts_list" | \
+		xargs --delimiter='\n' --max-args=1 --max-procs="$available_threads" sh | \
+		sort --unique
 }
 
