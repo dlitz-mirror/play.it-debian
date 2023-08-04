@@ -33,26 +33,6 @@ information_package_building() {
 	printf "$message" "$file"
 }
 
-# display a warning when output package format guessing failed
-# USAGE: warning_package_format_guessing_failed $fallback_value
-warning_package_format_guessing_failed() {
-	local message fallback_value
-	fallback_value="$1"
-	# shellcheck disable=SC2031
-	case "${LANG%_*}" in
-		('fr')
-			message='Lʼauto-détection du format de paquet le plus adapté a échoué.\n'
-			message="$message"'Le format de paquet %s sera utilisé par défaut.\n'
-		;;
-		('en'|*)
-			message='Most pertinent package format auto-detection failed.\n'
-			message="$message"'%s package format will be used by default.\n'
-		;;
-	esac
-	print_warning
-	printf "$message" "$fallback_value"
-}
-
 # Error - The provided package id uses an invalid format
 # USAGE: error_package_id_invalid $package_id
 error_package_id_invalid() {

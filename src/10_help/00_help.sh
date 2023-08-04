@@ -288,7 +288,6 @@ help_no_mtree() {
 # USAGE: help_tmpdir
 help_tmpdir() {
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tDéfinit le répertoire utilisé pour le stockage des fichiers temporaire.\n'
@@ -300,9 +299,7 @@ help_tmpdir() {
 		;;
 	esac
 	printf -- '--tmpdir\n\n'
-	local default_value
-	default_value=$(option_value_default 'tmpdir')
-	printf "$message" "$default_value"
+	printf "$message" "${TMPDIR:-/tmp}"
 }
 
 # Display --no-free-space-check option usage
