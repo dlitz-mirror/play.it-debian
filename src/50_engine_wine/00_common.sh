@@ -25,7 +25,21 @@ wine_persistent_directories() {
 #         the list can be empty.
 wine_winetricks_verbs() {
 	local winetricks_verbs
-	winetricks_verbs=$(context_value 'APP_WINETRICKS')
+	winetricks_verbs=$(context_value 'WINE_WINETRICKS_VERBS')
+
+	# Fall back on the legacy variable, for game scripts targeting ./play.it ≤ 2.25
+	if \
+		[ -z "$winetricks_verbs" ] && \
+		! version_is_at_least '2.26' "$target_version"
+	then
+		winetricks_verbs=$(context_value 'APP_WINETRICKS')
+		if \
+			[ -n "$winetricks_verbs" ] && \
+			version_is_at_least '2.25' "$target_version"
+		then
+			warning_deprecated_variable 'APP_WINETRICKS' 'WINE_WINETRICKS_VERBS'
+		fi
+	fi
 
 	# Fall back on default values based on the game engine
 	if [ -z "$winetricks_verbs" ]; then
