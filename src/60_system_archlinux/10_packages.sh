@@ -175,16 +175,16 @@ archlinux_package_build_single() {
 		fi
 		if [ -n "$tar_compress_program" ]; then
 			debug_external_command "tar $tar_options --use-compress-program=\"$tar_compress_program\" --file \"$generated_package_path\" $package_contents"
-			set +o errexit
-			tar $tar_options --use-compress-program="$tar_compress_program" --file "$generated_package_path" $package_contents
-			package_generation_return_code=$?
-			set -o errexit
+			{
+				tar $tar_options --use-compress-program="$tar_compress_program" --file "$generated_package_path" $package_contents
+				package_generation_return_code=$?
+			} || true
 		else
 			debug_external_command "tar $tar_options --file \"$generated_package_path\" $package_contents"
-			set +o errexit
-			tar $tar_options --file "$generated_package_path" $package_contents
-			package_generation_return_code=$?
-			set -o errexit
+			{
+				tar $tar_options --file "$generated_package_path" $package_contents
+				package_generation_return_code=$?
+			} || true
 		fi
 		printf '%s' "$package_generation_return_code"
 	)
@@ -362,3 +362,4 @@ archlinux_package_id() {
 
 	printf '%s' "$package_id"
 }
+

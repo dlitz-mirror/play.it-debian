@@ -254,17 +254,17 @@ egentoo_packages_build() {
 	information_package_building "$(basename "$package_filename")"
 	if [ -z "$compression_command" ]; then
 		debug_external_command "\"$tar_command\" $tar_options --file \"$package_filename\" $packages_paths"
-		set +o errexit
-		# shellcheck disable=SC2046
-		"$tar_command" $tar_options --file "$package_filename" $packages_paths
-		package_generation_return_code=$?
-		set -o errexit
+		{
+			# shellcheck disable=SC2046
+			"$tar_command" $tar_options --file "$package_filename" $packages_paths
+			package_generation_return_code=$?
+		} || true
 	else
 		debug_external_command "\"$tar_command\" $tar_options $packages_paths | \"$compression_command\" $compression_options > \"$package_filename\""
-		set +o errexit
-		"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
-		package_generation_return_code=$?
-		set -o errexit
+		{
+			"$tar_command" $tar_options $packages_paths | "$compression_command" $compression_options > "$package_filename"
+			package_generation_return_code=$?
+		} || true
 	fi
 
 	if [ $package_generation_return_code -ne 0 ]; then
@@ -289,3 +289,4 @@ package_path_egentoo() {
 
 	printf '%s' "$package_path"
 }
+

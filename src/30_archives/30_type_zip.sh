@@ -34,11 +34,10 @@ archive_extraction_zip_unclean() {
 	log_file="$3"
 
 	if command -v 'unzip' >/dev/null 2>&1; then
-		set +o errexit
-		archive_extraction_using_unzip "$archive" "$destination_directory" "$log_file"
-		set -o errexit
+		archive_extraction_using_unzip "$archive" "$destination_directory" "$log_file" || true
 	else
 		error_archive_no_extractor_found 'zip'
 		return 1
 	fi
 }
+

@@ -174,15 +174,14 @@ debian_package_build_single() {
 	esac
 
 	# Run the actual package generation, using dpkg-deb
-	local package_generation_return_code
+	local TMPDIR package_generation_return_code
 	information_package_building "$package_name"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
-	set +o errexit
-	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
-		--build "$package_path" "$generated_package_path" 1>/dev/null
-	package_generation_return_code=$?
-	set -o errexit
-
+	{
+		TMPDIR="$PLAYIT_WORKDIR"
+		fakeroot -- dpkg-deb $dpkg_options --build "$package_path" "$generated_package_path" 1>/dev/null
+		package_generation_return_code=$?
+	} || true
 	if [ $package_generation_return_code -ne 0 ]; then
 		error_package_generation_failed "$package_name"
 		return 1
@@ -320,3 +319,4 @@ debian_package_architecture_string() {
 
 	printf '%s' "$package_architecture_string"
 }
+

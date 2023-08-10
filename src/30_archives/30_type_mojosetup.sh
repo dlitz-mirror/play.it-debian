@@ -40,29 +40,28 @@ archive_extraction_mojosetup() {
 	archive_offset=$((archive_makeself_offset + archive_mojosetup_filesize))
 
 	# Extract the .zip archive containing the game data
-	local archive_game_data
+	local archive_game_data archive_extraction_return_code
 	archive_game_data="${destination_directory}/mojosetup-game-data.zip"
 	## Silence ShellCheck false-positive
 	## Consider using { cmd1; cmd2; } >> file instead of individual redirects.
 	# shellcheck disable=SC2129
 	printf 'dd if="%s" ibs="%s" skip=1 > "%s"\n' "$archive_path" "$archive_offset" "$archive_game_data" >> "$log_file"
-	local archive_extraction_return_code
-	set +o errexit
-	dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
-	archive_extraction_return_code=$?
-	set -o errexit
+	{
+		dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
+		archive_extraction_return_code=$?
+	} || true
 	if [ $archive_extraction_return_code -ne 0 ]; then
 		error_archive_extraction_failure "$archive"
 		return 1
 	fi
 
 	# Extract the game data
-	printf 'unzip -d "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
 	local archive_extraction_return_code
-	set +o errexit
-	unzip -d "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
-	archive_extraction_return_code=$?
-	set -o errexit
+	printf 'unzip -d "%s" "%s"\n' "$destination_directory" "$archive_game_data" >> "$log_file"
+	{
+		unzip -d "$destination_directory" "$archive_game_data" >> "$log_file" 2>&1
+		archive_extraction_return_code=$?
+	} || true
 	if [ $archive_extraction_return_code -ne 0 ]; then
 		error_archive_extraction_failure "$archive"
 		return 1

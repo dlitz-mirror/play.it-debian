@@ -491,8 +491,7 @@ package_provides() {
 
 	# Skip empty lines,
 	# ignore grep error state if there is nothing to return.
-	set +o errexit
 	printf '%s' "$package_provides" | \
-		grep --invert-match --regexp='^$'
-	set -o errexit
+		grep --invert-match --regexp='^$' || true
 }
+
