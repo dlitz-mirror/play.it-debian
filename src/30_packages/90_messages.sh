@@ -178,3 +178,31 @@ error_package_generation_failed() {
 	)
 }
 
+# Error - The given package does not exist
+# USAGE: error_package_does_not_exist $package $calling_function
+error_package_does_not_exist() {
+	local package calling_function
+	package="$1"
+	calling_function="$2"
+
+	local packages_list packages_list_formatted
+	packages_list=$(packages_get_list)
+	packages_list_formatted=$(printf '%s ' $packages_list | sed 's/\s\+$//')
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='The function "%s" has been given a package identifier that is not part of the list of packages to generate: %s\n'
+			message="$message"'The packages to build are: %s\n\n'
+		;;
+		('en'|*)
+			message='The function "%s" has been given a package identifier that is not part of the list of packages to generate: %s\n'
+			message="$message"'The packages to build are: %s\n\n'
+		;;
+	esac
+	(
+		print_error
+		printf "$message" "$calling_function" "$package" "$packages_list_formatted"
+	)
+}
+
