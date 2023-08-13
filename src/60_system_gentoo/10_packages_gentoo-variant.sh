@@ -159,24 +159,43 @@ gentoo_package_build_single() {
 	esac
 
 	# Run the actual package generation, using ebuild
-	local package_generation_return_code
+	local ebuild_path PORTAGE_TMPDIR PKGDIR BINPKG_COMPRESS package_generation_return_code
 	information_package_building "$package_name"
 	mkdir --parents "${PLAYIT_WORKDIR}/portage-tmpdir"
-	local ebuild_path
 	ebuild_path=$(gentoo_ebuild_path "$package")
 	ebuild "$ebuild_path" manifest 1>/dev/null
 	if [ -n "$binkpg_compress" ]; then
 		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-		set +o errexit
-		PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir" PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir" BINPKG_COMPRESS="$binkpg_compress" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
-		package_generation_return_code=$?
-		set -o errexit
+		{
+			## Silence a ShellCheck false positive
+			## PORTAGE_TMPDIR appears unused. Verify use (or export if used externally).
+			# shellcheck disable=SC2034
+			PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir"
+			## Silence a ShellCheck false positive
+			## PKGDIR appears unused. Verify use (or export if used externally).
+			# shellcheck disable=SC2034
+			PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir"
+			## Silence a ShellCheck false positive
+			## BINPKG_COMPRESS appears unused. Verify use (or export if used externally).
+			# shellcheck disable=SC2034
+			BINPKG_COMPRESS="$binkpg_compress"
+			fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+			package_generation_return_code=$?
+		} || true
 	else
 		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
-		set +o errexit
-		PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir" PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir" fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
-		package_generation_return_code=$?
-		set -o errexit
+		{
+			## Silence a ShellCheck false positive
+			## PORTAGE_TMPDIR appears unused. Verify use (or export if used externally).
+			# shellcheck disable=SC2034
+			PORTAGE_TMPDIR="${PLAYIT_WORKDIR}/portage-tmpdir"
+			## Silence a ShellCheck false positive
+			## PKGDIR appears unused. Verify use (or export if used externally).
+			# shellcheck disable=SC2034
+			PKGDIR="${PLAYIT_WORKDIR}/gentoo-pkgdir"
+			fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
+			package_generation_return_code=$?
+		} || true
 	fi
 
 	if [ $package_generation_return_code -ne 0 ]; then
@@ -296,3 +315,4 @@ gentoo_package_id() {
 	# Avoid mixups between numbers in package id and version number.
 	printf '%s' "$package_id" | sed 's/-/_/g'
 }
+

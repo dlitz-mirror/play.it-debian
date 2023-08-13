@@ -132,6 +132,15 @@ debian_package_build_single() {
 		return 0
 	fi
 
+	# Use old .deb format if the package is going over the size limit for the modern format
+	local package_size
+	package_size=$(debian_package_size "$package")
+	if [ "$package_size" -gt 9700000 ]; then
+		warning_debian_size_limit "$package"
+		export PLAYIT_DEBIAN_OLD_DEB_FORMAT=1
+		dpkg_options="${dpkg_options} --deb-format=0.939000"
+	fi
+
 	# Set compression setting
 	local option_compression dpkg_options
 	option_compression=$(option_value 'compression')
@@ -144,7 +153,18 @@ debian_package_build_single() {
 			dpkg_options="${dpkg_options} -Zgzip"
 		;;
 		('size')
-			dpkg_options="${dpkg_options} -Zxz"
+			if [ "${PLAYIT_DEBIAN_OLD_DEB_FORMAT:-0}" -eq 1 ]; then
+				## Old .deb format 0.939000 is not compatible with xz compression.
+				dpkg_options="${dpkg_options} -Zgzip"
+			else
+				dpkg_options="${dpkg_options} -Zxz"
+			fi
+		;;
+		('auto')
+			if [ "${PLAYIT_DEBIAN_OLD_DEB_FORMAT:-0}" -eq 1 ]; then
+				## Old .deb format 0.939000 is not compatible with xz compression.
+				dpkg_options="${dpkg_options} -Zgzip"
+			fi
 		;;
 		('gzip'|'xz')
 			if ! version_is_at_least '2.23' "$target_version"; then
@@ -153,25 +173,15 @@ debian_package_build_single() {
 		;;
 	esac
 
-	# Use old .deb format if the package is going over the size limit for the modern format
-	local package_size
-	package_size=$(debian_package_size "$package")
-	if [ "$package_size" -gt 9700000 ]; then
-		warning_debian_size_limit "$package"
-		export PLAYIT_DEBIAN_OLD_DEB_FORMAT=1
-		dpkg_options="${dpkg_options} --deb-format=0.939000"
-	fi
-
 	# Run the actual package generation, using dpkg-deb
-	local package_generation_return_code
+	local TMPDIR package_generation_return_code
 	information_package_building "$package_name"
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
-	set +o errexit
-	TMPDIR="$PLAYIT_WORKDIR" fakeroot -- dpkg-deb $dpkg_options \
-		--build "$package_path" "$generated_package_path" 1>/dev/null
-	package_generation_return_code=$?
-	set -o errexit
-
+	{
+		TMPDIR="$PLAYIT_WORKDIR"
+		fakeroot -- dpkg-deb $dpkg_options --build "$package_path" "$generated_package_path" 1>/dev/null
+		package_generation_return_code=$?
+	} || true
 	if [ $package_generation_return_code -ne 0 ]; then
 		error_package_generation_failed "$package_name"
 		return 1
@@ -309,3 +319,4 @@ debian_package_architecture_string() {
 
 	printf '%s' "$package_architecture_string"
 }
+

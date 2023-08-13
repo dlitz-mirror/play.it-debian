@@ -1,3 +1,13 @@
+2.24.1
+
+  * application_options - Fix test preventing line breaks in application options string.
+  * archive_guess_type_from_name - Ensure that an empty string is returned if no type could be guessed.
+  * content_inclusion - Check that the given package identifier is valid.
+  * content_inclusion_chunks - Drop declaration of unused variable.
+  * Prevent incompatibility between old .deb format 0.939000 and xz compression.
+  * Do not tweak shell options from inside functions.
+  * Add support for extra native libraries.
+
 2.24.0
 
   * Deprecation notices:

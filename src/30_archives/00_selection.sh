@@ -354,9 +354,13 @@ archive_guess_type_from_name() {
 		(*'.7z')
 			archive_type='7z'
 		;;
+		(*)
+			# No type could be guessed from the archive file name
+			archive_type=''
+		;;
 	esac
 
-	printf '%s' "${archive_type:-}"
+	printf '%s' "$archive_type"
 }
 
 # Guess the archive type from its headers

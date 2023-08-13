@@ -325,7 +325,9 @@ application_options() {
 	application_options=$(context_value "${application}_OPTIONS")
 
 	# Check that the options string does not span multiple lines
-	if [ "$(printf '%s' "$application_options" | wc --lines)" -gt 1 ]; then
+	local line_breaks_number
+	line_breaks_number=$(printf '%s' "$application_options" | wc --lines)
+	if [ "$line_breaks_number" -gt 0 ]; then
 		error_variable_multiline "${application}_OPTIONS"
 		return 1
 	fi

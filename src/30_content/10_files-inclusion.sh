@@ -121,6 +121,12 @@ content_inclusion() {
 	package="$2"
 	target_path="$3"
 
+	# Check that the given package is valid
+	if ! package_is_included_in_packages_list "$package"; then
+		error_package_does_not_exist "$package" 'content_inclusion'
+		return 1
+	fi
+
 	# Return early if the content source path is not set.
 	local content_path
 	content_path=$(content_path "$content_id")

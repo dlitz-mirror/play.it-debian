@@ -78,6 +78,9 @@ dependency_package_providing_library_arch() {
 		('libasound_module_'*'.so')
 			package_name='alsa-plugins'
 		;;
+		('libatspi.so.0')
+			package_name='at-spi2-core'
+		;;
 		('libatk-1.0.so.0')
 			package_name='atk'
 		;;
@@ -155,6 +158,12 @@ dependency_package_providing_library_arch() {
 		;;
 		('libgcrypt.so.11')
 			package_name='libgcrypt15'
+		;;
+		('libgdiplus.so')
+			package_name='libgdiplus'
+		;;
+		('libgdk-3.so.0')
+			package_name='gtk3'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='gdk-pixbuf2'
@@ -398,8 +407,14 @@ dependency_package_providing_library_arch() {
 		('libthread_db.so.1')
 			package_name='glibc'
 		;;
+		('libtiff.so.6')
+			package_name='libtiff'
+		;;
 		('libturbojpeg.so.0')
 			package_name='libjpeg-turbo'
+		;;
+		('libudev.so.0')
+			package_name='libudev0-shim'
 		;;
 		('libudev.so.1')
 			package_name='libudev.so=1-64'
@@ -551,6 +566,9 @@ dependency_package_providing_library_arch32() {
 		('libasound_module_'*'.so')
 			package_name='lib32-alsa-plugins'
 		;;
+		('libatspi.so.0')
+			package_name='lib32-at-spi2-core'
+		;;
 		('libatk-1.0.so.0')
 			package_name='lib32-atk'
 		;;
@@ -631,6 +649,13 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libgcrypt.so.11')
 			package_name='lib32-libgcrypt15'
+		;;
+		('libgdiplus.so')
+			# This library is not provided in a 32-bit build for Arch Linux
+			unset package_name
+		;;
+		('libgdk-3.so.0')
+			package_name='lib32-gtk3'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='lib32-gdk-pixbuf2'
@@ -879,8 +904,14 @@ dependency_package_providing_library_arch32() {
 		('libthread_db.so.1')
 			package_name='lib32-glibc'
 		;;
+		('libtiff.so.6')
+			package_name='lib32-libtiff'
+		;;
 		('libturbojpeg.so.0')
 			package_name='lib32-libjpeg-turbo'
+		;;
+		('libudev.so.0')
+			package_name='lib32-libudev0-shim'
 		;;
 		('libudev.so.1')
 			package_name='lib32-systemd'

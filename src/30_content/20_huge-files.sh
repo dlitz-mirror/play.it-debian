@@ -141,7 +141,7 @@ content_inclusion_chunks() {
 		## The file deletion is done when removing the chunks packages (see content_inclusion_chunk_single),
 		## to avoid deleting it when reinstalling the main package without rebuilding it afterwards
 		## because the chunks have been deleted already.
-		local postinst_commands prerm_commands extra_postinst_commands
+		local postinst_commands extra_postinst_commands
 		postinst_commands=$(get_value "${package}_POSTINST_RUN")
 		extra_postinst_commands=$(huge_file_concatenate "$huge_file")
 		export "${package}_POSTINST_RUN"="$postinst_commands

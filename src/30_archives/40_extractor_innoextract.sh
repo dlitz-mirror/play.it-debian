@@ -14,17 +14,16 @@ archive_extraction_using_innoextract() {
 		return 1
 	fi
 
-	local extractor_options
+	local extractor_options archive_extraction_return_code
 	extractor_options=$(archive_extractor_options "$archive")
 	if [ -z "$extractor_options" ]; then
 		extractor_options='--lowercase'
 	fi
 	printf 'innoextract %s --extract --output-dir "%s" "%s"\n' "$extractor_options" "$destination_directory" "$archive_path" >> "$log_file"
-	local archive_extraction_return_code
-	set +o errexit
-	innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" >> "$log_file" 2>&1
-	archive_extraction_return_code=$?
-	set -o errexit
+	{
+		innoextract $extractor_options --extract --output-dir "$destination_directory" "$archive_path" >> "$log_file" 2>&1
+		archive_extraction_return_code=$?
+	} || true
 	if [ $archive_extraction_return_code -ne 0 ]; then
 		error_archive_extraction_failure "$archive"
 		return 1
@@ -55,3 +54,4 @@ archive_extraction_using_innoextract_is_supported() {
 
 	return 0
 }
+

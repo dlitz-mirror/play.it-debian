@@ -45,7 +45,6 @@ check_directory_is_case_sensitive() {
 # USAGE: check_directory_supports_unix_permissions $tested_directory
 # RETURNS: 0 if has support for UNIX permissions, 1 if has no support for UNIX permissions
 check_directory_supports_unix_permissions() {
-	# the first argument should be a writable directory
 	local tested_directory
 	tested_directory="$1"
 	if [ ! -d "$tested_directory" ]; then
@@ -57,23 +56,20 @@ check_directory_supports_unix_permissions() {
 		return 1
 	fi
 
-	# change permissions on a file, and check it has an actual effect
-	# tests are done in an inner temporary directory to avoid messing up with existing files
-	local inner_temp_directory tested_temp_file
+	# Change permissions on a file, and check it has an actual effect
+	# Tests are done in an inner temporary directory to avoid messing up with existing files
+	local inner_temp_directory tested_temp_file file_permissions_expected file_permissions_real
 	inner_temp_directory=$(mktemp --directory --tmpdir="$tested_directory")
 	tested_temp_file="${inner_temp_directory}/a"
 	touch "$tested_temp_file"
-	local file_permissions
-	for file_permissions in '600' '700'; do
-		set +o errexit
-		chmod "$file_permissions" "$tested_temp_file" 2>/dev/null
-		set -o errexit
-		if [ "$(stat --printf='%a' "$tested_temp_file")" != "$file_permissions" ]; then
+	for file_permissions_expected in '600' '700'; do
+		chmod "$file_permissions_expected" "$tested_temp_file" 2>/dev/null || true
+		file_permissions_real=$(stat --printf='%a' "$tested_temp_file")
+		if [ "$file_permissions_real" != "$file_permissions_expected" ]; then
 			return 1
 		fi
 	done
 	rm --recursive "$inner_temp_directory"
-	return 0
 }
 
 # check that the target directory is on a filesystem supporting executable files
@@ -186,3 +182,4 @@ assert_not_empty() {
 		return 1
 	fi
 }
+

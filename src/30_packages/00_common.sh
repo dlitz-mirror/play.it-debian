@@ -98,6 +98,20 @@ packages_get_list() {
 	printf '%s' "$packages_list"
 }
 
+# Check if the given package is included in the list of packages that should be built
+# USAGE: package_is_included_in_packages_list $package
+# RETURN: 0 if the package is included, 1 if it is not
+package_is_included_in_packages_list() {
+	local package
+	package="$1"
+
+	local packages_list
+	packages_list=$(packages_get_list)
+
+	printf '%s' "$packages_list" | \
+		grep --quiet --fixed-strings --word-regexp "$package"
+}
+
 # Print the list of all the packages that could be built from the current game script,
 # not restricted to the current archive.
 # USAGE: packages_list_all_archives
@@ -491,8 +505,7 @@ package_provides() {
 
 	# Skip empty lines,
 	# ignore grep error state if there is nothing to return.
-	set +o errexit
 	printf '%s' "$package_provides" | \
-		grep --invert-match --regexp='^$'
-	set -o errexit
+		grep --invert-match --regexp='^$' || true
 }
+
