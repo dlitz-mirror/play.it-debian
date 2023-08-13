@@ -87,6 +87,9 @@ dependency_package_providing_library_gentoo() {
 		('libasound_module_'*'.so')
 			package_name='media-plugins/alsa-plugins'
 		;;
+		('libatspi.so.0')
+			package_name='app-accessibility/at-spi2-core'
+		;;
 		('libatk-1.0.so.0')
 			package_name='dev-libs/atk'
 		;;
@@ -166,6 +169,12 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libgcrypt.so.11')
 			package_name='dev-libs/libgcrypt-compat'
+		;;
+		('libgdiplus.so')
+			package_name='dev-dotnet/libgdiplus'
+		;;
+		('libgdk-3.so.0')
+			package_name='x11-libs/gtk+:3'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2'
@@ -413,8 +422,14 @@ dependency_package_providing_library_gentoo() {
 		('libthread_db.so.1')
 			package_name='sys-libs/glibc'
 		;;
+		('libtiff.so.6')
+			package_name='media-libs/tiff'
+		;;
 		('libturbojpeg.so.0')
 			package_name='media-libs/libjpeg-turbo'
+		;;
+		('libudev.so.0')
+			package_name='sys-libs/libudev-compat'
 		;;
 		('libudev.so.1')
 			package_name='virtual/libudev'
@@ -568,6 +583,9 @@ dependency_package_providing_library_gentoo32() {
 		('libasound_module_'*'.so')
 			package_name='media-plugins/alsa-plugins[abi_x86_32]'
 		;;
+		('libatspi.so.0')
+			package_name='app-accessibility/at-spi2-core[abi_x86_32]'
+		;;
 		('libatk-1.0.so.0')
 			package_name='dev-libs/atk[abi_x86_32]'
 		;;
@@ -647,6 +665,12 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libgcrypt.so.11')
 			package_name='dev-libs/libgcrypt-compat[abi_x86_32]'
+		;;
+		('libgdiplus.so')
+			package_name='dev-dotnet/libgdiplus[abi_x86_32]'
+		;;
+		('libgdk-3.so.0')
+			package_name='x11-libs/gtk+:3[abi_x86_32]'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='x11-libs/gdk-pixbuf:2[abi_x86_32]'
@@ -894,8 +918,14 @@ dependency_package_providing_library_gentoo32() {
 		('libthread_db.so.1')
 			package_name='sys-libs/glibc amd64? ( sys-libs/glibc[multilib] )'
 		;;
+		('libtiff.so.6')
+			package_name='media-libs/tiff[abi_x86_32]'
+		;;
 		('libturbojpeg.so.0')
 			package_name='media-libs/libjpeg-turbo[abi_x86_32]'
+		;;
+		('libudev.so.0')
+			package_name='sys-libs/libudev-compat[abi_x86_32]'
 		;;
 		('libudev.so.1')
 			package_name='virtual/libudev[abi_x86_32]'

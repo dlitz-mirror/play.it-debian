@@ -59,6 +59,9 @@ dependency_package_providing_library_deb() {
 		('libasound_module_'*'.so')
 			package_name='libasound2-plugins'
 		;;
+		('libatspi.so.0')
+			package_name='libatspi2.0-0'
+		;;
 		('libatk-1.0.so.0')
 			package_name='libatk1.0-0'
 		;;
@@ -137,6 +140,12 @@ dependency_package_providing_library_deb() {
 		('libgcrypt.so.11')
 			# This old library is no longer available from Debian.
 			unset package_name
+		;;
+		('libgdiplus.so')
+			package_name='libgdiplus'
+		;;
+		('libgdk-3.so.0')
+			package_name='libgtk-3-0'
 		;;
 		('libgdk_pixbuf-2.0.so.0')
 			package_name='libgdk-pixbuf-2.0-0 | libgdk-pixbuf2.0-0'
@@ -380,8 +389,14 @@ dependency_package_providing_library_deb() {
 		('libthread_db.so.1')
 			package_name='libc6'
 		;;
+		('libtiff.so.6')
+			package_name='libtiff6'
+		;;
 		('libturbojpeg.so.0')
 			package_name='libturbojpeg0'
+		;;
+		('libudev.so.0')
+			package_name='libudev0'
 		;;
 		('libudev.so.1')
 			package_name='libudev1'
