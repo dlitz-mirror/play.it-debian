@@ -9,9 +9,6 @@ requirements_list() {
 			printf '%s\n' $SCRIPT_DEPS
 		fi
 
-		# List requirements for the current compression setting
-		requirements_list_compression
-
 		# List requirements for the current archive integrity setting
 		requirements_list_checksum
 
@@ -26,41 +23,6 @@ requirements_list() {
 	)
 
 	printf '%s' "$requirements_list" | sort --unique
-}
-
-# List requirements for the current compression setting
-# USAGE: requirements_list_compression
-# RETURN: a list for required commands, one per line
-requirements_list_compression() {
-	local option_compression requirements
-	option_compression=$(option_value 'compression')
-	case "$option_compression" in
-		('gzip')
-			requirements='gzip'
-		;;
-		('xz')
-			requirements='xz'
-		;;
-		('bzip2')
-			requirements='bzip2'
-		;;
-		('zstd')
-			requirements='zstd'
-		;;
-		('lz4')
-			requirements='lz4'
-		;;
-		('lzip')
-			requirements='lzip'
-		;;
-		('lzop')
-			requirements='lzop'
-		;;
-	esac
-
-	if ! variable_is_empty 'requirements'; then
-		printf '%s\n' $requirements
-	fi
 }
 
 # List requirements for the current archive integrity setting
@@ -250,12 +212,10 @@ requirements_list_archive_single() {
 # they are handled by another function: archive_dependencies_check.
 # USAGE: check_deps
 check_deps() {
-	local requirements_list_compression requirements_list_checksum requirements_list_package
-	requirements_list_compression=$(requirements_list_compression)
+	local requirements_list_checksum requirements_list_package
 	requirements_list_checksum=$(requirements_list_checksum)
 	requirements_list_package=$(requirements_list_package)
 	SCRIPT_DEPS="${SCRIPT_DEPS:-}
-	$requirements_list_compression
 	$requirements_list_checksum
 	$requirements_list_package"
 

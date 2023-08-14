@@ -8,9 +8,6 @@ pkg_set_deps_arch32() {
 				lib32-alsa-lib
 				lib32-alsa-plugins'
 			;;
-			('dosbox')
-				pkg_dep='dosbox'
-			;;
 			('freetype')
 				pkg_dep='lib32-freetype2'
 			;;
@@ -31,9 +28,6 @@ pkg_set_deps_arch32() {
 			('gtk2')
 				pkg_dep='lib32-gtk2'
 			;;
-			('java')
-				pkg_dep='jre8-openjdk'
-			;;
 			('json')
 				pkg_dep='lib32-json-c'
 			;;
@@ -52,31 +46,24 @@ pkg_set_deps_arch32() {
 			('openal')
 				pkg_dep='lib32-openal'
 			;;
-			('pulseaudio')
-				pkg_dep='pulseaudio'
-			;;
-			('scummvm')
-				pkg_dep='scummvm'
-			;;
 			('sdl2')
 				pkg_dep='lib32-sdl2'
-			;;
-			('wine'|'wine32'|'wine64')
-				pkg_dep='wine'
-			;;
-			('winetricks')
-				pkg_dep='
-				winetricks
-				xterm'
 			;;
 			('xcursor')
 				pkg_dep='lib32-libxcursor'
 			;;
-			('xgamma')
-				pkg_dep='xorg-xgamma'
-			;;
-			('xrandr')
-				pkg_dep='xorg-xrandr'
+			( \
+				'dosbox' | \
+				'java' | \
+				'mono' | \
+				'pulseaudio' | \
+				'scummvm' | \
+				'wine' | \
+				'winetricks' | \
+				'xgamma' | \
+				'xrandr' \
+			)
+				pkg_dep=$(archlinux_dependencies_single_command "$dep")
 			;;
 			( \
 				'libgdk_pixbuf-2.0.so.0' | \
@@ -129,9 +116,6 @@ pkg_set_deps_arch64() {
 				alsa-lib
 				alsa-plugins'
 			;;
-			('dosbox')
-				pkg_dep='dosbox'
-			;;
 			('freetype')
 				pkg_dep='freetype2'
 			;;
@@ -152,9 +136,6 @@ pkg_set_deps_arch64() {
 			('gtk2')
 				pkg_dep='gtk2'
 			;;
-			('java')
-				pkg_dep='jre8-openjdk'
-			;;
 			('json')
 				pkg_dep='json-c'
 			;;
@@ -170,37 +151,27 @@ pkg_set_deps_arch64() {
 			('nss')
 				pkg_dep='nss'
 			;;
-			('mono')
-				pkg_dep='mono'
-			;;
 			('openal')
 				pkg_dep='openal'
-			;;
-			('pulseaudio')
-				pkg_dep='pulseaudio'
-			;;
-			('scummvm')
-				pkg_dep='scummvm'
 			;;
 			('sdl2')
 				pkg_dep='sdl2'
 			;;
-			('wine'|'wine32'|'wine64')
-				pkg_dep='wine'
-			;;
-			('winetricks')
-				pkg_dep='
-				winetricks
-				xterm'
-			;;
 			('xcursor')
 				pkg_dep='libxcursor'
 			;;
-			('xgamma')
-				pkg_dep='xorg-xgamma'
-			;;
-			('xrandr')
-				pkg_dep='xorg-xrandr'
+			( \
+				'dosbox' | \
+				'java' | \
+				'mono' | \
+				'pulseaudio' | \
+				'scummvm' | \
+				'wine' | \
+				'winetricks' | \
+				'xgamma' | \
+				'xrandr' \
+			)
+				pkg_dep=$(archlinux_dependencies_single_command "$dep")
 			;;
 			( \
 				'libgdk_pixbuf-2.0.so.0' | \
@@ -286,6 +257,11 @@ dependencies_archlinux_full_list() {
 		$packages_list"
 	fi
 
+	# Include dependencies on commands
+	packages_list=$(archlinux_dependencies_all_commands "$package")
+	packages_list_full="$packages_list_full
+	$packages_list"
+
 	# Include dependencies on native libraries
 	packages_list=$(dependencies_list_native_libraries_packages "$package")
 	packages_list_full="$packages_list_full
@@ -306,3 +282,4 @@ dependencies_archlinux_full_list() {
 		grep --invert-match --regexp='^$' | \
 		sort --unique
 }
+

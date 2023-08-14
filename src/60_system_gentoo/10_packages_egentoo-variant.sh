@@ -22,13 +22,6 @@ egentoo_packages_metadata() {
 		('size')
 			package_filename="${package_filename}.bz2"
 		;;
-		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
-				inherits=$(egentoo_package_inherits_legacy "$inherits" "$option_compression")
-				build_deps=$(egentoo_package_build_deps_legacy "$build_deps" "$option_compression")
-			fi
-		;;
 	esac
 
 	local option_output_dir package_id package_name
@@ -210,14 +203,6 @@ egentoo_packages_build() {
 			package_filename=$(egentoo_package_filename_auto "$package_filename")
 			compression_command=$(egentoo_package_compression_command_auto)
 			compression_options="${BINPKG_COMPRESS_FLAGS:-}"
-		;;
-		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				package_filename=$(egentoo_package_name_legacy "$package_filename" "$option_compression")
-				compression_command=$(egentoo_package_compression_command_legacy "$option_compression")
-				compression_options=$(egentoo_package_compression_options_legacy "$compression_options" "$option_compression")
-				tar_command=$(egentoo_package_tar_command_legacy "$tar_command" "$option_compression")
-			fi
 		;;
 	esac
 	compression_options="$compression_options --stdout --quiet"

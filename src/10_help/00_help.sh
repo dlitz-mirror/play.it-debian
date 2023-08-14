@@ -40,6 +40,8 @@ help() {
 	help_configfile
 	help_listpackages
 	help_listrequirements
+	help_listavailablescripts
+	help_listsupportedgames
 
 	# do not print a list of supported archives if called throught the "play.it" wrapper script
 	if [ "$script_name" = 'play.it' ]; then
@@ -286,7 +288,6 @@ help_no_mtree() {
 # USAGE: help_tmpdir
 help_tmpdir() {
 	local message
-	# shellcheck disable=SC2031
 	case "${LANG%_*}" in
 		('fr')
 			message='\tDéfinit le répertoire utilisé pour le stockage des fichiers temporaire.\n'
@@ -298,9 +299,7 @@ help_tmpdir() {
 		;;
 	esac
 	printf -- '--tmpdir\n\n'
-	local default_value
-	default_value=$(option_value_default 'tmpdir')
-	printf "$message" "$default_value"
+	printf "$message" "${TMPDIR:-/tmp}"
 }
 
 # Display --no-free-space-check option usage
@@ -375,3 +374,38 @@ help_listrequirements() {
 	printf -- '--list-requirements\n\n'
 	printf "$message"
 }
+
+# Display --list-available-scripts option usage
+# USAGE: help_listavailablescripts
+help_listavailablescripts() {
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des scripts de prise en charge de jeux disponibles sur ce système.\n\n'
+		;;
+		('en'|*)
+			message='\tPrint the list of game scripts available on this system.\n\n'
+		;;
+	esac
+	printf -- '--list-available-scripts\n\n'
+	printf "$message"
+}
+
+# Display --list-supported-games option usage
+# USAGE: help_listsupportedgames
+help_listsupportedgames() {
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='\tAffiche la liste des jeux pris en charge.\n'
+			message="$message"'\tAttention : cette opération peut prendre plusieurs minutes.\n\n'
+		;;
+		('en'|*)
+			message='\tPrint the list of supported games.\n'
+			message="$message"'\tWarning: this operation can take several minutes.\n\n'
+		;;
+	esac
+	printf -- '--list-supported-games\n\n'
+	printf "$message"
+}
+

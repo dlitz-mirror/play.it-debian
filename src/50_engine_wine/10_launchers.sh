@@ -48,10 +48,12 @@ wine_launcher() {
 	esac
 
 	# Automatically add required dependencies to the current package
-	if ! variable_is_empty 'APP_WINETRICKS'; then
+	local winetricks_verbs
+	winetricks_verbs=$(wine_winetricks_verbs)
+	if [ -n "$winetricks_verbs" ]; then
 		local package
 		package=$(context_package)
-		dependencies_add_generic "$package" 'winetricks'
+		dependencies_add_command "$package" 'winetricks'
 	fi
 }
 
@@ -93,8 +95,10 @@ wine_launcher_environment() {
 		EOF
 	} | sed --regexp-extended 's/( ){4}/\t/g'
 	## The `wineserver` command is only used by winetricks
+	local winetricks_verbs
+	winetricks_verbs=$(wine_winetricks_verbs)
 	if \
-		[ -n "${APP_WINETRICKS:-}" ] || \
+		[ -n "$winetricks_verbs" ] || \
 		[ -n "${WINE_DIRECT3D_RENDERER:-}" ]
 	then
 		{
@@ -122,8 +126,10 @@ wine_launcher_environment() {
 	fi
 
 	# Include the winetricks wrapper function only if it is going to be used
+	local winetricks_verbs
+	winetricks_verbs=$(wine_winetricks_verbs)
 	if \
-		[ -n "${APP_WINETRICKS:-}" ] || \
+		[ -n "$winetricks_verbs" ] || \
 		[ -n "${WINE_DIRECT3D_RENDERER:-}" ]
 	then
 		{

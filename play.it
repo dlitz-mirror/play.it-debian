@@ -64,11 +64,31 @@ unset option_help
 # if called with --version.
 
 option_version=$(option_value 'version')
-if [ "${option_version:-0}" -eq 1 ]; then
+if [ "$option_version" -eq 1 ]; then
 	printf '%s\n' "$LIBRARY_VERSION"
 	exit 0
 fi
 unset option_version
+
+# Display the list of available game scripts,
+# if called with --list-available-scripts.
+
+option_list_available_scripts=$(option_value 'list-available-scripts')
+if [ "$option_list_available_scripts" -eq 1 ]; then
+	games_list_scripts_all
+	exit 0
+fi
+unset option_list_available_scripts
+
+# Display the full list of supported-games,
+# if called with --list-supported-games.
+
+option_list_supported_games=$(option_value 'list-supported-games')
+if [ "$option_list_supported_games" -eq 1 ]; then
+	games_list_supported_all
+	exit 0
+fi
+unset option_list_supported_games
 
 # Exit with an error if no archive is provided
 

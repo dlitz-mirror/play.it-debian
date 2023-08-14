@@ -142,23 +142,30 @@ application_type_guess_from_file() {
 
 # Print the type variant for the given application
 # USAGE: application_type_variant $application
-# RETURNS: the type variant, or an empty string
+# RETURN: the type variant, or an empty string
 application_type_variant() {
 	local application
 	application="$1"
 
 	local application_type_variant
 	application_type_variant=$(context_value "${application}_TYPE_VARIANT")
-	if [ -n "$application_type_variant" ]; then
-		printf '%s' "$application_type_variant"
-		return 0
-	fi
 
 	# If no variant is explicitly set, try to guess one.
-	local unity3d_name
-	unity3d_name=$(unity3d_name)
-	if [ -n "$unity3d_name" ]; then
-		printf 'unity3d'
-		return 0
+	if [ -z "$application_type_variant" ]; then
+		## Unity3D
+		local unity3d_name
+		unity3d_name=$(unity3d_name)
+		if [ -n "$unity3d_name" ]; then
+			application_type_variant='unity3d'
+		fi
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			application_type_variant='unrealengine4'
+		fi
 	fi
+
+	printf '%s' "$application_type_variant"
 }
+

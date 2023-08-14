@@ -24,9 +24,7 @@ path_xdg_desktop() {
 	# For convenience, XDG .desktop menu entries are always installed under the default install prefix.
 	# If they could be installed under a custom path like /opt/${game_id},
 	# they would not be picked up by applications menus without a manual intervention from the system administrator.
-	local default_install_prefix
-	default_install_prefix=$(option_value_default 'prefix')
-	printf '%s/share/applications' "$default_install_prefix"
+	printf '/usr/share/applications'
 }
 
 # Print install path for documentation files.
@@ -75,9 +73,7 @@ path_game_data() {
 path_icons() {
 	# Icons are always installed under the default install prefix.
 	# launcher_desktop (src/30_launchers/00_common.sh) expects the icon to be available under either /usr or /usr/local.
-	local default_install_prefix
-	default_install_prefix=$(option_value_default 'prefix')
-	printf '%s/share/icons/hicolor' "$default_install_prefix"
+	printf '/usr/share/icons/hicolor'
 }
 
 # Print install path for native libraries.

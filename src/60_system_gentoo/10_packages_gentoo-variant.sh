@@ -151,11 +151,6 @@ gentoo_package_build_single() {
 		('auto')
 			binkpg_compress=''
 		;;
-		('gzip'|'xz'|'bzip2'|'zstd'|'lzip')
-			if ! version_is_at_least '2.23' "$target_version"; then
-				binkpg_compress=$(gentoo_package_binkpg_compress_legacy "$option_compression")
-			fi
-		;;
 	esac
 
 	# Run the actual package generation, using ebuild

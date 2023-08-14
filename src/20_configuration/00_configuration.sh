@@ -31,21 +31,18 @@ load_configuration_file() {
 # Print the configuration file path.
 # USAGE: find_configuration_file $arguments[…]
 find_configuration_file() {
+	local arguments_string
+	arguments_string=$(getopt_arguments_cleanup "$@")
+	eval set -- "$arguments_string"
+
 	local config_file_path
 	config_file_path=''
 
 	# Override the default path if another one has been specified.
 	while [ $# -gt 0 ]; do
 		case "$1" in
-			( \
-				'--config-file='* | \
-				'--config-file' \
-			)
-				if printf '%s' "$1" | grep --quiet --fixed-strings --regexp='='; then
-					config_file_path=$(argument_value "$1")
-				else
-					config_file_path=$(argument_value "$1" "$2")
-				fi
+			('--config-file')
+				config_file_path="$2"
 				break
 			;;
 		esac
@@ -60,13 +57,12 @@ find_configuration_file() {
 		return 1
 	fi
 
-	# Fall back on the default path is not custom one is set.
+	# Fall back on the default path if no custom one is set.
 	if [ -z "$config_file_path" ]; then
 		config_file_path=$(configuration_file_default_path)
 	fi
 
 	printf '%s' "$config_file_path"
-	return 0
 }
 
 # Print the default path to the configuration file
@@ -82,3 +78,4 @@ configuration_file_default_path() {
 	fi
 	printf '%s/play.it/config' "$configuration_path"
 }
+

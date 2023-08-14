@@ -1,3 +1,45 @@
+2.25.0
+
+  * Deprecation notices:
+    * Support for the legacy compression options is dropped. See "Compression methods rework" in 2.22.0 release notes for more details.
+    * The variable APP_WINETRICKS is deprecated, and will be ignored for game scripts targeting ./play.it ≥ 2.26. See "Improvements to support for WINE games" below for more details.
+
+  * New command line options:
+    * --list-available-scripts — Print the list of game scripts available on this system.
+    * --list-supported-games — Print the list of supported games. The output of this option can take up to several minutes to be generated, depending on the number of available game scripts.
+
+  * New make actions:
+    * make shunit2 - Run a series of unit tests based on shUnit2.
+    * make shunit2-coverage - Display a coverage report for shUnit2 tests.
+    * make check - This command is extended to include the shUnit2 tests and their coverage report.
+
+  * New dependencies system for commands required at runtime:
+    * A new variable is exposed to game scripts: PKG_xxx_DEPENDENCIES_COMMANDS
+      It can be set to a list of commands that are required by the game at runtime, one per line.
+
+  * Improvements to support for WINE games:
+    * Add ability to set the default value for WINEDLLOVERRIDES, using a new variables: WINE_DLLOVERRIDES_DEFAULT.
+      If this variable is not set, the generic default value is used:
+      WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml='
+    * A new variable is exposed for listing required winetricks verbs: WINE_WINETRICKS_VERBS.
+      The old variable name APP_WINETRICKS is still supported for game scripts targeting ./play.it < 2.26.
+
+  * Improved support for Unity3D games, the following variables can be omitted and will fall back on default values:
+    - APP_MAIN_EXE (including for Windows games)
+    - CONTENT_GAME_BIN_FILES
+    - CONTENT_GAME_BIN32_FILES
+    - CONTENT_GAME_BIN64_FILES
+    - CONTENT_GAME_DATA_FILES
+
+  * Improved support for Unreal Engine 4, the following variables can be omitted and will fall back on default values:
+    - APP_MAIN_ICON_WRESTOOL_OPTIONS
+    - CONTENT_GAME_BIN_FILES
+    - CONTENT_GAME_DATA_FILES
+    - PKG_BIN_DEPENDENCIES_GSTREAMER_PLUGINS
+    - WINE_DIRECT3D_RENDERER
+    - WINE_PERSISTENT_DIRECTORIES
+    - WINE_WINETRICKS_VERBS
+
 2.24.1
 
   * application_options - Fix test preventing line breaks in application options string.

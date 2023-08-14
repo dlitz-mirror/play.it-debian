@@ -12,6 +12,16 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Set input field separator to default value (space, tab, newline)
 	unset IFS
 
+	# Check early if ./play.it has been called in games listing mode,
+	# since most of the initialization steps are not required in this mode.
+
+	option_list_supported_games=$(option_value 'list-supported-games')
+	if [ "${option_list_supported_games:-0}" -eq 1 ]; then
+		games_list_supported
+		exit 0
+	fi
+	unset option_list_supported_games
+
 	# Unset variables that we do not want to import from the user environment
 
 	unset SOURCE_ARCHIVE
@@ -56,71 +66,37 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Display the help message,
 	# if called with --help.
 
-	if option_is_set 'help'; then
-		option_help=$(option_value 'help')
-		if [ "$option_help" -eq 1 ]; then
-			help
-			exit 0
-		fi
+	option_help=$(option_value 'help')
+	if [ "$option_help" -eq 1 ]; then
+		help
+		exit 0
 	fi
 	unset option_help
 
 	# Display the version string,
 	# if called with --version.
 
-	if option_is_set 'version'; then
-		option_version=$(option_value 'version')
-		if [ "$option_version" -eq 1 ]; then
-			printf '%s\n' "$LIBRARY_VERSION"
-			exit 0
-		fi
+	option_version=$(option_value 'version')
+	if [ "$option_version" -eq 1 ]; then
+		printf '%s\n' "$LIBRARY_VERSION"
+		exit 0
 	fi
 	unset option_version
 
-	# Try to detect the host distribution if no package format has been explicitely set
+	# If called with --list-supported-games,
+	# print the list of games supported by the current game script,
+	# then exit early.
 
-	if ! option_is_set 'package'; then
-		option_package=$(package_format_guess)
-		if [ -z "$option_package" ]; then
-			option_package=$(option_value_default 'package')
-			warning_package_format_guessing_failed "$option_package"
-		fi
-		option_update 'package' "$option_package"
+	option_list_supported_games=$(option_value 'list-supported-games')
+	if [ "$option_list_supported_games" -eq 1 ]; then
+		games_list_supported
+		exit 0
 	fi
-	unset option_package
+	unset option_list_supported_games
 
-	# Set options not already set by script arguments to default values
+	# Check the validity of all options
 
-	for option_name in \
-		'checksum' \
-		'compression' \
-		'debug' \
-		'free-space-check' \
-		'icons' \
-		'list-packages' \
-		'list-requirements' \
-		'mtree' \
-		'output-dir' \
-		'overwrite' \
-		'prefix' \
-		'show-game-script' \
-		'tmpdir'
-	do
-		if ! option_is_set "$option_name"; then
-			option_value=$(option_value_default "$option_name")
-			option_update "$option_name" "$option_value"
-		fi
-	done
-	unset option_value
-
-	# Check the presence of required paths set by default options (like the configuration file),
-	# as these are skipped by options_init_default.
-
-	option_validity_check 'output-dir'
-	option_validity_check 'tmpdir'
-
-	# Throw an error if incompatible options are set
-
+	options_validity_check
 	options_compatibility_check
 
 	# Find the main archive
@@ -137,12 +113,10 @@ if [ "$(basename "$0")" != 'libplayit2.sh' ] && [ -z "$LIB_ONLY" ]; then
 	# Display the path to the game script,
 	# if called with --show-game-script.
 
-	if option_is_set 'show-game-script'; then
-		option_show_game_script=$(option_value 'show-game-script')
-		if [ "$option_show_game_script" -eq 1 ]; then
-			printf '%s\n' "$(realpath "$0")"
-			exit 0
-		fi
+	option_show_game_script=$(option_value 'show-game-script')
+	if [ "$option_show_game_script" -eq 1 ]; then
+		printf '%s\n' "$(realpath "$0")"
+		exit 0
 	fi
 	unset option_show_game_script
 

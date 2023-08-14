@@ -5,7 +5,17 @@ wine_renderer_name() {
 	# if it is explicitely set.
 	local direct3d_renderer
 	direct3d_renderer="${WINE_DIRECT3D_RENDERER:-}"
-	## Fall back to using the default renderer
+
+	# Fall back on a default renderer based on the game engine
+	if [ -z "$direct3d_renderer" ]; then
+		## Unreal Engine 4
+		local unrealengine4_name
+		unrealengine4_name=$(unrealengine4_name)
+		if [ -n "$unrealengine4_name" ]; then
+			direct3d_renderer=$(unrealengine4_wine_renderer_name_default)
+		fi
+	fi
+	# Fall back to using the default renderer
 	if [ -z "$direct3d_renderer" ]; then
 		direct3d_renderer='default'
 	fi
@@ -100,7 +110,7 @@ wine_launcher_renderer_wined3d() {
 			dependency_library='libvulkan.so.1'
 		;;
 	esac
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 	if [ -n "${dependency_library:-}" ]; then
 		dependencies_add_native_libraries "$package" "$dependency_library"
 	fi
@@ -142,7 +152,7 @@ wine_launcher_renderer_dxvk() {
 	local package
 	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 }
 
 # WINE launcher - Use vkd3d for Direct3D rendering
@@ -170,5 +180,5 @@ wine_launcher_renderer_vkd3d() {
 	local package
 	package=$(context_package)
 	dependencies_add_native_libraries "$package" 'libvulkan.so.1'
-	dependencies_add_generic "$package" 'winetricks'
+	dependencies_add_command "$package" 'winetricks'
 }
