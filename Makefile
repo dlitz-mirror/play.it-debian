@@ -73,11 +73,13 @@ ifeq ($(NO_SIGN),0)
 endif
 
 
-# Syntax checks relying on ShellCheck
+# Run tests, including:
+# - syntax checks, relying on ShellCheck
+# - unit tests, relying on shUnit2
 
-.PHONY: check shellcheck-library shellcheck-wrapper
+.PHONY: check shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
 
-check: shellcheck-library shellcheck-wrapper
+check: shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
 
 ## Expressions don't expand in single quotes, use double quotes for that.
 shellcheck-library: SHELLCHECK_EXCLUDE := --exclude=SC2016
@@ -92,3 +94,9 @@ shellcheck-library: lib/libplayit2.sh
 
 shellcheck-wrapper: play.it
 	shellcheck --external-sources --shell=sh play.it
+
+shunit2-coverage: lib/libplayit2.sh
+	./tests/shunit2/coverage.sh
+
+shunit2: lib/libplayit2.sh
+	find tests/shunit2/*/ -type f -name '*.sh' -print0 | sort -z | xargs -0 -n1 shunit2
