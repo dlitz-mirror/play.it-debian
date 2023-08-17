@@ -31,7 +31,7 @@ In most cases, these instructions should work in the same way for derivatives of
 If your distribution does not already have a package for ./play.it, you can install it from this git repository:
 
 ```
-git clone --branch 2.25.0 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
+git clone --branch 2.25.1 --depth 1 https://forge.dotslashplay.it/play.it/scripts.git play.it.git
 cd play.it.git
 make
 make install

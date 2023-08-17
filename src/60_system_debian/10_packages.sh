@@ -133,37 +133,36 @@ debian_package_build_single() {
 	fi
 
 	# Use old .deb format if the package is going over the size limit for the modern format
-	local package_size
+	local dpkg_options package_size
 	package_size=$(debian_package_size "$package")
 	if [ "$package_size" -gt 9700000 ]; then
 		warning_debian_size_limit "$package"
 		export PLAYIT_DEBIAN_OLD_DEB_FORMAT=1
-		dpkg_options="${dpkg_options} --deb-format=0.939000"
+		dpkg_options="${dpkg_options:-} --deb-format=0.939000"
 	fi
 
 	# Set compression setting
-	local option_compression dpkg_options
+	local option_compression
 	option_compression=$(option_value 'compression')
-	dpkg_options=''
 	case "$option_compression" in
 		('none')
-			dpkg_options="${dpkg_options} -Znone"
+			dpkg_options="${dpkg_options:-} -Znone"
 		;;
 		('speed')
-			dpkg_options="${dpkg_options} -Zgzip"
+			dpkg_options="${dpkg_options:-} -Zgzip"
 		;;
 		('size')
 			if [ "${PLAYIT_DEBIAN_OLD_DEB_FORMAT:-0}" -eq 1 ]; then
 				## Old .deb format 0.939000 is not compatible with xz compression.
-				dpkg_options="${dpkg_options} -Zgzip"
+				dpkg_options="${dpkg_options:-} -Zgzip"
 			else
-				dpkg_options="${dpkg_options} -Zxz"
+				dpkg_options="${dpkg_options:-} -Zxz"
 			fi
 		;;
 		('auto')
 			if [ "${PLAYIT_DEBIAN_OLD_DEB_FORMAT:-0}" -eq 1 ]; then
 				## Old .deb format 0.939000 is not compatible with xz compression.
-				dpkg_options="${dpkg_options} -Zgzip"
+				dpkg_options="${dpkg_options:-} -Zgzip"
 			fi
 		;;
 	esac
@@ -174,7 +173,7 @@ debian_package_build_single() {
 	debug_external_command "TMPDIR=\"$PLAYIT_WORKDIR\" fakeroot -- dpkg-deb $dpkg_options --build \"$package_path\" \"$generated_package_path\" 1>/dev/null"
 	{
 		TMPDIR="$PLAYIT_WORKDIR"
-		fakeroot -- dpkg-deb $dpkg_options --build "$package_path" "$generated_package_path" 1>/dev/null
+		fakeroot -- dpkg-deb ${dpkg_options:-} --build "$package_path" "$generated_package_path" 1>/dev/null
 		package_generation_return_code=$?
 	} || true
 	if [ $package_generation_return_code -ne 0 ]; then

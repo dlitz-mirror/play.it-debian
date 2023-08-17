@@ -254,26 +254,24 @@ archive_add_size_to_total() {
 	return 0
 }
 
-# get the type of a given archive
-# USAGE: archive_get_type $archive_identifier
+# Get the type of a given archive
+# USAGE: archive_get_type $archive
 # RETURNS: an archive type
 archive_get_type() {
-	# Get the archive identifier, check that it is not empty
-	local archive_identifier
-	archive_identifier="$1"
-	assert_not_empty 'archive_identifier' 'archive_get_type'
+	local archive
+	archive="$1"
 
-	# Return archive type early if it is already set
+	# Return the archive type early if it is explicitly set
 	local archive_type
-	archive_type=$(get_value "${archive_identifier}_TYPE")
+	archive_type=$(get_value "${archive}_TYPE")
 	if [ -n "$archive_type" ]; then
 		printf '%s' "$archive_type"
 		return 0
 	fi
 
-	# Guess archive type from its file name
+	# Guess the archive type from its file name
 	local archive_file
-	archive_file=$(get_value "$archive_identifier")
+	archive_file=$(get_value "$archive")
 	archive_type=$(archive_guess_type_from_name "$archive_file")
 	if [ -n "$archive_type" ]; then
 		printf '%s' "$archive_type"
@@ -291,11 +289,11 @@ archive_get_type() {
 
 	# Fall back on using the type of the parent archive, if there is one
 	if \
-		printf '%s' "$archive_identifier" | \
+		printf '%s' "$archive" | \
 		grep --quiet --word-regexp '^ARCHIVE_.*_PART[0-9]\+$'
 	then
 		local parent_archive
-		parent_archive=$(printf '%s' "$archive_identifier" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
+		parent_archive=$(printf '%s' "$archive" | sed 's/^\(ARCHIVE_.*\)_PART[0-9]\+$/\1/')
 		archive_type=$(archive_get_type "$parent_archive")
 		if [ -n "$archive_type" ]; then
 			printf '%s' "$archive_type"
@@ -304,7 +302,7 @@ archive_get_type() {
 	fi
 
 	# Throw an error if no type could be found
-	error_archive_type_not_set "$archive_identifier"
+	error_archive_type_not_set "$archive"
 	return 1
 }
 
