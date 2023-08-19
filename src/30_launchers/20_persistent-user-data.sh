@@ -146,19 +146,19 @@ persistent_path_diversion() {
 # RETURNS: a list of paths to directories, one per line
 #          glob patterns can be included
 persistent_list_directories() {
-	if ! variable_is_empty 'USER_PERSISTENT_DIRECTORIES'; then
+	if [ -n "${USER_PERSISTENT_DIRECTORIES:-}" ]; then
 		printf '%s' "$USER_PERSISTENT_DIRECTORIES" | \
 			grep --invert-match --regexp='^$'
 	fi
 
 	# If USER_PERSISTENT_DIRECTORIES is not set, try to fall back on legacy variables
 	set +o noglob
-	if ! variable_is_empty 'CONFIG_DIRS'; then
+	if [ -n "${CONFIG_DIRS:-}" ]; then
 		for directory in $CONFIG_DIRS; do
 			printf '%s\n' "$directory"
 		done
 	fi
-	if ! variable_is_empty 'DATA_DIRS'; then
+	if [ -n "${DATA_DIRS:-}" ]; then
 		for directory in $DATA_DIRS; do
 			printf '%s\n' "$directory"
 		done
@@ -209,19 +209,19 @@ persistent_storage_update_directories() {
 # RETURNS: a list of paths to files, one per line
 #          glob patterns can be included
 persistent_list_files() {
-	if ! variable_is_empty 'USER_PERSISTENT_FILES'; then
+	if [ -n "${USER_PERSISTENT_FILES:-}" ]; then
 		printf '%s' "$USER_PERSISTENT_FILES" | \
 			grep --invert-match --regexp='^$'
 	fi
 
 	# If USER_PERSISTENT_FILES is not set, try to fall back on legacy variables
 	set +o noglob
-	if ! variable_is_empty 'CONFIG_FILES'; then
+	if [ -n "${CONFIG_FILES:-}" ]; then
 		for file in $CONFIG_FILES; do
 			printf '%s\n' "$file"
 		done
 	fi
-	if ! variable_is_empty 'DATA_FILES'; then
+	if [ -n "${DATA_FILES:-}" ]; then
 		for file in $DATA_FILES; do
 			printf '%s\n' "$file"
 		done
