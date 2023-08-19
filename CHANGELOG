@@ -1,3 +1,7 @@
+2.25.2
+
+  * persistent_list_directories / persistent_list_files - Reduce reliance on variable_is_empty.
+
 2.25.1
 
   * archive_get_type - Fix archive type detection using file headers.
