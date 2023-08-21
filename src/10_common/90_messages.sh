@@ -502,3 +502,25 @@ error_temporary_path_not_enough_space() {
 	)
 }
 
+# Error - A mandatory variable is not set
+# USAGE: error_missing_variable $variable_name
+error_missing_variable() {
+	local variable_name
+	variable_name="$1"
+
+	local message
+	case "${LANG%_*}" in
+		('fr')
+			message='La variable suivante est requise, mais elle nʼa pas été définie ou sa valeur est nulle : %s\n'
+		;;
+		('en'|*)
+			message='The following variable is mandatory, but it is unset or its value is null: %s\n'
+		;;
+	esac
+
+	(
+		print_error
+		printf "$message" "$variable_name"
+	)
+}
+
