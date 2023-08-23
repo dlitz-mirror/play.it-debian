@@ -1,1 +1,1534 @@
-play.it-2/changelog
+2.25.2
+
+  * persistent_list_directories / persistent_list_files - Reduce reliance on variable_is_empty.
+
+2.25.1
+
+  * archive_get_type - Fix archive type detection using file headers.
+  * debian_package_build_single - Fix usage of $dpkg_options variable.
+
+2.25.0
+
+  * Deprecation notices:
+    * Support for the legacy compression options is dropped. See "Compression methods rework" in 2.22.0 release notes for more details.
+    * The variable APP_WINETRICKS is deprecated, and will be ignored for game scripts targeting ./play.it ≥ 2.26. See "Improvements to support for WINE games" below for more details.
+
+  * New command line options:
+    * --list-available-scripts — Print the list of game scripts available on this system.
+    * --list-supported-games — Print the list of supported games. The output of this option can take up to several minutes to be generated, depending on the number of available game scripts.
+
+  * New make actions:
+    * make shunit2 - Run a series of unit tests based on shUnit2.
+    * make shunit2-coverage - Display a coverage report for shUnit2 tests.
+    * make check - This command is extended to include the shUnit2 tests and their coverage report.
+
+  * New dependencies system for commands required at runtime:
+    * A new variable is exposed to game scripts: PKG_xxx_DEPENDENCIES_COMMANDS
+      It can be set to a list of commands that are required by the game at runtime, one per line.
+
+  * Improvements to support for WINE games:
+    * Add ability to set the default value for WINEDLLOVERRIDES, using a new variables: WINE_DLLOVERRIDES_DEFAULT.
+      If this variable is not set, the generic default value is used:
+      WINEDLLOVERRIDES='winemenubuilder.exe,mscoree,mshtml='
+    * A new variable is exposed for listing required winetricks verbs: WINE_WINETRICKS_VERBS.
+      The old variable name APP_WINETRICKS is still supported for game scripts targeting ./play.it < 2.26.
+
+  * Improved support for Unity3D games, the following variables can be omitted and will fall back on default values:
+    - APP_MAIN_EXE (including for Windows games)
+    - CONTENT_GAME_BIN_FILES
+    - CONTENT_GAME_BIN32_FILES
+    - CONTENT_GAME_BIN64_FILES
+    - CONTENT_GAME_DATA_FILES
+
+  * Improved support for Unreal Engine 4, the following variables can be omitted and will fall back on default values:
+    - APP_MAIN_ICON_WRESTOOL_OPTIONS
+    - CONTENT_GAME_BIN_FILES
+    - CONTENT_GAME_DATA_FILES
+    - PKG_BIN_DEPENDENCIES_GSTREAMER_PLUGINS
+    - WINE_DIRECT3D_RENDERER
+    - WINE_PERSISTENT_DIRECTORIES
+    - WINE_WINETRICKS_VERBS
+
+2.24.1
+
+  * application_options - Fix test preventing line breaks in application options string.
+  * archive_guess_type_from_name - Ensure that an empty string is returned if no type could be guessed.
+  * content_inclusion - Check that the given package identifier is valid.
+  * content_inclusion_chunks - Drop declaration of unused variable.
+  * Prevent incompatibility between old .deb format 0.939000 and xz compression.
+  * Do not tweak shell options from inside functions.
+  * Add support for extra native libraries.
+
+2.24.0
+
+  * Deprecation notices:
+    * The following functions are deprecated:
+      - launcher_native_libraries_paths
+      - launcher_write_script_headers
+    * The following functions are deprecated for game scripts targeting ./play.it ≥ 2.14:
+      - write_metadata
+      - build_pkg
+      See the section "Changes related to packages generation" below for more details.
+    * Support for the following application types is dropped:
+      - renpy
+      - residualvm
+    * Ignoring errors during calls to archive_extraction can no longer be done using `set +o errexit`,
+      because `set -o errexit` is forced after the call to external tools used to handle the archives.
+      The recommended snippet to use instead is:
+      archive_extraction 'SOURCE_ARCHIVE' 2>/dev/null || true
+    * Support for the unused variable PREFIX_PREPARE is dropped.
+    * DOSBox games: The "userdir_toupper_files" function is no longer included in launchers.
+    * Mono games: Support for "APP_xxx_MONO_OPTIONS" is dropped.
+
+  * Improved support for game expansions:
+    * The expansion id is appended to the package id by default.
+      Explicit PKG_xxx_ID declaration is no longer required for expansions.
+
+  * Changes related to packages generation:
+    * A new function is provided for packages generation: packages_generation
+      It replaces the two following functions:
+      - write_metadata
+      - build_pkg
+
+  * Changes related to files extraction from archives:
+    * An extraction log is stored at: ${PLAYIT_WORKDIR}/logs/archive-extraction.log
+    * Minimal permissions are always applied on extracted files.
+    * MojoSetup archives: unzip is used instead of unar to handle the inner archive.
+
+  * Changes specific to ScummVM games:
+    * Allow omitting APPLICATION_xxx_TYPE for ScummVM applications.
+
+  * Changes specific to WINE games:
+    * Throw an explicit error if a required registry script could not be loaded.
+
+2.23.6
+
+  * Fix error displayed when an unkown archive type is set.
+  * WINE: Fix automatic dependencies addition based on WineD3D renderer.
+
+2.23.5
+
+  * MojoSetup archives: Fix the extraction of the inner .zip archive.
+
+2.23.4
+
+  * Prevent output redirection from leaking after error messages.
+  * Add support for dependencies on extra native libraries.
+
+2.23.3
+
+  * Add support for extra native libraries.
+  * Unity3D: Prevent plugins inclusion failure if no architecture-specific directory is shipped.
+  * Unity3D: Prevent a crash on Linux 6.1 by disabling the MAP_32BIT flag with some Unity3D builds.
+
+2.23.2
+
+  * Fix warning displayed on unsupported GStreamer media format.
+  * Fix content inclusion when using legacy ARCHIVE_xxx_FILES variables.
+  * Do not generate an empty list of unsupported GStreamer decoders.
+  * Add support for extra GStreamer decoders.
+  * Add support for extra native libraries.
+  * Avoid querying unset variables.
+
+2.23.1
+
+  * Display an explicit error on package building failure.
+  * Fix install path for native libraries.
+  * Add support for more native libraries dependencies.
+  * Arch Linux: Fix filling "conflict" and "provides" in package metadata.
+  * Gentoo: Fix setting the list of dependencies on native libraries.
+
+2.23.0
+
+  * Deprecation notices:
+    * Game scripts targeting ./play.it ≥ 2.23 can no longer use the legacy compression values, see "Compression methods rework" in the 2.22.0 section for more details.
+    * Trying to expand an unset variable triggers an error, for game scripts targeting ./play.it ≥ 2.23.
+    * APP_WINE_LINK_DIRS is deprecated, setting it from a game script targeting ./play.it ≥ 2.23 triggers a warning. For games scripts targeting ./play.it ≥ 2.24, it will by ignored silently. See "Improved support for WINE games" below for more details.
+    * PKG_xxx_PROVIDE is deprecated, setting it from a game script targeting ./play.it ≥ 2.23 triggers a warning. For games scripts targeting ./play.it ≥ 2.24, it will by ignored silently. See "Packages metadata improvements" below for more details.
+
+  * Dependencies handling improvements:
+    * The generation of a launcher for the following application types automatically adds the required dependency to the current package:
+      - dosbox
+      - java
+      - mono
+      - renpy
+      - residualvm
+      - scummvm
+      - wine
+    * Dependencies on media formats decoded by GStreamer can be listed using a new variable: PKG_xxx_DEPENDENCIES_GSTREAMER_PLUGINS.
+      The following formats are supported:
+      - avidemux
+      - decodebin
+      - deinterlace
+      - audio/x-wma, wmaversion=(int)1
+      - video/quicktime, variant=(string)iso
+      - video/x-ms-asf
+      - video/x-msvideo
+      - video/x-wmv, wmvversion=(int)1
+
+  * Application type improvements:
+    * The application type can be guessed from the game binary even if it is not in the current package.
+
+  * Packages generation improvements:
+    * A package can now provide/conflict with multiple package names, using a new variable PKG_xxx_PROVIDES
+      One provided name should be written on each line, using line breaks as the list separator.
+    * If all packages are already built, the execution stops early to avoid unnecessary resources and time usage.
+    * Debian: Automatically use old .deb format (0.939000) to avoid size limits.
+
+  * Improved support for Unity3D games:
+    * Shipped plugins for Unity3D games can now be listed using a new dedicated variable: UNITY3D_PLUGINS.
+      If it is set to a non-empty value, it is used during the call to "content_inclusion_default" to include the listed plugins into the path dedicated to shipped libraries. Plugins that are not listed are removed to ensure they are not included later by some "CONTENT_xxx_FILES" greedy pattern.
+
+  * Improved support for WINE games:
+    * A new variable is used to list the paths that should be diverted from the WINE prefix: WINE_PERSISTENT_DIRECTORIES
+      Its value is a list of paths relative to $WINEPREFIX/drive_c, one per line.
+
+  * Improved handling of huge files (>9GB):
+    * Files that are bigger than 9GB should be listed using a dedicated variable: HUGE_FILES_xxx
+      "xxx" is the suffix of the package that includes these files by default, so a list for PKG_DATA would be named HUGE_FILES_DATA.
+    * The files split is done only when building .deb packages, as Arch Linux and Gentoo packages have no size limit.
+
+  * Improved support for Makeself and MojoSetup archives:
+    * The type declaration can be omitted for MojoSetup archives.
+    * Support is added for Makeself archives.
+
+2.22.5
+
+  * Use a single function to handle the copy of the game binary into the prefix.
+  * Fix permissions on the manual pages.
+  * Add support for more native libraries dependencies:
+    - libc++.so.1
+    - libc++abi.so.1
+    - libpcre.so.3
+  * Arch Linux: Improve listing of packages providing generic dependencies.
+  * Arch Linux: Prevent querying of unset variables.
+
+2.22.4
+
+  * Arch Linux: Fix fetching the maintainer name from /etc/makepkg.conf.
+  * Arch Linux: Fix adding multiple dependencies for a single generic keyword.
+  * Gentoo: Fix support for PKG_xxx_PROVIDE.
+  * Gentoo: Prevent querying of unset variables.
+
+2.22.3
+
+  * Ensure function return codes are never hidden behind cat calls.
+  * Ensure package architecture is always fetched using the dedicated function.
+  * Run a late requirements check for icons extraction.
+  * Add support for missing native libraries dependencies:
+    - libutil.so.1
+    - libXmu.so.6
+  * Arch Linux: Rework packages metadata generation to no longer rely on a variable leak.
+  * Arch Linux: Fix libvulkan.so.1 dependency.
+
+2.22.2
+
+  * Improve automatic detection of DOS executables.
+  * Display a list of unknown Mono libraries if some have been required.
+  * Prevent functions failures to be hidden by while loops.
+
+2.22.1
+
+  * Fix inclusion of pre-run/post-run actions in launchers for WINE games.
+  * Improve handling of pre-run/post-run actions in launchers for native games.
+  * Add support for libbz2.so.1 native library dependency.
+
+2.22.0
+
+  * Deprecation notices:
+    * Multiple options are dropped, here are the replacements that should be used:
+      - --icons yes (no replacement, this is the default behaviour)
+      - --icons no → --no-icons
+      - --skip-free-space-check → --no-free-space-check
+      - -c → --config-file
+      - -h → --help
+      - -v → --version
+    * Functions used to fetch packages metadata have been renamed:
+      - packages_get_maintainer → package_maintainer
+      - packages_get_version → package_version (a compatibility alias is provided)
+      - package_get_architecture → package_architecture
+      - package_get_architecture_string → package_architecture_string
+      - package_get_description → package_description
+      - package_get_id → package_id
+    * "launcher_write_script_wine_run" is obsolete, "wine_launcher_run" should be used instead. A compatibility wrapper is provided for game scripts targeting ./play.it < 2.22.
+    * Legacy environment variables (usually "OPTION_xxx") are still exported only for game scripts targeting ./play.it ≤ 2.22. See "Options system rework" below for more details.
+    * The legacy values for --compression are still valid only for game scripts targeting ./play.it ≤ 2.22. See "Compression methods rework" below for more details.
+    * "unity3d" is no longer a full blown application type, but a variant of the application type "native". See "New application type variant system" below for more details.
+    * The internal test "variable_is_set" is dropped. "get_value" no longer throws an error when trying to query an unset variable, it returns an empty value instead.
+
+  * Options system rework:
+    * A new function is provided to fetch the current value of a given option:
+      option_value $option_name
+      As an example, instead of a direct use of the value of the deprecated variable $OPTION_COMPRESSION, the following function call should be used:
+      option_value 'compression'
+    * The game archive is no longer the first mandatory argument when calling the "play.it" command. It can now be provided anywhere on the command line.
+    * All options can be set using environment variables, here is the full list of command line arguments and for each one the equivalent environment variable:
+      - --checksum → PLAYIT_OPTION_CHECKSUM
+      - --compression → PLAYIT_OPTION_COMPRESSION
+      - --config-file → PLAYIT_OPTION_CONFIG_FILE
+      - --debug → PLAYIT_OPTION_DEBUG
+      - --help → PLAYIT_OPTION_HELP
+      - --list-packages → PLAYIT_OPTION_LIST_PACKAGES
+      - --list-requirements → PLAYIT_OPTION_LIST_REQUIREMENTS
+      - --no-free-space-check → PLAYIT_OPTION_FREE_SPACE_CHECK
+      - --no-icons → PLAYIT_OPTION_ICONS
+      - --no-mtree → PLAYIT_OPTION_MTREE
+      - --overwrite → PLAYIT_OPTION_OVERWRITE
+      - --output-dir → PLAYIT_OPTION_OUTPUT_DIR
+      - --package → PLAYIT_OPTION_PACKAGE
+      - --prefix → PLAYIT_OPTION_PREFIX
+      - --show-game-script → PLAYIT_OPTION_SHOW_GAME_SCRIPT
+      - --tmpdir → PLAYIT_OPTION_TMPDIR
+      - --version → PLAYIT_OPTION_VERSION
+      If a same option is set using both an environment variable and a command line argument, the command line argument is ignored.
+
+  * Compression methods rework:
+    * Compression options are no longer specific to the target package format, the same four values are available:
+      - "none":  no compression (default value)
+      - "speed": compression method focusing on compression speed
+      - "size":  compression method focusing on size reduction
+      - "auto":  use the current defaults for the packages generation tool (not supported when building packages for Arch Linux)
+      The legacy values are still available for game scripts targeting ./play.it ≤ 2.22, but their use triggers a deprecation warning. For game scripts targeting ./play.it > 2.22, an error is thrown.
+
+  * New application type variant system:
+    * The application type variant can be set from a game script using the variable "APP_xxx_TYPE_VARIANT". There is only one accepted value for now: "unity3d".
+    * Unity3D games for Windows are no longer wrongly identified as native Linux games if they set "UNITY3D_NAME" but not "APP_xxx_TYPE".
+    * A dedicated per-session log file is used for Unity3D games running through WINE.
+
+  * Changes related to packages:
+    * Environment variables set for Debian tools are followed when trying to get the maintainer name and e-mail.
+
+  * Changes specific to Debian:
+    * The generation of the DEBIAN/control file is moved to a dedicated function.
+    * The package metadata generation is updated to no longer rely on implicit variable inheritance.
+
+  * Dead code removals:
+    * Support is dropped for unused compatibility wrappers:
+      - package_get_current
+    * Support is dropped for unused messages:
+      - error_archive_unset
+      - error_context_invalid
+      - error_no_valid_temp_dir_found
+      - error_obsolete_function
+      - print_ok
+      - warning_missing_library
+    * Support is dropped for unused generic dependency keywords:
+      - bzip2
+      - gconf
+      - libcurl
+      - libcurl-gnutls
+      - sdl1.2
+      - sdl2_image
+      - sdl2_mixer
+      - theora
+      - vorbis
+      - wine-staging / wine32-staging / wine64-staging
+      - xft
+
+2.21.2
+
+  * Display an explicit error when a game script seems to support no archive.
+  * Use dpkg for version strings comparison.
+  * Ensure the pre-run and post-run actions strings always end with a line break.
+  * Add missing native library dependency: libIL.so.1
+  * Gentoo: Add the opengl USE flag to relevant SDL packages.
+
+2.21.1
+
+  * Fix Make rule used to build the library.
+  * Run syntax checks from the Makefile.
+  * Add ability to build release tarballs from Make.
+  * Add support for dependencies on more native libraries:
+    - libaudio.so.2
+    - libcrypt.so.1
+    - libFAudio.so.0
+    - libgomp.so.1
+    - liblcms2.so.2
+    - libpixman-1.so.0
+    - libSDL_kitchensink.so.1
+    - libSDL_sound-1.0.so.1
+    - libsigc-2.0.so.0
+    - libvorbisenc.so.2
+    - libX11-xcb.so.1
+    - libxcb.so.1
+    - libxcb-randr.so.0
+  * Add support for dependencies on more Mono libraries:
+    - OpenTK.dll
+    - OpenTK.Compatibility.dll
+    - OpenTK.GLControl.dll
+  * Prevent non-fatal errors when listing package dependencies.
+  * Fix the error displayed when no supported archive is found.
+  * Add support for "image/x-xpixmap" MIME type for icons.
+
+2.21.0
+
+  * Deprecation notices:
+    * Support is dropped for --icons auto. The only valid values are --icon yes|no, defaulting to --icons yes.
+    * Support for application type "native_no-prefix" is dropped.
+    * For game scripts targeting ./play.it ≥ 2.21, the main archives identifiers must start with "ARCHIVE_BASE". Game scripts targeting an older version can still use the prefix "ARCHIVE" instead.
+    * The following functions are deprecated, but still available through compatibility aliases:
+      - context_specific_value
+      - get_context_specific_value
+      - package_get_current
+    * The following old functions are dropped, with no compatibility alias:
+      - get_context_suffix_archive
+      - get_context_suffix_package
+      - context_specific_name
+      - test_var
+    * Up to ./play.it 2.20, all of these content identifiers were tested when calling "content_inclusion_default" (or "prepare_package_layout" for older game scripts):
+      - LIBS_xxx
+      - LIBS0_xxx
+      - (…)
+      - LIBS9_xxx
+      - GAME_xxx
+      - GAME0_xxx
+      - (…)
+      - GAME9_xxx
+      - DOC_xxx
+      - DOC0_xxx
+      - (…)
+      - DOC9_xxx
+      Starting with ./play.it 2.21, the search stops at the first unset numbered identifier. So if "GAME1_xxx" is not set, "GAME2_xxx" up to "GAME9_xxx" will be skipped.
+      No legacy behaviour is provided for old game scripts.
+    * For WINE games, winecfg launchers are no longer generated.
+      To spawn winecfg using the prefix for a given name, you can run the following command:
+      WINEPREFIX=~/.cache/play.it/wine/${game_id} winecfg
+
+  * New options:
+    * --list-packages: List the packages that would be built from the given archive.
+    * --list-requirements: List the game script requirements for the given archive.
+
+  * Improvements of file type detection based on MIME:
+    * Exclude charset information from "file" output.
+    * Add support for "application/x-sharedlib" MIME type.
+    * Improve detection of PE32 executables.
+
+  * Reworked context system
+    * The following commonly used variables now have context support:
+      - APP_xxx_ID
+      - APP_xxx_NAME
+      - APP_xxx_ICONS_LIST
+      - APP_xxx_SCUMMID
+    * New functions are provided:
+      - context_value: Print the context-sensitive value for the given variable.
+      - context_name: Print the name of the variable containing the context-specific value of the given variable.
+      - context_archive: Print the identifier of the current archive.
+      - context_package: Print the identifier of the current package.
+
+  * Changes related to launchers:
+    * Provide a new function printing the path to a launcher script: launcher_path.
+
+  * Changes related to icons:
+    * Rework "icons_list_all" to include implicit icons (like the ones from Unity3D or WINE games).
+
+  * Changes specific to Mono games:
+    * Dependencies on a list of Mono libraries can be declared with a new dedicated variable: PKG_xxx_DEPENDENCIES_MONO_LIBRARIES.
+
+  * Changes specific to Gentoo:
+    * Use PKG_xxx_DEPS_GENTOO with no transformation, allowing to pass more complex dependency constraints.
+
+  * Other changes:
+    * Provide new warnings and errors to be used when deprecated/obsolete functions are called:
+      - warning_deprecated_function
+      - error_obsolete_function
+    * If EXPANSION_NAME is set, it is automatically included in the output of game_name.
+
+2.20.3
+
+  * Fix usage of pkg_set_deps_gentoo.
+
+2.20.2
+
+  * Display an error when a DOSBox image disk was not found.
+  * Gentoo (egentoo variant): Install data files only if present.
+  * Gentoo: Use correct documentation paths.
+  * Add support for more native libraries.
+  * New generic dependencies:
+    - residualvm
+    - scummvm
+
+2.20.1
+
+  * Drop duplicate declaration of message function "error_variable_not_set".
+  * Update documentation with the "--config-file" option.
+  * application_icons_list - Fix support for archive context.
+  * applications_list - When parsing the game script, avoid printing duplicates.
+  * debian_dependencies_full_list - Fix listing when both PKG_xxx_DEPS_DEB and PKG_xxx_DEPENDENCIES_LIBRARIES are set.
+  * Add support for MIME type "application/vnd.microsoft.portable-executable".
+
+2.20.0
+
+  * Deprecation warnings:
+    * APP_xxx_PRERUN/APP_xxx_POSTRUN behaviour is changed for DOSBox game scripts targeting ./play.it ≥ 2.20. See "Changes specific to DOSBox" below for more details.
+    * "package_get_path" is now a compatibility wrapper around "package_path". See "Changes related to packages" below for more details
+
+  * Codebase improvements:
+    * Provide new variable manipulation helpers:
+      - variable_is_set
+      - variable_is_empty
+    * Rework multiple functions to avoid querying unset variables.
+
+  * Changes related to packages:
+    * A new function "package_name" is provided, returning the file name of a given package.
+    * Packages are prepared in "${PLAYIT_WORKDIR}/packages" instead of the root of "$PLAYIT_WORKDIR".
+    * The function returning the path to the directory where a given package is prepared is renamed from "package_get_path" to "package_path".
+
+  * Changes specific to DOSBox:
+    * Drop special behaviour when using APP_xxx_PRERUN/APP_xxx_POSTRUN.
+      Game scripts targeting ./play.it < 2.20 are unaffected, commands set using APP_xxx_PRERUN/APP_xxx_POSTRUN are still run from inside DOSBox.
+      For games scripts targeting ./play.it ≥ 2.20, commands set using APP_xxx_PRERUN are run before spawning DOSBox, and commands set using APP_xxx_POSTRUN are run after exiting DOSBox.
+      Two new variables are provided to set commands that should be run inside DOSBox:
+      - APP_xxx_DOSBOX_PRERUN
+      - APP_xxx_DOSBOX_POSTRUN
+
+  * Changes specific to Mono:
+    * Add ability to run games without a local user prefix.
+
+  * Changes specific to Gentoo:
+    * Change egentoo output paths. Instead of making packages in data, amd64 and x86 directories, ebuilds are now created in an overlay/games-playit directory and packages in a packages directory.
+    * With egentoo variant, generate only one ebuild and one tar archive, with a bit more complexity in the ebuild, in order to decide which content to install.
+
+2.19.1
+
+  * Ensure errors during calls to "game_id" are always blocking.
+  * Gentoo: Fix dependencies handling.
+  * Gentoo: Ensure libstdc++.so.6 is provided by the correct package.
+
+2.19.0
+
+  * Deprecation warnings:
+    * The legacy variables for content inclusion are no longer supported for game scripts targeting ./play.it ≥ 2.19:
+      - ARCHIVE_xxx_PATH
+      - ARCHIVE_xxx_FILES
+      The new variables introduced with ./play.it 2.18 must be used instead:
+      - CONTENT_xxx_PATH
+      - CONTENT_xxx_FILES
+      The legacy ones can still be used only from game scripts targeting ./play.it ≤ 2.18.
+    * The following global variables are still available, but are deprecated:
+      - PATH_BIN
+      - PATH_DESK
+      - PATH_DOC
+      - PATH_GAME
+      - PATH_ICON_BASE
+    * "APP_xxx_LIBS" is deprecated, game scripts should no longer rely on it.
+      Libraries installed under /usr/lib/games/${GAME_ID} are automatically added to LD_LIBRARY_PATH.
+    * The following internal functions are dropped:
+      - launcher_write_script_dosbox_application_variables
+      - launcher_write_script_dosbox_run
+      - launcher_write_script_java_application_variables
+      - launcher_write_script_java_run
+      - launcher_write_script_mono_application_variables
+      - launcher_write_script_mono_run
+      - launcher_write_script_native_application_variables
+      - launcher_write_script_native_run
+      - launcher_write_script_nativenoprefix_run
+      - launcher_write_script_native_run_common
+      - launcher_write_script_renpy_run
+      - launcher_write_script_residualvm_application_variables
+      - launcher_write_script_residualvm_run
+      - launcher_write_script_scummvm_application_variables
+      - launcher_write_script_scummvm_run
+    * "application_type" no longer fails if no type could be found.
+      Support for the special fallback value "unknown" is dropped, as its only purpose was to avoid the error on empty application type.
+    * "package_get_current" no longer falls back on "PKG_MAIN", see "Changes related to packages" below for more details.
+
+  * Improved integration of shipped libraries
+    * In addition to standard system paths, libraries are loaded from the following paths, ordered from lower priority to higher priority:
+      - APP_xxx_LIBS (deprecated)
+      - /usr/lib/games/${GAME_ID} (/usr is replaced by the custom install prefix)
+      - ${HOME}/.local/lib/games/${GAME_ID}
+    * In addition to game data files and documentation files, "content_inclusion_default" now automatically fetches listed native libraries and put them into a specific install path.
+      The native libraries can be listed using global variables similar to the ones already in use:
+      - CONTENT_LIBS_xxx_PATH
+      - CONTENT_LIBS_xxx_FILES
+      As with game data files and documentation files, as single-digit number can be appended to "LIBS":
+      - CONTENT_LIBS0_xxx_FILES
+      - CONTENT_LIBS1_xxx_FILES
+      - (…)
+      - CONTENT_LIBS9_xxx_FILES
+
+  * New dedicated functions printing install paths are available:
+    - path_binaries
+    - path_xdg_desktop
+    - path_documentation
+    - path_game_data
+    - path_icons
+    - path_libraries
+    These should be used instead of the deprecated "PATH_xxx" variables.
+
+  * Rework launchers generation
+    * Game execution failure no longer prevents the execution of post-run actions.
+    * The late extra eval step of JAVA_OPTIONS and MONO_OPTIONS is dropped, no current game script was relying on these.
+    * APP_xxx_OPTIONS support is added to ResidualVM and ScummVM launchers.
+
+  * Changes related to icons integration:
+    * Rework icons requirement check to no longer rely on applications.
+    * Add support for archive context to application_icons_list.
+    * If no icon is set for a WINE application, try to extract one from the game binary.
+
+  * Changes related to applications:
+    * Update applications_list to follow the archive context.
+    * Add automatic application type detection based on file type, APP_xxx_TYPE declaration is now optional in more cases.
+
+  * Changes related to packages:
+    * Extend the list of supported native libraries for packages dependencies declarations.
+    * package_get_current returns the first package of the list of packages to build if no value is explicitly set, instead of the previously hardcoded value "PKG_MAIN".
+
+  * Other changes:
+    * Drop system-specific install prefix. The default install prefix is now the same for all supported systems: /usr
+    * Do not run a full dependencies check when initializing an archive, only the presence of the dependencies required to handle the current archive is tested.
+    * Set working directory path as soon as the archive is found.
+    * Automatically add dependency on winetricks if APP_WINETRICKS is set.
+
+2.18.3
+
+  * content_path_default - Do not throw an error if no default path is set.
+  * Extend the list of supported native libraries for packages dependencies declarations.
+  * Add a format check for package id.
+  * WINE: Fix APP_WINE_LINK_DIRS failure on non-empty target.
+
+2.18.2
+
+  * Add ability to get the name of a context-specific variable, using a new dedicated function: context_specific_name.
+    This new function should not be used from game scripts before ./play.it 2.19 release.
+  * Fix dependencies addition using dedicated functions.
+  * Extend the list of supported native libraries for packages dependencies declarations.
+
+2.18.1
+
+  * Identify SteamOS as an Arch Linux derivative.
+  * Extend the list of supported native libraries for packages dependencies declarations.
+  * archive_dependencies_check - Include archive extra parts during extraction dependencies check.
+  * icons_inclusion - Fail explicitly if called with no argument and no applications list can be guessed.
+  * launcher_write_script - Throw an explicit error if called with an empty argument.
+  * print_instructions - Clear the list of unknown libraries after it has been displayed once.
+
+2.18.0
+
+  * Changes related to archive contents inclusion:
+    * CONTENT_xxx_PATH is a new variable replacing ARCHIVE_xxx_PATH.
+    * CONTENT_xxx_FILES is a new variable replacing ARCHIVE_xxx_FILES.
+    * content_inclusion is a new function replacing organize_data.
+    * content_inclusion_default is a new function replacing prepare_package_layout.
+
+  * Changes related to packages:
+    * Provide a new dependency system for native libraries, using a new variable:
+      PKG_xxx_DEPENDENCIES_LIBRARIES
+    * Support is added for extra native libraries.
+
+  * Changes specific to WINE:
+    * WINEDLLOVERRIDES can be overridden at runtime.
+    * Provide persistent storage for registry keys, using a new dedicated variable:
+      WINE_REGEDIT_PERSISTENT_KEYS
+    * Add ability to set the Direct3D renderer using WINE_DIRECT3D_RENDERER.
+
+  * Other changes:
+    * Drop messages on completion of long tasks.
+
+  * Codebase improvements:
+    * Rework prefix generation for WINE games.
+
+2.17.2
+
+  * Prefixes - Fix handling of symbolic links in read-only game data
+  * icons_move_to (deprecated) - Drop declaration of unused variable
+  * Improve automatic package format setting
+  * Identify Artix as an Arch Linux derivative
+
+2.17.1
+
+  * icons_get_from_legacy_path - Fix clean-up step, to avoid an error from rmdir.
+
+2.17.0
+
+  * Changes related to launchers:
+    * Prefix type can be set at the application level (using APP_xxx_PREFIX_TYPE)
+      or for all applications (using APPLICATIONS_PREFIX_TYPE), with the following valid values:
+      - symlinks: generate our usual symbolic links farm, the default for most application types
+      - none: the game is run from the read-only system directory, the default for ScummVM and ResidualVM
+    * Prefix path can be overridden for the current game session by setting PLAYIT_PREFIX_PATH
+      The default value is: ~/.cache/play.it/prefixes/${GAME_ID}
+    * WINE prefix path follows WINEPREFIX if it is set. If the variable is unset, it defaults to:
+      ~/.cache/play.it/wine/${GAME_ID}
+    * A single directory is used for persistent storage of user data.
+      It can be set using PLAYIT_PERSISTENT_USER_PATH, and defaults to:
+      ~/.local/share/games/${GAME_ID}
+    * The undocumented runtime variable PREFIX_ID is no longer supported.
+
+  * Changes related to archives:
+    * New archive type "tar.bz2".
+    * For multi-part archives, type is optional for extra parts.
+    * Allow use of unzip for data extraction from mojosetup archives, if bsdtar is not available.
+    * Force the use of a specific tool for content extraction:
+      - An archive extractor can be set with ARCHIVE_xxx_EXTRACTOR
+      - An options strings can be set with ARCHIVE_xxx_EXTRACTOR_OPTIONS
+
+  * Changes related to icons:
+    * Icons inclusion is now done using a single function, icons_inclusion.
+    * The following functions are deprecated:
+      - icons_get_from_package
+      - icons_get_from_workdir
+      - icons_move_to
+
+  * Other changes:
+    * Drop option to do partial runs with no actual disk write.
+      (--dry-run option)
+    * New option provided to change ./play.it working path: --tmpdir
+      The default value is $TMPDIR, falling back on /tmp
+
+  * Codebase improvements:
+    * New layout for source files.
+    * Use a dedicated check to detect unexpected empty variables.
+
+2.16.2
+
+  * applications_list - Throw an explicit error on unexpected empty list.
+  * prepare_package_layout - Prevent PKG value changes to leak outside of the current function call.
+
+2.16.1
+
+  * icons_list_dependencies - Rely on application_icons_list to get the list of icons.
+  * launcher_write_desktop - Drop requirement on APP_xxx_TYPE.
+  * get_context_specific_value:
+    - Do not try to guess a package identifier if none is set.
+    - Do not look for an archive-specific value before an archive is set.
+  * Check for dependencies only after the main archive is set.
+
+2.16.0
+
+  * Major changes:
+    * Game scripts are no longer provided by this repository,
+      they should instead be fetched from dedicated collections.
+      The main official game scripts collection is available from
+      https://forge.dotslashplay.it/play.it/games
+    * Drop support for selective architecture building
+      (--architecture option)
+    * Disable debug support by default,
+      its inclusion is now done through a build flag.
+    * A new extended man page is provided,
+      available in both English and French.
+
+  * Codebase improvements
+    * Rewrite the code used to generate and update the volatile game prefixes.
+    * Rework the code handling data extraction from archives.
+    * Launchers: Escape single quotes in binary file name.
+    * Applications: Allow setting package-specific versions of several
+      application properties.
+
+  * Changes specific to WINE:
+    * Add ability to set a custom path to `wine` command,
+      using a new environment variable: PLAYIT_WINE_CMD
+
+  * Changes specific to ScummVM:
+    * Improve ScummVM ID validation.
+
+  * Changes specific to Debian:
+    * Drop support for installation instructions relying on dpkg
+      (useful only for apt versions older than 1.1)
+
+  * Changes specific to Arch Linux:
+    * Restore the generation of the .MTREE package metadata file.
+      Its generation can be skipped with --no-mtree.
+
+  * Changes specific to Gentoo:
+    * Ensure the directory used to prepare packages allows files execution.
+    * Append script revision to package version number.
+
+2.15.1
+
+  * WINE: Set compatibility links to legacy user paths
+  * Drop direct calls to PACKAGES_LIST environment variable
+  * Fix behaviour of archive_find_path when the archive variable contains
+    an absolute path
+
+2.15.0
+
+  * New features:
+    * All command line options can now be set through a configuration file,
+      its path can be set with --config-file some_path and defaults to:
+      $XDG_CONFIG_HOME/play.it/config
+    * --show-game-script - display the path to the game script that would be
+      used for a given archive, but take no action
+
+  * General improvements:
+    * New functions used to fetch game-related values:
+      * game_id   - print the id of the current game
+      * game_name - print the display name of the current game
+    * Provide a new variable CONTENT_PATH_DEFAULT, used as a default value for
+      ARCHIVE_xxx_PATH
+    * Setting the current package to a value that is not included in the list
+      of packages to build triggers an error
+    * Rely on MIME type for icon type detection, instead of file extension
+    * application_type can now be passed a fallback value
+
+  * Changes specific to Debian:
+    * Improve handling of dependency to WINE
+
+  * Changes specific to Gentoo:
+    * Use unpacker eclass when using a non-standard compression option
+    * Drop support for lzop compression
+    * Replace spaces by tabulations and linefeeds in pkg_deps
+    * Refactor compression handling
+
+2.14.4
+
+  * Fix ambiguous quoting when using prefix/suffix pattern removal
+
+2.14.3
+
+  * Fix ability to call the wrapper with --help
+  * WINE: Fix a failure to get the path to current package when generating the
+    .desktop launcher for winecfg
+  * Gentoo: Update icon cache after installation and removal
+  * Gentoo: Fix "provides" fields for ebuild generation
+
+2.14.2
+
+  * Ensure all errors related to fetching the path where a package is prepared
+    are blocking
+  * Fix fetching current package when getting the path where a .desktop file
+    should be written
+  * Fall back on guessed value for game binary only if no value has been
+    explicitely set
+  * Improve handling of failure state on errors
+
+2.14.1
+
+  * Only use application type guessing if none is explicitely set
+  * Drop ShellCheck "disable" directives for non-POSIX local usage
+  * Ensure invalid application type always throws blocking errors
+  * Fix fetching application type
+  * Show an explicit error when tolower/toupper is given an invalid target
+
+2.14.0
+
+  * New features:
+    * Archives: Add support for tar.xz archives
+    * Engines: Improve support for Unity3D games, with a new dedicated application type
+    * Launchers: Provide new functions used to display localized messages
+    * Launchers: Add a new hook for commands to run before the initialization of the game prefix
+    * Launchers: Provide a new function used to convert filenames case
+    * Icons: Add support for X PixMap icons (.xpm)
+
+  * General improvements:
+    * Improve the validity tests run when setting temporary directories
+
+  * Packages-related improvements:
+    * Always use the archive-specific list of packages when available
+    * Add several new dependency keywords
+
+  * Installation:
+    * The default path for installing the "play.it" command as a non root user
+      is now "$HOME/.local/bin", instead of "$HOME/bin"
+    * The path for installing game scripts is now $(datadir)/play.it/games/50_core,
+      where $(datadir) defaults to:
+      - /usr/local/share/games for installation as root
+      - $XDG_DATA_HOME for installation as a non-privileged user
+
+  * Code maintenance:
+    * A new source file is used for functions dedicated to variable manipulations
+    * A new function is provided for getting context-specific variable values
+    * Provide new helper functions easing the manipulation of applications and icons
+    * Launchers: Rework the generation of the XDG desktop files
+
+  * Deprecation notices:
+    * get_archive_specific_value is no longer available
+    * use_archive_specific_value and use_package_specific_value are now
+      compatibility aliases around the new function get_context_specific_value
+
+2.13.3
+
+  * Redirect all debug messages to /dev/stderr
+  * Gentoo: Stop emerge on errors
+  * Arch Linux: Drop generation of .MTREE metadata file
+
+2.13.2
+
+  * Fix getting icon path for pre-2.8 game scripts with globs expanding to spaces
+  * Improve the search for a proper working directory
+  * Improve function descriptions in the icons source file
+  * Gentoo: Use fakeroot (≥1.25.1) instead of fakeroot-ng
+
+2.13.1
+
+  * Fix data migration from volatile prefix to persistent paths
+  * Fix filenames case conversion failure on non-ascii characters
+  * Fix wrapper installation path
+  * Gentoo: Ensure sdl2-image is built with png and jpeg support
+
+2.13.0
+
+  * New features:
+    * New option --version (or -v), displaying the library version
+    * Debug notices, disabled by default, enabled with --debug
+    * Archives: Add support for InstallShield installers
+    * Engines: Add ability to use system-provided Ren'Py
+    * Packages: Add support for extra compression methods: lz4, lzip, lzop and zstd
+    * Packages: Add an alternative output format targeting Gentoo
+
+  * The installation process GNU Make has been improved to allow targeted actions:
+    install-library, install-games, install-wrapper and install-manpage
+
+  * Archive-related fixes and improvements:
+    * Use a new archives naming convention, more robust, see our documentation for details:
+      https://forge.dotslashplay.it/play.it/doc/-/wikis/dev/scripts/variables#base-archives
+    * Rewrite functions related to archives initialization
+    * .deb archives: Extract data without relying on dpkg-deb only
+    * Fix the error shown when an archive type is not set and could not be guessed
+    * Fix the error shown when an unknown archive type is used
+
+  * WINE-specific improvements:
+    * Do not override WINEDEBUG if it is already set by the user
+    * Provide a standard method to divert arbitrary files from the WINE prefix
+      to persistent user-writable paths
+
+  * Packages-related changes:
+    * Provide wrapper functions to get package-related informations, including
+      packages metadata
+    * New generic dependency keywords
+    * Improve handling of supported compression methods based on the target
+      package format
+    * Debian: Update dependency on libgdk_pixbuf-2.0.so.0
+    * Gentoo: Change default installation prefix to /usr from /usr/local
+
+  * Environment checks:
+    * Run early filesystem checks, allowing to detect failure that would
+      happen only at the packages building step
+    * New function version_is_at_least comparing two version strings using
+      the "x.y.z" format
+
+  * Deprecation notices:
+    * icons_linking_postinst is now a compatibility wrapper around standard
+      icons extraction functions
+
+2.12.2
+
+  * Archives-related improvements:
+    * Improve compatibility check for InnoSetup archives
+
+  * Icons-related fixes:
+    * Avoid a potential infinite loop in the icons resolution guessing
+      function
+    * Fix compatibility with GraphicksMagic compatibility wrapper for
+      ImageMagick
+
+  * Package-related fixes and improvements:
+    * Arch Linux: Add support for EndeavourOS as an Arch Linux derivative
+    * Fix getting hostname on systems without /etc/hostname
+
+  * Errors handling:
+    * Fix error message displayed when passing an invalid value to a supported
+      option
+    * Improve handling of error cases related to empty variables
+    * Fix error message shown when there was not enough disk space in tested
+      temporary directory candidates
+
+  * Codebase improvements:
+    * Use grep --quiet instead of output redirection
+
+2.12.1
+
+  * Wrapper fixes:
+    * Fix script detection from archive name
+
+  * Archive-related fixes:
+    * .zip archives: Drop selected files extraction using unzip
+
+  * Package-related improvements:
+    * Arch Linux: Use multithreaded xz compression by default
+    * Arch Linux: Fix packages building failure when using --output-dir with a
+      relative path
+    * Arch Linux: Generate a .MTREE metadata file
+    * Debian: Improve APT version detection
+
+  * Dependencies-related improvements:
+    * Show a more explicit message if icotool or wrestool is required but
+      missing
+
+  * Launchers-related fixes
+    * Avoid broken .desktop Exec field when using spaces in the install prefix
+
+  * Icons-related fixes:
+    * Fix icons_move_to failure when targeting a non-empty directory
+
+  * Codebase improvements:
+    * Drop the dependency on hostname
+    * Unset variables that we do not want to import from the user environment
+
+2.12.0
+
+  * New options:
+    * --output-dir: Set the output directory for generated packages
+    * --overwrite: Replace packages if they already exist
+    * --icons: Allow including icons only if dependencies are present
+
+  * Wrapper changes:
+    * Drop $XDG_RUNTIME_DIR from the candidates for temporary directories
+    * Prevent scan of unneeded directories
+    * Drop script identification by MD5 hash
+
+  * Archive-related changes:
+    * Only extract needed files when using unzip
+    * Allow to use renamed installers
+    * Add support for LHA archives extraction
+
+  * Engines-related changes:
+    * New engine: ResidualVM
+    * New engine: System-provided Mono runtime
+    * DOSBox: Use PLAYIT_DOSBOX_BINARY in launchers if defined
+
+  * Packages-related changes:
+    * Add ability to set variables for package-specific postinst and prerm
+      scripts
+    * Arch Linux: Improve consistence of 32-bit packages naming
+
+  * New helper functions:
+    * version_target_is_older_than: Check if the game script target version is
+      older than a given one
+    * toupper: Convert files name to upper case
+
+  * New generic dependency keywords:
+    * libgdk_pixbuf-2.0.so.0
+    * libglib-2.0.so.0 / libgobject-2.0.so.0
+    * libmbedtls.so.12
+    * libpng16.so.16
+    * libopenal.so.1 (alias for "openal")
+    * libSDL2-2.0.so.0 (alias for "sdl2")
+    * libturbojpeg.so.0
+    * libuv.so.1
+    * libvorbisfile.so.3 (alias for "vorbis")
+    * libz.so.1
+
+  * Codebase clean-up and improvements:
+    * Massive rework of all message-related functions
+    * Drop hardcoded paths for icons and .desktop launchers
+    * Use system-specific default installation prefix for generated packages
+    * Forcefully set errexit setting on library initialization
+    * Use dirname/basename instead of built-in shell patterns
+
+2.11.4
+
+  * Throw an explicit error when trying to write a launcher for a missing
+    binary
+
+  * Use safer `find | while read` constructs in prefix functions
+
+  * Drop unrequired spawning of subshell by organize_data
+
+  * Drop unrequired spawning of subshell by move_icons_to
+
+  * Ensure $PLAYIT_WORKDIR is always an absolute path
+
+  * Arch Linux: Fix bugs in dependencies handling
+
+  * Debian: Fix APT version detection with APT ≥ 2.0.0
+
+  * Debian: Enforce correct permissions for packages metadata
+
+  * Gentoo: Update download link for quickunpkg
+
+2.11.3
+
+  * Fix cdrom type (file or directory) detection for DOSBox games
+
+  * Use -eq instead of = for arithmetic comparisons
+
+  * Update link to issues tracker
+
+  * Improve handling of 7z archives extraction
+
+  * Improve error messages shown when a required script dependency is missing
+
+  * Spawn a terminal when calling winetricks, so its actions are no longer
+    hidden from users not running their games from a terminal
+
+  * Use convmv when available for converting file names to lower case, as it
+    has better performances than our custom-made function
+
+  * Fix argument usage for check_option_validity, and move it outside of
+    play.it-2/src/99_init.sh
+
+  * Arch Linux: Advertise ./play.it in the generated packages metadata
+
+  * Arch Linux: Fix builddate entry in the generated packages metadata
+
+  * Arch Linux: Improve support for libarchive implementation of tar
+   ("bsdtar") when building packages
+
+  * Debian: Improve handling of WINE dependency, thanks to Jens Reyer for the
+    help on debian-wine mailing list
+
+  * Gentoo: Fix default compression method for generated packages
+
+  * Gentoo: Drop abi_x86_32 abi_x86_32 USE flag for app-emulation/winetricks
+    dependency
+
+2.11.2
+
+  * Do not throw an error when a script has been called with --dry-run and an
+    icon file is not found
+
+  * Move all compatibility aliases to a dedicated source file
+
+  * glx meta-dependency do not install a transitional package anymore on
+    recent Debian versions
+
+  * Allow to skip control of InnoSetup version used in archive passed to
+    innoextract
+
+  * New test: Run a single game script in dry mode once for each supported
+    archive
+
+  * Check for file existence when an archive is given as argument to a
+    game-specific script
+
+  * Display an error when an unknown application type is used
+
+  * When extracting multiple icons at once, ensure that they won’t override
+    the ones extracted before them
+
+  * Fix get_archive_specific_value / get_package_specific_value on corner
+    cases, by dropping avoidable calls to eval
+
+  * Use cabextract’s -L option to extract files as lowercase
+
+  * Gentoo packages: bump EAPI version to 7
+
+2.11.1
+
+  * Fix apt version detection on old versions of apt
+
+2.11.0
+
+  * Add ability to generate packages for Gentoo, using --package=gentoo
+
+  * Rewrite of launchers-related functions. Compatibility wrappers still
+    exist for old functions
+
+  * archive_guess_type: Automatically set ARCHIVE_TYPE for 7-zip archives
+
+  * Nixstaller archives: Guess header length instead of using hardcoded value
+
+  * Improve support for Java games
+
+  * pkg_write_*: Reliably use archive-specific dependencies list when
+    available
+
+  * New option --skip-free-space-check: Bypass free space check, create
+    temporary directories under $TMPDIR, defaults to /tmp
+
+  * Fix issue with pre-2.8 compatibility code in icons_linking_postinst
+
+  * move_icons_to: Fix crash when --prefix is set to a custom value
+
+2.10.5
+
+  * select_package_architecture: Fix bug when using --architecture=64 (or
+    --architecture=auto on 64-bit systems) on an archive providing 32-bit
+    binaries only
+
+2.10.4
+
+  * Improve ShellCheck tests coverage
+
+  * Do not let empty dirs lingering after uninstallation using make
+
+  * main script: Fix wrong usage of 'return' instead of 'exit'
+
+  * main script: Update search paths for library and game scripts
+
+  * help: Fix usage instructions when called from main script
+
+  * packages_guess_format: Fix falling back on default package format value
+    when host OS couldn’t be guessed
+
+  * icons_get_from_path: Fail with an explicit error message if called with an
+    empty icon path
+
+  * print_instructions: Improve message readability
+
+  * write_bin - init_prefix_dirs: Fix use of globbing when setting the paths to
+    user directories
+
+2.10.3
+
+  * write_bin - init_prefix_files: Do not ignore symbolic links in
+    $CONFIG_PATH / $DATA_PATH when generating or updating prefix
+
+  * pkg_write_deb: Always set "Multi-Arch: foreign" in packages meta-data,
+    fixes issues when trying to install DLC for 32-bit games on 64-bit systems
+
+2.10.2
+
+  * write_bin_run_native: Restore pre-2.10.1 version, as the 2.10.1 fix has
+    unexpected side effects
+
+2.10.1
+
+  * Drop pre-built library from repository
+
+  * make install: Use different default paths if not run as root
+
+  * Arch Linux: Add missing package to generic dependency 'gcc32'
+
+  * archive_extraction_innosetup: Hide innoextract warnings during extraction
+
+  * write_bin_build_wine: Always sleep 1 second after using winetricks, as
+    some tweaks won’t apply directly if the game is called to quickly
+
+  * Set input field separator to default value (space, tab, newline)
+
+  * write_bin_run_native: Remove unneeded duplicated code
+
+2.10.0
+
+  * get_tmp_dir: New function allowing to set a temporary working directory by
+    setting $TMPDIR
+
+  * New archive type 'iso', using bsdtar for data extraction
+
+  * get_value: New helper function allowing to get the value of a variable
+    using a dynamically generated name
+
+  * New meta-dependencies 'libudev1' and 'theora' respectively providing
+    libudev.so.1 and libtheora.so.0
+
+  * New archive type 'innosetup1.7', allowing to ensure that InnoExtract >= 1.7
+    is available
+
+  * icon_file_not_found_error: New function displaying an error if some
+    function should work on an icon file that could not be found
+
+  * write_bin_run_dosbox: Improve handling of CD-ROM images for DOSBox games
+
+  * Add support for bzip2 compression
+
+  * Set all application-specific variables even for ScummVM games
+
+2.9.2
+
+  * set_temp_directories: Improve the generation of the temporary work
+    directory, dropping "mktemp --dry-run" usage
+
+2.9.1
+
+  * extract_data_from: Do not print "OK" after innosetup variants extraction
+    (progress already has a visual feedback)
+
+  * Better handling of game updates and DLC (un)installation by automatically
+    updating the user prefix on each game launch
+
+  * meta-script: if called without argument, show usage instructions
+
+  * icon_get_resolution_from_file: Fix a bug with pre 2.8 scripts where the
+    resolution value of the first analyzed file would be kept for all files
+
+2.9.0
+
+  * Update license file to keep track of all authors
+
+  * New generic dependency: libcurl
+
+  * Remove shebang from library, as it is always meant to be sourced, never
+    directly executed
+
+  * Makefile: Add ability to choose the installation path, now defaulting to
+    /usr/local/share/games/play.it for library and scripts, and
+    /usr/local/games for meta-script
+
+  * Makefile: Do not install play.it 1.x scripts and library anymore
+
+  * meta-script: Add manpage
+
+2.8.3
+
+  * Fix typo in help(), that led to suboptimal wording when called on a script
+    with a single supported archive (previous 2.8.2 fix was incomplete)
+
+  * Add automated shellcheck tests based on GitLab CI
+
+  * Improve syntax based on shellcheck 0.5.0 report
+
+2.8.2
+
+  * icon_extract_ico_from_exe: Suppress wrestool error output
+
+  * icon_get_resolution_from_file: Fix compatibility with scripts targeting
+    library version 2.7 or older in a more robust way than what has been done
+    in 2.8.1
+
+  * Fix typo in help(), that led to suboptimal wording when called on a script
+    with a single supported archive
+
+2.8.1
+
+  * Fix icon_get_resolution_from_file and icons_linking_postinst compatibility
+    with scripts targeting library version 2.7 or older
+
+  * WINE: Do not remove links to $HOME for scripts targeting library version
+    2.7 or older
+
+2.8.0
+
+  * Greatly reduce time taken by play.it meta-script to identify the correct
+    script for an archive, by using file name before falling back on MD5 hash
+    sum
+
+  * WINE: Remove most links pointing outside of the WINE prefix, to reduce
+    $HOME clutter
+
+  * Rework most icon-related code for easier understanding and maintenance
+
+  * Use ImageMagick to extract .png files from .ico containers
+
+  * Update dependencies automatic detection based on new icon extraction
+    methods
+
+2.7.5
+
+  * Fix sort_icons behaviour when icon extraction produced a single file
+
+  * meta-script: Fix broken support for ./play.it 1 scripts
+
+2.7.4
+
+  * Fix write_bin_winecfg breaking init_prefix_dirs in winecfg launcher
+
+2.7.3
+
+  * archive_extraction_innosetup: Fix InnoSetup version test
+
+  * Fix archives_get_list not detecting archives named ARCHIVE_(…)_OLD
+
+  * Fix error message displayed by write_metadata when called on an unknown
+    package
+
+2.7.2
+
+  * Fix an inverted test in archive_get_infos that broke the MD5 integrity
+    check again, the 2.6.2 fix having been accidentally reverted on 2.7.0
+    release
+
+2.7.1
+
+  * Fix variable leak during multi-parts archive automatic handling
+
+2.7.0
+
+  * InnoSetup archives: Check ability of available innoextract version to
+    extract the target archive before trying to proceed with extraction
+
+  * Try to guess the value of ARCHIVES_LIST if it is not set by the script
+
+  * Use 'APP_ICON' as a fallback value for APP_ICONS_LIST if it is not set
+
+  * Add automatic detection of multi-parts archives
+
+  * New function get_package_version allowing a reliable way to use different
+    version values for multiple packages generated from a single archive
+
+2.6.2
+
+  * Fix an inverted test in archive_get_infos that broke the MD5 integrity
+    check
+
+2.6.1
+
+  * Fix postinst_icons_linking not working on more than one single app
+
+  * Rework most archive-related code for easier understanding and maintenance
+
+2.6.0
+
+  * Add ability to build only packages for a given architecture
+
+  * Add automatic architecture handling to print_instructions
+
+  * New function prepare_package_layout providing a wrapper for organize_data
+
+  * Improve sort_icons so it can be used on single .png file produced by
+    convert
+
+  * Add --dry-run switch, running tests but not extracting data nor building
+    packages
+
+  * Use a dedicated function to guess package format to build from host OS
+
+2.5.3
+
+  * When no supported archive is provided, add download URL to archives list
+
+  * Fix variable leaking function scope when calling print_instructions
+
+  * Follow symblic links when copying native game binary in user prefix
+
+2.5.2
+
+  * Fix init_prefix_files crashing when some files exist in PATH_DATA or
+    PATH_CONFIG with no equivalent in PATH_PREFIX
+
+2.5.1
+
+  * Add a patch allowing to chose wether or not the desktop files should
+    include the full path to the launcher script (default includes it and does
+    not use $PATH, so custom values for installation prefix can be used
+    without further tweaking)
+
+  * Improve patches syntax following ShellCheck feedback
+
+  * Display an error when using an invalid value for PKG
+
+  * Fix error displayed if calling extract_icon_from on an unsupported file
+    type
+
+  * Improve user prefix generation
+
+  * Improve library syntax following ShellCheck feedback
+
+2.5.0
+
+  * Add support for games requiring wine-staging patches
+
+  * Add support for 64-bit WINE games
+
+  * Add support for Windows MSI installers
+
+  * Add support for Microsoft cabinet archives
+
+  * New archive type 'nullsoft-installer'
+
+  * New archive type value 'innosetup_nolowercase' allowing to skip files
+    names conversion to lower case
+
+  * New archive type 'zip_unclean'
+
+  * New function use_package_specific_value allowing to get package-specific
+    value for a given variable name (if such value exists)
+
+  * New function use_archive_specific_value allowing to get archive-specific
+    value for a given variable name (if such value exists)
+
+  * Add 'xrandr' and 'xgamma' to the generic dependencies
+
+  * Add automatic dependencies detection for archive types 'mojosetup_unzip'
+    and 'tar'
+
+2.4.2
+
+  * Fix handling by init_prefix_files of files created after the first game
+    launch
+
+2.4.1
+
+  * Fix messed up icon path when using get_icon_from_temp_dir
+
+2.4.0
+
+  * Add option to load regedit files on WINE prefix initialization
+
+  * New function get_icon_from_temp_dir, to get an icon in .png format
+    directly from the source archive
+
+2.3.2
+
+  * Fix launchers broken in 2.3.1
+
+2.3.1
+
+  * Use full path to game binary in launchers, to avoid issues when using
+    non-default install path
+
+  * Do not store temporary files outside of prefix
+
+  * Drop post-run user directories clean-up, redundant with another function
+
+2.3.0
+
+  * Improve handling of MojoSetup extraction with unzip ending with an error
+    code
+
+  * Improve handling of user directories
+
+  * Add new packages to the list of generic dependencies
+
+  * Add a patch allowing to change the default package compression method
+
+  * Remove the need to manually clean-up package scripts
+
+  * Preserve symbolic links when copying files
+
+2.2.0
+
+  * Automatically detect archive type for *.rar files
+
+  * Allow to use multiple fallback values for $ARCHIVE_PATH and $ARCHIVE_FILES
+
+  * Make /tmp/play.it world-writable to allow using ./play.it more easily on
+    shared systems
+
+  * Allow to set package-specific values for $APP_OPTIONS, $APP_PRERUN and
+    $APP_POSTRUN
+
+  * Add $APP_POSTRUN support to WINE launchers
+
+  * Skip building already existing packages
+
+  * New distro-agnostic method to declare dependencies
+
+2.1.1
+
+  * Fails gracefully if organize_data() is called before setting $PKG
+
+  * Fix a bug where postinst_icons_linking() would erase the prerm/postinst
+    prior content instead of appending to it
+
+  * Fix a bug with wrestool, where calling it once with the --name option
+    would have this option been carried out to all subsequent invocations
+
+2.1.0
+
+  * First fully installable version of ./play.it
+
+  * New script 'play.it' automatically loading the adequate game-specific
+    script for the archive given in argument
+
+  * Display an error when calling a script with unsupported arguments
+
+  * New function easing the management of icons provided by post-installation
+    links
+
+  * New application type allowing to run native games without using a
+    ./play.it prefix
+
+  * The library can now be loaded without implying that it has been called by
+    a ./play.it script, making it easier to use by third-party projects
+
+2.0.3
+
+  * Fix error displayed when building .deb packages on systems without apt
+
+  * Better handling of spaces in directories names when displaying
+    installation instructions
+
+  * Work around WINE bug 41639
+
+2.0.2
+
+  * Fix a bug with the copy of the game binary in the user prefix for some
+    native games
+
+  * Work around WINE bug 29661 for WINE versions prior to 1.9.20
+
+2.0.1
+
+  * Test the validity of options values early in the script execution to throw
+    an error before any potentially long task
+
+  * Print 'OK' on potentially long tasks completion without a visual
+    progression indicator
+
+  * If host OS auto-detection failed, display a warning before falling back on
+    deb format
+
+  * On all distributions providing apt >= 1.1, installation instructions show
+    apt usage instead of dpkg + apt-get

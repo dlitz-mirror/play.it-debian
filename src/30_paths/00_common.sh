@@ -1,0 +1,111 @@
+# Print install path for binaries.
+# USAGE: path_binaries
+path_binaries() {
+	local install_prefix target_system path_structure
+	install_prefix=$(option_value 'prefix')
+	target_system=$(option_value 'package')
+	case "$target_system" in
+		('deb')
+			# Debian uses /usr/games as the default path for game-related binaries.
+			path_structure='%s/games'
+		;;
+		(*)
+			# Non-Debian systems use /usr/bin as the default path for all binaries,
+			# including game-related ones.
+			path_structure='%s/bin'
+		;;
+	esac
+	printf "$path_structure" "$install_prefix"
+}
+
+# Print install path for XDG .desktop menu entries.
+# USAGE: path_xdg_desktop
+path_xdg_desktop() {
+	# For convenience, XDG .desktop menu entries are always installed under the default install prefix.
+	# If they could be installed under a custom path like /opt/${game_id},
+	# they would not be picked up by applications menus without a manual intervention from the system administrator.
+	printf '/usr/share/applications'
+}
+
+# Print install path for documentation files.
+# USAGE: path_documentation
+path_documentation() {
+	local install_prefix option_package
+	install_prefix=$(option_value 'prefix')
+	option_package=$(option_value 'package')
+	case "$option_package" in
+		('deb'|'arch')
+			local game_id
+			game_id=$(game_id)
+			printf '%s/share/doc/%s' "$install_prefix" "$game_id"
+			;;
+		('gentoo'|'egentoo')
+			local package_name
+			package_name=$(egentoo_package_name)
+			printf '%s/share/doc/%s' "$install_prefix" "$package_name"
+			;;
+	esac
+}
+
+# Print install path for game files.
+# USAGE: path_game_data
+path_game_data() {
+	local install_prefix game_id target_system path_structure
+	install_prefix=$(option_value 'prefix')
+	game_id=$(game_id)
+	target_system=$(option_value 'package')
+	case "$target_system" in
+		('deb')
+			# Debian uses /usr/share/games as the default path for game-related data files.
+			path_structure='%s/share/games/%s'
+		;;
+		(*)
+			# Non-Debian systems use /usr/share as the default path for all data files,
+			# including game-related ones.
+			path_structure='%s/share/%s'
+		;;
+	esac
+	printf "$path_structure" "$install_prefix" "$game_id"
+}
+
+# Print install path for icons.
+# USAGE: path_icons
+path_icons() {
+	# Icons are always installed under the default install prefix.
+	# launcher_desktop (src/30_launchers/00_common.sh) expects the icon to be available under either /usr or /usr/local.
+	printf '/usr/share/icons/hicolor'
+}
+
+# Print install path for native libraries.
+# USAGE: path_libraries
+path_libraries() {
+	local install_prefix target_system game_id
+	install_prefix=$(option_value 'prefix')
+	target_system=$(option_value 'package')
+	game_id=$(game_id)
+
+	local path_pattern
+	## Set default value
+	path_pattern='%s/lib/games/%s'
+	## Override default value if required
+	case "$target_system" in
+		('arch')
+			local package package_architecture
+			package=$(context_package)
+			package_architecture=$(package_architecture "$package")
+			if [ "$package_architecture" = '32' ]; then
+				path_pattern='%s/lib32/games/%s'
+			fi
+		;;
+		('gentoo'|'egentoo')
+			local package package_architecture
+			package=$(context_package)
+			package_architecture=$(package_architecture "$package")
+			if [ "$package_architecture" = '64' ]; then
+				path_pattern='%s/lib64/games/%s'
+			fi
+		;;
+	esac
+
+	printf "$path_pattern" "$install_prefix" "$game_id"
+}

@@ -1,0 +1,178 @@
+.Dd $Mdocdate$
+.Dt ./play.it 6
+.Os
+.Sh NAME
+.Nm ./play.it
+.Nd Installer for drm-free commercial games
+.Sh SYNOPSIS
+.Nm
+.Ar archive
+.Op Fl \-checksum Cm md5 | Cm none
+.Op Fl \-compression Cm none | Cm speed | Cm size | Cm auto
+.Op Fl \-prefix Ar path
+.Op Fl \-package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+.Op Fl \-no\-icons
+.Op Fl \-overwrite
+.Op Fl \-output\-dir Ar path
+.Op Fl \-debug Op Ar N
+.Op Fl \-no\-mtree
+.Op Fl \-tmpdir Ar path
+.Op Fl \-no\-free\-space\-check
+.Op Fl \-show\-game\-script
+.Op Fl \-config\-file Ar path
+.Op Fl \-list\-packages
+.Op Fl \-list\-requirements
+.Op Fl \-list\-available\-scripts
+.Op Fl \-list\-supported\-games
+.Sh DESCRIPTION
+.Nm
+is a free software building native packages from installers for Windows or
+Linux, mainly those sold by stores focusing on DRM-free games distribution. The
+goal is that a game installed via
+.Nm
+is indistinguishable from a game installed via the official repositories of
+your favorite distribution.
+.Pp
+The games are installed globally on multi-user systems, avoiding unnecessary
+duplication. The locations of save games, settings, mods, temporary files and
+backups are standardized with XDG Base Directory support.
+.Pp
+Packaging the games simplifies future updates, uninstalls and handling of any
+necessary dependencies, including integrated obsolete dependencies if specific
+versions are needed.
+.Ss Options
+.Bl -tag -width DS
+.It Fl \-checksum Cm md5 | Cm none
+Archive integrity verification method selection.
+.Bl -tag -width indent -compact
+.It Cm md5
+md5sum verification
+.It Cm none
+no verification
+.El
+.It Fl \-compression Cm none | Cm speed | Cm size | Cm auto
+Generated packages compression method selection.
+.Bl -tag -width indent -compact
+.It Cm none
+no compression
+.It Cm speed
+compression method focusing on compression speed
+.It Cm size
+compression method focusing on size reduction
+.It Cm auto
+default compression method on the current system
+.El
+.It Fl \-prefix Ar path
+Game installation
+.Ar path
+setting.
+.Pp
+This option accepts an absolute
+.Ar path
+only.
+.It Fl \-package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+Generated package type selection.
+.Bl -tag -width indent-two -compact
+.It Cm arch
+.No .pkg.tar package (Arch Linux)
+.It Cm deb
+.No .deb package (Debian, Ubuntu)
+.It Cm gentoo
+.No .tbz2 package (Gentoo)
+.It Cm egentoo
+.No .tar package with an associated .ebuild (Gentoo)
+.El
+.It Fl \-icons
+Do not include game icons.
+.It Fl \-overwrite
+Replace packages if they already exist.
+.It Fl \-output\-dir Ar path
+Set the output directory for generated packages.
+.It Fl \-debug Op Ar N
+Set the debug level. If
+.Ar N
+is unspecified, defaults to 1.
+.It Fl \-no\-mtree
+Do not create .MTREE files in Arch Linux packages. As these files contain a
+hash of every file in the package, they may be quite long to create when
+dealing with big games.
+.It Fl \-tmpdir Ar path
+Set the directory used for temporary files storage.
+Default value is: 
+.Ev TMPDIR
+.It Fl \-no\-free\-space\-check
+Do not check for free space.
+.It Fl \-show\-game\-script
+Only display the name of the game script to use, without running it.
+.It Fl \-config\-file Ar path
+Set the configuration file path. Default path is
+.Ar $XDG_CONFIG_HOME/play.it/config
+or
+.Ar $HOME/config/play.it/config
+if
+.Ev XDG_CONFIG_HOME
+is unset.
+Configuration file contains list of additional command-line parameters that
+will be passed to
+.Nm
+as if they were given on the command-line.
+.It Fl \-list\-packages
+Print the list of packages to build.
+.It Fl \-list\-requirements
+Print the list of commands required to build packages from the given archive.
+.It Fl \-list\-available\-scripts
+Print the list of game scripts available on this system.
+.It Fl \-list\-supported\-games
+Print the list of supported games.
+Warning: this operation can take several minutes.
+.El
+.Sh ENVIRONMENT
+.Bl -tag -width DS
+.It Ev PLAYIT_LIB2
+If set, overrides the provided version of
+.Pa libplayit2.sh
+(and its supported games) to a local copy for development.
+(default: /usr/share/games/play.it/libplayit2.sh)
+.It Ev TMPDIR
+Default place where temporary files are processed.
+(default: /tmp)
+.It Ev XDG_CONFIG_HOME
+Used in the configuration file default path.
+.Sh FILES
+.Bl -tag -width DS
+.It Ar $XDG_CONFIG_HOME/play.it/config
+Default path to the configuration file. This file contains a list of additional
+command-line parameters that will be passed to
+.Nm
+as if they were given on the command-line.
+.Sh COMPRESSION
+.Ss Arch Linux
+When building packages for Arch Linux (with \-\-package arch):
+.Bl -tag -compact
+.It \-\-compression speed
+Use zstd compression with the flag \-\-fast=1.
+.It \-\-compression size
+Use zstd compression with the flag \-19.
+.It \-\-compression auto
+Unsupported option.
+.El
+.Ss Debian
+When building packages for Debian (with \-\-package deb):
+.Bl -tag -compact
+.It \-\-compression speed
+Use gzip compression.
+.It \-\-compression size
+Use xz compression.
+.It \-\-compression auto
+Rely on the default dpkg-deb behaviour. This behaviour can be controlled using the environment variables DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE and DPKG_DEB_COMPRESSOR_LEVEL. See dpkg-deb(1) for more details on how these can be used.
+.El
+.Ss Gentoo
+When building packages for Gentoo (with \-\-package gentoo or \-\-package egentoo)
+.Bl -tag -compact
+.It \-\-compression speed
+Use gzip compression.
+.It \-\-compression size
+Use bzip2 compression.
+.It \-\-compression auto
+Rely on the default ebuild behaviour. This behaviour can be controlled using the environment variables BINPKG_COMPRESS and BINPKG_COMPRESS_FLAGS. See make.conf(5) for more details on how these can be used.
+.El

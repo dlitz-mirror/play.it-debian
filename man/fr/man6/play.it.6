@@ -1,0 +1,184 @@
+.Dd $Mdocdate$
+.Dt ./play.it 6
+.Os
+.\" La section .Sh NAME est obligatoire pour la mise en page correcte du
+.\" manuel. Super pratique pour les traductions… ><
+.Sh NAME
+.Nm ./play.it
+.Nd Installateur de jeux commerciaux sans DRM
+.Sh SYNOPSIS
+.Nm
+.Ar archive
+.Op Fl \-checksum Cm md5 | Cm none
+.Op Fl \-compression Cm none | Cm speed | Cm size | Cm auto
+.Op Fl \-prefix Ar chemin
+.Op Fl \-package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+.Op Fl \-no\-icons
+.Op Fl \-overwrite
+.Op Fl \-output\-dir Ar chemin
+.Op Fl \-debug Op Ar N
+.Op Fl \-no\-mtree
+.Op Fl \-tmpdir Ar chemin
+.Op Fl \-no\-free\-space\-check
+.Op Fl \-show\-game\-script
+.Op Fl \-config\-file Ar chemin
+.Op Fl \-list\-packages
+.Op Fl \-list\-requirements
+.Op Fl \-list\-available\-scripts
+.Op Fl \-list\-supported\-games
+.Sh DESCRIPTION
+.Nm
+est un logiciel libre qui automatise la construction de paquets natifs pour
+plusieurs familles de distributions à partir d’installateurs sans DRM pour une
+collection de jeux commerciaux. Les paquets ainsi générés s’installent ensuite
+en utilisant les outils standard fournis par la distribution.
+.Pp
+Des jeux natifs pour Linux sont gérés, mais aussi des jeux initialement
+développés pour d’autres plate-formes grâce à des outils comme
+.Xr wine 1 , Xr dosbox 1 et Xr scummvm 1 .
+.Pp
+Les jeux sont installés globalement, ce qui évite la duplication sur les
+systèmes ayant plusieurs utilisateurs. Les emplacements des sauvegardes, des
+paramètres, des mods, des fichiers temporaires et des backups sont
+standardisés selon les directives de l’XDG Base Directory.
+.Pp
+Empaqueter les jeux simplifie les mises-à-jour, les désinstallations et la
+gestion des dépendances, y compris celle des dépendances obsolètes, dans le cas
+où un jeu nécessite une version particulière de l’une d’elles.
+.Ss Options
+.Bl -tag -width DS
+.It Fl \-checksum Cm md5 | Cm none
+Détermine la méthode de vérification de l’intégrité de l’archive.
+.Bl -tag -width indent -compact
+.It Cm md5
+vérification de la somme md5
+.It Cm none
+pas de vérification
+.El
+.It Fl \-compression Cm none | Cm speed | Cm size | Cm auto
+Détermine la méthode de compression des paquets générés.
+.Bl -tag -width indent -compact
+.It Cm none
+pas de compression
+.It Cm speed
+méthode de compression mettant lʼaccent sur la rapidité
+.It Cm size
+méthode de compression mettant lʼaccent sur la réduction de taille
+.It Cm auto
+méthode de compression par défaut du système actuel
+.El
+.It Fl \-prefix Ar chemin
+Détermine le
+.Ar chemin
+d’installation du jeu.
+.Pp
+Cette option n’accepte qu’un
+.Ar chemin
+absolu.
+.It Fl \-package Cm arch | Cm deb | Cm gentoo | Cm egentoo
+Détermine le type de paquets générés.
+.Bl -tag -width indent-two -compact
+.It Cm arch
+paquets .pkg.tar (Arch Linux)
+.It Cm deb
+paquets .deb (Debian, Ubuntu)
+.It Cm gentoo
+paquets .tbz2 (Gentoo)
+.It Cm egentoo
+paquets .tar accompagné d’un .ebuild (Gentoo)
+.El
+.It Fl \-no\-icons
+Ne pas inclure les icônes du jeu.
+.It Fl \-overwrite
+Remplace les paquets s’ils existent déjà.
+.It Fl \-output\-dir Ar chemin
+Détermine le dossier dans lequel seront placés les paquets générés.
+.It Fl \-debug Op Ar N
+Détermine le niveau de débuggage.
+.Ar N
+a la valeur 1 par défaut s’il n’est pas précisé.
+.It Fl \-no\-mtree
+Ne crée pas de fichier .MTREE lors de la création de paquets pour Arch Linux.
+Ces fichiers contenant un hash de tous les autres fichiers du paquet, ils
+peuvent être relativement long à calculer lors du traitement de jeux
+volumineux.
+.It Fl \-tmpdir Ar chemin
+Définit le répertoire utilisé pour le stockage des fichiers temporaire.
+La valeur par défaut est : 
+.Ev TMPDIR
+.It Fl \-no\-free\-space\-check
+Ne pas tester l’espace libre disponible.
+.It Fl \-show\-game\-script
+Affiche seulement le nom du script du jeu à utiliser sans l’exécuter.
+.It Fl \-config\-file Ar chemin
+Définit le fichier de configuration à utiliser. Le chemin par défaut est
+.Ar $XDG_CONFIG_HOME/play.it/config
+ou
+.Ar $HOME/.config/play.it/config
+si
+.Ev XDG_CONFIG_HOME
+n’est pas définie.
+Le fichier de configuration contient une liste de paramètres qui seront passés
+à
+.Nm
+comme s’ils lui avaient été donnés sur la ligne de commande.
+.It Fl \-list\-packages
+Affiche la liste des paquets à construire.
+.It Fl \-list\-requirements
+Affiche la liste des commandes nécessaire à la construction de paquets à partir de lʼarchive donnée.
+.It Fl \-list\-available\-scripts
+Affiche la liste des scripts de prise en charge de jeux disponibles sur ce système.
+.It Fl \-list\-supported\-games
+Affiche la liste des jeux pris en charge.
+Attention : cette opération peut prendre plusieurs minutes.
+.El
+.Sh ENVIRONNEMENT
+.Bl -tag -width DS
+.It Ev PLAYIT_LIB2
+Remplace la version fournie de
+.Pa libplayit2.sh
+(et des jeux qu’elle supporte) par une version de développement locale.
+(défaut : /usr/share/games/play.it/libplayit2.sh)
+.It Ev TMPDIR
+Emplacement par défaut où les fichiers temporaires sont traités.
+(défaut : /tmp)
+.It Ev XDG_CONFIG_HOME
+Détermine l’emplacement par défaut du fichier de configuration.
+.Sh FICHIERS
+.Bl -tag -width DS
+.It Ar $XDG_CONFIG_HOME/play.it/config
+Emplacement par défaut du fichier de configuration. Celui-ci contient une liste
+de paramètres qui seront passés à
+.Nm
+comme s’ils lui avaient été donnés sur la ligne de commande.
+.Sh COMPRESSION
+.Ss Arch Linux
+Lors de la construction de paquets pour Arch Linux (avec \-\-package arch):
+.Bl -tag -compact
+.It \-\-compression speed
+Utilisation de la méthode de compression zstd avec lʼoption \-\-fast=1.
+.It \-\-compression size
+Utilisation de la méthode de compression zstd avec lʼoption \-19.
+.It \-\-compression auto
+Cette option nʼest pas prise en charge.
+.El
+.Ss Debian
+Lors de la construction de paquets pour Debian (avec \-\-package deb):
+.Bl -tag -compact
+.It \-\-compression speed
+Utilisation de la méthode de compression gzip.
+.It \-\-compression size
+Utilisation de la méthode de compression xz.
+.It \-\-compression auto
+Utilisation du comportement par défaut de dpkg-deb. Ce comportement peut être contrôlé par les variables dʼenvironnement DPKG_DEB_THREADS_MAX, DPKG_DEB_COMPRESSOR_TYPE et DPKG_DEB_COMPRESSOR_LEVEL. Référez-vous à dpkg-deb(1) pour plus de détails sur la manière dont elles peuvent être utilisées.
+.El
+.Ss Gentoo
+Lors de la construction de paquets pour Gentoo (avec \-\-package gentoo ou \-\-package egentoo)
+.Bl -tag -compact
+.It \-\-compression speed
+Utilisation de la méthode de compression gzip.
+.It \-\-compression size
+Utilisation de la méthode de compression bz2.
+.It \-\-compression auto
+Utilisation du comportement par défaut de ebuild. Ce comportement peut être contrôlé par les variables dʼenvironnement BINPKG_COMPRESS et BINPKG_COMPRESS_FLAGS. Référez-vous à make.conf(5) pour plus de détails sur la manière dont elles peuvent être utilisées.
+.El

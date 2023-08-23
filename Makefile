@@ -1,7 +1,32 @@
-.PHONY: all clean install uninstall install-library install-games install-wrapper install-manpage
+# Build the library
 
+.PHONY: all clean
+
+## The debug code is omitted unless DEBUG is set to 1.
+DEBUG := 0
+
+all: lib/libplayit2.sh
+
+lib/libplayit2.sh: src/*/*.sh
+	mkdir --parents lib
+ifeq ($(DEBUG),1)
+	find src -type f -name '*.sh' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
+	sed -i -e 's/%%DEBUG_DISABLED%%/0/' lib/libplayit2.sh
+else
+	find src -type f -name '*.sh' \! -path 'src/80_debug/*' -print0 | sort -z | xargs -0 cat > lib/libplayit2.sh
+	sed -i -e '/^\s*debug_/d' -e 's/%%DEBUG_DISABLED%%/1/' lib/libplayit2.sh
+endif
+
+clean:
+	rm --force lib/libplayit2.sh
+
+
+# Install the library, main script, and man pages
+
+.PHONY: install uninstall
+
+## Set the default install paths
 UID := $(shell id --user)
-
 ifeq ($(UID),0)
     prefix = /usr/local
     bindir = $(prefix)/games
@@ -16,53 +41,62 @@ else
     datadir = $(prefix)
     mandir = $(prefix)/man
 endif
-gamesdir = $(DESTDIR)$(datadir)/play.it/games
 
-PANDOC := $(shell command -v pandoc 2> /dev/null)
-
-all: libplayit2.sh play.it.6
-
-libplayit2.sh: play.it-2/src/*
-	mkdir --parents play.it-2/lib
-	cat play.it-2/src/* > play.it-2/lib/libplayit2.sh
-
-%.6: %.6.md
-ifneq ($(PANDOC),)
-	$(PANDOC) --standalone $< --to man --output $@
-else
-	@echo "pandoc not installed; skipping $@"
-endif
-
-clean:
-	rm -f play.it-2/lib/libplayit2.sh
-	rm -f *.6
-
-install-library:
-	install -D --mode=644 play.it-2/lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-
-install-games:
-	install -D --mode=755 --target-directory=$(gamesdir)/50_core play.it-2/games/*
-
-install-wrapper:
+install: all
+	install -D --mode=644 lib/libplayit2.sh $(DESTDIR)$(datadir)/play.it/libplayit2.sh
 	install -D --mode=755 play.it $(DESTDIR)$(bindir)/play.it
-
-install-manpage:
-ifneq ($(wildcard play.it.6),)
-	mkdir --parents $(DESTDIR)$(mandir)/man6
-	gzip -c play.it.6 > $(DESTDIR)$(mandir)/man6/play.it.6.gz
-else
-	@echo "manpage not generated; skipping its installation"
-endif
-
-
-install: install-library install-games install-wrapper install-manpage
+	install -D --mode=644 man/man6/play.it.6 $(DESTDIR)$(mandir)/man6/play.it.6
+	install -D --mode=644 man/fr/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
 
 uninstall:
-	rm $(DESTDIR)$(bindir)/play.it
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) || true
-	rm $(gamesdir)/50_core/play-*.sh
-	rmdir -p --ignore-fail-on-non-empty $(gamesdir)/50_core
-	rm $(DESTDIR)$(datadir)/play.it/libplayit2.sh
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(datadir)/play.it
-	rm --force $(DESTDIR)$(mandir)/man6/play.it.6.gz
-	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(mandir)/man6
+	rm --force $(DESTDIR)$(bindir)/play.it $(DESTDIR)$(datadir)/play.it/libplayit2.sh $(DESTDIR)$(mandir)/man6/play.it.6 $(DESTDIR)$(mandir)/fr/man6/play.it.6
+	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(bindir) $(DESTDIR)$(datadir)/play.it $(DESTDIR)$(mandir)/man6 $(DESTDIR)$(mandir)/fr/man6
+
+
+# Release preparation
+
+.PHONY: dist
+
+## The generated tarball is signed with gpg by default,
+## NO_SIGN should be set to a non-0 value to skip the signature.
+NO_SIGN := 0
+
+dist: VERSION := $(shell head --lines=1 CHANGELOG)
+dist: TARBALL := play.it-$(VERSION).tar.gz
+dist: TAR_OPTIONS := --sort=name --mtime=2017-06-14 --owner=root:0 --group=root:0 --use-compress-program='gzip --no-name'
+dist: CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+	mkdir --parents dist
+	LC_ALL=C tar cf dist/$(TARBALL) $(TAR_OPTIONS) CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+ifeq ($(NO_SIGN),0)
+	rm --force dist/$(TARBALL).asc
+	gpg --armor --detach-sign dist/$(TARBALL)
+endif
+
+
+# Run tests, including:
+# - syntax checks, relying on ShellCheck
+# - unit tests, relying on shUnit2
+
+.PHONY: check shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
+
+check: shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
+
+## Expressions don't expand in single quotes, use double quotes for that.
+shellcheck-library: SHELLCHECK_EXCLUDE := --exclude=SC2016
+## Don't use variables in the printf format string. Use printf "..%s.." "$foo".
+shellcheck-library: SHELLCHECK_EXCLUDE += --exclude=SC2059
+## Double quote to prevent globbing and word splitting.
+shellcheck-library: SHELLCHECK_EXCLUDE += --exclude=SC2086
+## In POSIX sh, local is undefined.
+shellcheck-library: SHELLCHECK_EXCLUDE += --exclude=SC3043
+shellcheck-library: lib/libplayit2.sh
+	shellcheck --shell=sh $(SHELLCHECK_EXCLUDE) lib/libplayit2.sh
+
+shellcheck-wrapper: play.it
+	shellcheck --external-sources --shell=sh play.it
+
+shunit2-coverage: lib/libplayit2.sh
+	./tests/shunit2/coverage.sh
+
+shunit2: lib/libplayit2.sh
+	find tests/shunit2/*/ -type f -name '*.sh' -print0 | sort -z | xargs -0 -n1 shunit2
