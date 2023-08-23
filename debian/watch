@@ -1,8 +1,10 @@
 version=4
 
 opts="pgpmode=next" \
-  https://downloads.dotslashplay.it/releases/@ANY_VERSION@/play.it-@ANY_VERSION@.tar.gz
+  https://downloads.dotslashplay.it/releases/@ANY_VERSION@/ \
+  (?:.*/)@PACKAGE@@ANY_VERSION@@ARCHIVE_EXT@
 
 opts="pgpmode=previous" \
-  https://downloads.dotslashplay.it/releases/@ANY_VERSION@/play.it-@ANY_VERSION@.tar.gz.asc \
+  https://downloads.dotslashplay.it/releases/@ANY_VERSION@/ \
+  (?:.*/)@PACKAGE@@ANY_VERSION@@SIGNATURE_EXT@ \
   previous
