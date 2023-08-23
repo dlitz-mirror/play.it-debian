@@ -9,20 +9,28 @@ oneTimeSetUp() {
 }
 
 test_content_path_default() {
-	local ARCHIVE CONTENT_PATH_DEFAULT CONTENT_PATH_DEFAULT_0 content_path_default
+	local \
+		CONTENT_PATH_DEFAULT content_path_default \
+		ARCHIVE CONTENT_PATH_DEFAULT_0
 
 	CONTENT_PATH_DEFAULT='some/path'
 	content_path_default=$(content_path_default)
-	assertEquals 'some/path' "$content_path_default"
+	assertEquals \
+		'content_path_default failed to get an explicitly set value from CONTENT_PATH_DEFAULT.' \
+		'some/path' "$content_path_default"
+	unset CONTENT_PATH_DEFAULT
 
 	ARCHIVE='ARCHIVE_BASE_0'
 	CONTENT_PATH_DEFAULT_0='some/other/path'
 	content_path_default=$(content_path_default)
-	assertEquals 'some/other/path' "$content_path_default"
+	assertEquals \
+		'content_path_default failed to get a contextual value for CONTENT_PATH_DEFAULT.' \
+		'some/other/path' "$content_path_default"
+	unset ARCHIVE CONTENT_PATH_DEFAULT_0
 
-	unset CONTENT_PATH_DEFAULT_0 CONTENT_PATH_DEFAULT
-	content_path_default=$(content_path_default)
-	assertNull "$content_path_default"
+	assertFalse \
+		'content_path_default did not fail, despite no value being set for CONTENT_PATH_DEFAULT.' \
+		'content_path_default'
 }
 
 test_content_path() {

@@ -65,11 +65,11 @@ application_type_guess_from_file() {
 	local application
 	application="$1"
 
-	# Compute path to application binary
+	# Get the path to the application binary.
 	local application_exe application_exe_path
 	application_exe=$(application_exe "$application")
-	## If no binary is found for the current package,
-	## try to find one for any of the packages.
+
+	# If no binary is found for the current package, try to find one for any of the packages.
 	if [ -z "$application_exe" ]; then
 		local packages_list PKG
 		packages_list=$(packages_get_list)
@@ -80,11 +80,13 @@ application_type_guess_from_file() {
 			fi
 		done
 	fi
-	## Check that an application binary is set.
+
+	# Return early if no binary seems to be set for the current application.
 	if [ -z "$application_exe" ]; then
-		error_application_exe_empty "$application" 'application_type_guess_from_file'
-		return 1
+		return 0
 	fi
+
+	# Compute the full path to the application binary.
 	application_exe_path=$(application_exe_path "$application_exe")
 
 	# Return early if no binary file can be found for the given application.

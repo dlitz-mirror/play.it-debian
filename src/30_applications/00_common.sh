@@ -189,16 +189,21 @@ application_exe_path() {
 	application_exe="$1"
 
 	# Look for the application binary in the temporary path for archive content.
-	local content_path application_exe_path
-	content_path=$(content_path_default)
-	application_exe_path="${PLAYIT_WORKDIR}/gamedata/${content_path}/${application_exe}"
-	if [ -f "$application_exe_path" ]; then
-		printf '%s' "$application_exe_path"
-		return 0
+	## Do not throw an error if CONTENT_PATH_DEFAULT is not set,
+	## but skip searching for the application binary in the archive content.
+	local content_path
+	content_path=$(content_path_default) 2>/dev/null || true
+	if [ -n "$content_path" ]; then
+		local application_exe_path
+		application_exe_path="${PLAYIT_WORKDIR}/gamedata/${content_path}/${application_exe}"
+		if [ -f "$application_exe_path" ]; then
+			printf '%s' "$application_exe_path"
+			return 0
+		fi
 	fi
 
 	# Look for the application binary in the current package.
-	local package package_path path_game_data
+	local package package_path path_game_data application_exe_path
 	package=$(context_package)
 	package_path=$(package_path "$package")
 	path_game_data=$(path_game_data)

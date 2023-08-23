@@ -99,36 +99,47 @@ test_application_exe_escaped() {
 }
 
 test_application_exe_path() {
-	local PLAYIT_OPTION_TMPDIR GAME_ID APP_MAIN_EXE PACKAGES_LIST PKG CONTENT_PATH_DEFAULT fake_binary application_exe_path
+	local \
+		PLAYIT_OPTION_TMPDIR GAME_ID APP_MAIN_EXE \
+		CONTENT_PATH_DEFAULT fake_binary application_exe_path \
+		PKG PKG_MAIN_ID \
+		PACKAGES_LIST PKG_BIN32_ID PKG_BIN64_ID PKG_DATA_ID
 
+	# Create a couple files in the temporary directory, and set required variables.
 	PLAYIT_OPTION_TMPDIR="$TEST_TEMP_DIR"
 	GAME_ID='some-game'
 	APP_MAIN_EXE='SomeGame.exe'
 	set_temp_directories
-
-	# Scan all package
-	PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
-	fake_binary="$(package_path 'PKG_BIN64')$(path_game_data)/$(application_exe 'APP_MAIN')"
-	mkdir --parents "$(dirname "$fake_binary")"
-	touch "$fake_binary"
-	application_exe_path=$(application_exe_path "$APP_MAIN_EXE")
-	assertEquals "$fake_binary" "$application_exe_path"
-
-	# Look in the current package
-	PKG='PKG_DATA'
-	fake_binary="$(package_path 'PKG_DATA')$(path_game_data)/$(application_exe 'APP_MAIN')"
-	mkdir --parents "$(dirname "$fake_binary")"
-	touch "$fake_binary"
-	application_exe_path=$(application_exe_path "$APP_MAIN_EXE")
-	assertEquals "$fake_binary" "$application_exe_path"
+	mkdir --parents \
+		"${PLAYIT_WORKDIR}/gamedata" \
+		"${PLAYIT_WORKDIR}/packages/some-game-main_1.0-1+19700101.1_all/usr/share/games/some-game" \
+		"${PLAYIT_WORKDIR}/packages/some-game-bin64_1.0-1+19700101.1_all/usr/share/games/some-game"
+	touch \
+		"${PLAYIT_WORKDIR}/gamedata/SomeGame.exe" \
+		"${PLAYIT_WORKDIR}/packages/some-game-main_1.0-1+19700101.1_all/usr/share/games/some-game/SomeGame.exe" \
+		"${PLAYIT_WORKDIR}/packages/some-game-bin64_1.0-1+19700101.1_all/usr/share/games/some-game/SomeGame.exe"
 
 	# Look in archive contents
 	CONTENT_PATH_DEFAULT='.'
-	fake_binary="${PLAYIT_WORKDIR}/gamedata/$(content_path_default)/$(application_exe 'APP_MAIN')"
-	mkdir --parents "$(dirname "$fake_binary")"
-	touch "$fake_binary"
 	application_exe_path=$(application_exe_path "$APP_MAIN_EXE")
-	assertEquals "$fake_binary" "$application_exe_path"
+	assertEquals "${PLAYIT_WORKDIR}/gamedata/./SomeGame.exe" "$application_exe_path"
+	unset CONTENT_PATH_DEFAULT
+
+	# Look in the current package
+	PKG='PKG_MAIN'
+	PKG_MAIN_ID='some-game-main'
+	application_exe_path=$(application_exe_path "$APP_MAIN_EXE")
+	assertEquals "${PLAYIT_WORKDIR}/packages/some-game-main_1.0-1+19700101.1_all/usr/share/games/some-game/SomeGame.exe" "$application_exe_path"
+	unset PKG PKG_MAIN_ID
+
+	# Look in all packages
+	PACKAGES_LIST='PKG_BIN32 PKG_BIN64 PKG_DATA'
+	PKG_BIN32_ID='some-game-bin32'
+	PKG_BIN64_ID='some-game-bin64'
+	PKG_DATA_ID='some-game-data'
+	application_exe_path=$(application_exe_path "$APP_MAIN_EXE")
+	assertEquals "${PLAYIT_WORKDIR}/packages/some-game-bin64_1.0-1+19700101.1_all/usr/share/games/some-game/SomeGame.exe" "$application_exe_path"
+	unset PACKAGES_LIST PKG_BIN32_ID PKG_BIN64_ID PKG_DATA_ID
 }
 
 test_application_name() {
