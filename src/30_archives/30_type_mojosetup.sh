@@ -38,6 +38,8 @@ archive_extraction_mojosetup() {
 	archive_makeself_offset=$(makeself_offset "$archive_path")
 	archive_mojosetup_filesize=$(makeself_filesize "$archive_path")
 	archive_offset=$((archive_makeself_offset + archive_mojosetup_filesize))
+	## Arbitrary value, small values would increase the time spent on the dd calls.
+	archive_block_size=4096
 
 	# Extract the .zip archive containing the game data
 	local archive_game_data archive_extraction_return_code
@@ -45,9 +47,9 @@ archive_extraction_mojosetup() {
 	## Silence ShellCheck false-positive
 	## Consider using { cmd1; cmd2; } >> file instead of individual redirects.
 	# shellcheck disable=SC2129
-	printf 'dd if="%s" ibs="%s" skip=1 > "%s"\n' "$archive_path" "$archive_offset" "$archive_game_data" >> "$log_file"
+	printf 'dd if="%s" ibs="%s" obs="%s" skip="%sB" > "%s"\n' "$archive_path" "$archive_block_size" "$archive_block_size" "$archive_offset" "$archive_game_data" >> "$log_file"
 	{
-		dd if="$archive_path" ibs="$archive_offset" skip=1 > "$archive_game_data" 2>> "$log_file"
+		dd if="$archive_path" ibs="$archive_block_size" obs="$archive_block_size" skip="${archive_offset}B" > "$archive_game_data" 2>> "$log_file"
 		archive_extraction_return_code=$?
 	} || true
 	if [ $archive_extraction_return_code -ne 0 ]; then

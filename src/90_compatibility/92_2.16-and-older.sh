@@ -27,6 +27,14 @@ icons_get_from_legacy_path() {
 	local icon_source_directory_legacy
 	icon_source_directory_legacy="$1"
 	shift 1
+
+	# Get the archive inner path, falling back on a default value.
+	local content_path
+	content_path=$(content_path_default) 2>/dev/null || true
+	if [ -z "$content_path" ]; then
+		content_path='.'
+	fi
+
 	if variable_is_empty 'CONTENT_PATH_DEFAULT'; then
 		local CONTENT_PATH_DEFAULT
 		CONTENT_PATH_DEFAULT='.'
@@ -47,7 +55,6 @@ icons_get_from_legacy_path() {
 			# Compute icon legacy path
 			icon_full_path_legacy="${icon_source_directory_legacy}/${icon_path}"
 			# Compute icon expected path for new function
-			content_path=$(content_path_default)
 			icon_source_directory_new="${PLAYIT_WORKDIR}/gamedata/${content_path}"
 			icon_full_path_new="${icon_source_directory_new}/${icon_path}"
 			# Set compatibility link

@@ -1,3 +1,10 @@
+2.25.3
+
+  * application_type_guess_from_file - Prevent failure when APP_xxx_EXE is not set.
+  * archive_extraction_makeself - Decrease the time spent on files extraction.
+  * archive_extraction_mojosetup - Decrease the time spent on files extraction.
+  * content_path_default - Throw an explicit error if no path is set.
+
 2.25.2
 
   * persistent_list_directories / persistent_list_files - Reduce reliance on variable_is_empty.

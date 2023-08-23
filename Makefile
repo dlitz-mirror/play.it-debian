@@ -64,9 +64,9 @@ NO_SIGN := 0
 dist: VERSION := $(shell head --lines=1 CHANGELOG)
 dist: TARBALL := play.it-$(VERSION).tar.gz
 dist: TAR_OPTIONS := --sort=name --mtime=2017-06-14 --owner=root:0 --group=root:0 --use-compress-program='gzip --no-name'
-dist: CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+dist: CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh tests/gitlab/gitlab-ci.yml tests/shunit2/coverage.sh tests/shunit2/*/*.sh
 	mkdir --parents dist
-	LC_ALL=C tar cf dist/$(TARBALL) $(TAR_OPTIONS) CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh
+	LC_ALL=C tar cf dist/$(TARBALL) $(TAR_OPTIONS) CHANGELOG LICENSE README.md Makefile play.it man/man6/play.it.6 man/*/man6/play.it.6 src/*/*.sh tests/gitlab/gitlab-ci.yml tests/shunit2/coverage.sh tests/shunit2/*/*.sh
 ifeq ($(NO_SIGN),0)
 	rm --force dist/$(TARBALL).asc
 	gpg --armor --detach-sign dist/$(TARBALL)

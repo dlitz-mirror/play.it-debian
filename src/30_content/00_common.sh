@@ -1,12 +1,16 @@
 # Print the default path to the game data in the archive
 # USAGE: content_path_default
-# RETURN: a path relative to the archive root,
-#         or an empty path if none is set
+# RETURN: a path relative to the archive root
 content_path_default() {
-	# No error is thrown if there is no default content path set by the game script.
-	# The calling function should check that the path is not empty.
+	local content_path
+	content_path=$(context_value 'CONTENT_PATH_DEFAULT')
 
-	context_value 'CONTENT_PATH_DEFAULT'
+	if [ -z "$content_path" ]; then
+		error_missing_variable 'CONTENT_PATH_DEFAULT'
+		return 1
+	fi
+
+	printf '%s' "$content_path"
 }
 
 # Print the path to the game data in the archive for a given identifier
