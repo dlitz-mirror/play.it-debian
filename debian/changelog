@@ -1,3 +1,14 @@
+play.it (2.25.3-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Update debian/watch to no longer rely on parsing GitLab URLs.
+  * Update debian/copyright with the upstream authors list.
+  * Drop pandoc from the list of build-dependencies.
+  * Add packages required to run tests to the build-dependencies list.
+  * Update upstream project Web page URL.
+
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Wed, 23 Aug 2023 21:59:30 +0200
+
 play.it (2.15.1-1) unstable; urgency=medium
 
   * New upstream release
