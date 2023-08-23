@@ -38,23 +38,24 @@ archive_extraction_makeself() {
 	local archive_offset archive_filesize archive_block_size archive_blocks archive_bytes
 	archive_offset=$(makeself_offset "$archive_path")
 	archive_filesize=$(makeself_filesize "$archive_path")
-	archive_block_size=1024
+	## Arbitrary value, small values would increase the time spent on the dd calls.
+	archive_block_size=4096
 	archive_blocks=$((archive_filesize / archive_block_size))
 	archive_bytes=$((archive_filesize % archive_block_size))
 
 	# Proceed with the contents extraction
 	local archive_extraction_return_code
 	{
-		printf 'dd if="%s" ibs="%s" skip=1 obs=1024 conv=sync 2>/dev/null | ' "$archive_path" "$archive_offset"
-		printf '{ test "%s" -gt 0 && dd ibs=1024 obs=1024 count="%s" ; ' "$archive_blocks" "$archive_blocks"
-		printf 'test "%s" -gt 0 && dd ibs=1 obs=1024 count="%s" ; } 2>/dev/null | ' "$archive_bytes" "$archive_bytes"
+		printf 'dd if="%s" ibs="%s" skip=1 obs=%s conv=sync 2>/dev/null | ' "$archive_path" "$archive_offset" "$archive_block_size"
+		printf '{ test "%s" -gt 0 && dd ibs=%s obs=%s count="%s" ; ' "$archive_blocks" "$archive_block_size" "$archive_block_size" "$archive_blocks"
+		printf 'test "%s" -gt 0 && dd ibs=1 obs=%s count="%s" ; } 2>/dev/null | ' "$archive_bytes" "$archive_block_size" "$archive_bytes"
 		printf 'gzip --stdout --decompress | tar xvf - --directory="%s"\n' "$destination_directory"
 	} >> "$log_file"
 	{
-		dd if="$archive_path" ibs="$archive_offset" skip=1 obs=1024 conv=sync 2>/dev/null | \
+		dd if="$archive_path" ibs="$archive_offset" skip=1 obs="$archive_block_size" conv=sync 2>/dev/null | \
 			{
-				test "$archive_blocks" -gt 0 && dd ibs=1024 obs=1024 count="$archive_blocks" ; \
-				test "$archive_bytes" -gt 0 && dd ibs=1 obs=1024 count="$archive_bytes" ;
+				test "$archive_blocks" -gt 0 && dd ibs="$archive_block_size" obs="$archive_block_size" count="$archive_blocks"
+				test "$archive_bytes" -gt 0 && dd ibs=1 obs="$archive_block_size" count="$archive_bytes"
 			} 2>/dev/null | \
 			gzip --stdout --decompress | \
 			tar xvf - --directory="$destination_directory" >> "$log_file" 2>&1
