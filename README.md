@@ -41,13 +41,10 @@ make install
 
 Starting with ./play.it 2.16 release, game scripts are no longer provided in this repository. You need to install a collection of game scripts in addition to the core library and wrapper to add support for some game installers. The following games collections are available:
 
-- [The community-maintained main collection]
-- [vv221ʼs games collection]
-- [Hoëlʼs games]
-
-[The community-maintained main collection]: https://forge.dotslashplay.it/play.it/games
-[vv221ʼs games collection]: https://forge.dotslashplay.it/vv221/games
-[Hoëlʼs games]: https://forge.dotslashplay.it/hoel/les-jeux-de-hoel
+- [The community-maintained main collection](https://forge.dotslashplay.it/play.it/games)
+- [vv221ʼs games collection](https://forge.dotslashplay.it/vv221/games)
+- [Hoëlʼs games](https://forge.dotslashplay.it/hoel/les-jeux-de-hoel)
+- [ahubʼs My Game Collection](https://forge.dotslashplay.it/ahub/my-game-collection)
 
 ## Usage
 
