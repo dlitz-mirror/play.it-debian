@@ -15,3 +15,20 @@ content_files_legacy() {
 		printf '%s\n' "$file_pattern"
 	done
 }
+
+application_libs_legacy() {
+	local application
+	application="$1"
+
+	local application_libs
+	application_libs=$(context_value "${application}_LIBS")
+	# The deprecation warning should only be shown if the legacy variable is actually used.
+	if \
+		[ -n "$application_libs" ] && \
+		version_is_at_least '2.19' "$target_version"
+	then
+		warning_deprecated_variable "${application}_LIBS" 'CONTENT_LIBS_xxx_PATH / CONTENT_LIBS_xxx_FILES'
+	fi
+	printf '%s' "$application_libs"
+}
+
