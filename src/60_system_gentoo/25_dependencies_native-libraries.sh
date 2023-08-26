@@ -81,6 +81,9 @@ dependency_package_providing_library_gentoo() {
 		('liballegro_ttf.so.5.2')
 			package_name='media-libs/allegro'
 		;;
+		('libalut.so.0')
+			package_name='media-libs/freealut'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib'
 		;;
@@ -119,6 +122,14 @@ dependency_package_providing_library_gentoo() {
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo'
+		;;
+		('libCg.so')
+			# This library is not provided for Gentoo
+			unset package_name
+		;;
+		('libCgGL.so')
+			# This library is not provided for Gentoo
+			unset package_name
 		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs'
@@ -577,6 +588,9 @@ dependency_package_providing_library_gentoo32() {
 		('liballegro_ttf.so.5.2')
 			package_name='media-libs/allegro[abi_x86_32]'
 		;;
+		('libalut.so.0')
+			package_name='media-libs/freealut[abi_x86_32]'
+		;;
 		('libasound.so.2')
 			package_name='media-libs/alsa-lib[abi_x86_32]'
 		;;
@@ -615,6 +629,14 @@ dependency_package_providing_library_gentoo32() {
 		;;
 		('libcairo.so.2')
 			package_name='x11-libs/cairo[abi_x86_32]'
+		;;
+		('libCg.so')
+			# This library is not provided for Gentoo
+			unset package_name
+		;;
+		('libCgGL.so')
+			# This library is not provided for Gentoo
+			unset package_name
 		;;
 		('libcom_err.so.2')
 			package_name='sys-libs/e2fsprogs-libs[abi_x86_32]'
