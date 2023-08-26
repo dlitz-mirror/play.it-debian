@@ -46,9 +46,11 @@ java_launcher_environment() {
 	game_id=$(game_id)
 	path_game=$(path_game_data)
 	application_exe=$(application_exe_escaped "$application")
-	application_libs=$(application_libs "$application")
 	application_options=$(application_options "$application")
 	application_java_options=$(application_java_options "$application")
+	## Legacy variable APP_xxx_LIBS should not be used with compatibility level ≥ 2.19,
+	## a warning will be trigerred is it is set.
+	application_libs=$(application_libs_legacy "$application")
 
 	cat <<- EOF
 	# Set the environment
@@ -56,9 +58,9 @@ java_launcher_environment() {
 	GAME_ID='$game_id'
 	PATH_GAME='$path_game'
 	APP_EXE='$application_exe'
-	APP_LIBS='$application_libs'
 	APP_OPTIONS="$application_options"
 	JAVA_OPTIONS='$application_java_options'
+	APP_LIBS='$application_libs'
 
 	EOF
 }

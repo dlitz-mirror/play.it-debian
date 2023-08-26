@@ -72,6 +72,9 @@ dependency_package_providing_library_arch() {
 		('liballegro_ttf.so.5.2')
 			package_name='allegro'
 		;;
+		('libalut.so.0')
+			package_name='freealut'
+		;;
 		('libasound.so.2')
 			package_name='alsa-lib'
 		;;
@@ -110,6 +113,12 @@ dependency_package_providing_library_arch() {
 		;;
 		('libcairo.so.2')
 			package_name='cairo'
+		;;
+		('libCg.so')
+			package_name='nvidia-cg-toolkit'
+		;;
+		('libCgGL.so')
+			package_name='nvidia-cg-toolkit'
 		;;
 		('libcom_err.so.2')
 			package_name='e2fsprogs'
@@ -560,6 +569,9 @@ dependency_package_providing_library_arch32() {
 		('liballegro_ttf.so.5.2')
 			package_name='lib32-allegro'
 		;;
+		('libalut.so.0')
+			package_name='lib32-freealut'
+		;;
 		('libasound.so.2')
 			package_name='lib32-alsa-lib'
 		;;
@@ -601,6 +613,12 @@ dependency_package_providing_library_arch32() {
 		;;
 		('libcairo.so.2')
 			package_name='lib32-cairo'
+		;;
+		('libCg.so')
+			package_name='lib32-nvidia-cg-toolkit'
+		;;
+		('libCgGL.so')
+			package_name='lib32-nvidia-cg-toolkit'
 		;;
 		('libcom_err.so.2')
 			package_name='lib32-e2fsprogs'

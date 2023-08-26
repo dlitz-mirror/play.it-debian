@@ -53,6 +53,9 @@ dependency_package_providing_library_deb() {
 		('liballegro_ttf.so.5.2')
 			package_name='liballegro-ttf5.2'
 		;;
+		('libalut.so.0')
+			package_name='libalut0'
+		;;
 		('libasound.so.2')
 			package_name='libasound2'
 		;;
@@ -91,6 +94,12 @@ dependency_package_providing_library_deb() {
 		;;
 		('libcairo.so.2')
 			package_name='libcairo2'
+		;;
+		('libCg.so')
+			package_name='libcg'
+		;;
+		('libCgGL.so')
+			package_name='libcggl'
 		;;
 		('libcom_err.so.2')
 			package_name='libcom-err2'

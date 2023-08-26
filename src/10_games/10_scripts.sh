@@ -68,6 +68,8 @@ games_find_script_for_archive() {
 	local archive_name
 	archive_name="$1"
 
-	games_find_scripts_for_archive "$archive_name" | head --lines=1
+	local scripts_list
+	scripts_list=$(games_find_scripts_for_archive "$archive_name")
+	printf '%s' "$scripts_list" | head --lines=1
 }
 

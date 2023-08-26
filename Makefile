@@ -76,10 +76,11 @@ endif
 # Run tests, including:
 # - syntax checks, relying on ShellCheck
 # - unit tests, relying on shUnit2
+# - man page syntax check
 
-.PHONY: check shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
+.PHONY: check shellcheck-library shellcheck-wrapper shunit2-coverage shunit2 man-syntax
 
-check: shellcheck-library shellcheck-wrapper shunit2-coverage shunit2
+check: shellcheck-library shellcheck-wrapper shunit2-coverage shunit2 man-syntax
 
 ## Expressions don't expand in single quotes, use double quotes for that.
 shellcheck-library: SHELLCHECK_EXCLUDE := --exclude=SC2016
@@ -100,3 +101,7 @@ shunit2-coverage: lib/libplayit2.sh
 
 shunit2: lib/libplayit2.sh
 	find tests/shunit2/*/ -type f -name '*.sh' -print0 | sort -z | xargs -0 -n1 shunit2
+
+man-syntax: man/man6/play.it.6 man/fr/man6/play.it.6
+	man --warnings --encoding=UTF-8 --local-file --troff-device=utf8 --ditroff man/man6/play.it.6 >/dev/null
+	man --warnings --encoding=UTF-8 --local-file --troff-device=utf8 --ditroff man/fr/man6/play.it.6 >/dev/null

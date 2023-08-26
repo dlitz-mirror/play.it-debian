@@ -35,7 +35,8 @@ content_path() {
 
 	# Fall back to default content path if unset
 	if [ -z "$content_path" ]; then
-		content_path=$(content_path_default)
+		# Do not fail if no default path is set
+		content_path=$(content_path_default) 2>/dev/null || true
 	fi
 
 	printf '%s' "$content_path"
