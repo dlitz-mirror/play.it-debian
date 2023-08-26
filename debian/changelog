@@ -1,4 +1,4 @@
-play.it (2.25.3-1) unstable; urgency=medium
+play.it (2.25.4-1) unstable; urgency=medium
 
   * New upstream release.
   * Update debian/watch to no longer rely on parsing GitLab URLs.
@@ -7,7 +7,7 @@ play.it (2.25.3-1) unstable; urgency=medium
   * Add packages required to run tests to the build-dependencies list.
   * Update upstream project Web page URL.
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Wed, 23 Aug 2023 21:59:30 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 26 Aug 2023 21:40:54 +0200
 
 play.it (2.15.1-1) unstable; urgency=medium
 
