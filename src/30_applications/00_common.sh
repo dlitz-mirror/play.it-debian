@@ -340,14 +340,3 @@ application_options() {
 	printf '%s' "$application_options"
 }
 
-# Legacy - Print the application libraries path, relative to the game root.
-# This function is deprecated, starting with ./play.it 2.19.
-# New game scripts should no longer rely on the APP_xxx_LIBS variable.
-# USAGE: application_libs $application
-# RETURN: the application libraries path relative to the game root,
-#         or an empty string if none is set
-application_libs() {
-	# Use the context-specific value if it is available,
-	# falls back on the default value
-	context_value "${1}_LIBS"
-}
