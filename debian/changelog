@@ -1,8 +1,9 @@
-play.it (2.25.4-2) UNRELEASED; urgency=medium
+play.it (2.25.4-2) unstable; urgency=medium
 
+  * Add dependencies (Recommends) on the packages providing game scripts.
   * Bump Standards-Version to 4.6.2
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 26 Aug 2023 22:03:32 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Sun, 27 Aug 2023 23:47:46 +0200
 
 play.it (2.25.4-1) unstable; urgency=medium
 

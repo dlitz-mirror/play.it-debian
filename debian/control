@@ -24,6 +24,8 @@ Depends:
 Recommends:
  imagemagick,
  libarchive-tools,
+ play.it-community,
+ play.it-vv221,
 Suggests:
  convmv,
  icoutils,

@@ -1,4 +1,4 @@
-play.it (2.25.4-1) unstable; urgency=medium
+play.it (2.25.4-2) unstable; urgency=medium
 
   play.it up to 2.15.1 used to provide game scripts in the same package than
   the core software (its library and "play.it" command). Starting with the
@@ -7,11 +7,12 @@ play.it (2.25.4-1) unstable; urgency=medium
   current update.
 
   The main change is that installing only this package no longer provides
-  support for any game. Game scripts will be supported by other packages that
-  should be included to the Debian repositories at a later date. An alternative
-  until these packages are ready is to install the games collections from git,
-  here are the ones featuring installation instructions:
-  - https://forge.dotslashplay.it/play.it/games - Community-maintained games collection
-  - https://forge.dotslashplay.it/vv221/games - vv221ʼs games collection
+  support for any game. Game scripts are provided by new dedicated packages:
+  - play.it-community, a collection maintained by the same team than the
+    ./play.it library and tools.
+  - play.it-vv221, a collection maintained by the original author of
+    ./play.it.
+  Unless you disabled APT::Install-Recommends, these new packages are
+  automatically installed as dependencies of the current one.
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 26 Aug 2023 21:43:51 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Sun, 27 Aug 2023 23:48:28 +0200
