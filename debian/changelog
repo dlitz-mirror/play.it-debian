@@ -1,20 +1,15 @@
-play.it (2.25.4-2) unstable; urgency=medium
-
-  * Add dependencies (Recommends) on the packages providing game scripts.
-  * Bump Standards-Version to 4.6.2
-
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Sun, 27 Aug 2023 23:47:46 +0200
-
 play.it (2.25.4-1) unstable; urgency=medium
 
   * New upstream release.
+  * Add dependencies (Recommends) on the packages providing game scripts.
+  * Add packages required to run tests to the build-dependencies list.
+  * Drop pandoc from the list of build-dependencies.
+  * Update upstream project Web page URL.
   * Update debian/watch to no longer rely on parsing GitLab URLs.
   * Update debian/copyright with the upstream authors list.
-  * Drop pandoc from the list of build-dependencies.
-  * Add packages required to run tests to the build-dependencies list.
-  * Update upstream project Web page URL.
+  * Bump Standards-Version to 4.6.2
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Sat, 26 Aug 2023 21:40:54 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Mon, 28 Aug 2023 13:09:11 +0200
 
 play.it (2.15.1-1) unstable; urgency=medium
 
