@@ -136,20 +136,20 @@ gentoo_package_build_single() {
 	fi
 
 	# Set compression setting
-	local option_compression binkpg_compress
+	local option_compression binpkg_compress
 	option_compression=$(option_value 'compression')
 	case "$option_compression" in
 		('none')
-			binkpg_compress='cat'
+			binpkg_compress='cat'
 		;;
 		('speed')
-			binkpg_compress='gzip'
+			binpkg_compress='gzip'
 		;;
 		('size')
-			binkpg_compress='bzip2'
+			binpkg_compress='bzip2'
 		;;
 		('auto')
-			binkpg_compress=''
+			binpkg_compress=''
 		;;
 	esac
 
@@ -159,8 +159,8 @@ gentoo_package_build_single() {
 	mkdir --parents "${PLAYIT_WORKDIR}/portage-tmpdir"
 	ebuild_path=$(gentoo_ebuild_path "$package")
 	ebuild "$ebuild_path" manifest 1>/dev/null
-	if [ -n "$binkpg_compress" ]; then
-		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binkpg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
+	if [ -n "$binpkg_compress" ]; then
+		debug_external_command "PORTAGE_TMPDIR=\"${PLAYIT_WORKDIR}/portage-tmpdir\" PKGDIR=\"${PLAYIT_WORKDIR}/gentoo-pkgdir\" BINPKG_COMPRESS=\"$binpkg_compress\" fakeroot -- ebuild \"$ebuild_path\" package 1>/dev/null"
 		{
 			## Silence a ShellCheck false positive
 			## PORTAGE_TMPDIR appears unused. Verify use (or export if used externally).
@@ -173,7 +173,7 @@ gentoo_package_build_single() {
 			## Silence a ShellCheck false positive
 			## BINPKG_COMPRESS appears unused. Verify use (or export if used externally).
 			# shellcheck disable=SC2034
-			BINPKG_COMPRESS="$binkpg_compress"
+			BINPKG_COMPRESS="$binpkg_compress"
 			fakeroot -- ebuild "$ebuild_path" package 1>/dev/null
 			package_generation_return_code=$?
 		} || true
