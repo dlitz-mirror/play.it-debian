@@ -139,9 +139,6 @@ gentoo_package_build_single() {
 	local option_compression binpkg_compress
 	option_compression=$(option_value 'compression')
 	case "$option_compression" in
-		('none')
-			binpkg_compress='cat'
-		;;
 		('speed')
 			binpkg_compress='gzip'
 		;;

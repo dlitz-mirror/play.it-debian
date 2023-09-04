@@ -388,16 +388,29 @@ options_compatibility_check() {
 	# Check the compatibility of --compression auto with the target package format.
 	local option_compression
 	option_compression=$(option_value 'compression')
-	if [ "$option_compression" = 'auto' ]; then
-		local option_package
-		option_package=$(option_value 'package')
-		case "$option_package" in
-			('arch')
-				# --compression auto has not been implemented for Arch Linux packages yet.
-				error_incompatible_options 'package' 'compression'
-				return 1
-			;;
-		esac
-	fi
+	case "$option_compression" in
+		('none')
+			local option_package
+			option_package=$(option_value 'package')
+			case "$option_package" in
+				('gentoo')
+					# --compression none has not been implemented for Gentoo packages yet.
+					error_incompatible_options 'package' 'compression'
+					return 1
+				;;
+			esac
+		;;
+		('auto')
+			local option_package
+			option_package=$(option_value 'package')
+			case "$option_package" in
+				('arch')
+					# --compression auto has not been implemented for Arch Linux packages yet.
+					error_incompatible_options 'package' 'compression'
+					return 1
+				;;
+			esac
+		;;
+	esac
 }
 
