@@ -117,10 +117,11 @@ gentoo_package_build_single() {
 	local package
 	package="$1"
 
-	local package_path package_name generated_package_path generated_package_directory
-	package_path=$(package_path "$package")
+	# Set the path where the package should be generated.
+	local option_output_dir package_name generated_package_path generated_package_directory
+	option_output_dir=$(option_value 'output-dir')
 	package_name=$(package_name "$package")
-	generated_package_path="${package_path}.tbz2"
+	generated_package_path="${option_output_dir}/${package_name}"
 	generated_package_directory=$(dirname "$generated_package_path")
 
 	# Skip packages already existing,
