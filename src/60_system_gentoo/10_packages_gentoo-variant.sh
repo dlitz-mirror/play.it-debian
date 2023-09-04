@@ -50,7 +50,7 @@ gentoo_package_metadata_single() {
 
 	local ebuild_path package_architecture ebuild_keywords ebuild_description ebuild_rdepend
 	ebuild_path=$(gentoo_ebuild_path "$package")
-	ebuild_description=$(ebuild_description "$package")
+	ebuild_description=$(package_description "$package")
 	ebuild_rdepend=$(package_gentoo_ebuild_rdepend "$pkg")
 	package_architecture=$(package_architecture "$package")
 	case "$package_architecture" in
