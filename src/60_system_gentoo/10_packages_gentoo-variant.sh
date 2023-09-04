@@ -269,7 +269,7 @@ gentoo_package_version() {
 		package_version='1.0'
 	fi
 
-	printf '$%s_p%s' "$package_version" "$(printf '%s' "$script_version" | sed 's/\.//g')"
+	printf '%s_p%s' "$package_version" "$(printf '%s' "$script_version" | sed 's/\.//g')"
 }
 
 # Print the architecture string of the given package, in the format expected by portage
