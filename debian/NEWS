@@ -1,4 +1,4 @@
-play.it (2.25.4-1) unstable; urgency=medium
+play.it (2.25.5-1) unstable; urgency=medium
 
   play.it up to 2.15.1 used to provide game scripts in the same package than
   the core software (its library and "play.it" command). Starting with the
@@ -15,4 +15,4 @@ play.it (2.25.4-1) unstable; urgency=medium
   Unless you disabled APT::Install-Recommends, these new packages are
   automatically installed as dependencies of the current one.
 
- -- Antoine Le Gonidec <debian@dotslashplay.it>  Mon, 28 Aug 2023 13:10:55 +0200
+ -- Antoine Le Gonidec <debian@dotslashplay.it>  Tue, 05 Sep 2023 15:47:05 +0200
